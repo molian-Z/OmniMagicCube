@@ -1,0 +1,16 @@
+{
+  "default":"默认",
+  "header":"头部",
+  "footer":"尾部",
+  "left":"左侧",
+  "right":"右侧",
+  "asyncLoading":"异步加载",
+  "action":"操作",
+  "content":"内容",
+  "avatar":"头像",
+  "title":"标题",
+  "description":"描述",
+  "image":"图片",
+  "icon":"图标",
+  "button":"按钮"
+}

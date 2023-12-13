@@ -1,0 +1,10 @@
+{
+  "createCss":"生成css",
+  "createJs":"生成js",
+  "createVue":"生成vue",
+  "create":"生成",
+  "treeDir":"树目录",
+  "loadLib":"载入库",
+  "sendToChannel":"发送到频道",
+  "onChannel":"请监听频道广播"
+}

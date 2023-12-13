@@ -1,0 +1,30 @@
+{
+  "name": "molian-page-designer",
+  "version": "0.0.0",
+  "title": "墨联源创构建器",
+  "scripts": {
+    "dev": "vite --host",
+    "build": "vite build",
+    "serve": "vite preview"
+  },
+  "dependencies": {
+    "@vueuse/core": "^10.5.0",
+    "ace-builds": "^1.31.2",
+    "ant-design-vue": "^4.0.6",
+    "dexie": "^3.2.4",
+    "element-plus": "^2.4.2",
+    "fast-glob": "^3.3.1",
+    "naive-ui": "^2.35.0",
+    "tdesign-vue-next": "^1.6.7",
+    "vexip-ui": "^2.2.10",
+    "vue": "^3.2.8",
+    "vue3-colorpicker": "^2.2.2"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^4.4.0",
+    "rollup-plugin-visualizer": "^5.9.2",
+    "sass": "^1.69.5",
+    "vite": "^4.5.0",
+    "vite-plugin-svg-icons": "^2.0.1"
+  }
+}

@@ -1,0 +1,178 @@
+.designer-container {
+  height: 420px;
+  overflow-y: auto;
+
+  &::-webkit-scrollbar {
+    width: 0px;
+    height: 0px;
+    border-radius: 10px;
+    background-color: #F5F5F5;
+  }
+
+  .designer-container__body-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    font-weight: bold;
+    padding: var(--ml-pd-lg);
+    user-select: none;
+    background-color: var(--ml-bg-color);
+    border-radius: var(--ml-radius-small);
+  }
+
+  .designer-container__body {
+    background-color: var(--ml-bg-color);
+    border-radius: var(--ml-radius-small);
+    padding: 0 var(--ml-pd-lg);
+
+    &:nth-child(2) {
+      padding-bottom: var(--ml-pd-base);
+    }
+
+    &:not(:nth-child(2)) {
+      padding-bottom: var(--ml-pd-base);
+      padding-top: var(--ml-pd-base);
+    }
+
+    .designer-top-tool {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .designer-list-item {
+      display: flex;
+      padding-top: var(--ml-pd-base);
+
+      &.between {
+        justify-content: space-between;
+        align-items: center;
+      }
+    }
+
+    .designer-input {
+      width: 180px;
+      margin-right: var(--ml-mg-base);
+    }
+
+    .designer-input-lg{
+      width: 130px;
+    }
+
+    .designer-input-base {
+      width: 120px;
+    }
+
+    .designer-input-base {
+      width: 100px;
+    }
+
+    .designer-input-small {
+      width: 80px;
+    }
+
+    .designer-input-mini {
+      width: 60px;
+    }
+
+    .designer-input-base+.designer-input-base,
+    .designer-input-base+.designer-input-small,.mg-left-base{
+      margin-left: var(--ml-mg-base);
+    }
+  }
+
+  .css-svg-icon {
+    width: 24px;
+    height: 24px;
+    padding: 2px;
+    transition: var(--ml-transition-base);
+    border-radius: var(--ml-radius-small);
+    cursor: pointer;
+
+    &:hover {
+      background: var(--ml-fill-color-4);
+    }
+  }
+
+  &.disabled {
+    .css-svg-icon {
+      cursor: auto;
+
+      &:hover {
+        background-color: var(--ml-bg-color);
+      }
+    }
+  }
+
+  .designer-mg-top{
+    margin-top: var(--ml-mg-base);
+  }
+}
+
+.suffix-tag {
+  user-select: none;
+  color: var(--ml-icon-color);
+  font-size: 10px;
+}
+
+
+/* 1. 声明过渡效果 */
+.fade-move,
+.fade-enter-active,
+.fade-leave-active {
+  transition: all 0.5s cubic-bezier(0.55, 0, 0.1, 1);
+}
+
+/* 2. 声明进入和离开的状态 */
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+  transform: scaleY(0.01) translate(30px, 0);
+}
+
+/* 3. 确保离开的项目被移除出了布局流
+      以便正确地计算移动时的动画效果。 */
+.fade-leave-active {
+  position: absolute;
+}
+
+
+.list-move,
+/* 对移动中的元素应用的过渡 */
+.list-enter-active,
+.list-leave-active {
+  transition: all 0.5s ease;
+}
+
+.list-enter-from,
+.list-leave-to {
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+/* 确保将离开的元素从布局流中删除
+  以便能够正确地计算移动的动画。 */
+.list-leave-active {
+  position: absolute;
+}
+
+.list2top-move,
+/* 对移动中的元素应用的过渡 */
+.list2top-enter-active,
+.list2top-leave-active {
+  transition: all 0.5s ease;
+}
+
+.list2top-enter-from,
+.list2top-leave-to {
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+/* 确保将离开的元素从布局流中删除
+  以便能够正确地计算移动的动画。 */
+.list2top-leave-active {
+  position: absolute;
+  top:0;
+}

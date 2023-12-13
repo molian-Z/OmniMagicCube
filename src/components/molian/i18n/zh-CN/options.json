@@ -1,0 +1,23 @@
+{
+    "append":"追加",
+    "edit":"编辑",
+    "copy":"复制",
+    "paste":"粘贴",
+    "reset":"重置",
+    "save":"保存",
+    "cancel":"取消",
+    "confirm":"确定",
+    "close":"关闭",
+    "open":"打开",
+    "search":"搜索",
+    "add":"添加",
+    "remove":"删除",
+    "basic":"基础",
+    "slot":"插槽",
+    "js":"高级",
+    "funciton":"函数",
+    "array":"数组",
+    "object":"对象",
+    "javascript":"代码",
+    "json":"数据"
+}
