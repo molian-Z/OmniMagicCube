@@ -1,7 +1,7 @@
 # OmniMagicCube 无界魔方
 
 ### 商用请保留版权信息
-(演示网址)[http://demo.mlyt.top/]
+[演示网址](http://demo.mlyt.top/)
 ```
 这是一个支持VUE3主流UI组件库的可视化框架
 这个框架跟市面上的其他可视化框架是完全不同的产品。
