@@ -14,10 +14,17 @@
     "remove":"删除",
     "basic":"基础",
     "slot":"插槽",
-    "js":"高级",
+    "js":"事件",
     "funciton":"函数",
     "array":"数组",
     "object":"对象",
     "javascript":"代码",
-    "json":"数据"
+    "json":"数据",
+    "lifecycle":"生命周期",
+    "nativeOn":"原生事件",
+    "asyncFunction":"异步函数",
+    "function":"函数",
+    "appendOn":"新增事件",
+    "addTag":"+ 新标签",
+    "addNewVar":"+ 新变量"
 }

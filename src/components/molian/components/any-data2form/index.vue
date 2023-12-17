@@ -3,9 +3,10 @@ import { ref, computed, defineOptions, inject, defineProps, watch } from 'vue';
 import { useVModel } from '@vueuse/core'
 import svgIcon from '@molianComps/svg-icon/index.vue'
 import codeEditor from '@molianComps/code-editor/index.vue'
+import tagInput from '@molianComps/tag-input/index.vue'
 const t = inject('mlLangs')
 const customComps = inject('customComps')
-const { customInputNumber, customInput, customSwitch, customSelect, customButton, customDialog } = customComps
+const { customInputNumber, customInput, customSwitch, customSelect, customButton, customDialog, customRadioGroup, customRadioButton } = customComps
 const props = defineProps({
   modelValue: {
     type: [String, Number, Boolean, Object, Array],
@@ -55,6 +56,7 @@ const type = computed(() => {
 
 const visible = ref(false)
 const codeMode = ref('javascript')
+const functionMode = ref('function')
 const cacheValue = ref('')
 
 const getI18n = (key, name) => {
@@ -68,14 +70,49 @@ const tabType = () => {
   currentTypeIndex.value = props.propData.type.length - 1 === currentTypeIndex.value ? 0 : currentTypeIndex.value + 1
 }
 
+const codeVar = computed(() => {
+  return value.value && value.value.codeVar && value.value.codeVar.length > 0 && value.value.codeVar || props.propData.codeVar || []
+})
+
 const showDialog = (type) => {
   if (type === 'object' || type === 'array') {
     codeMode.value = "json"
+    cacheValue.value = value.value
   } else {
     codeMode.value = "javascript"
+    if (typeof value.value !== 'object') {
+      value.value = {
+        code: '',
+        codeVar: []
+      }
+    }
+    cacheValue.value = value.value.code || ''
   }
-  cacheValue.value = value.value
   visible.value = true
+}
+
+const saveCode = () => {
+  visible.value = false;
+  if (!value.value) {
+    value.value = {
+      code: cacheValue,
+      codeVar: []
+    }
+  } else {
+    value.value = cacheValue
+  }
+}
+
+const appendCodeVar = (val) => {
+  if (!value.value) {
+    value.value = {
+      code: '',
+      codeVar: []
+    }
+  }
+  if (val) {
+    value.value.codeVar = val
+  }
 }
 </script>
 
@@ -104,12 +141,22 @@ const showDialog = (type) => {
       <svg-icon icon="switch" class="data2form-item__svg-icon" />
     </div>
   </div>
-  <customDialog attach="body" :header="t('options.edit') + t(`options.${codeMode}`)" width="80%" :close-on-click-modal="false"
-    @escKeydown="visible = false" @closeBtnClick="visible = false" :visible="visible">
+  <customDialog attach="body" :header="keyName" width="80%" :close-on-click-modal="false" @escKeydown="visible = false"
+    @closeBtnClick="visible = false" :visible="visible" destroyOnClose>
+    <div class="modeType" v-if="codeMode === 'javascript'">
+      <customRadioGroup v-model="functionMode" variant="primary-filled" size="small">
+        <customRadioButton value="function">{{ t('options.function') }}</customRadioButton>
+        <customRadioButton value="asyncFunction">{{ t('options.asyncFunction') }}</customRadioButton>
+      </customRadioGroup>
+      <tagInput class="tagInput" :modelValue="codeVar" @update:modelValue="appendCodeVar" />
+    </div>
+    <div class="function-top">{{ functionMode === 'asyncFunction' && 'async ' || '' }}<span
+        style="color:#ff85cd;">function </span>({{ codeVar.join(', ') }}) {</div>
     <codeEditor :mode="codeMode" v-model="cacheValue"></codeEditor>
+    <div class="function-bottom">}</div>
     <template #footer>
-        <customButton theme="default" @click="visible = false">{{ t('options.cancel') }}</customButton>
-        <customButton theme="primary" @click="visible = false;value = cacheValue">{{ t('options.confirm') }}</customButton>
+      <customButton theme="default" @click="visible = false">{{ t('options.cancel') }}</customButton>
+      <customButton theme="primary" @click="saveCode">{{ t('options.confirm') }}</customButton>
     </template>
   </customDialog>
 </template>
@@ -166,5 +213,20 @@ const showDialog = (type) => {
       }
     }
   }
+}
+
+.modeType {
+  margin: var(--ml-mg-base) 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  .tagInput {
+    width: calc(100% - 200px);
+  }
+}
+
+:deep(.tag-input-container) {
+  justify-content: flex-end;
 }
 </style>

@@ -1,7 +1,7 @@
 <script setup>
 import { computed, inject, defineOptions, defineProps, defineEmits } from 'vue'
 import { selectedComp, compsRef } from '../designerData'
-import { isDraggable, dragIndex, dropIndex, dropKey, useDraggable } from '../draggable'
+import { isDraggable, dragIndex, dropIndex, dropKey, useDraggable, dropType } from '../draggable'
 import { parseStyle } from '@molian/utils/css-generator'
 defineOptions({
     name: 'deepTree'
@@ -37,46 +37,46 @@ const onClick = function (comp) {
 }
 
 const setRef = (el, comp, nest) => {
-    if (el && el.$el && el.$el.nodeName === '#text' && !nest) {
-        comp.nest = true
-    }
+    // if (el && el.$el && el.$el.nodeName === '#text' && !nest) {
+    //     comp.nest = true
+    // }
     compsRef[comp.key] = el
 }
 </script>
 
 <template>
     <template v-for="(comp, index) in compData" :key="comp.key">
-        <component :is="comp.name" :ref="(el) => setRef(el, comp)" :data-key="comp.key" :style="parseStyle(comp.css)"
-            @dragenter.self="onDragenter(index, comp)" @dragover.self.prevent @drop.self.stop="onDrop"
-            @click.self="onClick(comp)" @dragend="onDragend"
-            @mouseenter.self.native="onMouseEnter($event, comp, index)" v-bind="comp.attrs"
+        <transition name="fade">
+            <div :class="['prefix-drop-slot designer-comp__empty', dropKey === comp.key && dropType === 'prev' && 'dropping-comp']"
+                v-if="isDraggable && index === 0" @drop.self.stop="onDrop($event, index)"
+                @dragover.self.prevent="onDragenter(index, comp, 'prev')">{{ t('container.drop') }}</div>
+        </transition>
+        <component :id="comp.id" :is="comp.name" :ref="(el) => setRef(el, comp)" :data-key="comp.key"
+            :style="parseStyle(comp.css)" @dragover.self.prevent="onDragenter(index, comp)" @drop.self.stop="onDrop"
+            @click.self="onClick(comp)" @dragend="onDragend" @mouseenter.self.native="onMouseEnter($event, comp, index)"
+            v-bind="comp.attrs"
             :class="['designer-comp', dragIndex === index && 'hiddenComps', isDraggable && 'is-margin', selectedComp && selectedComp.key === comp.key && 'selectedComp']"
             v-if="!comp.nest">
             <template v-for="(slotVal, slotKey) in comp.slots" :key="slotKey" #[slotKey]="slotProps">
                 <template v-if="slotVal && slotVal.children">
-                    <div :class="['prefix-drop-slot designer-comp__empty']" v-if="isDraggable" @dragover.prevent
-                        @drop.stop="onDrop($event, index)"></div>
-                        <template v-if="JSON.stringify(slotProps) !== '{}'">
-                            <deepTree v-model="slotVal.children" :slotProp="slotProps"></deepTree>
-                        </template>
-                        <deepTree v-else v-model="slotVal.children"></deepTree>
-                    <div :class="['designer-comp__empty', dropKey === comp.key && 'dropping-comp']" @dragover.prevent
-                        @drop.self.stop="onDropSlot($event, slotVal)" v-if="isDraggable">
-                        <template v-if="dropKey !== comp.key">
-                            {{ t('container.dropSlot') + t('slot.' + slotKey) + t('container.slot') }}
-                        </template>
-                        <template v-else>
-                            {{ t("container.dropComp") + t('component.' + comp.name) + t('container.component') }}
-                        </template>
+                    <template v-if="JSON.stringify(slotProps) !== '{}'">
+                        <deepTree v-model="slotVal.children" :slotProp="slotProps"></deepTree>
+                    </template>
+                    <deepTree v-else v-model="slotVal.children"></deepTree>
+                    <div :class="['designer-comp__empty', dropKey === comp.key && !dropType && 'dropping-comp']"
+                        @dragover.self.prevent="onDragenter(index, comp)" @drop.self.stop="onDropSlot($event, slotVal)"
+                        v-if="isDraggable && slotVal.children.length === 0">
+                        {{ t("container.dropComp") + t('component.' + comp.name.substring(comps[comp.name].prefix.length)) +
+                            t('container.component') + t('slot.' + slotKey) + t('container.slot') }}
                     </div>
                 </template>
             </template>
         </component>
-        <div :data-key="comp.key" :style="parseStyle(comp.css)" v-else @dragenter.self="onDragenter(index)"
+        <div :data-key="comp.key" :style="parseStyle(comp.css)" v-else @dragenter.self="onDragenter(index, comp)"
             @dragover.self.prevent @drop.self.stop="onDrop" @click.self="onClick(comp)" @dragend="onDragend"
             @mouseenter.self.native="onMouseEnter($event, comp, index)"
             :class="['designer-comp comp-inline', dragIndex === index && 'hiddenComps', dropIndex === index && isDraggable && 'is-margin', selectedComp && selectedComp.key === comp.key && 'selectedComp']">
-            <component :ref="(el) => setRef(el, comp, true)" :is="comp.name" v-bind="comp.attrs">
+            <component :id="comp.id" :ref="(el) => setRef(el, comp, true)" :is="comp.name" v-bind="comp.attrs">
                 <template v-for="(slotVal, slotKey) in comp.slots" :key="slotKey" #[slotKey]="slotProps">
                     <template v-if="slotVal && slotVal.children && slotVal.children.length > 0">
                         <template v-if="JSON.stringify(slotProps) !== '{}'">
@@ -96,6 +96,11 @@ const setRef = (el, comp, nest) => {
                 </template>
             </component>
         </div>
+        <transition name="fade">
+            <div :class="['suffix-drop-slot designer-comp__empty', dropKey === comp.key && dropType === 'next' && 'dropping-comp']"
+                v-if="isDraggable" @dragover.self.prevent="onDragenter(index, comp, 'next')"
+                @drop.self.stop="onDrop($event, index + 1)">{{ t('container.drop') }}</div>
+        </transition>
     </template>
 </template>
 
@@ -143,28 +148,26 @@ const setRef = (el, comp, nest) => {
             border: 2px solid var(--ml-primary-color);
         }
     }
+}
 
-    .prefix-drop-slot {
-        position: absolute;
-        left: -20px;
-        padding: var(--ml-pd-small);
-    }
+.prefix-drop-slot {
+    padding: var(--ml-pd-small);
+}
 
-    .designer-comp__empty {
-        height: 50px;
-        margin: 5px;
-        border: 2px dashed var(--ml-info-color-1);
-        padding: 0 var(--ml-pd-small);
-        text-align: center;
-        line-height: 50px;
-        font-weight: bold;
-        color: var(--ml-info-color-1);
-        user-select: none;
-        transition: var(--ml-transition-base);
-    }
+.designer-comp__empty {
+    border: 2px dashed var(--ml-info-color-1);
+    padding: 0 var(--ml-pd-small);
+    text-align: center;
+    font-weight: bold;
+    color: var(--ml-info-color-1);
+    user-select: none;
+    line-height: 36px;
+    transition: var(--ml-transition-base);
+    flex: 1;
+}
 
-    .dropping-comp {
-        border-color: var(--ml-primary-color) !important;
-        color: var(--ml-primary-color) !important;
-    }
-}</style>
+.dropping-comp {
+    border-color: var(--ml-primary-color) !important;
+    color: var(--ml-primary-color) !important;
+}
+</style>

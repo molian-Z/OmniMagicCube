@@ -8,5 +8,6 @@
     "treeDir":"结构目录",
     "dropComp":"组件将放至于",
     "appendComp":"插入组件",
-    "appendSlot":"插入插槽"
+    "appendSlot":"插入插槽",
+    "drop":"放置"
 }

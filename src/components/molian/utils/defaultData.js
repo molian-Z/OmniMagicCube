@@ -55,6 +55,34 @@ export const defaultAttrsMap = {
     }
 }
 
+export const defaultNativeEventMap = {
+    click:['evt'], //点击
+    dblClick:['evt'], //双击
+    mouseEnter:['evt'], //鼠标移入
+    mouseLeave:['evt'], //鼠标移出
+    keyDown:['evt'], //按键按下
+    keyUp:['evt'], //按键抬起
+    keyPress:['evt'], //按键按下
+    wheel:['evt'], //滚轮滚动
+    contextmenu:['evt'], //右键
+    scroll:['evt'], //滚动
+    resize:['evt'], //窗口大小改变
+}
+
+export const defaultPageEventMap = {
+    beforeCreate:"",
+    created:"",
+    beforeMount:"",
+    mounted:"",
+    beforeUpdate:"",
+    updated:"",
+    beforeUnmount:"",
+    unmounted:"",
+    errorCaptured: ['err', 'vm', 'info'],
+    activated:"",
+    deactivated:""
+}
+
 /**
  * 默认插槽地图(用于记录各组件插槽及限制放入组件)
  * @param {object} ComponentMap 组件对象
@@ -129,6 +157,7 @@ export const uiMapping = {
                     "variant": "text"
                 },
             },
+            "Tag":{},
             "Input": {},
             "InputNumber": {},
             "Select": {},
@@ -249,3 +278,5 @@ export const uiMapping = {
 }
 
 export const dbName = "molian-cube"
+
+export const cloudUrl = "http://wujie.mlyt.top/getData"

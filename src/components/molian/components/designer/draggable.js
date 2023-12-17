@@ -1,6 +1,14 @@
-import { useElementBounding } from '@vueuse/core'
-import { ref } from 'vue'
-import {hiddenAllPanel, createComp} from './designerData'
+import {
+  useElementBounding,
+  useThrottleFn  
+} from '@vueuse/core'
+import {
+  ref
+} from 'vue'
+import {
+  hiddenAllPanel,
+  createComp
+} from './designerData'
 // 拖拽数据
 export const dragComp = ref(null)
 export const dragNodes = ref(null)
@@ -9,6 +17,7 @@ export const dragIndex = ref(null)
 export const dropIndex = ref(null)
 export const dropNode = ref(null)
 export const dropKey = ref(null)
+export const dropType = ref(null)
 export const isDraggable = ref(null)
 export const startDraggable = function (evt) {
   hiddenAllPanel.value = true
@@ -28,6 +37,7 @@ export const resetDraggable = function () {
   dropIndex.value = null
   dropNode.value = null
   dropKey.value = null
+  dropType.value = null
   resetHover()
 }
 
@@ -45,25 +55,27 @@ export const resetHover = function (e) {
 
 
 // methods
-
-export const useDraggable = (comps, compData, message)=> {
-  const onDragenter = function (index, comp) {
-    if(index > -1){
+export const useDraggable = (comps, compData, message) => {
+  const onDragenter = useThrottleFn((index, comp, type = null) => {
+    if (index > -1) {
       dropIndex.value = index
+    } else {
+      dropIndex.value = null
     }
+    dropType.value = type
     dropNode.value = comp
     dropKey.value = comp.key
     dropNodes.value = compData
-  }
+  }, 100)
 
   const onDrop = function (evt, index) {
     const name = evt.dataTransfer.getData('compName')
     if (name) {
-        const obj = createComp(comps.value[name])
-        compData.value.splice(index && index || dropIndex.value, 0, obj)
+      const obj = createComp(comps.value[name])
+      compData.value.splice(index && index || dropIndex.value, 0, obj)
     } else {
-        let moveComp = dragNodes.value.splice(dragIndex.value, 1)[0]
-        compData.value.splice(index && index || dropIndex.value, 0, moveComp)
+      let moveComp = dragNodes.value.splice(dragIndex.value, 1)[0]
+      compData.value.splice(index && index || dropIndex.value, 0, moveComp)
     }
     resetDraggable()
   }
@@ -71,12 +83,12 @@ export const useDraggable = (comps, compData, message)=> {
   const onDropSlot = function (evt, slotVal) {
     const name = evt.dataTransfer.getData('compName')
     if (name && slotVal.allowComps && (slotVal.allowComps.length === 0 || slotVal.allowComps.indexOf(name) > -1) || name && !slotVal.allowComps) {
-        const obj = createComp(comps.value[name])
-        slotVal.children.push(obj)
+      const obj = createComp(comps.value[name])
+      slotVal.children.push(obj)
     } else {
       message.error('拖拽组件不在允许的组件列表中')
-        // let moveComp = dragNodes.value.splice(dragIndex.value, 1)[0]
-        // slotVal.children.push(moveComp)
+      // let moveComp = dragNodes.value.splice(dragIndex.value, 1)[0]
+      // slotVal.children.push(moveComp)
     }
   }
 

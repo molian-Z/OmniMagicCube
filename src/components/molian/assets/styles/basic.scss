@@ -56,7 +56,7 @@
       margin-right: var(--ml-mg-base);
     }
 
-    .designer-input-lg{
+    .designer-input-lg {
       width: 130px;
     }
 
@@ -77,7 +77,8 @@
     }
 
     .designer-input-base+.designer-input-base,
-    .designer-input-base+.designer-input-small,.mg-left-base{
+    .designer-input-base+.designer-input-small,
+    .mg-left-base {
       margin-left: var(--ml-mg-base);
     }
   }
@@ -105,7 +106,7 @@
     }
   }
 
-  .designer-mg-top{
+  .designer-mg-top {
     margin-top: var(--ml-mg-base);
   }
 }
@@ -174,5 +175,20 @@
   以便能够正确地计算移动的动画。 */
 .list2top-leave-active {
   position: absolute;
-  top:0;
+  top: 0;
+}
+
+
+.function-top {
+  background-color: #282a36;
+  color: #FFF;
+  font-weight: bold;
+  padding: 6px 10px;
+}
+
+.function-bottom{
+  background-color: #282a36;
+  color: #FFF;
+  font-weight: bold;
+  padding: 6px 10px;
 }

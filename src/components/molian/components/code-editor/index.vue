@@ -43,6 +43,9 @@
       },
 
     },
+    unmounted() {
+      this.aceEditor.destroy()
+    },
     emits: ['update:modelValue'],
     mounted() {
       //ace.config.set('basePath', ACE_BASE_PATH)
@@ -374,6 +377,6 @@
 <style lang="scss" scoped>
   .ace-editor {
     min-height: 300px;
-    border-radius: var(--el-border-radius-base);
+    // border-radius: var(--el-border-radius-base);
   }
 </style>

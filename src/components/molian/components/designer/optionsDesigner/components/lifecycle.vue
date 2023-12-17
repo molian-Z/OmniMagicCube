@@ -2,30 +2,38 @@
 import { computed, defineOptions, inject } from 'vue';
 import anyData2Form from '@/components/molian/components/any-data2form'
 import { selectedComp } from '../../designerData'
+import { defaultPageEventMap } from '@molian/utils/defaultData'
 
 defineOptions({
   name: 'basicComp'
 })
 const comps = inject('mlComps')
 const t = inject('mlLangs')
-
-
-const currentAttrs = computed(() => {
+// const lifecycle = inject('mlLifecycle')
+const currentOn = computed(() => {
   if (!selectedComp.value) return {}
-  return selectedComp.value && selectedComp.value.attrs
+  return selectedComp.value && selectedComp.value.on
 })
 
-const currentProps = computed(() => {
+const currentEmits = computed(() => {
   if (!selectedComp.value) return {}
-  return comps.value[selectedComp.value.name].props
+  const newNativeOn = Array.from(new Set(Object.keys(defaultPageEventMap).concat(currentOn.value? Object.keys(currentOn.value) : [])))
+  return selectedComp.value && newNativeOn.map(item => {
+    return {
+      key: item,
+      type: 'function',
+      codeVar:defaultPageEventMap[item]
+    }
+  })
 })
 
 </script>
 <template>
   <div class="basic-list">
     <template v-if="selectedComp">
-      <template v-for="(val, key) in currentProps" :key="key">
-        <anyData2Form :selectedComp="selectedComp" v-model="currentAttrs[key]" :propData="val" :keyName="key"></anyData2Form>
+      <template v-for="(item) in currentEmits" :key="item.key">
+        <anyData2Form :selectedComp="selectedComp" v-model="currentOn[item.key]" :propData="item" :keyName="item.key">
+        </anyData2Form>
       </template>
     </template>
   </div>

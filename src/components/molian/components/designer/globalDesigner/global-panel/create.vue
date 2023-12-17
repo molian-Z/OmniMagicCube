@@ -17,6 +17,7 @@ const {
 } = useBroadcastChannel({ name: 'molian_createVue' })
 const showDialog = ref(false)
 const codeData = ref(``)
+const langMode = ref(``)
 
 const createSFC = function () {
   const template = createTemplate(modelValue)
@@ -28,16 +29,24 @@ const createSFC = function () {
 }
 
 const sendChannel = function () {
-  if(isSupported.value){
+  if (isSupported.value) {
     post({
       type: 'create',
       data: createSFC()
     })
-  }else{
+  } else {
     message.error(error.value)
   }
 }
+
+const exportModelData = function () {
+  langMode.value = 'json'
+  codeData.value = JSON.stringify(modelValue)
+  showDialog.value = true
+}
+
 const showCode = function () {
+  langMode.value = 'html'
   codeData.value = createSFC()
   showDialog.value = true
 }
@@ -46,23 +55,28 @@ const showCode = function () {
 <template>
   <div class="create-list">
     <div class="create-item">
-      <div  @click="showCode">
+      <div @click="showCode">
         <customButton @click="sendChannel">
-        {{ t('global.createVue') }}
-      </customButton>
+          {{ t('global.createVue') }}
+        </customButton>
       </div>
     </div>
     <div class="create-item">
-    <customTooltip  :content='t(`global.onChannel`)+`：molian_createVue`'>
-      <customButton @click="sendChannel">
-        {{ t('global.sendToChannel') }}
+      <customTooltip :content='t(`global.onChannel`) + `：molian_createVue`'>
+        <customButton @click="sendChannel">
+          {{ t('global.sendToChannel') }}
+        </customButton>
+      </customTooltip>
+    </div>
+    <div class="create-item">
+      <customButton @click="exportModelData">
+        导出训练数据
       </customButton>
-    </customTooltip>
     </div>
   </div>
-  <el-dialog v-model="showDialog" title="生成SFC" width="800px" append-to-body>
+  <el-dialog v-model="showDialog" title="生成SFC" width="800px" append-to-body destroyOnClose>
     <div>
-      <codeEditor v-model="codeData" lang="javascript" />
+      <codeEditor v-model="codeData" :lang="langMode" />
     </div>
   </el-dialog>
 </template>
@@ -70,7 +84,7 @@ const showCode = function () {
 <style scoped lang="scss">
 .create-list {
 
-  .create-item{
+  .create-item {
     display: flex;
     align-items: center;
     justify-content: center;

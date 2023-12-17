@@ -158,7 +158,9 @@ const closePanel = function (evt) {
                     <div class="float-panel-toolbar-holder" v-if="$slots.toolbar" />
                     <div :class="['float-panel-content-detail__content', float === 'left' ? 'is-left' : 'is-right']"
                         :style="{ width: foldWidth - 77 + 'px', height: $slots.toolbar ? 'calc(100% - 72px)' : 'calc(100% - 40px)' }">
-                        <slot :activeData="activeObj"></slot>
+                        <transition name="list2top">
+                            <slot :activeData="activeObj"></slot>
+                        </transition>
                     </div>
                 </div>
             </div>
@@ -326,6 +328,7 @@ const closePanel = function (evt) {
             }
 
             .float-panel-content-detail__content {
+                position: relative;
                 padding: var(--ml-pd-base);
                 height: calc(100% - 40px);
 

@@ -40,6 +40,7 @@ export const createControl = function (prefix, compName, attrs) {
             }
           }
         }
+        objAttrs.ref = 'ref'
         return objAttrs
       }
     }

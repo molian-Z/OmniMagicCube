@@ -4,7 +4,9 @@ import { optionsPanel, panelType, globalMenu } from '../designerData'
 import floatPanel from '@molianComps/float-panel/index.vue'
 import basicComp from './components/basic.vue'
 import slotComp from './components/slot.vue'
+import nativeOnComp from './components/nativeOn.vue'
 import javascriptComp from './components/javascript.vue'
+import lifecycleComp from './components/lifecycle.vue'
 const t = inject('mlLangs')
 const menus = ref([{
     icon: 'basic',
@@ -18,6 +20,14 @@ const menus = ref([{
     icon: 'js',
     text: t('options.js'),
     name: 'javascript'
+}, {
+    icon: 'nativeOn', 
+    text: t('options.nativeOn'),
+    name: 'nativeOn'
+}, {
+    icon: 'lifecycle', 
+    text: t('options.lifecycle'),
+    name: 'lifecycle'
 }])
 
 const closeFloatPanel = function () {
@@ -30,9 +40,11 @@ const closeFloatPanel = function () {
         <float-panel class="float-panel" float="right" :list="menus" v-model="optionsPanel" @clickClose="closeFloatPanel" :foldWidth="365" :foldHeight="600"
             :isShow="panelType === 'option'">
             <template v-slot:default="{ activeData }">
-                <basicComp v-if="activeData.name === 'basic'"></basicComp>
-                <slotComp v-else-if="activeData.name === 'slot'"></slotComp>
+                <basicComp v-if="activeData.name === 'basic'" />
+                <slotComp v-else-if="activeData.name === 'slot'" />
                 <javascriptComp v-else-if="activeData.name === 'javascript'" />
+                <nativeOnComp v-else-if="activeData.name === 'nativeOn'" />
+                <lifecycleComp v-else-if="activeData.name === 'lifecycle'" />
             </template>
         </float-panel>
     </div>

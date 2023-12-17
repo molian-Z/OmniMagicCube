@@ -32,6 +32,7 @@ export const createComp = function (comp) {
         category:comp.category,
         attrs:initAttrs,
         on:{},
+        nativeOn:{},
         slots:cloned.value,
         css: {
             borderRadius:['0','0','0','0'],

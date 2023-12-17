@@ -1,7 +1,7 @@
 {
-  "name": "molian-page-designer",
+  "name": "omni-magic-cube",
   "version": "0.0.0",
-  "title": "墨联源创构建器",
+  "title": "无界魔方",
   "scripts": {
     "dev": "vite --host",
     "build": "vite build",
