@@ -1,4 +1,4 @@
-// 改用jsx语法
+// 改用render语法
 import { defineComponent, h } from 'vue'
 
 export const createControl = function (prefix, compName, attrs) {

@@ -1,12 +1,11 @@
 <script setup>
-import { ref, computed, defineOptions, inject, defineProps, watch } from 'vue';
+import { ref, computed, defineOptions, inject, defineProps } from 'vue';
 import { useVModel } from '@vueuse/core'
 import svgIcon from '@molianComps/svg-icon/index.vue'
-import codeEditor from '@molianComps/code-editor/index.vue'
-import tagInput from '@molianComps/tag-input/index.vue'
+import codeInput from '@molianComps/code-input/index.vue'
 const t = inject('mlLangs')
 const customComps = inject('customComps')
-const { customInputNumber, customInput, customSwitch, customSelect, customButton, customDialog, customRadioGroup, customRadioButton } = customComps
+const { customInputNumber, customInput, customSwitch, customSelect } = customComps
 const props = defineProps({
   modelValue: {
     type: [String, Number, Boolean, Object, Array],
@@ -27,6 +26,10 @@ const props = defineProps({
   selectedComp: {
     type: Object,
     default: () => { }
+  },
+  isModifiers:{
+    type:Boolean,
+    default:true
   }
 })
 defineOptions({
@@ -54,11 +57,6 @@ const type = computed(() => {
   }
 })
 
-const visible = ref(false)
-const codeMode = ref('javascript')
-const functionMode = ref('function')
-const cacheValue = ref('')
-
 const getI18n = (key, name) => {
   const langStr = t('attrs.' + name + '.' + key)
   return langStr === key ? t('attrs.' + key) : langStr
@@ -70,50 +68,8 @@ const tabType = () => {
   currentTypeIndex.value = props.propData.type.length - 1 === currentTypeIndex.value ? 0 : currentTypeIndex.value + 1
 }
 
-const codeVar = computed(() => {
-  return value.value && value.value.codeVar && value.value.codeVar.length > 0 && value.value.codeVar || props.propData.codeVar || []
-})
+// 指令支持
 
-const showDialog = (type) => {
-  if (type === 'object' || type === 'array') {
-    codeMode.value = "json"
-    cacheValue.value = value.value
-  } else {
-    codeMode.value = "javascript"
-    if (typeof value.value !== 'object') {
-      value.value = {
-        code: '',
-        codeVar: []
-      }
-    }
-    cacheValue.value = value.value.code || ''
-  }
-  visible.value = true
-}
-
-const saveCode = () => {
-  visible.value = false;
-  if (!value.value) {
-    value.value = {
-      code: cacheValue,
-      codeVar: []
-    }
-  } else {
-    value.value = cacheValue
-  }
-}
-
-const appendCodeVar = (val) => {
-  if (!value.value) {
-    value.value = {
-      code: '',
-      codeVar: []
-    }
-  }
-  if (val) {
-    value.value.codeVar = val
-  }
-}
 </script>
 
 <template>
@@ -126,14 +82,7 @@ const appendCodeVar = (val) => {
           v-else-if="propData.optionItems" />
         <customInputNumber size="small" v-model="value" v-else-if="type === 'number'">
         </customInputNumber>
-        <customButton size="small" v-else-if="type === 'promise'" @click="showDialog('promise')">
-          {{ t('options.edit') + t('options.function') }}</customButton>
-        <customButton size="small" v-else-if="type === 'function'" @click="showDialog('function')">
-          {{ t('options.edit') + t('options.function') }}</customButton>
-        <customButton size="small" v-else-if="type === 'object'" @click="showDialog('object')">
-          {{ t('options.edit') + t('options.object') }}</customButton>
-        <customButton size="small" v-else-if="type === 'array'" @click="showDialog('array')">
-          {{ t('options.edit') + t('options.array') }}</customButton>
+        <codeInput :isModifiers="isModifiers" :mode="type" :keyName="keyName" v-model="value" v-else-if="['promise','function','object','array'].indexOf(type) > -1" />
         <customInput size="small" v-model="value" v-else></customInput>
       </transition>
     </div>
@@ -141,24 +90,7 @@ const appendCodeVar = (val) => {
       <svg-icon icon="switch" class="data2form-item__svg-icon" />
     </div>
   </div>
-  <customDialog attach="body" :header="keyName" width="80%" :close-on-click-modal="false" @escKeydown="visible = false"
-    @closeBtnClick="visible = false" :visible="visible" destroyOnClose>
-    <div class="modeType" v-if="codeMode === 'javascript'">
-      <customRadioGroup v-model="functionMode" variant="primary-filled" size="small">
-        <customRadioButton value="function">{{ t('options.function') }}</customRadioButton>
-        <customRadioButton value="asyncFunction">{{ t('options.asyncFunction') }}</customRadioButton>
-      </customRadioGroup>
-      <tagInput class="tagInput" :modelValue="codeVar" @update:modelValue="appendCodeVar" />
-    </div>
-    <div class="function-top">{{ functionMode === 'asyncFunction' && 'async ' || '' }}<span
-        style="color:#ff85cd;">function </span>({{ codeVar.join(', ') }}) {</div>
-    <codeEditor :mode="codeMode" v-model="cacheValue"></codeEditor>
-    <div class="function-bottom">}</div>
-    <template #footer>
-      <customButton theme="default" @click="visible = false">{{ t('options.cancel') }}</customButton>
-      <customButton theme="primary" @click="saveCode">{{ t('options.confirm') }}</customButton>
-    </template>
-  </customDialog>
+  
 </template>
 
 <style scoped lang="scss">
@@ -213,20 +145,5 @@ const appendCodeVar = (val) => {
       }
     }
   }
-}
-
-.modeType {
-  margin: var(--ml-mg-base) 0;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-
-  .tagInput {
-    width: calc(100% - 200px);
-  }
-}
-
-:deep(.tag-input-container) {
-  justify-content: flex-end;
 }
 </style>

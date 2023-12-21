@@ -35,7 +35,7 @@ const currentProps = computed(() => {
 .basic-list {
   display: flex;
   width: 100%;
-  height: 542px;
+  height: 510px;
   overflow-y: auto;
   overflow-x: hidden;
   background-color: var(--ml-bg-color);

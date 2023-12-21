@@ -2,6 +2,8 @@
   "createCss":"生成css",
   "createJs":"生成js",
   "createVue":"生成vue",
+  "createOptionsVue":"生成选项式Vue",
+  "createCompositionVue":"生成组合式Vue",
   "create":"生成",
   "treeDir":"树目录",
   "loadLib":"载入库",

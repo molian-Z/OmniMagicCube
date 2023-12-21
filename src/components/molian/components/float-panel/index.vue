@@ -248,7 +248,7 @@ const closePanel = function (evt) {
                     right: 0;
                     height: 32px;
                     display: flex;
-                    justify-content: space-around;
+                    justify-content: space-between;
                     align-items: center;
                     background-color: var(--ml-bg-color);
                     border-top: 1px solid var(--ml-fill-color-4);

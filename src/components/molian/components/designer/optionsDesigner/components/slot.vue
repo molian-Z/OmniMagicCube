@@ -68,6 +68,11 @@ const appendSlot = function (key, val) {
     </div>
 </template>
 <style scoped lang="scss">
+.slot-list{
+    display: flex;
+    width: 100%;
+    height: 510px;
+}
 .slot-item {
     display: flex;
     align-items: center;
@@ -76,6 +81,7 @@ const appendSlot = function (key, val) {
     padding: var(--ml-pd-lg) var(--ml-pd-base);
     border-radius: var(--ml-radius-base);
     margin-bottom: var(--ml-mg-base);
+    width: 100%;
 
     .slot-item__title {
         display: flex;

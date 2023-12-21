@@ -1,5 +1,6 @@
 {
     "append":"追加",
+    "modify":"修改",
     "edit":"编辑",
     "copy":"复制",
     "paste":"粘贴",
@@ -25,6 +26,13 @@
     "asyncFunction":"异步函数",
     "function":"函数",
     "appendOn":"新增事件",
-    "addTag":"+ 新标签",
-    "addNewVar":"+ 新变量"
+    "addNewTag":"+ 新标签",
+    "addNewVar":"+ 新变量",
+    "addNewDirective":"+ 新指令",
+    "addNewModifier":"+ 新修饰符",
+    "for":"循环",
+    "if":"判断",
+    "show":"显示",
+    "variable":"变量",
+    "continue":"继续"
 }

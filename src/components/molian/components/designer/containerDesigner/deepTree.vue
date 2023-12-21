@@ -1,5 +1,6 @@
 <script setup>
 import { computed, inject, defineOptions, defineProps, defineEmits } from 'vue'
+import { directives } from './directives.js'
 import { selectedComp, compsRef } from '../designerData'
 import { isDraggable, dragIndex, dropIndex, dropKey, useDraggable, dropType } from '../draggable'
 import { parseStyle } from '@molian/utils/css-generator'
@@ -51,7 +52,23 @@ const setRef = (el, comp, nest) => {
                 v-if="isDraggable && index === 0" @drop.self.stop="onDrop($event, index)"
                 @dragover.self.prevent="onDragenter(index, comp, 'prev')">{{ t('container.drop') }}</div>
         </transition>
-        <component :id="comp.id" :is="comp.name" :ref="(el) => setRef(el, comp)" :data-key="comp.key"
+        <directives :ref="(el) => setRef(el, comp)" :comp="comp" :index="index" :modelValue="compData">
+            <template v-for="(slotVal, slotKey) in comp.slots" :key="slotKey" #[slotKey]="slotProps">
+                <template v-if="slotVal && slotVal.children">
+                    <template v-if="JSON.stringify(slotProps) !== '{}'">
+                        <deepTree v-model="slotVal.children" :slotProp="slotProps"></deepTree>
+                    </template>
+                    <deepTree v-else v-model="slotVal.children"></deepTree>
+                    <div :class="['designer-comp__empty', dropKey === comp.key && !dropType && 'dropping-comp']"
+                        @dragover.self.prevent="onDragenter(index, comp)" @drop.self.stop="onDropSlot($event, slotVal)"
+                        v-if="isDraggable && slotVal.children.length === 0">
+                        {{ t("container.dropComp") + t('component.' + comp.name.substring(comps[comp.name].prefix.length)) +
+                            t('container.component') + t('slot.' + slotKey) + t('container.slot') }}
+                    </div>
+                </template>
+            </template>
+        </directives>
+        <!-- <component :id="comp.id" :is="comp.name" :ref="(el) => setRef(el, comp)" :data-key="comp.key"
             :style="parseStyle(comp.css)" @dragover.self.prevent="onDragenter(index, comp)" @drop.self.stop="onDrop"
             @click.self="onClick(comp)" @dragend="onDragend" @mouseenter.self.native="onMouseEnter($event, comp, index)"
             v-bind="comp.attrs"
@@ -95,7 +112,7 @@ const setRef = (el, comp, nest) => {
                     </template>
                 </template>
             </component>
-        </div>
+        </div> -->
         <transition name="fade">
             <div :class="['suffix-drop-slot designer-comp__empty', dropKey === comp.key && dropType === 'next' && 'dropping-comp']"
                 v-if="isDraggable" @dragover.self.prevent="onDragenter(index, comp, 'next')"
@@ -104,11 +121,11 @@ const setRef = (el, comp, nest) => {
     </template>
 </template>
 
-<style scoped lang="scss">
+<style lang="scss">
 @use '../../../assets/styles/global.scss';
 
 .designer-comp {
-    min-height: 28px;
+    min-height: 28px !important;
     margin: var(--ml-mg-base) 0;
     position: relative;
     transition: var(--ml-transition-base);

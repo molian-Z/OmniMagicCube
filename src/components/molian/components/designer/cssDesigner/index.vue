@@ -142,32 +142,3 @@ const actived = function (item) {
         </float-panel>
     </div>
 </template>
-
-<style scoped lang="scss">
-.toolbar-icon {
-    font-size: 22px;
-    width: 28px;
-    height: 28px;
-}
-
-:deep(.css-svg-icon) {
-    // fill: var(--ml-primary-color);
-    margin: 0;
-    cursor: pointer;
-    transition: var(--ml-transition-base);
-    border-radius: var(--ml-radius-small);
-
-    &:hover {
-        background-color: var(--ml-fill-color-4);
-    }
-
-    &.is-active {
-        background-color: var(--ml-fill-color-3);
-    }
-
-    &.disabled {
-        background-color: var(--ml-bg-color);
-        cursor: auto;
-    }
-}
-</style>

@@ -1,9 +1,10 @@
 <script setup>
 import { ref, inject } from 'vue'
 import { createCss } from '@molian/utils/css-generator'
-import codeEditor from '@molianComps/code-editor/index.vue';
 import { createTemplate } from '@molian/utils/template-generator'
-import { modelValue } from '../../designerData'
+import { createJS } from '@molian/utils/js-generator'
+import { modelValue,globalAttrs } from '../../designerData'
+import codeEditor from '@molianComps/code-editor/index.vue';
 import { useBroadcastChannel } from '@vueuse/core'
 
 const customComps = inject('customComps')
@@ -22,8 +23,10 @@ const langMode = ref(``)
 const createSFC = function () {
   const template = createTemplate(modelValue)
   const css = createCss(modelValue)
-  const code = `<template>${template}\n</template>
-    <style>${css}</style>`
+  const js = createJS(modelValue, globalAttrs)
+  const code = `${js}
+  <template>${template}\n</template>
+  <style>${css}</style>`
   // console.log(codeData)
   return code
 }
@@ -55,21 +58,28 @@ const showCode = function () {
 <template>
   <div class="create-list">
     <div class="create-item">
-      <div @click="showCode">
-        <customButton @click="sendChannel">
-          {{ t('global.createVue') }}
+      <div>
+        <customButton theme="primary" size="small" @click="showCode">
+          {{ t('global.createOptionsVue') }}
+        </customButton>
+      </div>
+    </div>
+    <div class="create-item">
+      <div>
+        <customButton theme="primary" size="small" @click="showCode">
+          {{ t('global.createCompositionVue') }}
         </customButton>
       </div>
     </div>
     <div class="create-item">
       <customTooltip :content='t(`global.onChannel`) + `：molian_createVue`'>
-        <customButton @click="sendChannel">
+        <customButton theme="primary" size="small" @click="sendChannel">
           {{ t('global.sendToChannel') }}
         </customButton>
       </customTooltip>
     </div>
     <div class="create-item">
-      <customButton @click="exportModelData">
+      <customButton theme="primary" size="small" @click="exportModelData">
         导出训练数据
       </customButton>
     </div>

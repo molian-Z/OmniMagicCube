@@ -1,6 +1,7 @@
 <script setup>
-import { ref, inject } from 'vue'
-import { optionsPanel, panelType, globalMenu } from '../designerData'
+import { ref, inject, computed } from 'vue'
+import { optionsPanel, panelType, globalMenu, selectedComp, globalAttrs } from '../designerData'
+import svgIcon from '@molianComps/svg-icon/index.vue'
 import floatPanel from '@molianComps/float-panel/index.vue'
 import basicComp from './components/basic.vue'
 import slotComp from './components/slot.vue'
@@ -8,6 +9,8 @@ import nativeOnComp from './components/nativeOn.vue'
 import javascriptComp from './components/javascript.vue'
 import lifecycleComp from './components/lifecycle.vue'
 const t = inject('mlLangs')
+const customComps = inject('customComps')
+const { customTooltip } = customComps
 const menus = ref([{
     icon: 'basic',
     text: t('options.basic'),
@@ -21,24 +24,69 @@ const menus = ref([{
     text: t('options.js'),
     name: 'javascript'
 }, {
-    icon: 'nativeOn', 
+    icon: 'nativeOn',
     text: t('options.nativeOn'),
     name: 'nativeOn'
 }, {
-    icon: 'lifecycle', 
+    icon: 'lifecycle',
     text: t('options.lifecycle'),
     name: 'lifecycle'
 }])
+
+const toolbarData = ref([{
+    label: t('options.for'),
+    value: 'for',
+    icon: 'for'
+}, {
+    label: t('options.if'),
+    value: 'if',
+    icon: 'if'
+}, {
+    label: t('options.show'),
+    value: 'show',
+    icon: 'show'
+}])
+
+const directives = computed(() => {
+    return selectedComp.value && selectedComp.value.directives || {}
+})
 
 const closeFloatPanel = function () {
     globalMenu.value = ''
     panelType.value = ''
 }
+
+const actived = function (item) {
+    return false
+    // if (item.type === 'h') {
+    //     return css.value.justifyContent === item.value
+    // } else if (item.type === 'v') {
+    //     return css.value.alignItems === item.value
+    // }
+}
+
+const showFn = () => {
+    
+}
 </script>
 <template>
     <div class="options-designer">
-        <float-panel class="float-panel" float="right" :list="menus" v-model="optionsPanel" @clickClose="closeFloatPanel" :foldWidth="365" :foldHeight="600"
-            :isShow="panelType === 'option'">
+        <float-panel class="float-panel" float="right" :list="menus" v-model="optionsPanel" @clickClose="closeFloatPanel"
+            :foldWidth="365" :foldHeight="600" :isShow="panelType === 'option'">
+            <template #toolbar>
+                <div style="height: 32px;align-items: center;display: flex;">
+                    <customTooltip :content="item.label" v-for="item in toolbarData" :key="item.value">
+                        <svg-icon
+                            :class="['css-svg-icon', 'toolbar-icon', actived(item) && 'is-active', !selectedComp && 'disabled']"
+                            :icon="`option-${item.icon}`" @click="showFn(item.type, item.value)" />
+                    </customTooltip>
+                </div>
+                <customTooltip :content="t('options.variable')">
+                    <svg-icon
+                        :class="['css-svg-icon', 'toolbar-icon', actived('variable') && 'is-active', !selectedComp && 'disabled']"
+                        icon="option-variable" @click="showFn('variable')" />
+                </customTooltip>
+            </template>
             <template v-slot:default="{ activeData }">
                 <basicComp v-if="activeData.name === 'basic'" />
                 <slotComp v-else-if="activeData.name === 'slot'" />

@@ -15,6 +15,10 @@ export const globalPanel = ref('')
 export const modelValue = reactive([])
 export const compsRef = reactive({})
 export const selectedComp = ref(null)
+export const globalAttrs = reactive({
+    lifecycle:{},
+    variable:{}
+})
 
 // 创建组件
 export const createComp = function (comp) {
@@ -33,6 +37,7 @@ export const createComp = function (comp) {
         attrs:initAttrs,
         on:{},
         nativeOn:{},
+        directives:{},
         slots:cloned.value,
         css: {
             borderRadius:['0','0','0','0'],

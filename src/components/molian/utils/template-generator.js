@@ -23,6 +23,8 @@ function deepObjCreateTemplate(obj) {
         tag: toKebabCase(element.name),
         attrs: element.attrs,
         on: element.on,
+        nativeOn:element.nativeOn,
+        directives:element.directives,
         key: element.key,
         id: element.id,
         categroy: element.categroy
@@ -78,12 +80,44 @@ function parseTemplate(obj) {
     for(const key in obj.on){
       if(Object.hasOwnProperty.call(obj.on,key)){
         // 遍历事件对象的事件
-        const element = obj.on[key];
-        templateStr += ` @${key}="${element}"`
+        const element = obj.nativeOn[key];
+        //modifiers
+        templateStr += ` @${key}`
+        if(element.modifiers && element.modifiers.length > 0){
+          element.modifiers.forEach(item =>{
+            templateStr += `.${item}`
+          })
+        }
+        if(element.type === 'variable'){
+          templateStr += `="${element.name}"`
+        }else{
+          templateStr += `="${obj.key}_${key}"`
+        }
       }
     }
   }
 
+  if(obj.nativeOn){
+    // 如果存在事件对象
+    for(const key in obj.nativeOn){
+      if(Object.hasOwnProperty.call(obj.nativeOn,key)){
+        // 遍历事件对象的事件
+        const element = obj.nativeOn[key];
+        //modifiers
+        templateStr += ` @${key}`
+        if(element.modifiers && element.modifiers.length > 0){
+          element.modifiers.forEach(item =>{
+            templateStr += `.${item}`
+          })
+        }
+        if(element.type === 'variable'){
+          templateStr += `="${element.name}"`
+        }else{
+          templateStr += `="${obj.key}_${key}"`
+        }
+      }
+    }
+  }
   templateStr += `>`
   // 返回解析后的模板字符串
   return templateStr

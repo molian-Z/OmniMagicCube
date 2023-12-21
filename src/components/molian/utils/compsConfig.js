@@ -19,6 +19,10 @@ import {
     createControl
 } from './importUIControl'
 
+import {
+    getCloudData
+} from './getCloudData'
+
 // 注册配置
 const config = {
     allowDiffCateReg: false, // 允许不同分类重复注册同一组件(不推荐允许,显示过多组件并没有好处,只会增加用户使用难度)
@@ -231,6 +235,11 @@ const registerComps = function (app, {
         }
     })
     currentRegComps.value = newComps
+    getCloudData(newComps)
+    .catch(err => {
+        console.log('cloudData is error', err)
+    })
+    .finally()
     app.provide('mlComps', currentRegComps)
 }
 

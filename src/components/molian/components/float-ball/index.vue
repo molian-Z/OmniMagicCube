@@ -1,5 +1,5 @@
 <script setup>
-import { ref, defineProps } from 'vue'
+import { ref, defineProps, defineExpose } from 'vue'
 
 const props = defineProps({
   title: {
@@ -8,6 +8,13 @@ const props = defineProps({
   }
 })
 const expand = ref(false)
+const switchExpand = (bool)=>{
+  expand.value = bool
+}
+defineExpose({
+  expand,
+  switchExpand
+})
 </script>
 <template>
   <div :class="['float-ball-body', expand && 'expand']">

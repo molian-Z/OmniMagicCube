@@ -42,6 +42,10 @@ export const defaultCategory = [{
 //     rule: /.*(container).*/
 // }]
 
+
+/**
+ * defaultAttrsMap 默认属性映射表
+ */
 export const defaultAttrsMap = {
     TRow: {
         align: {
@@ -55,6 +59,9 @@ export const defaultAttrsMap = {
     }
 }
 
+/**
+ * defaultAttrsMap 默认原生事件映射表
+ */
 export const defaultNativeEventMap = {
     click:['evt'], //点击
     dblClick:['evt'], //双击
@@ -69,7 +76,10 @@ export const defaultNativeEventMap = {
     resize:['evt'], //窗口大小改变
 }
 
-export const defaultPageEventMap = {
+/**
+ * defaultLifecycleMap 默认生命周期映射表
+ */
+export const defaultLifecycleMap = {
     beforeCreate:"",
     created:"",
     beforeMount:"",
@@ -143,6 +153,7 @@ export const defaultSlotsMap = {
 }
 
 /**
+ * UI组件库映射表
  * 输入项目中使用的UI方便框架内部解析
  */
 export const uiMapping = {
@@ -153,20 +164,39 @@ export const uiMapping = {
         icon: "TDesign",
         compMapping: {
             "Button": {
+                "theme":"theme",
                 "text": {
                     "variant": "text"
                 },
             },
             "Tag":{},
-            "Input": {},
+            "Input": {
+                "prefixIcon": "prefixIcon",
+                "onKeyup":{}
+            },
             "InputNumber": {},
             "Select": {},
             "Switch": {},
-            "Tooltip": {},
-            "Popup": {},
+            "Tooltip": {
+                "content":{
+                    "content":"content",
+                    "destroyOnClose":true
+                }
+            },
+            "Popup": {
+                "component": "component",
+                "default": "default",
+                "content": "content"
+            },
             "RadioGroup": {},
-            "RadioButton": {},
-            "Dialog":{}
+            "RadioButton": {
+                "value": "label"
+            },
+            "Dialog":{
+                "appendToBody":{
+                    "attach":"body"
+                }
+            }
         }
     }, {
         name: 'element-plus',
@@ -174,10 +204,15 @@ export const uiMapping = {
         icon: "ElementPlus",
         compMapping: {
             "Button": {
+                "theme":"type",
+                "text":"text"
+            },
+            "Tag":{
                 "theme":"type"
             },
             "Input": {
-                "prefixIcon": "prefix"
+                "prefixIcon": "prefix",
+                "onEnter":{}
             },
             "InputNumber": {},
             "Select": {
@@ -189,7 +224,10 @@ export const uiMapping = {
                     }
                 }
             },
-            "Tooltip": {},
+            "Switch": {},
+            "Tooltip": {
+                "content":"content"
+            },
             "Popup": {
                 "component": "Popover",
                 "default": "reference",
@@ -198,6 +236,11 @@ export const uiMapping = {
             "RadioGroup": {},
             "RadioButton": {
                 "value": "label"
+            },
+            "Dialog":{
+                "visible":"modelValue",
+                "destroyOnClose":"destroy-on-close",
+                "appendTobody":"append-to-body"
             }
         }
     }, {

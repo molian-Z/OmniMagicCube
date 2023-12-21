@@ -46,7 +46,7 @@ const appendOn = function () {
       <div class="appendOn">
       <customInput size="small" v-model="appendOnInput">
         <template #suffix>
-          <customButton @click="appendOn">{{t('options.appendOn')}}</customButton>
+          <customButton theme="primary" size="small" @click="appendOn">{{t('options.appendOn')}}</customButton>
         </template>
       </customInput>
       
@@ -59,7 +59,7 @@ const appendOn = function () {
 .basic-list {
   display: flex;
   width: 100%;
-  height: 542px;
+  height: 510px;
   overflow-y: auto;
   overflow-x: hidden;
   background-color: var(--ml-bg-color);

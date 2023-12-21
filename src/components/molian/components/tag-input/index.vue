@@ -6,6 +6,10 @@ const props = defineProps({
   modelValue: {
     type: Array,
     default: () => []
+  },
+  inputText:{
+    type:String,
+    default:''
   }
 })
 const emit = defineEmits(['update:modelValue'])
@@ -29,7 +33,14 @@ const showInput = () => {
     inputRef.value.$refs.ref.focus()
   })
 }
-const handleInputConfirm = () => {
+const handleInputConfirm = (evt) => {
+  if(typeof evt !== 'string'){
+    if(evt.key !== 'Enter'){
+      return false
+    }
+  }else if(typeof evt === 'string'){
+    return false
+  }
   if (inputValue.value) {
     dynamicTags.value.push(inputValue.value)
     emit('update:modelValue', dynamicTags.value)
@@ -37,18 +48,25 @@ const handleInputConfirm = () => {
   inputVisible.value = false
   inputValue.value = ''
 }
-
+const enterConfirm = () => {
+  if (inputValue.value) {
+    dynamicTags.value.push(inputValue.value)
+    emit('update:modelValue', dynamicTags.value)
+  }
+  inputVisible.value = false
+  inputValue.value = ''
+}
 </script>
 
 <template>
   <div class="tag-input-container">
-    <customTag v-for="tag in modelValue" :key="tag" closable :disable-transitions="false"
+    <customTag theme="default" v-for="tag in modelValue" :key="tag" closable :disable-transitions="false"
       @close="handleClose(tag)">
       {{ tag }}
     </customTag>
-    <customInput style="width:70px;" v-if="inputVisible" ref="inputRef" v-model="inputValue" size="small" @enter="handleInputConfirm" @blur="handleInputConfirm" />
-    <customButton v-else size="small" @click="showInput">
-      {{t('options.addNewVar')}}
+    <customInput style="width:70px;" v-if="inputVisible" ref="inputRef" v-model="inputValue" size="small" @enter="enterConfirm" @keyup="handleInputConfirm" @blur="enterConfirm" />
+    <customButton theme="primary" v-else size="small" @click="showInput">
+      {{ inputText || t('options.addNewTag')}}
     </customButton>
   </div>
 </template>
