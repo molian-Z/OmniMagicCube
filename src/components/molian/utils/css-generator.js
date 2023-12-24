@@ -64,40 +64,40 @@ const styleMap = {
   // 暂不转换xy,实际使用应根据组件因素考虑是否替换为margin-left、margin-top
   constX: {
     rawValue: function (val, obj, key) {
-      if (!obj[val]) return ''
+      if (!obj.moveX || obj.moveX == '0') return ''
       const {left, right} = useElementBounding(document.querySelector(`[data-key="${key}"]`))
       if (val === 'left') {
         return {
-          left: obj.left + 'px'
+          left: obj.moveX + 'px'
         }
       }else if(val === 'right'){
         return {
-          right: right - (left - Number(obj.left)) + 'px'
+          right: right - (left - Number(obj.moveX)) + 'px'
         }
       } else if (val === 'left2right') {
         return {
-          left: obj.left + 'px',
-          right: right - (left - Number(obj.left)) + 'px'
+          left: obj.moveX + 'px',
+          right: right - (left - Number(obj.moveX)) + 'px'
         }
       }
     }
   },
   constY: {
     rawValue: function (val, obj, key) {
-      if (!obj[val]) return ''
+      if (!obj.moveY || obj.moveY == '0') return ''
       const {top, bottom} = useElementBounding(document.querySelector(`[data-key="${key}"]`))
       if (val === 'top') {
         return {
-          top: obj.top + 'px'
+          top: obj.moveY + 'px'
         }
       }else if(val === 'bottom'){
         return {
-          bottom: bottom - (top - Number(obj.top)) + 'px'
+          bottom: bottom - (top - Number(obj.moveY)) + 'px'
         }
       } else if (val === 'top2bottom') {
         return {
-          top: obj.top + 'px',
-          bottom: bottom - (top - Number(obj.top)) + 'px'
+          top: obj.moveY + 'px',
+          bottom: bottom - (top - Number(obj.moveY)) + 'px'
         }
       }
     }
@@ -180,7 +180,10 @@ export const parseStyle = function (styleObj, compKey) {
       } else {
         // 将属性及其对应的值存储在customCss对象中，如果存在后缀，则加上后缀
         if (!customCss[key]) {
-          customCss[key] = suffix[key] ? val + suffix[key] : val
+          // 为0时默认不显示
+          if(val !== '0'){
+            customCss[key] = suffix[key] ? val + suffix[key] : val
+          }
         }
       }
     }

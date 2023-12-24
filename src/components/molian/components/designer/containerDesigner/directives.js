@@ -35,12 +35,22 @@ export const directives = {
       showToolbar
     } = useDraggable(comps, props.modelValue, message)
 
-    const onMouseEnter = function (evt, comp, index) {
-      showToolbar(evt, comp, index, props.modelValue.value)
-    }
+    // const onMouseEnter = function (evt, comp, index) {
+    //   showToolbar(evt, comp, index, props.modelValue.value)
+    // }
 
-    const onClick = function () {
+    const onClick = function (evt, comp, index) {
+      try{
+        if(evt.e){
+          evt.e.stopPropagation()
+        }else{
+          evt.stopPropagation()
+        }
+      }catch(e){
+        console.log(e)
+      }
       selectedComp.value = props.comp
+      showToolbar(evt, comp, index, props.modelValue)
     }
 
     const isIf = computed(() => {
@@ -82,8 +92,8 @@ export const directives = {
         ['data-key']: props.comp.key,
         style: parseStyle(props.comp.css),
         ...props.comp.attrs,
-        onMouseenter: withModifiers(($event) => onMouseEnter($event, props.comp, props.index), ['self', 'native']),
-        onClick: withModifiers(()=>onClick(), ['self']),
+        // onMouseenter: withModifiers(($event) => onMouseEnter($event, props.comp, props.index), ['self', 'native']), // 暂且取消经过选择
+        onClick: withModifiers(($event)=>onClick($event, props.comp, props.index), ['native']),
         onDragend:onDragend,
         onDragover:withModifiers(()=>onDragenter(props.index, props.comp),['self','prevent']),
         onDrop:withModifiers(($event)=>onDrop($event),['self','stop']),

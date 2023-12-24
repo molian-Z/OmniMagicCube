@@ -1,39 +1,39 @@
 // 改用render语法
-import { defineComponent, h } from 'vue'
+import {
+  defineComponent,
+  h,
+  computed,
+  inject
+} from 'vue'
 
-export const createControl = function (prefix, compName, attrs) {
-
+export const createControl = function (prefix, compName, newAttrs) {
   return defineComponent({
-    render() {
-      const controlTag = this._.appContext.components[prefix + compName]
-      return h(controlTag, this.getAttrs, this.getSlots)
-    },
-    computed: {
-      getSlots() {
+    setup(props, {attrs, emit, slots, expose}) {
+      const getSlots = computed(() => {
         let objSlots = {}
-        for (const key in this.$slots) {
-          if (Object.hasOwnProperty.call(this.$slots, key)) {
-            const element = this.$slots[key];
-            if (attrs[key]) {
-              objSlots[attrs[key]] = element
+        for (const key in slots) {
+          if (Object.hasOwnProperty.call(slots, key)) {
+            const element = slots[key];
+            if (newAttrs[key]) {
+              objSlots[newAttrs[key]] = element
             } else {
               objSlots[key] = element
             }
           }
         }
         return objSlots
-      },
-      getAttrs() {
+      })
+      const getAttrs = computed(() => {
         let objAttrs = {}
-        for (const key in this.$attrs) {
-          if (Object.hasOwnProperty.call(this.$attrs, key)) {
-            const element = this.$attrs[key];
-            if (typeof attrs[key] === 'string') {
-              objAttrs[attrs[key]] = element
-            } else if (typeof attrs[key] === 'object') {
+        for (const key in attrs) {
+          if (Object.hasOwnProperty.call(attrs, key)) {
+            const element = attrs[key];
+            if (typeof newAttrs[key] === 'string') {
+              objAttrs[newAttrs[key]] = element
+            } else if (typeof newAttrs[key] === 'object') {
               objAttrs = {
                 ...objAttrs,
-                ...attrs[key]
+                ...newAttrs[key]
               }
             } else {
               objAttrs[key] = element
@@ -42,7 +42,10 @@ export const createControl = function (prefix, compName, attrs) {
         }
         objAttrs.ref = 'ref'
         return objAttrs
-      }
+      })
+      const comps = inject('mlComps')
+      let controlTag = comps.value[prefix + compName].comp
+      return ()=>h(controlTag, getAttrs.value, getSlots.value)
     }
   })
 }

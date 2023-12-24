@@ -54,8 +54,8 @@ const switchRadius = function () {
 }
 
 const updateModelValue = function (prop, val) {
-    if (css.value && !isNaN(Number(val))) {
-        let newVal = Number(val).toString()
+    if (css.value && !isNaN(Number(val)) && Number(val) >= 0) {
+        let newVal = val === '' ? '' : Number(val).toString()
         if (activeLink.value && ['width', 'height'].indexOf(prop) > -1) {
             css.value.width = newVal
             css.value.height = newVal
@@ -64,6 +64,8 @@ const updateModelValue = function (prop, val) {
         } else {
             css.value[prop] = newVal
         }
+    }else if(css.value && /^(?:0|-|-?[1-9]\d*)$/.test(val)){
+        css.value[prop] = val
     } else if (css.value && !isNaN(Number(val.value))) {
         if (activeRadius.value) {
             css.value.borderRadius[val.index] = Number(val.value).toString()
@@ -76,7 +78,7 @@ const updateModelValue = function (prop, val) {
         <div class="transform-container__body-title">{{ t('css.transform') }}</div>
         <div class="transform-container__body-list">
             <div class="transform-container__body-list_item">
-                <customInput size="small" :modelValue="css.left" @update:modelValue="updateModelValue('left', $event)"
+                <customInput size="small" :modelValue="css.moveX" @update:modelValue="updateModelValue('moveX', $event)"
                     :disabled="!selectedComp" placeholder="">
                     <template #prefixIcon>
                         <svg-icon icon="posX"></svg-icon>
@@ -87,7 +89,7 @@ const updateModelValue = function (prop, val) {
                 </customInput>
             </div>
             <div class="transform-container__body-list_item">
-                <customInput size="small" :modelValue="css.top" @update:modelValue="updateModelValue('top', $event)"
+                <customInput size="small" :modelValue="css.moveY" @update:modelValue="updateModelValue('moveY', $event)"
                     :disabled="!selectedComp" placeholder="">
                     <template #prefixIcon>
                         <svg-icon icon="posY"></svg-icon>

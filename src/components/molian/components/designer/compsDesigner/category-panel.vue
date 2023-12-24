@@ -52,7 +52,7 @@ const onDragend = function () {
                     @dragstart="onDragStart($event, item)" @dragend="onDragend">
                     <svg-icon class="comps-panel-list-item__icon" icon="comps-default"></svg-icon>
                     <span class="comps-panel-list-item__text">
-                        {{ t('component.' + item.name.substring(item.prefix.length)) }}
+                        {{ item.title }}
                     </span>
                 </div>
             </transition-group>

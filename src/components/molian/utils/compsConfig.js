@@ -4,7 +4,8 @@
 import {
     ref,
     markRaw,
-    shallowRef
+    shallowRef,
+    computed
 } from 'vue'
 import {
     useCloned
@@ -22,6 +23,8 @@ import {
 import {
     getCloudData
 } from './getCloudData'
+
+import { i18nt as t } from './lang'
 
 // 注册配置
 const config = {
@@ -216,6 +219,7 @@ const registerComps = function (app, {
             newComps[key] = parseComp(key, element, allowRegPropsAndEmit)
             const prefixObj = uiMapping.data.find((fitem) => key.startsWith(fitem.prefix))
             newComps[key].prefix = prefixObj && prefixObj.prefix || ''
+            newComps[key].title = t('component.' + newComps[key].name.substring(newComps[key].prefix.length))
         }
     }
     
@@ -265,7 +269,7 @@ const registerCustomComps = function (app) {
     for (const key in compMapping) {
         if (Object.hasOwnProperty.call(compMapping, key)) {
             const element = compMapping[key];
-            customComps['custom' + key] = createControl(prefix, element.component || key, element)
+            customComps['custom' + key] = createControl(prefix, key || element.component, element)
         }
     }
     app.provide('customComps', customComps)

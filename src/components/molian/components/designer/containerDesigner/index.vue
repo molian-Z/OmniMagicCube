@@ -51,6 +51,7 @@ const deleteComp = function () {
     if (hoverNodes.value && hoverNodes.value) {
         hoverNodes.value.splice(hoverIndex.value, 1)
     }
+    console.log(hoverNodes.value, hoverIndex.value)
     resetDraggable()
 }
 

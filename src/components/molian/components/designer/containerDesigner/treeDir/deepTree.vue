@@ -1,11 +1,12 @@
 <script setup>
-import { defineProps, defineEmits } from 'vue'
+import { defineProps, defineEmits, inject } from 'vue'
 import svgIcon from '@molianComps/svg-icon/index.vue'
 
 const props = defineProps({
   modelValue: Array,
   selectedComp: Object
 })
+const mlComps = inject('mlComps')
 
 const emit = defineEmits(['activeNode'])
 
@@ -18,7 +19,7 @@ const sendActive = function (comp) {
   <div class="tree-node" v-for="comp in modelValue" :key="comp.key">
     <div class="tree-node-header" :class="[selectedComp && selectedComp.key === comp.key && 'is-active']">
       <svg-icon icon="node-fold" style="transform:rotate(90deg)"></svg-icon>
-      <div class="tree-node-header__title" @click="sendActive(comp)">{{ comp.name }}</div>
+      <div class="tree-node-header__title" @click="sendActive(comp)">{{ mlComps[comp.name].title }}</div>
     </div>
     <div class="tree-node-content">
       <template v-for="(slotVal, slotKey) in comp.slots" :key="slotKey">
