@@ -184,7 +184,7 @@ export const uiMapping = {
                 }
             },
             "Popup": {
-                "component": "component",
+                "component": "Popup",
                 "default": "default",
                 "content": "content"
             },
@@ -216,8 +216,8 @@ export const uiMapping = {
             },
             "InputNumber": {},
             "Select": {
-                "component": "SelectV2",
-                "size": {
+                "component": "SelectV2", // 切换组件
+                "size": {                // 设置大小的同时设置组件的props
                     "size": "small",
                     "props": {
                         options: 'children'
@@ -240,7 +240,8 @@ export const uiMapping = {
             "Dialog":{
                 "visible":"modelValue",
                 "destroyOnClose":"destroy-on-close",
-                "appendTobody":"append-to-body"
+                "appendTobody":"append-to-body",
+                "header":"title"
             }
         }
     }, {

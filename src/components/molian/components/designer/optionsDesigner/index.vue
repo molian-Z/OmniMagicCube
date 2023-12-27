@@ -1,6 +1,6 @@
 <script setup>
 import { ref, inject, computed } from 'vue'
-import { optionsPanel, panelType, globalMenu, selectedComp, globalAttrs } from '../designerData'
+import { optionsPanel, globalMenu, selectedComp, globalAttrs } from '../designerData'
 import svgIcon from '@molianComps/svg-icon/index.vue'
 import floatPanel from '@molianComps/float-panel/index.vue'
 import basicComp from './components/basic.vue'
@@ -53,7 +53,6 @@ const directives = computed(() => {
 
 const closeFloatPanel = function () {
     globalMenu.value = ''
-    panelType.value = ''
 }
 
 const actived = function (item) {
@@ -72,7 +71,7 @@ const showFn = () => {
 <template>
     <div class="options-designer">
         <float-panel class="float-panel" float="right" :list="menus" v-model="optionsPanel" @clickClose="closeFloatPanel"
-            :foldWidth="365" :foldHeight="600" :isShow="panelType === 'option'">
+            :foldWidth="365" :foldHeight="600" :isShow="globalMenu === 'option'">
             <template #toolbar>
                 <div style="height: 32px;align-items: center;display: flex;">
                     <customTooltip :content="item.label" v-for="item in toolbarData" :key="item.value">

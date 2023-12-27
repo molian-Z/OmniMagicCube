@@ -1,18 +1,17 @@
 <script setup>
 import { ref } from 'vue'
-import { actionPanel, panelType, globalMenu } from '../designerData'
+import { actionPanel, globalMenu } from '../designerData'
 import floatPanel from '@molianComps/float-panel/index.vue'
 const menus = ref([])
 
 const closeFloatPanel = function () {
     globalMenu.value = ''
-    panelType.value = ''
 }
 </script>
 <template>
     <div class="css-designer">
         <float-panel float="right" :list="menus" v-model="actionPanel" @clickClose="closeFloatPanel"
-            :isShow="panelType === 'action'">
+            :isShow="globalMenu === 'action'">
             <template v-slot:default="{ activeData }">
                 <div class="float-panel">
                     43243

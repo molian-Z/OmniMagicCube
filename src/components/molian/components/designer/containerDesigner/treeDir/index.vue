@@ -1,12 +1,11 @@
 <script setup>
 import { inject,ref } from 'vue'
 import { onClickOutside } from '@vueuse/core'
-import { modelValue, selectedComp } from '@molianComps/designer/designerData'
+import { modelValue, selectedComp, treeDirRef } from '@molianComps/designer/designerData'
 import deepTree from './deepTree.vue'
 import floatBall from '@molianComps/float-ball/index.vue'
 
 const t = inject('mlLangs')
-const treeDirRef = ref()
 const onActive = (value)=>{
   selectedComp.value = value
 }

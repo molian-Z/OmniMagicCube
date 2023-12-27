@@ -34,14 +34,14 @@ const onDrop = function (evt) {
     if (name) {
         const { cloned } = useCloned(createComp(comps.value[name]))
         if (dropIndex.value !== null) {
-            modelValue.splice(dropIndex.value, 0, cloned.value)
+            modelValue.value.splice(dropIndex.value, 0, cloned.value)
         } else {
-            modelValue.push(cloned.value)
+            modelValue.value.push(cloned.value)
         }
     } else {
         let moveComp = dragNodes.value?.splice(dragIndex.value, 1)[0]
         if (moveComp) {
-            modelValue.splice(dropIndex.value, 0, moveComp)
+            modelValue.value.splice(dropIndex.value, 0, moveComp)
         }
     }
     resetDraggable()
@@ -59,7 +59,6 @@ const onClick = function () {
     selectedComp.value = null
     resetHover()
 }
-
 </script>
 <template>
     <div class="container-designer">

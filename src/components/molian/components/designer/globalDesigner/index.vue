@@ -1,6 +1,6 @@
 <script setup>
 import { ref, inject } from 'vue'
-import { globalPanel, panelType, globalMenu } from '../designerData'
+import { globalPanel, globalMenu } from '../designerData'
 import floatPanel from '@molianComps/float-panel/index.vue'
 import create from './global-panel/create.vue'
 const t = inject('mlLangs')
@@ -12,13 +12,12 @@ const menus = ref([{
 
 const closeFloatPanel = function () {
     globalMenu.value = ''
-    panelType.value = ''
 }
 </script>
 <template>
     <div class="global-designer">
         <float-panel float="right" :list="menus" v-model="globalPanel" @clickClose="closeFloatPanel" :foldHeight="500"
-            :isShow="panelType === 'global'">
+            :isShow="globalMenu === 'global'">
             <template v-slot:default="{ activeData }">
                 <create v-if="activeData.name === 'create'" />
             </template>

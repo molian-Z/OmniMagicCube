@@ -1,6 +1,6 @@
 <script setup>
 import { ref, computed, inject } from 'vue'
-import { cssPanel, panelType, selectedComp, globalMenu } from '../designerData'
+import { cssPanel, selectedComp, globalMenu } from '../designerData'
 import svgIcon from '@molianComps/svg-icon/index.vue'
 import floatPanel from '@molianComps/float-panel/index.vue'
 import effect from './css-tool-panel/effect.vue'
@@ -86,7 +86,6 @@ const css = computed(() => {
 
 const closeFloatPanel = function () {
     globalMenu.value = ''
-    panelType.value = ''
 }
 
 const flexSwitch = function (type, value) {
@@ -119,7 +118,7 @@ const actived = function (item) {
 <template>
     <div class="css-designer">
         <float-panel float="right" :list="menus" v-model="cssPanel" @clickClose="closeFloatPanel"
-            :title="t('css.styleEdit')" :foldWidth="365" :isShow="panelType === 'style'">
+            :title="t('css.styleEdit')" :foldWidth="365" :isShow="globalMenu === 'style'">
             <template #toolbar>
                 <customTooltip :content="item.label" v-for="item in toolbarData" :key="item.value">
                     <svg-icon

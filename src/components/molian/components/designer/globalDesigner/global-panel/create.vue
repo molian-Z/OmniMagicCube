@@ -21,9 +21,9 @@ const codeData = ref(``)
 const langMode = ref(``)
 
 const createSFC = function () {
-  const template = createTemplate(modelValue)
-  const css = createCss(modelValue)
-  const js = createJS(modelValue, globalAttrs)
+  const template = createTemplate(modelValue.value)
+  const css = createCss(modelValue.value)
+  const js = createJS(modelValue.value, globalAttrs)
   const code = `${js}
   <template>${template}\n</template>
   <style>${css}</style>`
@@ -44,7 +44,7 @@ const sendChannel = function () {
 
 const exportModelData = function () {
   langMode.value = 'json'
-  codeData.value = JSON.stringify(modelValue)
+  codeData.value = JSON.stringify(modelValue.value)
   showDialog.value = true
 }
 

@@ -102,7 +102,7 @@ const appendModifiers = (val) => {
     </template>
     <codeEditor :mode="codeMode" :modelValue="codeMode === 'javascript' ? codeObj.code : codeObj"
       @update:modelValue="updateCacheCode"></codeEditor>
-    <div class="function-bottom">}</div>
+    <div class="function-bottom" v-if="codeMode === 'javascript'">}</div>
     <template #footer>
       <customButton theme="default" @click="visible = false">{{ t('options.cancel') }}</customButton>
       <customButton theme="primary" @click="saveCode">{{ t('options.confirm') }}</customButton>

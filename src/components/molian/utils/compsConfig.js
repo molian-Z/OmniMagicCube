@@ -269,7 +269,7 @@ const registerCustomComps = function (app) {
     for (const key in compMapping) {
         if (Object.hasOwnProperty.call(compMapping, key)) {
             const element = compMapping[key];
-            customComps['custom' + key] = createControl(prefix, key || element.component, element)
+            customComps['custom' + key] = createControl(prefix, element.component || key, element)
         }
     }
     app.provide('customComps', customComps)

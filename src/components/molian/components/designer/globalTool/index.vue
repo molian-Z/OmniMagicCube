@@ -1,7 +1,7 @@
 <script setup>
 import { ref, inject } from 'vue'
 import stickyTool from '@molianComps/sticky-tool/index.vue'
-import { panelType, globalMenu } from '../designerData'
+import { globalMenu } from '../designerData'
 const t = inject('mlLangs')
 const menus = ref([{
     icon: 'style',
@@ -22,10 +22,7 @@ const menus = ref([{
     name: 'global'
 }
 ])
-const clickTool = function ({ item }) {
-    panelType.value = item.name
-}
 </script>
 <template>
-    <sticky-tool :list="menus" v-model="globalMenu" @clickTool="clickTool"></sticky-tool>
+    <sticky-tool :list="menus" v-model="globalMenu"></sticky-tool>
 </template>
