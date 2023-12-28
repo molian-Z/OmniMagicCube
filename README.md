@@ -1,4 +1,4 @@
-# OmniMagicCube 无界魔方
+# OmniMagicCube 无界魔方 vue3的可视化框架
 
 ### 商用请保留版权信息
 [演示网址](http://demo.mlyt.top/)
