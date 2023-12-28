@@ -6,6 +6,8 @@ import visualizer from 'rollup-plugin-visualizer'
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  base: './', // 这里更改打包相对绝对路径
+  minify: true, // 是否压缩代码
   plugins: [
     vue(),
     createSvgIconsPlugin({
@@ -27,5 +29,4 @@ export default defineConfig({
     },
     extensions: ['.js', '.vue', '.json', '.ts', '.jsx'] // 使用路径别名时想要省略的后缀名，可以自己 增减
   },
-
 })
