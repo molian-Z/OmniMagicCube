@@ -172,7 +172,7 @@ const closePanel = function (evt) {
 @use '../../assets/styles/global.scss';
 
 .float-panel-container {
-    position: fixed;
+    position: absolute;
     border-radius: var(--ml-radius-lg);
     border: 1px solid var(--color-fill-3, #E5E6EB);
     background-color: rgba(global.$bgColor, 0.15);

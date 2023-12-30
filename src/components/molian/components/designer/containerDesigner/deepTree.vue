@@ -11,12 +11,19 @@ const props = defineProps({
     modelValue: {
         type: Array,
         default: () => []
+    },
+    treeIndex: {
+        type: Number,
+        default: 1
     }
 })
 const emit = defineEmits(['update:modelValue'])
 const comps = inject('mlComps')
 const message = inject('ml-message')
 const t = inject('mlLangs')
+const treeIndexNext = computed(()=>{
+    return props.treeIndex + 1
+})
 const compData = computed({
     get() {
         return props.modelValue
@@ -49,10 +56,10 @@ const setRef = (el, comp, nest) => {
                     <template v-if="JSON.stringify(slotProps) !== '{}'">
                         <deepTree v-model="slotVal.children" :slotProp="slotProps"></deepTree>
                     </template>
-                    <deepTree v-else v-model="slotVal.children"></deepTree>
+                    <deepTree v-else v-model="slotVal.children" :treeIndex="treeIndex + 1"></deepTree>
                     <div :class="['designer-comp__empty', dropKey === comp.key && !dropType && 'dropping-comp']"
-                        @dragover.self.prevent="onDragenter(index, comp)" @drop.self.stop="onDropSlot($event, slotVal)"
-                        v-if="isDraggable && slotVal.children.length === 0">
+                        @dragover.self.prevent.stop="onDragenter(index, comp)"
+                        @drop.self.stop="onDropSlot($event, slotVal)" v-if="isDraggable && slotVal.children.length === 0">
                         {{ t("container.dropComp") + t('component.' + comps[comp.name].title) +
                             t('container.component') + t('slot.' + slotKey) + t('container.slot') }}
                     </div>
@@ -99,7 +106,7 @@ const setRef = (el, comp, nest) => {
         right: -2px;
         bottom: -2px;
         transition: var(--ml-transition-base);
-        z-index: -1;
+        z-index: v-bind(treeIndex);
     }
 
     &.is-margin {
@@ -127,6 +134,8 @@ const setRef = (el, comp, nest) => {
     line-height: 36px;
     transition: var(--ml-transition-base);
     flex: 1;
+    position: relative;
+    z-index: v-bind(treeIndexNext);
 }
 
 .dropping-comp {
