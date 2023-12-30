@@ -1,4 +1,4 @@
-# OmniMagicCube 无界魔方 vue3的可视化框架
+# OmniMagicCube 无界魔方
 
 ### 商用请保留版权信息
 [演示网址](http://demo.mlyt.top/)
@@ -13,9 +13,23 @@
 
 ## 集成到项目中
 
+### 首先安装必备的依赖项
+
+npm install @vueuse/core ace-builds dexie vue3-colorpicker sass vite-plugin-svg-icons
+
+### 其次ts项目应为项目配置运行js
+``` tsconfig.json
+{
+  "compilerOptions":{
+    "allowJs":true
+  }
+}
+```
+
 ### 1.复制components中的molian到自己的项目中,并对vite.config进行以下配置
 
 ```
+import { resolve } from 'node:path'
 export default defineConfig({
   plugins: [
     ...您的内容
@@ -34,8 +48,7 @@ export default defineConfig({
       "@molianDesigner": resolve(__dirname, 'src/components/molian/components/designer'),
       "@molianRender": resolve(__dirname, 'src/components/molian/components/render'),
       "@molianComps": resolve(__dirname, 'src/components/molian/components'),
-    },
-    extensions: ['.js', '.vue', '.json', '.ts', '.jsx'] // 使用路径别名时想要省略的后缀名，可以自己 增减
+    }
   },
 
 })
@@ -47,7 +60,6 @@ import plug from '@molian/utils/plug' // 我们需要引入plug进行配置
 // 我们需要获取全局组件message以及notify，传入plug中,它将给予我们提示能力
 // TDesign
 import TDesign, {MessagePlugin, NotifyPlugin} from 'tdesign-vue-next';
-
 
 // ...UI框架引入,注意一定要在其他UI库引入完成后在对我们的组件进行引入。因为它首先会获取所有的全局组件进行配置
 app.use(plug, {
