@@ -20,10 +20,10 @@ const showDialog = ref(false)
 const codeData = ref(``)
 const langMode = ref(``)
 
-const createSFC = function () {
+const createSFC = function (type) {
   const template = createTemplate(modelValue.value)
   const css = createCss(modelValue.value)
-  const js = createJS(modelValue.value, globalAttrs)
+  const js = createJS(modelValue.value, globalAttrs, type)
   const code = `${js}
   <template>${template}\n</template>
   <style>${css}</style>`
@@ -48,9 +48,9 @@ const exportModelData = function () {
   showDialog.value = true
 }
 
-const showCode = function () {
+const showCode = function (type) {
   langMode.value = 'html'
-  codeData.value = createSFC()
+  codeData.value = createSFC(type)
   showDialog.value = true
 }
 </script>
@@ -59,14 +59,14 @@ const showCode = function () {
   <div class="create-list">
     <div class="create-item">
       <div>
-        <customButton theme="primary" size="small" @click="showCode">
+        <customButton theme="primary" size="small" @click="showCode('options')">
           {{ t('global.createOptionsVue') }}
         </customButton>
       </div>
     </div>
     <div class="create-item">
       <div>
-        <customButton theme="primary" size="small" @click="showCode">
+        <customButton theme="primary" size="small" @click="showCode('composition')">
           {{ t('global.createCompositionVue') }}
         </customButton>
       </div>

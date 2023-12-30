@@ -23,9 +23,16 @@ export const treeDirRef = ref()
 
 // 页面数据
 // 缓存数据
-const store = useStorage('history', [])
+const store = useStorage('history', {
+    modelValue: [],
+    globalAttrs: {
+        lifecycle: {},
+        variable: {}
+    }
+})
 // 数据
-export const modelValue = ref(store.value && store.value.length > 0 ? store.value[0].snapshot : [])
+export const modelValue = ref(store.value.modelValue && store.value.modelValue.length > 0 ? store.value.modelValue[0].snapshot : [])
+export const globalAttrs = reactive(store.value.globalAttrs)
 // 历史记录
 export const {
     history,
@@ -37,14 +44,13 @@ export const {
     capacity: 20
 })
 watch(history, (val) => {
-    store.value = val
+    store.value = {
+        modelValue:val,
+        globalAttrs:globalAttrs
+    }
 })
 export const compsRef = reactive({})
 export const selectedComp = ref(null)
-export const globalAttrs = reactive({
-    lifecycle: {},
-    variable: {}
-})
 
 // 魔术键（快捷键）
 const keys = useMagicKeys({

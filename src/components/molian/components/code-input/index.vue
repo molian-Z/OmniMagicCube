@@ -15,9 +15,13 @@ const props = defineProps({
     type: String,
     default: 'object'
   },
-  isModifiers:{
-    type:Boolean,
-    default:false
+  isModifiers: {
+    type: Boolean,
+    default: false
+  },
+  isVariable: {
+    type: Boolean,
+    default: true
   }
 })
 const emits = defineEmits(['update:modelValue'])
@@ -40,7 +44,7 @@ const showDialog = (type) => {
         codeVar: [],
         functionMode: 'function'
       }
-      if(props.isModifiers){
+      if (props.isModifiers) {
         obj.modifiers = []
       }
       codeObj.value = obj
@@ -74,10 +78,10 @@ const updateCacheCode = (val) => {
 
 
 const appendModifiers = (val) => {
-  if(!props.isModifiers)return false
+  if (!props.isModifiers) return false
   emits('update:modelValue', {
-   ...codeObj.value,
-   modifiers: val
+    ...codeObj.value,
+    modifiers: val
   })
 }
 </script>
@@ -85,29 +89,33 @@ const appendModifiers = (val) => {
 <template>
   <customButton :theme="typeof codeObj === 'object' && codeObj.code ? 'warning' : 'primary'" size="small"
     @click="showDialog(mode)">
-    {{ codeObj.code ? t('options.modify') : t('options.edit') }}{{ t(`options.${mode}`) }}</customButton>
-  <customDialog appendToBody :header="keyName" width="80%" :close-on-click-modal="false" @escKeydown="visible = false"
-    @closeBtnClick="visible = false" :visible="visible" destroyOnClose>
-    <template v-if="codeMode === 'javascript'">
-      <div class="modeType">
-        <customRadioGroup v-model="codeObj.functionMode" variant="primary-filled" size="small">
-          <customRadioButton value="function">{{ t('options.function') }}</customRadioButton>
-          <customRadioButton value="asyncFunction">{{ t('options.asyncFunction') }}</customRadioButton>
-        </customRadioGroup>
-        <tagInput v-if="isModifiers" :inputText="t('options.addNewModifier')" class="tag-modifiers" :modelValue="codeObj.modifiers" @update:modelValue="appendModifiers" />
-        <tagInput :inputText="t('options.addNewVar')" class="tagInput" :modelValue="codeObj.codeVar" @update:modelValue="appendCodeVar" />
-      </div>
-      <div class="function-top">{{ codeObj.functionMode === 'asyncFunction' && 'async ' || '' }}<span
-          style="color:#ff85cd;">function </span>({{ codeObj.codeVar && codeObj.codeVar.join(', ') || '' }}) {</div>
-    </template>
-    <codeEditor :mode="codeMode" :modelValue="codeMode === 'javascript' ? codeObj.code : codeObj"
-      @update:modelValue="updateCacheCode"></codeEditor>
-    <div class="function-bottom" v-if="codeMode === 'javascript'">}</div>
-    <template #footer>
-      <customButton theme="default" @click="visible = false">{{ t('options.cancel') }}</customButton>
-      <customButton theme="primary" @click="saveCode">{{ t('options.confirm') }}</customButton>
-    </template>
-  </customDialog>
+    {{ codeObj.code ? t('options.modify') : t('options.edit') }}{{ t(`options.${mode}`) }}
+
+    <customDialog appendToBody :header="keyName" width="80%" :close-on-click-modal="false" @escKeydown="visible = false"
+      @closeBtnClick="visible = false" :visible="visible" destroyOnClose>
+      <template v-if="codeMode === 'javascript'">
+        <div class="modeType">
+          <customRadioGroup v-model="codeObj.functionMode" variant="primary-filled" size="small">
+            <customRadioButton value="function">{{ t('options.function') }}</customRadioButton>
+            <customRadioButton value="asyncFunction">{{ t('options.asyncFunction') }}</customRadioButton>
+          </customRadioGroup>
+          <tagInput v-if="isModifiers" :inputText="t('options.addNewModifier')" class="tag-modifiers"
+            :modelValue="codeObj.modifiers" @update:modelValue="appendModifiers" />
+          <tagInput v-if="isVariable" :inputText="t('options.addNewVar')" class="tagInput" :modelValue="codeObj.codeVar"
+            @update:modelValue="appendCodeVar" />
+        </div>
+        <div class="function-top">{{ codeObj.functionMode === 'asyncFunction' && 'async ' || '' }}<span
+            style="color:#ff85cd;">function </span>({{ codeObj.codeVar && codeObj.codeVar.join(', ') || '' }}) {</div>
+      </template>
+      <codeEditor :mode="codeMode" :modelValue="codeMode === 'javascript' ? codeObj.code : codeObj"
+        @update:modelValue="updateCacheCode"></codeEditor>
+      <div class="function-bottom" v-if="codeMode === 'javascript'">}</div>
+      <template #footer>
+        <customButton theme="default" @click="visible = false">{{ t('options.cancel') }}</customButton>
+        <customButton theme="primary" @click="saveCode">{{ t('options.confirm') }}</customButton>
+      </template>
+    </customDialog>
+  </customButton>
 </template>
 
 <style scoped lang="scss">
@@ -121,7 +129,7 @@ const appendModifiers = (val) => {
     width: calc(100% - 400px);
   }
 
-  .tag-modifiers{
+  .tag-modifiers {
     width: 270px;
   }
 }

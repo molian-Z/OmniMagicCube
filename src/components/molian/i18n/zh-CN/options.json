@@ -34,5 +34,20 @@
     "if":"判断",
     "show":"显示",
     "variable":"变量",
-    "continue":"继续"
+    "continue":"继续",
+    "operate":"操作",
+    "addNew":"新增",
+    "string":"字符串",
+    "number":"数字",
+    "boolean":"布尔",
+    "computed":"计算函数",
+    "null":"空",
+    "undefined":"未定义",
+    "true":"真",
+    "false":"假",
+    "modelValue":"数据",
+    "dataType":"数据类型",
+    "label":"标签",
+    "validateError":"验证错误",
+    "validateSuccess":"验证成功"
 }

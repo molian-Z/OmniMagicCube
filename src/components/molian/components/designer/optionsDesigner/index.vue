@@ -1,6 +1,6 @@
 <script setup>
 import { ref, inject, computed } from 'vue'
-import { optionsPanel, globalMenu, selectedComp, globalAttrs } from '../designerData'
+import { optionsPanel, globalMenu, selectedComp } from '../designerData'
 import svgIcon from '@molianComps/svg-icon/index.vue'
 import floatPanel from '@molianComps/float-panel/index.vue'
 import basicComp from './components/basic.vue'
@@ -48,6 +48,8 @@ const toolbarData = ref([{
     icon: 'show'
 }])
 
+const varRef = ref()
+
 const directives = computed(() => {
     return selectedComp.value && selectedComp.value.directives || {}
 })
@@ -68,6 +70,12 @@ const actived = function (item) {
 const showFn = () => {
     
 }
+
+const openDialog = (type) =>{
+    if(type === 'variable'){
+        varRef.value.show()
+    }
+}
 </script>
 <template>
     <div class="options-designer">
@@ -84,7 +92,7 @@ const showFn = () => {
                 <customTooltip :content="t('options.variable')">
                     <svg-icon
                         :class="['css-svg-icon', 'toolbar-icon', actived('variable') && 'is-active']"
-                        icon="option-variable" @click="openVariable" />
+                        icon="option-variable" @click="openDialog('variable')" />
                 </customTooltip>
             </template>
             <template v-slot:default="{ activeData }">
@@ -95,6 +103,7 @@ const showFn = () => {
                 <lifecycleComp v-else-if="activeData.name === 'lifecycle'" />
             </template>
         </float-panel>
+        <variable ref="varRef" />
     </div>
 </template>
 
