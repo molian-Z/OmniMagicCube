@@ -1,6 +1,6 @@
 <script setup>
 import { computed, defineOptions, inject } from 'vue';
-import anyData2Form from '@/components/molian/components/any-data2form'
+import anyData2Form from '@molianComps/any-data2form/index.vue'
 import { selectedComp } from '../../designerData'
 
 defineOptions({

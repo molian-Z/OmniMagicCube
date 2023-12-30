@@ -8,6 +8,7 @@ import slotComp from './components/slot.vue'
 import nativeOnComp from './components/nativeOn.vue'
 import javascriptComp from './components/javascript.vue'
 import lifecycleComp from './components/lifecycle.vue'
+import variable from './tooltip/variable.vue'
 const t = inject('mlLangs')
 const customComps = inject('customComps')
 const { customTooltip } = customComps
@@ -82,8 +83,8 @@ const showFn = () => {
                 </div>
                 <customTooltip :content="t('options.variable')">
                     <svg-icon
-                        :class="['css-svg-icon', 'toolbar-icon', actived('variable') && 'is-active', !selectedComp && 'disabled']"
-                        icon="option-variable" @click="showFn('variable')" />
+                        :class="['css-svg-icon', 'toolbar-icon', actived('variable') && 'is-active']"
+                        icon="option-variable" @click="openVariable" />
                 </customTooltip>
             </template>
             <template v-slot:default="{ activeData }">

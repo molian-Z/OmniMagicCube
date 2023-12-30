@@ -1,6 +1,6 @@
 <script setup>
 import { computed, defineOptions } from 'vue';
-import anyData2Form from '@/components/molian/components/any-data2form'
+import anyData2Form from '@molianComps/any-data2form/index.vue'
 import { globalAttrs } from '../../designerData'
 import { defaultLifecycleMap } from '@molian/utils/defaultData'
 

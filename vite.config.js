@@ -26,7 +26,6 @@ export default defineConfig({
       "@molianDesigner": resolve(__dirname, 'src/components/molian/components/designer'),
       "@molianRender": resolve(__dirname, 'src/components/molian/components/render'),
       "@molianComps": resolve(__dirname, 'src/components/molian/components'),
-    },
-    extensions: ['.js', '.vue', '.json', '.ts', '.jsx'] // 使用路径别名时想要省略的后缀名，可以自己 增减
+    }
   },
 })

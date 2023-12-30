@@ -1,6 +1,6 @@
 import { ref, watch } from 'vue'
 import { useNavigatorLanguage } from '@vueuse/core'
-const langs = import.meta.globEager(`../i18n/*/*.json`)
+const langs = import.meta.glob(`../i18n/*/*.json`, { eager: true })
 export const { language } = useNavigatorLanguage()
 
 export const langObj = ref({})

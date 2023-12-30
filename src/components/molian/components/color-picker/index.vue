@@ -1,6 +1,7 @@
 <script setup>
 import { inject, defineProps, defineEmits } from 'vue'
-import { ColorPicker } from './index.es'
+import { ColorPicker } from "vue3-colorpicker";
+import "vue3-colorpicker/style.css";
 const customComps = inject('customComps')
 const { customInput, customPopup } = customComps
 
@@ -60,10 +61,6 @@ const updateModel = function (value) {
         </template>
     </customInput>
 </template>
-
-<style lang="scss">
-@use './style.css';
-</style> 
 <style lang="scss" scoped>
 .prefix-color-selected {
     width: 16px;
@@ -75,5 +72,12 @@ const updateModel = function (value) {
     &.disabled {
         cursor: auto;
     }
+}
+
+</style>
+
+<style>
+.vc-colorpicker{
+    box-shadow: none !important;
 }
 </style>
