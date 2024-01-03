@@ -1,5 +1,6 @@
 # OmniMagicCube 无界魔方
 
+[文档中心](https://www.yuque.com/u12572940/wujiemofang)
 ### 商用请保留版权信息
 [演示网址](http://demo.mlyt.top/)
 ```
