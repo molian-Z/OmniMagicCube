@@ -46,7 +46,7 @@ export const {
 watch(history, (val) => {
     store.value = {
         modelValue:val,
-        globalAttrs:globalAttrs
+        globalAttrs
     }
 })
 export const compsRef = reactive({})

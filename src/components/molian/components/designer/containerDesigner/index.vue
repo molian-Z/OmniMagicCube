@@ -5,29 +5,14 @@ import {
 } from '@vueuse/core'
 import deepComps from './deepTree.vue'
 import treeDir from './treeDir/index.vue'
+import toolTip from './toolTip/index.vue'
 import { modelValue, hiddenAllPanel, selectedComp, createComp } from '../designerData'
 import { isDraggable, resetHover, hoverComp, hoverNodes, hoverIndex, hoverBounding, dragNodes, dragIndex, dropIndex, startDraggable, resetDraggable, useDraggable } from '../draggable'
 import svgIcon from '@molianComps/svg-icon/index.vue'
 const comps = inject('mlComps')
 const t = inject('mlLangs')
-const { onDragenter, onDragend } = useDraggable()
+const { onDragenter } = useDraggable()
 const { top, left, right, bottom, width, height } = hoverBounding
-const currentBounding = computed(() => {
-    let isWidth = 360
-    if (hoverComp.value) {
-        let obj = {
-            left: left.value + width.value / 2 <= (isWidth / 2) ? '5px' : Number(left.value - (isWidth / 2)) + width.value / 2 + 'px',
-            height: 60 + 'px',
-            width: isWidth + 'px'
-        }
-        if (top.value < 60) {
-            obj.top = top.value + height.value + 'px'
-        } else {
-            obj.top = top.value - 60 + 'px'
-        }
-        return obj
-    }
-})
 
 const onDrop = function (evt) {
     const name = evt.dataTransfer.getData('compName')
@@ -61,27 +46,14 @@ const onClick = function () {
 </script>
 <template>
     <div class="container-designer">
-        <div class="container-draggable-body" @dragover.prevent @dragenter.self="onDragenter(-1,modelValue)" @drop="onDrop"
+        <div class="container-draggable-body" @dragover.prevent @dragenter.self="onDragenter(-1, modelValue)" @drop="onDrop"
             @click.self="onClick">
             <deepComps v-model="modelValue"></deepComps>
         </div>
         <!-- 组件提示栏 -->
         <div class="drag-tips" v-if="isDraggable">{{ t('container.dropContent') }}</div>
         <!-- 组件工具栏 -->
-        <div class="drag-shadow" :style="currentBounding" v-if="hoverComp">
-            <div class="drag-handler" draggable="true" @dragstart="startDraggable" @dragend="onDragend">
-                <svgIcon icon="move"></svgIcon>
-                <span>{{ t('container.moveComp') }}</span>
-            </div>
-            <div class="drag-appendSlot" @click.stop="appendSlots(index)">
-                <svg-icon class="svg-icon-transh" icon="appendSlot"></svg-icon>
-                <span>{{ t('container.appendSlot') }}</span>
-            </div>
-            <div class="drag-delete" @click.stop="deleteComp(index)">
-                <svg-icon class="svg-icon-transh" icon="trash"></svg-icon>
-                <span>{{ t('container.deleteComp') }}</span>
-            </div>
-        </div>
+        <toolTip :deleteComp="deleteComp"></toolTip>
         <div class="designer-page-delete-comp" @dragover.prevent @drop="deleteComp" v-if="hiddenAllPanel && !hoverComp">
             <svg-icon class="svg-icon-transh" icon="trash"></svg-icon>
         </div>
@@ -109,64 +81,6 @@ const onClick = function () {
     .drag-tips {
         position: absolute;
 
-    }
-
-    .drag-shadow {
-        position: absolute;
-        background-color: rgba(global.$bgColor, 0.15);
-        box-shadow: var(--ml-shadow-lg);
-        backdrop-filter: var(--ml-bg-blur-base);
-        border-radius: var(--ml-radius-lg);
-        display: flex;
-        justify-content: space-around;
-        align-items: center;
-        z-index: 100;
-        user-select: none;
-        padding: var(--ml-pd-lg);
-        transition: var(--ml-transition-base);
-
-        .drag-handler {
-            color: var(--ml-primary-color);
-            font-size: 16px;
-            cursor: all-scroll;
-            transition: var(--ml-transition-base);
-
-            &:hover {
-                color: var(--ml-primary-color-light-hover);
-            }
-        }
-
-        .drag-appendSlot {
-            color: var(--ml-primary-color);
-            font-size: 16px;
-            transition: var(--ml-transition-base);
-
-            &:hover {
-                color: var(--ml-primary-color-light-hover);
-            }
-        }
-
-        .drag-slot {
-            color: var(--ml-primary-color);
-            font-size: 16px;
-            cursor: pointer;
-            transition: var(--ml-transition-base);
-
-            &:hover {
-                color: var(--ml-primary-color-light-hover);
-            }
-        }
-
-        .drag-delete {
-            color: var(--ml-danger-color);
-            font-size: 16px;
-            cursor: pointer;
-            transition: var(--ml-transition-base);
-
-            &:hover {
-                color: var(--ml-danger-color-light-hover);
-            }
-        }
     }
 
     .designer-page-delete-comp {

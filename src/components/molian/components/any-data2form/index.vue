@@ -3,9 +3,12 @@ import { ref, computed, defineOptions, inject, defineProps } from 'vue';
 import { useVModel } from '@vueuse/core'
 import svgIcon from '@molianComps/svg-icon/index.vue'
 import codeInput from '@molianComps/code-input/index.vue'
+import { globalAttrs } from '../designer/designerData'
+import { deepObjToArray } from '@molian/utils/util'
 const t = inject('mlLangs')
 const customComps = inject('customComps')
-const { customInputNumber, customInput, customSwitch, customSelect } = customComps
+const message = inject('ml-message')
+const { customInputNumber, customInput, customSwitch, customSelect, customCascader } = customComps
 const props = defineProps({
   modelValue: {
     type: [String, Number, Boolean, Object, Array],
@@ -27,9 +30,9 @@ const props = defineProps({
     type: Object,
     default: () => { }
   },
-  isModifiers:{
-    type:Boolean,
-    default:true
+  isModifiers: {
+    type: Boolean,
+    default: true
   }
 })
 defineOptions({
@@ -49,23 +52,55 @@ const getOptionItemI18n = (optionItems) => {
   })
 }
 const currentTypeIndex = ref(0)
-const type = computed(() => {
+const types = computed(() => {
+  let currentType = []
   if (Array.isArray(props.propData.type)) {
-    return props.propData.type[currentTypeIndex.value]
+    currentType = props.propData.type
+    currentType.push('variable')
   } else {
-    return props.propData.type
+    currentType = [props.propData.type, 'variable']
   }
+  return currentType
 })
 
+const type = computed(() => {
+  return types.value[currentTypeIndex.value]
+})
+
+const variableList = computed(() => {
+  return Object.keys(globalAttrs.variable).map(key => {
+    const variableValue = globalAttrs.variable[key]
+    if (variableValue.type === 'object') {
+      const currentObjValue = {
+        label: globalAttrs.variable[key].label || key,
+        value: key
+      }
+      let children = []
+      try {
+        children = deepObjToArray(JSON.parse(variableValue.value))
+      } catch (error) {
+        message.error(currentObjValue.label+ t('options.isNotJSONFormatData'))
+      }
+      if(children.length > 0){
+        currentObjValue.children = children
+      }
+      return currentObjValue
+    } else {
+      return {
+        label: globalAttrs.variable[key].label || key,
+        value: key
+      }
+    }
+  })
+})
 const getI18n = (key, name) => {
   const langStr = t('attrs.' + name + '.' + key)
   return langStr === key ? t('attrs.' + key) : langStr
 }
 
 const tabType = () => {
-  if (!Array.isArray(props.propData.type)) return false
   value.value = null
-  currentTypeIndex.value = props.propData.type.length - 1 === currentTypeIndex.value ? 0 : currentTypeIndex.value + 1
+  currentTypeIndex.value = types.value.length - 1 === currentTypeIndex.value ? 0 : currentTypeIndex.value + 1
 }
 
 // 指令支持
@@ -78,19 +113,20 @@ const tabType = () => {
     <div class="data2form-item__input">
       <transition name="fade">
         <customSwitch size="small" v-model="value" v-if="type === 'boolean'" />
+        <customCascader size="small" :options="variableList" :checkStrictly="true" v-else-if="type === 'variable'"></customCascader>
         <customSelect :options="getOptionItemI18n(propData.optionItems)" size="small" v-model="value"
           v-else-if="propData.optionItems" />
         <customInputNumber size="small" v-model="value" v-else-if="type === 'number'">
         </customInputNumber>
-        <codeInput :isModifiers="isModifiers" :mode="type" :keyName="keyName" v-model="value" v-else-if="['promise','function','object','array'].indexOf(type) > -1" />
+        <codeInput :isModifiers="isModifiers" :mode="type" :keyName="keyName" v-model="value"
+          v-else-if="['promise', 'function', 'object', 'array'].indexOf(type) > -1" />
         <customInput size="small" v-model="value" v-else></customInput>
       </transition>
     </div>
-    <div :class="['data2form-item__icon', !Array.isArray(propData.type) && 'disabled']" @click="tabType">
+    <div :class="['data2form-item__icon']" @click="tabType">
       <svg-icon icon="switch" class="data2form-item__svg-icon" />
     </div>
   </div>
-  
 </template>
 
 <style scoped lang="scss">

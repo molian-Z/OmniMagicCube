@@ -5,7 +5,7 @@
 export const defaultCategory = [{
     icon: 'basic',
     name: 'basic',
-    component:['div','span','ul','li','text']
+    component: ['div', 'span', 'ul', 'li', 'text']
 }, {
     icon: 'container',
     name: 'layout',
@@ -49,11 +49,11 @@ export const defaultCategory = [{
 export const defaultAttrsMap = {
     TRow: {
         align: {
-            default:'center',
+            default: 'center',
             optionItems: ['top', 'center', 'end', 'stretch', 'baseline']
         },
         justify: {
-            default:'center',
+            default: 'center',
             optionItems: ['start', 'end', 'center', 'space-around', 'space-between', 'space-evenly']
         }
     }
@@ -63,34 +63,34 @@ export const defaultAttrsMap = {
  * defaultAttrsMap 默认原生事件映射表
  */
 export const defaultNativeEventMap = {
-    click:['evt'], //点击
-    dblClick:['evt'], //双击
-    mouseEnter:['evt'], //鼠标移入
-    mouseLeave:['evt'], //鼠标移出
-    keyDown:['evt'], //按键按下
-    keyUp:['evt'], //按键抬起
-    keyPress:['evt'], //按键按下
-    wheel:['evt'], //滚轮滚动
-    contextmenu:['evt'], //右键
-    scroll:['evt'], //滚动
-    resize:['evt'], //窗口大小改变
+    click: ['evt'], //点击
+    dblClick: ['evt'], //双击
+    mouseEnter: ['evt'], //鼠标移入
+    mouseLeave: ['evt'], //鼠标移出
+    keyDown: ['evt'], //按键按下
+    keyUp: ['evt'], //按键抬起
+    keyPress: ['evt'], //按键按下
+    wheel: ['evt'], //滚轮滚动
+    contextmenu: ['evt'], //右键
+    scroll: ['evt'], //滚动
+    resize: ['evt'], //窗口大小改变
 }
 
 /**
  * defaultLifecycleMap 默认生命周期映射表
  */
 export const defaultLifecycleMap = {
-    beforeCreate:"",
-    created:"",
-    beforeMount:"",
-    mounted:"",
-    beforeUpdate:"",
-    updated:"",
-    beforeUnmount:"",
-    unmounted:"",
+    beforeCreate: "",
+    created: "",
+    beforeMount: "",
+    mounted: "",
+    beforeUpdate: "",
+    updated: "",
+    beforeUnmount: "",
+    unmounted: "",
     errorCaptured: ['err', 'vm', 'info'],
-    activated:"",
-    deactivated:""
+    activated: "",
+    deactivated: ""
 }
 
 /**
@@ -164,23 +164,23 @@ export const uiMapping = {
         icon: "TDesign",
         compMapping: {
             "Button": {
-                "theme":"theme",
+                "theme": "theme",
                 "text": {
                     "variant": "text"
                 },
             },
-            "Tag":{},
+            "Tag": {},
             "Input": {
                 "prefixIcon": "prefixIcon",
-                "onKeyup":{}
+                "onKeyup": {}
             },
             "InputNumber": {},
             "Select": {},
             "Switch": {},
             "Tooltip": {
-                "content":{
-                    "content":"content",
-                    "destroyOnClose":true
+                "content": {
+                    "content": "content",
+                    "destroyOnClose": true
                 }
             },
             "Popup": {
@@ -192,9 +192,26 @@ export const uiMapping = {
             "RadioButton": {
                 "value": "label"
             },
-            "Dialog":{
-                "appendToBody":{
-                    "attach":"body"
+            "Cascader":{
+                "optionItems":"options"
+            },
+            "Dropdown": {
+                "optionItems": (data) => {
+                    return {
+                        "options": data.map(item => {
+                            return {
+                                content: item.label,
+                                value: item.value,
+                                disabled: item.disabled,
+                                onClick: item.onclick
+                            }
+                        })
+                    }
+                }
+            },
+            "Dialog": {
+                "appendToBody": {
+                    "attach": "body"
                 }
             }
         }
@@ -204,20 +221,20 @@ export const uiMapping = {
         icon: "ElementPlus",
         compMapping: {
             "Button": {
-                "theme":"type",
-                "text":"text"
+                "theme": "type",
+                "text": "text"
             },
-            "Tag":{
-                "theme":"type"
+            "Tag": {
+                "theme": "type"
             },
             "Input": {
                 "prefixIcon": "prefix",
-                "onEnter":{}
+                "onEnter": {}
             },
             "InputNumber": {},
             "Select": {
                 "component": "SelectV2", // 切换组件
-                "size": {                // 设置大小的同时设置组件的props
+                "size": { // 设置大小的同时设置组件的props
                     "size": "small",
                     "props": {
                         options: 'children'
@@ -226,7 +243,7 @@ export const uiMapping = {
             },
             "Switch": {},
             "Tooltip": {
-                "content":"content"
+                "content": "content"
             },
             "Popup": {
                 "component": "Popover",
@@ -237,11 +254,42 @@ export const uiMapping = {
             "RadioButton": {
                 "value": "label"
             },
-            "Dialog":{
-                "visible":"modelValue",
-                "destroyOnClose":"destroy-on-close",
-                "appendTobody":"append-to-body",
-                "header":"title"
+            "Cascader":{
+                "optionItems":"options",
+                "checkStrictly":{
+                    "props":{
+                        "checkStrictly": true,
+                    }
+                }
+            },
+            "Dropdown": {
+                "optionItems": (data) => {
+                    return {
+                        dropdown: {
+                            _isSlot:true,
+                            tag: 'ElDropdownMenu',
+                            attrs: {},
+                            slots: data.map(item => {
+                                return {
+                                    _isSlot:true,
+                                    tag: "ElDropdownItem",
+                                    attrs: {
+                                        disabled: item.disabled,
+                                        onClick: item.onclick,
+                                        command: item.value
+                                    },
+                                    slots: item.label
+                                }
+                            })
+                        }
+                    }
+                }
+            },
+            "Dialog": {
+                "visible": "modelValue",
+                "destroyOnClose": "destroy-on-close",
+                "appendTobody": "append-to-body",
+                "header": "title"
             }
         }
     }, {
@@ -250,7 +298,7 @@ export const uiMapping = {
         icon: "Ant",
         compMapping: {
             "Button": {
-                "theme":"type",
+                "theme": "type",
                 "text": {
                     "type": "text"
                 },

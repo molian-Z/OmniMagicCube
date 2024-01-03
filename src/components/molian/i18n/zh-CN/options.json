@@ -49,5 +49,6 @@
     "dataType":"数据类型",
     "label":"标签",
     "validateError":"验证错误",
-    "validateSuccess":"验证成功"
+    "validateSuccess":"验证成功",
+    "isNotJSONFormatData":"不是JSON格式数据"
 }

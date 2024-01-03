@@ -6,10 +6,32 @@ import {
   inject
 } from 'vue'
 
+function createRender(data, comps) {
+  const { slots, attrs, tag } = data
+  let currentSlots = ``
+  if(Array.isArray(slots)){
+    currentSlots = slots.map(item => {
+      return createRender(item, comps)
+    })
+  }else if(typeof slots === "object"){
+    currentSlots = createRender(slots, comps)
+  }else if(typeof slots === 'function'){
+    currentSlots = slots()
+  }else{
+    currentSlots = () => slots
+  }
+  return h(comps[tag].comp, attrs, currentSlots)
+}
 export const createControl = function (prefix, compName, newAttrs) {
   return defineComponent({
-    setup(props, {attrs, emit, slots, expose}) {
-      const getSlots = computed(() => {
+    setup(props, {
+      attrs,
+      emit,
+      slots,
+      expose
+    }) {
+      const comps = inject('mlComps')
+      const getSlots = () => {
         let objSlots = {}
         for (const key in slots) {
           if (Object.hasOwnProperty.call(slots, key)) {
@@ -22,7 +44,8 @@ export const createControl = function (prefix, compName, newAttrs) {
           }
         }
         return objSlots
-      })
+      }
+      const currentSlots = getSlots() || {}
       const getAttrs = computed(() => {
         let objAttrs = {}
         for (const key in attrs) {
@@ -35,6 +58,19 @@ export const createControl = function (prefix, compName, newAttrs) {
                 ...objAttrs,
                 ...newAttrs[key]
               }
+            } else if (typeof newAttrs[key] === 'function') {
+              let newAttr = newAttrs[key](element)
+              Object.keys(newAttr).forEach(key => {
+                const currentAttr = newAttr[key]
+                if (!currentAttr._isSlot) {
+                  objAttrs = {
+                    ...objAttrs,
+                    [key]:currentAttr
+                  }
+                } else {
+                  currentSlots[key] = createRender(currentAttr, comps.value)
+                }
+              })
             } else {
               objAttrs[key] = element
             }
@@ -43,9 +79,8 @@ export const createControl = function (prefix, compName, newAttrs) {
         objAttrs.ref = 'ref'
         return objAttrs
       })
-      const comps = inject('mlComps')
       let controlTag = comps.value[prefix + compName].comp
-      return ()=>h(controlTag, getAttrs.value, getSlots.value)
+      return () => h(controlTag, getAttrs.value, currentSlots)
     }
   })
 }

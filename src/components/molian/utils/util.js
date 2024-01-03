@@ -34,3 +34,25 @@ export const toKebabCase = function(str) {
   }
   return ret;
 }
+
+export const deepObjToArray = function(obj) {
+  let newArr = []
+  for (const key in obj) {
+    if (Object.hasOwnProperty.call(obj, key)) {
+      const value = obj[key]
+      if(typeof value === 'object' && !Array.isArray(value)){
+        newArr.push({
+          label:key,
+          value: key,
+          children:deepObjToArray(value)
+        })
+      }else{
+        newArr.push({
+          label:key,
+          value:key
+        })
+      }
+    }
+  }
+  return newArr
+}
