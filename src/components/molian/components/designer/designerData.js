@@ -90,7 +90,18 @@ export const createComp = function (comp) {
     for (const key in comp.props) {
         if (Object.hasOwnProperty.call(comp.props, key)) {
             const element = comp.props[key]
-            initAttrs[key] = element.default
+            let currentType = typeof element.default === 'object' && Array.isArray(element.default) ? 'array' : typeof element.default
+            if(element.default){
+                initAttrs[key] = {
+                    type: currentType,
+                    value:element.default
+                }
+            }else{
+                initAttrs[key] = {
+                    type: Array.isArray(element.type) ? element.type[0] : element.type,
+                    value:null
+                }
+            }
         }
     }
     return {

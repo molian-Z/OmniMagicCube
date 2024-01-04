@@ -99,11 +99,19 @@ export const directives = {
       index,
       keyProp
     }) => {
+      // props
+      const propsData = {}
+      for (const key in props.comp.attrs) {
+        if (Object.hasOwnProperty.call(props.comp.attrs, key)) {
+          const element = props.comp.attrs[key];
+          propsData[key] = element.value
+        }
+      }
       const attrObj = {
         id: props.comp.id,
         ['data-key']: props.comp.key,
         style: parseStyle(props.comp.css),
-        ...props.comp.attrs,
+        ...propsData,
         // onMouseenter: withModifiers(($event) => onMouseEnter($event, props.comp, props.index), ['self', 'native']), // 暂且取消经过选择
         onClick: withModifiers(($event) => onClick($event, props.comp, props.index), ['native']),
         onDragend: onDragend,

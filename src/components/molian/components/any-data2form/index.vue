@@ -1,13 +1,11 @@
 <script setup>
 import { ref, computed, defineOptions, inject, defineProps } from 'vue';
-import { useVModel } from '@vueuse/core'
+import { deepObjToArray } from '@molian/utils/util'
 import svgIcon from '@molianComps/svg-icon/index.vue'
 import codeInput from '@molianComps/code-input/index.vue'
 import { globalAttrs } from '../designer/designerData'
-import { deepObjToArray } from '@molian/utils/util'
 const t = inject('mlLangs')
 const customComps = inject('customComps')
-const message = inject('ml-message')
 const { customInputNumber, customInput, customSwitch, customSelect, customCascader } = customComps
 const props = defineProps({
   modelValue: {
@@ -41,7 +39,18 @@ defineOptions({
   }
 })
 const emit = defineEmits(['update:modelValue'])
-const value = useVModel(props, 'modelValue', emit)
+const value = computed({
+  get() {
+    return props.modelValue && props.modelValue.value || null
+  },
+  set(val) {
+    emit('update:modelValue', {
+      type: type.value,
+      value: val
+    })
+  }
+})
+
 const getOptionItemI18n = (optionItems) => {
   return optionItems.map(item => {
     const langStr = t('attrs.' + props.keyName + '.' + item)
@@ -51,18 +60,16 @@ const getOptionItemI18n = (optionItems) => {
     }
   })
 }
-const currentTypeIndex = ref(0)
 const types = computed(() => {
   let currentType = []
   if (Array.isArray(props.propData.type)) {
-    currentType = props.propData.type
-    currentType.push('variable')
+    currentType = props.propData.type.concat(['variable'])
   } else {
     currentType = [props.propData.type, 'variable']
   }
   return currentType
 })
-
+const currentTypeIndex = ref(props.modelValue && types.value.indexOf(props.modelValue.type) > -1 ? types.value.indexOf(props.modelValue.type) : 0)
 const type = computed(() => {
   return types.value[currentTypeIndex.value]
 })
@@ -79,9 +86,9 @@ const variableList = computed(() => {
       try {
         children = deepObjToArray(JSON.parse(variableValue.value))
       } catch (error) {
-        message.error(currentObjValue.label+ t('options.isNotJSONFormatData'))
+        message.error(currentObjValue.label + t('options.isNotJSONFormatData'))
       }
-      if(children.length > 0){
+      if (children.length > 0) {
         currentObjValue.children = children
       }
       return currentObjValue
@@ -93,6 +100,7 @@ const variableList = computed(() => {
     }
   })
 })
+
 const getI18n = (key, name) => {
   const langStr = t('attrs.' + name + '.' + key)
   return langStr === key ? t('attrs.' + key) : langStr
@@ -112,8 +120,9 @@ const tabType = () => {
     <div class="data2form-item__label">{{ getI18n(keyName, selectedComp && selectedComp.name || '') }}</div>
     <div class="data2form-item__input">
       <transition name="fade">
-        <customSwitch size="small" v-model="value" v-if="type === 'boolean'" />
-        <customCascader size="small" :options="variableList" :checkStrictly="true" v-else-if="type === 'variable'"></customCascader>
+        <customCascader size="small" :options="variableList" :checkStrictly="true" v-model="value"
+          v-if="type === 'variable'" />
+        <customSwitch size="small" v-model="value" v-else-if="type === 'boolean'" />
         <customSelect :options="getOptionItemI18n(propData.optionItems)" size="small" v-model="value"
           v-else-if="propData.optionItems" />
         <customInputNumber size="small" v-model="value" v-else-if="type === 'number'">
