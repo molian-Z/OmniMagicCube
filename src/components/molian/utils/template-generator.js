@@ -65,10 +65,11 @@ function parseTemplate(obj) {
     for (const key in obj.attrs) {
       if (Object.hasOwnProperty.call(obj.attrs, key)) {
         // 遍历属性对象的属性
-        const element = obj.attrs[key];
+        const elementType = obj.attrs[key].type;
+        const element = obj.attrs[key].value;
         // 可通过比对默认值是否相同取消属性的添加
         if(element || element === 0 || element === false || element === ''){
-          const propKey = typeof element !== 'string' && `:${key}` || `${key}`
+          const propKey = elementType !== 'string' && `:${key}` || `${key}`
           templateStr += ` ${propKey}="${element}"`
         }
       }

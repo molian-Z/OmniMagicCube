@@ -32,7 +32,9 @@ export const createJS = function (compObj, globalAttrs, type = "options") {
     }).join('\n')
 
     // 生命周期生成
-    const lifecycleStr = Object.keys(lifecycle).map(key => {
+    const lifecycleStr = Object.keys(lifecycle).filter(key =>{
+      return !!lifecycle[key]
+    }).map(key => {
       const rename = `on` + key.charAt(0).toUpperCase() + key.slice(1);
       importModule.vue.push(rename)
       return `
@@ -56,7 +58,9 @@ ${jsCode}
   } else if (type === 'options') {
     // OptionsAPI代码
     // 生命周期写入
-    const lifecycleStr = Object.keys(lifecycle).map(key => {
+    const lifecycleStr = Object.keys(lifecycle).filter(key =>{
+      return !!lifecycle[key]
+    }).map(key => {
       return `${key}${parseJSCode(lifecycle[key], "lifecycle")}`
     }).join(',\n')
     // 变量写入
