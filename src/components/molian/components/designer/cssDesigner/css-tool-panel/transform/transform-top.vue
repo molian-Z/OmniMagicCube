@@ -1,9 +1,9 @@
-<script setup>
+<script setup lang="ts">
 import { ref, computed, inject, watch, onMounted } from 'vue'
 import { selectedComp } from '@molianComps/designer/designerData'
 import svgIcon from '@molianComps/svg-icon/index.vue'
-const customComps = inject('customComps')
-const t = inject('mlLangs')
+const customComps:any = inject('customComps')
+const t:any = inject('mlLangs')
 const { customInput } = customComps
 
 const css = computed(() => {
@@ -19,7 +19,7 @@ watch(selectedComp, (val) => {
     if (val && val.css.borderRadius) {
         let value = ''
         let btn = false
-        val.css.borderRadius.forEach((item, index) => {
+        val.css.borderRadius.forEach((item: string, index: number) => {
             if(index === 0){
                 value = item
             }
@@ -35,7 +35,7 @@ onMounted(() => {
     if (selectedComp.value && selectedComp.value.css.borderRadius) {
         let value = ''
         let btn = false
-        selectedComp.value.css.borderRadius.forEach((item, index) => {
+        selectedComp.value.css.borderRadius.forEach((item: string, index: number) => {
             if(index === 0){
                 value = item
             }
@@ -53,7 +53,7 @@ const switchRadius = function () {
     activeRadius.value = !activeRadius.value
 }
 
-const updateModelValue = function (prop, val) {
+const updateModelValue = function (prop: string, val: any) {
     if (css.value && !isNaN(Number(val)) && Number(val) >= 0) {
         let newVal = val === '' ? '' : Number(val).toString()
         if (activeLink.value && ['width', 'height'].indexOf(prop) > -1) {

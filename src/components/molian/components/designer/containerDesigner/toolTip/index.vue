@@ -1,23 +1,23 @@
-<script setup>
+<script setup lang="ts">
 import { computed, defineProps, inject } from 'vue'
 import { hoverComp, hoverBounding, startDraggable, useDraggable } from '../../draggable'
 import { useCloned } from '@vueuse/core'
 import { selectedComp } from '../../designerData'
 import svgIcon from '@molianComps/svg-icon/index.vue'
 import { slotsMap } from '@molian/utils/compsConfig'
-const props = defineProps({
-  deleteComp: Function
-})
-const customComps = inject('customComps')
-const t = inject('mlLangs')
-const { onDragend } = useDraggable()
+defineProps<{
+  deleteComp:Function
+}>()
+const customComps:any = inject('customComps')
+const t:any = inject('mlLangs')
+const { onDragend } = useDraggable(null, null, null)
 const { top, left, width, height } = hoverBounding
 const { customDropdown } = customComps
 
 const currentBounding = computed(() => {
   let isWidth = 360
   if (hoverComp.value) {
-    let obj = {
+    let obj:any = {
       left: left.value + width.value / 2 <= (isWidth / 2) ? '5px' : Number(left.value - (isWidth / 2)) + width.value / 2 + 'px',
       height: 60 + 'px',
       width: isWidth + 'px'
@@ -45,7 +45,7 @@ const slotsData = computed(() => {
   return []
 })
 
-const appendSlot = function (key, val) {
+const appendSlot = function (key: string, val: any) {
   if (selectedComp.value.slots && selectedComp.value.slots[key]) {
     delete selectedComp.value.slots[key]
     return false
@@ -80,7 +80,7 @@ const appendSlot = function (key, val) {
         <span>{{ t('container.appendSlot') }}</span>
       </div>
     </customDropdown>
-    <div class="drag-delete" @click.stop="deleteComp(index)">
+    <div class="drag-delete" @click.stop="deleteComp()">
       <svg-icon class="svg-icon-transh" icon="trash"></svg-icon>
       <span>{{ t('container.deleteComp') }}</span>
     </div>

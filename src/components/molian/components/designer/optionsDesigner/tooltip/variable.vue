@@ -1,11 +1,11 @@
-<script setup>
+<script setup lang="ts">
 import { ref, inject, defineExpose } from 'vue'
 import { globalAttrs } from '../../designerData'
 import subForm from '@molianComps/sub-form/index.vue'
 import data2input from '@molianComps/data2input/index.vue'
-const t = inject('mlLangs')
-const customComps = inject('customComps')
-const message = inject('ml-message')
+const t:any = inject('mlLangs')
+const customComps:any = inject('customComps')
+const message:any = inject('ml-message')
 const { customDialog, customButton } = customComps
 const subFormColumns = ref([{
   prop: "name",
@@ -52,10 +52,10 @@ const subFormColumns = ref([{
 }])
 const visible = ref(false)
 const subFormRef = ref()
-const modelValue = ref([])
+const modelValue = ref<any[]>([])
 defineExpose({
   show: function () {
-    const variable = []
+    const variable:any[] = []
     Object.keys(globalAttrs.variable).forEach(key => {
       variable.push({
         name: key,
@@ -71,7 +71,13 @@ defineExpose({
 
 const createVariable = function () {
   if(subFormRef.value.validate()){
-    const obj = {}
+    const obj:{
+      [key:string]:{
+        label:string,
+        type:string,
+        value:any
+      }
+    } = {}
     modelValue.value.forEach(item =>{
       obj[item.name] = {
         label: item.label,
@@ -86,7 +92,7 @@ const createVariable = function () {
   }
 }
 
-const newProp = function (column, item) {
+const newProp = function (column: { prop: string; }, item: { type: any; }) {
   if (column.prop === 'value') {
     return {...column,type:item.type}
   }else{

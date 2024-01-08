@@ -1,17 +1,17 @@
-<script setup>
-import { inject,ref } from 'vue'
+<script setup lang="ts">
+import { inject } from 'vue'
 import { onClickOutside } from '@vueuse/core'
 import { modelValue, selectedComp, treeDirRef } from '@molianComps/designer/designerData'
-import deepTree from './deepTree.vue'
+import deepTree from './deepTreeToData.vue'
 import floatBall from '@molianComps/float-ball/index.vue'
 
-const t = inject('mlLangs')
-const onActive = (value)=>{
+const t: any = inject('mlLangs')
+const onActive = (value: any) => {
   selectedComp.value = value
 }
 
 onClickOutside(treeDirRef, () => {
-  if(treeDirRef.value.expand){
+  if (treeDirRef.value.expand) {
     treeDirRef.value.switchExpand(false)
   }
 })
@@ -20,13 +20,13 @@ onClickOutside(treeDirRef, () => {
 <template>
   <floatBall :title="t('container.treeDir')" ref="treeDirRef">
     <div class="tree-dir-container">
-    <deepTree v-model="modelValue" :selectedComp="selectedComp" @activeNode="onActive"></deepTree>
-  </div>
+      <deepTree v-model="modelValue" :selectedComp="selectedComp" @activeNode="onActive"></deepTree>
+    </div>
   </floatBall>
 </template>
 
 <style scoped lang="scss">
-.tree-dir-container{
+.tree-dir-container {
   width: 100%;
   height: 100%;
   background-color: var(--ml-bg-color);

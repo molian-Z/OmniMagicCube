@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { computed, defineOptions, inject } from 'vue';
 import anyData2Form from '@molianComps/any-data2form/index.vue'
 import { selectedComp } from '../../designerData'
@@ -6,8 +6,7 @@ import { selectedComp } from '../../designerData'
 defineOptions({
   name: 'basicComp'
 })
-const comps = inject('mlComps')
-const t = inject('mlLangs')
+const comps:any = inject('mlComps')
 
 
 const currentOn = computed(() => {
@@ -17,7 +16,7 @@ const currentOn = computed(() => {
 
 const currentEmits = computed(() => {
   if (!selectedComp.value) return {}
-  return selectedComp.value && comps.value[selectedComp.value.name].emits.map(item => {
+  return selectedComp.value && comps.value[selectedComp.value.name].emits.map((item: any) => {
     return {
       key: item,
       type: 'function'

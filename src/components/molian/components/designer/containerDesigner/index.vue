@@ -1,20 +1,19 @@
-<script setup>
-import { inject, computed } from 'vue'
+<script setup lang="ts">
+import { inject } from 'vue'
 import {
     useCloned
 } from '@vueuse/core'
-import deepComps from './deepTree.vue'
+import deepComps from './deepTreeToDesigner.vue'
 import treeDir from './treeDir/index.vue'
 import toolTip from './toolTip/index.vue'
 import { modelValue, hiddenAllPanel, selectedComp, createComp } from '../designerData'
-import { isDraggable, resetHover, hoverComp, hoverNodes, hoverIndex, hoverBounding, dragNodes, dragIndex, dropIndex, startDraggable, resetDraggable, useDraggable } from '../draggable'
+import { isDraggable, resetHover, hoverComp, hoverNodes, hoverIndex, dragNodes, dragIndex, dropIndex, resetDraggable, useDraggable } from '../draggable'
 import svgIcon from '@molianComps/svg-icon/index.vue'
-const comps = inject('mlComps')
-const t = inject('mlLangs')
-const { onDragenter } = useDraggable()
-const { top, left, right, bottom, width, height } = hoverBounding
+const comps:any = inject('mlComps')
+const t:any = inject('mlLangs')
+const { onDragenter } = useDraggable(null, null, null)
 
-const onDrop = function (evt) {
+const onDrop = function (evt: any) {
     const name = evt.dataTransfer.getData('compName')
     if (name) {
         const { cloned } = useCloned(createComp(comps.value[name]))

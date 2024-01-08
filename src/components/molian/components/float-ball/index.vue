@@ -1,14 +1,14 @@
-<script setup>
+<script setup lang="ts">
 import { ref, defineProps, defineExpose } from 'vue'
 
-const props = defineProps({
+defineProps({
   title: {
     type: String,
     default: ''
   }
 })
 const expand = ref(false)
-const switchExpand = (bool)=>{
+const switchExpand = (bool: boolean)=>{
   expand.value = bool
 }
 defineExpose({

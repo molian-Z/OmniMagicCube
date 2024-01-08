@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { ref } from 'vue'
 import { actionPanel, globalMenu } from '../designerData'
 import floatPanel from '@molianComps/float-panel/index.vue'

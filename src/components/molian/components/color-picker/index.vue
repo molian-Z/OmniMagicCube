@@ -1,11 +1,11 @@
-<script setup>
+<script setup lang="ts">
 import { inject, defineProps, defineEmits } from 'vue'
 import { ColorPicker } from "vue3-colorpicker";
 import "vue3-colorpicker/style.css";
-const customComps = inject('customComps')
+const customComps:any = inject('customComps')
 const { customInput, customPopup } = customComps
 
-const props = defineProps({
+defineProps({
     modelValue: {
         type: String,
         default: ''
@@ -42,7 +42,7 @@ const props = defineProps({
 
 const emit = defineEmits(['update:modelValue'])
 
-const updateModel = function (value) {
+const updateModel = function (value: string) {
     emit('update:modelValue', value)
 }
 </script>

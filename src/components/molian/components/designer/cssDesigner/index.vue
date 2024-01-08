@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { ref, computed, inject } from 'vue'
 import { cssPanel, selectedComp, globalMenu } from '../designerData'
 import svgIcon from '@molianComps/svg-icon/index.vue'
@@ -9,8 +9,8 @@ import font from './css-tool-panel/font.vue'
 import stroke from './css-tool-panel/stroke.vue'
 import transform from './css-tool-panel/transform.vue'
 import margin from './css-tool-panel/margin.vue'
-const customComps = inject('customComps')
-const t = inject('mlLangs')
+const customComps:any = inject('customComps')
+const t:any = inject('mlLangs')
 const { customTooltip } = customComps
 const toolbarData = ref([{
     label: t('css.textAlign.left'),
@@ -88,7 +88,7 @@ const closeFloatPanel = function () {
     globalMenu.value = ''
 }
 
-const flexSwitch = function (type, value) {
+const flexSwitch = function (type: string, value: any) {
     if (!selectedComp.value) return false
     if (type === 'h') {
         if (css.value.justifyContent === value) {
@@ -105,7 +105,7 @@ const flexSwitch = function (type, value) {
     }
 }
 
-const actived = function (item) {
+const actived = function (item: { type: string; value: any }) {
     if (item.type === 'h') {
         return css.value.justifyContent === item.value
     } else if (item.type === 'v') {

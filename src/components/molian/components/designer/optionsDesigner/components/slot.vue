@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { ref, computed, defineOptions, inject } from 'vue';
 import { useCloned } from '@vueuse/core'
 import { selectedComp } from '../../designerData'
@@ -8,8 +8,8 @@ defineOptions({
     name: 'slotComp'
 })
 
-const customComps = inject('customComps')
-const t = inject('mlLangs')
+const customComps:any = inject('customComps')
+const t:any = inject('mlLangs')
 const { customButton, customInput } = customComps
 
 const tempSlot = ref('')
@@ -19,7 +19,7 @@ const slots = computed(() => {
         return slotsMap.value[selectedComp.value.name]
     }
 })
-const appendSlot = function (key, val) {
+const appendSlot = function (key: string | number, val: any) {
     if (selectedComp.value.slots && selectedComp.value.slots[key]) {
         delete selectedComp.value.slots[key]
         return false

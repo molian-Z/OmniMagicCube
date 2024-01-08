@@ -1,9 +1,9 @@
-<script setup>
+<script setup lang="ts">
 import { ref, inject } from 'vue'
 import { globalPanel, globalMenu } from '../designerData'
 import floatPanel from '@molianComps/float-panel/index.vue'
 import create from './global-panel/create.vue'
-const t = inject('mlLangs')
+const t: any = inject('mlLangs')
 const menus = ref([{
     icon: 'transform',
     text: t('global.create'),

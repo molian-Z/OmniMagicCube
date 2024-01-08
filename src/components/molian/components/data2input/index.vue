@@ -1,8 +1,8 @@
-<script setup>
+<script setup lang="ts">
 import { ref, computed, inject, defineProps } from 'vue';
 import { useVModel } from '@vueuse/core'
 import codeInput from '@molianComps/code-input/index.vue'
-const customComps = inject('customComps')
+const customComps:any = inject('customComps')
 const { customInputNumber, customInput, customSwitch, customSelect } = customComps
 const props = defineProps({
   modelValue: {
@@ -15,7 +15,7 @@ const props = defineProps({
   },
 })
 const emit = defineEmits(['update:modelValue'])
-const value = useVModel(props, 'modelValue', emit)
+const value:any = useVModel(props, 'modelValue', emit)
 const currentTypeIndex = ref(0)
 const type = computed(() => {
   if (Array.isArray(props.propData.type)) {

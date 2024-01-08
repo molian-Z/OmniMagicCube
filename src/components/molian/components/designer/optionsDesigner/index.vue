@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { ref, inject, computed } from 'vue'
 import { optionsPanel, globalMenu, selectedComp } from '../designerData'
 import svgIcon from '@molianComps/svg-icon/index.vue'
@@ -9,9 +9,12 @@ import nativeOnComp from './components/nativeOn.vue'
 import javascriptComp from './components/javascript.vue'
 import lifecycleComp from './components/lifecycle.vue'
 import variable from './tooltip/variable.vue'
-const t = inject('mlLangs')
-const customComps = inject('customComps')
-const { customTooltip } = customComps
+import vueif from './tooltip/if.vue'
+import vuefor from './tooltip/for.vue'
+import vueshow from './tooltip/show.vue'
+const t: any = inject('mlLangs')
+const customComps: any = inject('customComps')
+const { customTooltip, customPopup } = customComps
 const menus = ref([{
     icon: 'basic',
     text: t('options.basic'),
@@ -34,18 +37,27 @@ const menus = ref([{
     name: 'lifecycle'
 }])
 
-const toolbarData = ref([{
+const toolbarData = ref<{
+    label: string;
+    value: string;
+    icon: string;
+    show: boolean;
+    type?:string;
+}[]>([{
     label: t('options.for'),
     value: 'for',
-    icon: 'for'
+    icon: 'for',
+    show: false
 }, {
     label: t('options.if'),
     value: 'if',
-    icon: 'if'
+    icon: 'if',
+    show: false
 }, {
     label: t('options.show'),
     value: 'show',
-    icon: 'show'
+    icon: 'show',
+    show: false
 }])
 
 const varRef = ref()
@@ -58,21 +70,16 @@ const closeFloatPanel = function () {
     globalMenu.value = ''
 }
 
-const actived = function (item) {
-    return false
-    // if (item.type === 'h') {
-    //     return css.value.justifyContent === item.value
-    // } else if (item.type === 'v') {
-    //     return css.value.alignItems === item.value
-    // }
+const actived = function (item: { label: string; value: string; icon: string; show: boolean; type?: string | undefined } | 'variable') {
+    return !!directives.value[typeof item === 'string'? item : item.value]
 }
 
-const showFn = () => {
-    
+const showFn = (type: any, value: any) => {
+    console.log(type, value)
 }
 
-const openDialog = (type) =>{
-    if(type === 'variable'){
+const openDialog = (type: string) => {
+    if (type === 'variable') {
         varRef.value.show()
     }
 }
@@ -84,14 +91,20 @@ const openDialog = (type) =>{
             <template #toolbar>
                 <div style="height: 32px;align-items: center;display: flex;">
                     <customTooltip :content="item.label" v-for="item in toolbarData" :key="item.value">
-                        <svg-icon
-                            :class="['css-svg-icon', 'toolbar-icon', actived(item) && 'is-active', !selectedComp && 'disabled']"
-                            :icon="`option-${item.icon}`" @click="showFn(item.type, item.value)" />
+                        <customPopup trigger="click" placement="bottom" :destroyOnClose="true" v-model:visible="item.show">
+                            <svg-icon
+                                :class="['css-svg-icon', 'toolbar-icon', actived(item) && 'is-active', !selectedComp && 'disabled']"
+                                :icon="`option-${item.icon}`" @click="showFn(item.type, item.value)" />
+                            <template #content>
+                                <vueif @close="item.show = false" v-if="item.value === 'if'" />
+                                <vuefor @close="item.show = false" v-else-if="item.value === 'for'" />
+                                <vueshow @close="item.show = false" v-else-if="item.value === 'show'" />
+                            </template>
+                        </customPopup>
                     </customTooltip>
                 </div>
                 <customTooltip :content="t('options.variable')">
-                    <svg-icon
-                        :class="['css-svg-icon', 'toolbar-icon', actived('variable') && 'is-active']"
+                    <svg-icon :class="['css-svg-icon', 'toolbar-icon', actived('variable') && 'is-active']"
                         icon="option-variable" @click="openDialog('variable')" />
                 </customTooltip>
             </template>

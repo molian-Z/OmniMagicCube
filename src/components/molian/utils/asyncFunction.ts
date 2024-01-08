@@ -1,0 +1,1 @@
+export const asyncFunction = Object.getPrototypeOf(async function () { }).constructor

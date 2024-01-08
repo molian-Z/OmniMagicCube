@@ -1,7 +1,7 @@
-<script setup>
+<script setup lang="ts">
 import { computed, defineProps, inject } from 'vue'
 import { hiddenAllPanel } from '../designerData'
-import {isDraggable, resetDraggable} from '../draggable'
+import { isDraggable, resetDraggable } from '../draggable'
 import { uiMapping } from '@molian/utils/defaultData'
 import svgIcon from '@molianComps/svg-icon/index.vue'
 const props = defineProps({
@@ -16,20 +16,20 @@ const props = defineProps({
 })
 
 const { data } = uiMapping
-const comps = inject('mlComps')
+const comps: any = inject('mlComps')
 const t = inject('mlLangs')
 
 const getCurrentUI = computed(() => {
     return props.currentUI !== 'all' ? data.find(item => item.name === props.currentUI) || 'all' : 'all'
 })
 
-const compList = computed(() => {
-    return Object.values(comps.value).filter(item => {
+const compList: any = computed(() => {
+    return Object.values(comps.value).filter((item: any) => {
         return item.category === props.currentData.name && (getCurrentUI.value === 'all' || item.prefix === getCurrentUI.value.prefix || item.category === 'basic')
     })
 })
 
-const onDragStart = function (evt, item) {
+const onDragStart = function (evt: any, item: { name: any }) {
     evt.dataTransfer.setData('compName', item.name)
     evt.dataTransfer.setData('isCreate', true)
     isDraggable.value = true
@@ -62,6 +62,7 @@ const onDragend = function () {
 
 <style scoped lang="scss">
 @use '../../../assets/styles/global.scss';
+
 .comps-panel {
     height: 100%;
     position: relative;
@@ -94,7 +95,7 @@ const onDragend = function () {
             color: var(--ml-fill-color-1);
             transition: var(--ml-transition-base);
 
-            &:hover{
+            &:hover {
                 border: 1px solid var(--ml-primary-color-hover);
             }
 

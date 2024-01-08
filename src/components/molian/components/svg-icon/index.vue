@@ -1,12 +1,9 @@
-<script setup>
+<script setup lang="ts">
 import { defineProps } from 'vue'
 
-defineProps({
-    icon: {
-        type: String,
-        default: ''
-    }
-})
+defineProps<{
+    icon: string
+}>()
 </script>
 
 <template>

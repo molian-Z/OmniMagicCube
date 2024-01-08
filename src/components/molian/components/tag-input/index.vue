@@ -1,20 +1,18 @@
-<script setup>
-import { ref, nextTick, inject, defineProps, defineEmits, computed } from 'vue';
+<script setup lang="ts">
+import { ref, nextTick, inject, defineProps, defineEmits, withDefaults } from 'vue';
 import { useVModel } from '@vueuse/core'
-
-const props = defineProps({
-  modelValue: {
-    type: Array,
-    default: () => []
+const props = withDefaults(defineProps<{
+  inputText?: string;
+  modelValue?: any;
+}>(),
+  {
+    modelValue: [],
+    inputText: ''
   },
-  inputText:{
-    type:String,
-    default:''
-  }
-})
+)
 const emit = defineEmits(['update:modelValue'])
-const t = inject('mlLangs')
-const customComps = inject('customComps')
+const t:any = inject('mlLangs')
+const customComps:any  = inject('customComps')
 const { customInput, customTag, customButton } = customComps
 
 const inputValue = ref('')
@@ -22,7 +20,7 @@ const dynamicTags = useVModel(props, 'modelValue', emit)
 const inputVisible = ref(false)
 const inputRef = ref()
 
-const handleClose = (tag) => {
+const handleClose = (tag: string) => {
   dynamicTags.value.splice(dynamicTags.value.indexOf(tag), 1)
 }
 
@@ -33,12 +31,12 @@ const showInput = () => {
     inputRef.value.$refs.ref.focus()
   })
 }
-const handleInputConfirm = (evt) => {
-  if(typeof evt !== 'string'){
-    if(evt.key !== 'Enter'){
+const handleInputConfirm = (evt: { key: string; }) => {
+  if (typeof evt !== 'string') {
+    if (evt.key !== 'Enter') {
       return false
     }
-  }else if(typeof evt === 'string'){
+  } else if (typeof evt === 'string') {
     return false
   }
   if (inputValue.value) {
@@ -64,16 +62,18 @@ const enterConfirm = () => {
       @close="handleClose(tag)">
       {{ tag }}
     </customTag>
-    <customInput style="width:70px;" v-if="inputVisible" ref="inputRef" v-model="inputValue" size="small" @enter="enterConfirm" @keyup="handleInputConfirm" @blur="enterConfirm" />
+    <customInput style="width:70px;" v-if="inputVisible" ref="inputRef" v-model="inputValue" size="small"
+      @enter="enterConfirm" @keyup="handleInputConfirm" @blur="enterConfirm" />
     <customButton theme="primary" v-else size="small" @click="showInput">
-      {{ inputText || t('options.addNewTag')}}
+      {{ inputText || t('options.addNewTag') }}
     </customButton>
   </div>
 </template>
 <style scoped>
-.tag-input-container{
+.tag-input-container {
   display: flex;
-  > *{
+
+  >* {
     margin: 0 var(--ml-mg-small);
   }
 }

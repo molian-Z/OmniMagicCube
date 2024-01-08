@@ -1,50 +1,31 @@
-<script setup>
-import { ref, defineProps, nextTick, computed, defineEmits, watch } from 'vue'
+<script setup lang="ts">
+import { ref, defineProps, nextTick, computed, defineEmits, watch, withDefaults } from 'vue'
 import { useDraggable, useWindowSize } from '@vueuse/core'
 import svgIcon from '@molianComps/svg-icon/index.vue'
 import mlAnimate from '@molianComps/animate-height/index.vue'
 
-const props = defineProps({
-    shape: {
-        type: String,
-        default: 'square'
-    },
-    offset: {
-        type: Array,
-        default: function () { return [15, 105] }
-    },
-    title: {
-        type: String,
-        default: ''
-    },
-    list: {
-        type: Array,
-        default: () => []
-    },
-    modelValue: {
-        type: [String, Number],
-        default: ''
-    },
-    foldWidth: {
-        type: Number,
-        default: 300
-    },
-    foldHeight:{
-        type: Number,
-        default: 0
-    },
-    isShow: {
-        type: Boolean,
-        default: true
-    },
-    float: {
-        type: String,
-        default: 'left'
-    },
-    isClose: {
-        type: Boolean,
-        default: true
-    }
+const props = withDefaults(defineProps <{
+    shape: 'square' | 'round';
+    offset: any;
+    title?: string;
+    list: any;
+    modelValue: string | number;
+    foldWidth: number;
+    foldHeight: number;
+    isShow: boolean;
+    float: 'left' | 'right';
+    isClose: boolean;
+}> (), {
+    shape: 'square',
+    offset: [15, 105],
+    title: '',
+    list: [],
+    modelValue: '',
+    foldWidth: 300,
+    foldHeight: 0,
+    isShow: true,
+    float: 'left',
+    isClose: true
 })
 
 const emit = defineEmits(['update:modelValue', 'iconClick', 'clickClose'])
@@ -57,7 +38,7 @@ const activeName = computed({
         emit('update:modelValue', val)
     }
 })
-const activeObj = ref({})
+const activeObj:any = ref({})
 const el = ref(null)
 const dragHeader = ref(null)
 const isFold = ref(true)
@@ -93,11 +74,11 @@ nextTick(() => {
 
 watch(() => props.isShow, (newVal) => {
     if (!newVal) {
-        closePanel()
+        closePanel(null)
     }
 })
 
-const clickIcon = function (item, index) {
+const clickIcon = function (item: { name?: any; }, index: any) {
     if (activeName.value === item.name) {
         isFold.value = true
         activeName.value = ''
@@ -110,7 +91,7 @@ const clickIcon = function (item, index) {
     emit('iconClick', { item, index })
 }
 
-const closePanel = function (evt) {
+const closePanel = function (evt: any) {
     isFold.value = true
     activeName.value = ''
     activeObj.value = {}
@@ -131,8 +112,7 @@ const closePanel = function (evt) {
                     </div>
                     <div :class="['float-panel-header-toolbar', !$slots.toolbar && !isFold && 'none-toolbar']">
                         <div ref="dragHeader" v-if="isFold">
-                            <svg-icon class="float-panel-icon move-icon" icon="ic_styles"
-                                ></svg-icon>
+                            <svg-icon class="float-panel-icon move-icon" icon="ic_styles"></svg-icon>
                         </div>
                         <template v-else-if="!!$slots.toolbar">
                             <div class="float-panel-header-toolbar__fold">
@@ -195,16 +175,16 @@ const closePanel = function (evt) {
         &.float-left {
             flex-direction: row;
 
-            .float-panel-list{
-                .float-panel-header__close{
+            .float-panel-list {
+                .float-panel-header__close {
                     border-top-left-radius: var(--ml-radius-base);
                 }
             }
 
-            .float-panel-header__title{
+            .float-panel-header__title {
                 border-top-right-radius: var(--ml-radius-base);
 
-                &.max-width{
+                &.max-width {
                     left: 0;
                     width: 100%;
                 }
@@ -225,7 +205,7 @@ const closePanel = function (evt) {
                 transition: var(--ml-transition-base);
                 width: 100%;
 
-                .float-panel-icon{
+                .float-panel-icon {
                     cursor: pointer;
                 }
             }
@@ -237,7 +217,8 @@ const closePanel = function (evt) {
                 align-items: center;
                 transition: var(--ml-transition-base);
                 overflow: hidden;
-                &.none-toolbar{
+
+                &.none-toolbar {
                     height: 0px;
                 }
 
@@ -304,13 +285,14 @@ const closePanel = function (evt) {
         .float-panel-content-detail {
             width: 100%;
             overflow: hidden;
-            .float-panel-header__title-holder{
+
+            .float-panel-header__title-holder {
                 height: 40px;
             }
 
             .float-panel-header__title {
                 position: absolute;
-                top:0;
+                top: 0;
                 padding: 12px var(--ml-pd-lg);
                 font-weight: 600;
                 font-size: 14px;

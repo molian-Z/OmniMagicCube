@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { ref, inject, computed } from 'vue'
 import floatPanel from '@molianComps/float-panel/index.vue'
 import categroyPanel from './category-panel.vue'
@@ -7,8 +7,8 @@ import { categoryList } from '@molian/utils/compsConfig'
 import { uiMapping } from '@molian/utils/defaultData'
 import svgIcon from '@molianComps/svg-icon/index.vue'
 
-const customComps = inject('customComps')
-const t = inject('mlLangs')
+const customComps:any = inject('customComps')
+const t:any = inject('mlLangs')
 const { customTooltip } = customComps
 const { current, data } = uiMapping
 

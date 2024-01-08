@@ -1,10 +1,10 @@
-<script setup>
+<script setup lang="ts">
 import { inject, ref, computed } from 'vue'
 import { selectedComp } from '@molianComps/designer/designerData'
 import colorPicker from '@molianComps/color-picker/index.vue'
 import svgIcon from '@molianComps/svg-icon/index.vue'
-const customComps = inject('customComps')
-const t = inject('mlLangs')
+const customComps:any = inject('customComps')
+const t:any = inject('mlLangs')
 const { customInput, customSelect, customTooltip } = customComps
 
 const fontFamily = ref(['微软雅黑', '宋体', '新宋体', '仿宋', '黑体', '楷体', '等线', 'SimSun-ExtB', 'Arial Nova', 'Arial', 'Corbel'])
@@ -18,7 +18,7 @@ const css = computed(() => {
     return selectedComp.value && selectedComp.value.css || {color:{}}
 })
 
-const clickIcon = function (key, value) {
+const clickIcon = function (key: string | number, value: any) {
     if (!selectedComp.value) return false
     if (css.value[key] === value) {
         css.value[key] = ''

@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import designer from '@molianDesigner/index.vue'
 </script>
 

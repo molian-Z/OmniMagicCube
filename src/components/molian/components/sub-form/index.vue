@@ -1,40 +1,33 @@
-<script setup>
-import { ref, inject, defineProps, defineEmits, defineExpose } from 'vue'
+<script setup lang="ts">
+import { inject, defineProps, defineEmits, defineExpose, withDefaults } from 'vue'
 import { useVModel } from '@vueuse/core'
-const t = inject('mlLangs')
-const customComps = inject('customComps')
+const t:any = inject('mlLangs')
+const customComps: any = inject('customComps')
 const { customButton } = customComps
-const props = defineProps({
-  modelValue: {
-    type: Array,
-    default: () => []
-  },
-  columns: {
-    type: Array,
-    default: () => []
-  },
-  isAdd: {
-    type: Boolean,
-    default: true
-  },
-  isAppend: {
-    type: Boolean,
-    default: true
-  },
-  isDelete: {
-    type: Boolean,
-    default: true
-  }
+const props = withDefaults(defineProps<{
+  modelValue: any,
+  columns: any,
+  isAdd: boolean,
+  isAppend: boolean,
+  isDelete: boolean
+}>(), {
+  modelValue: [],
+  columns: [],
+  isAdd: true,
+  isAppend: true,
+  isDelete: true
 })
 const emit = defineEmits(['update:modelValue'])
 const data = useVModel(props, 'modelValue', emit)
 
 const setData = () => {
-  const defaultcolumns = props.columns.filter(fitem => {
+  const defaultcolumns = props.columns.filter((fitem: any) => {
     return fitem.default
   })
-  const obj = {}
-  defaultcolumns.forEach(item => {
+  const obj: {
+    [key: string]: any
+  } = {}
+  defaultcolumns.forEach((item: any) => {
     obj[item.prop] = item.default
   })
   return obj
@@ -46,13 +39,13 @@ const addNew = () => {
   }
 }
 
-const appendRow = (index) => {
+const appendRow = (index: number) => {
   if (props.isAppend) {
     data.value.splice(index, 0, setData())
   }
 }
 
-const deleteRow = (index) => {
+const deleteRow = (index: number) => {
   if (props.isDelete) {
     data.value.splice(index, 1)
   }
@@ -60,12 +53,12 @@ const deleteRow = (index) => {
 
 const validate = () => {
   let btn = true
-  const requiredColumn = props.columns.filter(fitem => {
+  const requiredColumn = props.columns.filter((fitem: any) => {
     return !!fitem.required
   })
   for (let index = 0; index < data.value.length; index++) {
-    const item = data.value[index];
-    requiredColumn.forEach(fitem => {
+    const item: any = data.value[index];
+    requiredColumn.forEach((fitem: any) => {
       if (!item[fitem.prop]) {
         btn = false
       }

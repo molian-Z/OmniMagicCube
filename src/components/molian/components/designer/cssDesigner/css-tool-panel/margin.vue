@@ -1,9 +1,9 @@
-<script setup>
+<script setup lang="ts">
 import { ref, computed, inject, watch } from 'vue'
 import { selectedComp } from '@molianComps/designer/designerData'
 import svgIcon from '@molianComps/svg-icon/index.vue'
-const customComps = inject('customComps')
-const t = inject('mlLangs')
+const customComps:any = inject('customComps')
+const t:any = inject('mlLangs')
 const { customInput } = customComps
 
 const css = computed(() => {
@@ -22,11 +22,11 @@ watch(selectedComp, (val) => {
       if (val.css[item]) {
         let value = ''
         let btn = false
-        val.css[item].forEach((item, index) => {
+        val.css[item].forEach((fitem: string, index: number) => {
           if (index === 0) {
-            value = item
+            value = fitem
           }
-          if (item !== value) {
+          if (fitem !== value) {
             btn = true
           }
         })
@@ -40,7 +40,7 @@ watch(selectedComp, (val) => {
   }
 })
 
-const changeMarign = function (type) {
+const changeMarign = function (type: string) {
   let val = css.value[type][0]
   css.value[type] = [val, val, val, val]
   if (type === 'margin') {
@@ -50,7 +50,7 @@ const changeMarign = function (type) {
   }
 }
 
-const updateModelValue = function (prop, obj) {
+const updateModelValue = function (prop: string, obj: { value: any; index: string | number; }) {
   if (css.value && !isNaN(Number(obj.value))) {
     let newVal = Number(obj.value).toString()
     if (prop === 'margin' && activeMargin.value || prop === 'padding' && activePadding.value) {

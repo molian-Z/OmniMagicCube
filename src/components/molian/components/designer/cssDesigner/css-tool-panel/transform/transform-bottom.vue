@@ -1,9 +1,9 @@
-<script setup>
+<script setup lang="ts">
 import { ref, computed, inject, onMounted } from 'vue'
 import { selectedComp } from '@molianComps/designer/designerData'
 import svgIcon from '@molianComps/svg-icon/index.vue'
-const customComps = inject('customComps')
-const t = inject('mlLangs')
+const customComps:any = inject('customComps')
+const t:any = inject('mlLangs')
 const { customSelect } = customComps
 
 const css = computed(() => {
@@ -39,7 +39,7 @@ const topOptions = ref([{
     value: 'top2bottom'
 }])
 
-const svgClick = function (val) {
+const svgClick = function (val: string) {
     const { constY, constX } = css.value
     if (['top', 'bottom', 'top2bottom'].indexOf(val) > -1) {
         if (constY === 'top' && val === 'bottom' || constY === 'bottom' && val === 'top'){

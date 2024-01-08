@@ -1,5 +1,5 @@
-<script setup>
-import { ref, inject, defineProps, defineEmits } from 'vue';
+<script setup lang="ts">
+import { ref, computed, inject, defineProps, defineEmits } from 'vue';
 import codeEditor from '@molianComps/code-editor/index.vue'
 import tagInput from '@molianComps/tag-input/index.vue'
 const props = defineProps({
@@ -25,21 +25,30 @@ const props = defineProps({
   }
 })
 const emits = defineEmits(['update:modelValue'])
-const customComps = inject('customComps')
+const customComps:any = inject('customComps')
 const { customButton, customDialog, customRadioGroup, customRadioButton } = customComps
 const codeMode = ref('javascript')
-const t = inject('mlLangs')
+const t:any = inject('mlLangs')
 const visible = ref(false)
-const codeObj = ref({})
+const codeObj = ref<any>({})
 
-const showDialog = (type) => {
+const newValue:any = computed(()=>{
+  return props.modelValue || {}
+})
+
+const showDialog = (type: string) => {
   if (type === 'object' || type === 'array') {
     codeMode.value = "json"
-    codeObj.value = props.modelValue || ''
+    codeObj.value = props.modelValue || type === 'object' ? {} : []
   } else {
     codeMode.value = "javascript"
-    if (typeof props.modelValue !== 'object') {
-      const obj = {
+    if (typeof props.modelValue !== 'object' || !props.modelValue) {
+      const obj:{
+        code: string,
+        codeVar: string[],
+        functionMode: string,
+        modifiers?: string[]
+      } = {
         code: '',
         codeVar: [],
         functionMode: 'function'
@@ -61,14 +70,14 @@ const saveCode = () => {
 }
 
 // 追加变量
-const appendCodeVar = (val) => {
+const appendCodeVar = (val: string[]) => {
   emits('update:modelValue', {
     ...codeObj.value,
     codeVar: val
   })
 }
 
-const updateCacheCode = (val) => {
+const updateCacheCode = (val: string) => {
   if (codeMode.value === 'json') {
     codeObj.value = val
   } else if (codeMode.value === 'javascript') {
@@ -77,7 +86,7 @@ const updateCacheCode = (val) => {
 }
 
 
-const appendModifiers = (val) => {
+const appendModifiers = (val: string[]) => {
   if (!props.isModifiers) return false
   emits('update:modelValue', {
     ...codeObj.value,
@@ -87,9 +96,9 @@ const appendModifiers = (val) => {
 </script>
 
 <template>
-  <customButton :theme="typeof codeObj === 'object' && codeObj.code ? 'warning' : 'primary'" size="small"
+  <customButton :theme="newValue.code ? 'warning' : 'primary'" size="small"
     @click="showDialog(mode)">
-    {{ codeObj.code ? t('options.modify') : t('options.edit') }}{{ t(`options.${mode}`) }}
+    {{ newValue.code ? t('options.modify') : t('options.edit') }}{{ t(`options.${mode}`) }}
 
     <customDialog appendToBody :header="keyName" width="80%" :close-on-click-modal="false" @escKeydown="visible = false"
       @closeBtnClick="visible = false" :visible="visible" destroyOnClose>

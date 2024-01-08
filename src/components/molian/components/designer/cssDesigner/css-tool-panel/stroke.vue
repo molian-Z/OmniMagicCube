@@ -1,10 +1,10 @@
-<script setup>
+<script setup lang="ts">
 import { inject, ref, computed } from 'vue'
 import { selectedComp } from '@molianComps/designer/designerData'
 import colorPicker from '@molianComps/color-picker/index.vue'
 import svgIcon from '@molianComps/svg-icon/index.vue'
-const customComps = inject('customComps')
-const t = inject('mlLangs')
+const customComps:any = inject('customComps')
+const t:any = inject('mlLangs')
 const { customInput, customSelect, customRadioButton, customRadioGroup } = customComps
 const css = computed(() => {
     return selectedComp.value && selectedComp.value.css && selectedComp.value.css.border || []
@@ -24,13 +24,13 @@ const addBorder = function () {
     })
 }
 
-const updateBorder = function (props, val) {
+const updateBorder = function (props: { width: string; }, val: any) {
     if (!isNaN(Number(val))) {
         props.width = Number(val).toString()
     }
 }
 
-const deleteBorder = function (index) {
+const deleteBorder = function (index: number) {
     if (!selectedComp.value) return false
     css.value.splice(index, 1)
 }

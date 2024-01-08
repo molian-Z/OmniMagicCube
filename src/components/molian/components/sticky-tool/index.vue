@@ -1,25 +1,18 @@
-<script setup>
-import { ref, defineProps, nextTick, defineExpose, defineEmits, computed } from 'vue'
+<script setup lang="ts">
+import { ref, defineProps, nextTick, defineExpose, defineEmits, computed, withDefaults } from 'vue'
 import { useDraggable, useElementBounding, useWindowSize } from '@vueuse/core'
 import svgIcon from '@molianComps/svg-icon/index.vue'
 
-const props = defineProps({
-    shape: {
-        type: String,
-        default: 'round'
-    },
-    offset: {
-        type: Array,
-        default: function () { return [0, 15] }
-    },
-    list: {
-        type: Array,
-        default: () => []
-    },
-    modelValue: {
-        type: String,
-        default: ''
-    }
+const props = withDefaults(defineProps<{
+    shape?: 'round' | 'base',
+    offset: any,
+    list?: any;
+    modelValue?: string;
+}>(), {
+    shape: 'round',
+    offset: [0, 15],
+    list: [],
+    modelValue: ''
 })
 const emit = defineEmits(['clickTool', 'update:modelValue'])
 const activeName = computed({
@@ -35,11 +28,11 @@ const { x, y, style } = useDraggable(el)
 nextTick(() => {
     const pageSize = useWindowSize()
     const { width, height } = useElementBounding(el)
-    x.value = pageSize.width.value / 2  -  (width.value / 2) - props.offset[0]
+    x.value = pageSize.width.value / 2 - (width.value / 2) - props.offset[0]
     y.value = pageSize.height.value - height.value - props.offset[1]
 })
 
-const setActive = (item, index) => {
+const setActive = (item: { name: string; }, index: any) => {
     activeName.value = item.name
     emit('clickTool', { item, index })
 }
@@ -126,9 +119,11 @@ defineExpose({
 
         &:hover {
             border-color: var(--ml-primary-color-2);
-            .sticky-tool-content-svg-icon{
-                fill:var(--ml-primary-color);
+
+            .sticky-tool-content-svg-icon {
+                fill: var(--ml-primary-color);
             }
+
             color: var(--ml-primary-color);
         }
 

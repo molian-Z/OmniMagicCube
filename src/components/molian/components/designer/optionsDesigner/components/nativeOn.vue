@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { computed, defineOptions, inject,ref } from 'vue';
 import anyData2Form from '@molianComps/any-data2form/index.vue'
 import { selectedComp } from '../../designerData'
@@ -6,8 +6,8 @@ import { defaultNativeEventMap } from '@molian/utils/defaultData'
 defineOptions({
   name: 'basicComp'
 })
-const customComps = inject('customComps')
-const t = inject('mlLangs')
+const customComps:any = inject('customComps')
+const t:any = inject('mlLangs')
 const { customButton, customInput } = customComps
 const appendOnInput = ref('')
 const currentOn = computed(() => {

@@ -1,38 +1,34 @@
-<script setup>
-import { ref, computed, defineOptions, inject, defineProps } from 'vue';
+<script setup lang="ts">
+import { ref, computed, defineOptions, inject, defineProps, withDefaults } from 'vue';
 import { deepObjToArray } from '@molian/utils/util'
 import svgIcon from '@molianComps/svg-icon/index.vue'
 import codeInput from '@molianComps/code-input/index.vue'
 import { globalAttrs } from '../designer/designerData'
-const t = inject('mlLangs')
-const customComps = inject('customComps')
+const t: any = inject('mlLangs')
+const message: any = inject('ml-message')
+const customComps: any = inject('customComps')
 const { customInputNumber, customInput, customSwitch, customSelect, customCascader } = customComps
-const props = defineProps({
-  modelValue: {
-    type: [String, Number, Boolean, Object, Array],
-    default: ''
-  },
-  keyName: {
-    type: String,
-    default: ''
-  },
+const props = withDefaults(defineProps<{
+  modelValue: any;
+  keyName: string|number|any;
   attrs: {
-    type: Object,
-    default: () => ({})
-  },
+    [key: string]: any
+  } | any;
   propData: {
-    type: Object,
-    default: () => ({})
-  },
+    [key: string]: any
+  } | any;
   selectedComp: {
-    type: Object,
-    default: () => { }
-  },
-  isModifiers: {
-    type: Boolean,
-    default: true
-  }
-})
+    [key: string]: any
+  } | any;
+  isModifiers: boolean
+}>(), {
+  modelValue: '',
+  attrs: {},
+  propData: {},
+  selectedComp: {},
+  isModifiers: true
+}
+)
 defineOptions({
   slotsOption: {
     default: true
@@ -51,7 +47,19 @@ const value = computed({
   }
 })
 
-const getOptionItemI18n = (optionItems) => {
+const variableValue = computed({
+  get() {
+    return !!value.value && value.value || []
+  },
+  set(val) {
+    emit('update:modelValue', {
+      type: type.value,
+      value: val
+    })
+  }
+})
+
+const getOptionItemI18n = (optionItems: any[]) => {
   return optionItems.map(item => {
     const langStr = t('attrs.' + props.keyName + '.' + item)
     return {
@@ -78,7 +86,11 @@ const variableList = computed(() => {
   return Object.keys(globalAttrs.variable).map(key => {
     const variableValue = globalAttrs.variable[key]
     if (variableValue.type === 'object') {
-      const currentObjValue = {
+      const currentObjValue: {
+        label: string;
+        value: string;
+        children?: any;
+      } = {
         label: globalAttrs.variable[key].label || key,
         value: key
       }
@@ -101,7 +113,7 @@ const variableList = computed(() => {
   })
 })
 
-const getI18n = (key, name) => {
+const getI18n = (key: string | number, name: string) => {
   const langStr = t('attrs.' + name + '.' + key)
   return langStr === key ? t('attrs.' + key) : langStr
 }
@@ -120,8 +132,8 @@ const tabType = () => {
     <div class="data2form-item__label">{{ getI18n(keyName, selectedComp && selectedComp.name || '') }}</div>
     <div class="data2form-item__input">
       <transition name="fade">
-        <customCascader size="small" :options="variableList" :checkStrictly="true" v-model="value"
-          v-if="type === 'variable'" />
+        <customCascader size="small" :options="variableList" :checkStrictly="true" :clearable="true"
+          v-model="variableValue" valueType="full" v-if="type === 'variable'" />
         <customSwitch size="small" v-model="value" v-else-if="type === 'boolean'" />
         <customSelect :options="getOptionItemI18n(propData.optionItems)" size="small" v-model="value"
           v-else-if="propData.optionItems" />

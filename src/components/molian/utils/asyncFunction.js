@@ -1,1 +1,0 @@
-module.exports = Object.getPrototypeOf(async function(){}).constructor

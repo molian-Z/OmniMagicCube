@@ -1,8 +1,8 @@
-<script setup>
+<script setup lang="ts">
 import { ref, inject } from 'vue'
 import stickyTool from '@molianComps/sticky-tool/index.vue'
 import { globalMenu } from '../designerData'
-const t = inject('mlLangs')
+const t:any = inject('mlLangs')
 const menus = ref([{
     icon: 'style',
     text: t('globalTool.style'),

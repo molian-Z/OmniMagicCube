@@ -1,11 +1,11 @@
-<script setup>
+<script setup lang="ts">
 import { inject, computed } from 'vue'
 import { selectedComp } from '@molianComps/designer/designerData'
 import colorPicker from '@molianComps/color-picker/index.vue';
 import svgIcon from '@molianComps/svg-icon/index.vue'
 
-const customComps = inject('customComps')
-const t = inject('mlLangs')
+const customComps:any = inject('customComps')
+const t:any = inject('mlLangs')
 const { customInput, customSelect, customRadioButton, customRadioGroup } = customComps
 const css = computed(() => {
     return selectedComp.value && selectedComp.value.css || { mixBlendMode: {}, blur:{},boxShadow:[] }
@@ -26,11 +26,11 @@ const mixBlendModeData = computed(() => {
     })
 })
 
-const iconClick = function (prop) {
+const iconClick = function (prop: string | number) {
     css.value[prop].isShow = !css.value[prop].isShow
 }
 
-const iconClickVar = function(prop){
+const iconClickVar = function(prop: { isShow: boolean; }){
     prop.isShow = !prop.isShow
 }
 
@@ -47,18 +47,18 @@ const addShadow = function () {
     })
 }
 
-const deleteShadow = function(index){
+const deleteShadow = function(index: any){
     if (!selectedComp.value) return false
     css.value.boxShadow.splice(index,1)
 }
 
-const updateModelValue = function (props,val) {
+const updateModelValue = function (props: string | number,val: any) {
     if (!isNaN(Number(val)) && Number(val) <= 100 && Number(val) >= 0) {
         css.value[props] = Number(val).toString()
     }
 }
 
-const updateBlurValue = function(val){
+const updateBlurValue = function(val: any){
     if (!isNaN(Number(val))) {
         css.value.blur.modelValue = Number(val).toString()
     }
