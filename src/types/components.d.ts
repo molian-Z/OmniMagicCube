@@ -20,7 +20,6 @@ declare module 'vue' {
     Create: typeof import('./../components/molian/components/designer/globalDesigner/global-panel/create.vue')['default']
     CssDesigner: typeof import('./../components/molian/components/designer/cssDesigner/index.vue')['default']
     Data2input: typeof import('./../components/molian/components/data2input/index.vue')['default']
-    DeepTree: typeof import('./../components/molian/components/designer/containerDesigner/treeDir/deepTree.vue')['default']
     DeepTreeToData: typeof import('./../components/molian/components/designer/containerDesigner/treeDir/deepTreeToData.vue')['default']
     DeepTreeToDesigner: typeof import('./../components/molian/components/designer/containerDesigner/deepTreeToDesigner.vue')['default']
     DeepTreeToRender: typeof import('./../components/molian/components/render/deepTreeToRender.vue')['default']
