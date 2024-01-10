@@ -1,3 +1,4 @@
+import { onMounted, onBeforeMount, onBeforeUnmount, onUpdated, onBeforeUpdate, onUnmounted, onErrorCaptured, onActivated, onDeactivated } from 'vue'
 export type IDefaultCategory = {
     icon?: string;
     name?: string;
@@ -10,6 +11,14 @@ export interface IDefaultAttrsMap {
 
 export interface IEventMap {
     [key: string]: (string)[] | string;
+}
+
+export interface ILifecycleMap {
+    [key: string]: {
+        codeVar: string[];
+        code: string;
+        function?: any;
+    };
 }
 
 export interface IDefaultSlotsMap {
@@ -198,18 +207,60 @@ export const defaultNativeEventMap: IEventMap = {
 /**
  * defaultLifecycleMap 默认生命周期映射表
  */
-export const defaultLifecycleMap: IEventMap = {
-    beforeCreate: "",
-    created: "",
-    beforeMount: "",
-    mounted: "",
-    beforeUpdate: "",
-    updated: "",
-    beforeUnmount: "",
-    unmounted: "",
-    errorCaptured: ['err', 'vm', 'info'],
-    activated: "",
-    deactivated: ""
+export const defaultLifecycleMap: ILifecycleMap = {
+    beforeCreate: {
+        codeVar: [],
+        code: ''
+    },
+    created: {
+        codeVar: [],
+        code: ''
+    },
+    beforeMount: {
+        codeVar: [],
+        code: '',
+        function:onBeforeMount,
+    },
+    mounted: {
+        codeVar: [],
+        code: '',
+        function:onMounted,
+    },
+    beforeUpdate: {
+        codeVar: [],
+        code: '',
+        function:onBeforeUpdate,
+    },
+    updated: {
+        codeVar: [],
+        code: '',
+        function:onUpdated,
+    },
+    beforeUnmount: {
+        codeVar: [],
+        code: '',
+        function:onBeforeUnmount,
+    },
+    unmounted: {
+        codeVar: [],
+        code: '',
+        function:onUnmounted,
+    },
+    errorCaptured: {
+        codeVar: ['err', 'vm', 'info'],
+        code: '',
+        function:onErrorCaptured,
+    },
+    activated: {
+        codeVar: [],
+        code: '',
+        function:onActivated,
+    },
+    deactivated: {
+        codeVar: [],
+        code: '',
+        function:onDeactivated,
+    }
 }
 
 /**
@@ -570,9 +621,9 @@ export const uiMapping: IUiMapping = {
             "Select": {
                 "modelValue": "value",
                 "onUpdate:modelValue": "onUpdate:value",
-                "size":{
-                    "size":"small",
-                    "virtualScroll":false
+                "size": {
+                    "size": "small",
+                    "virtualScroll": false
                 }
             },
             "Switch": {
@@ -598,10 +649,10 @@ export const uiMapping: IUiMapping = {
                 "content": "default",
                 "trigger": {
                     "trigger": "click",
-                    "style":"min-width:180px;"
+                    "style": "min-width:180px;"
                 },
-                "visible":"show",
-                "onUpdate:visible":"onUpdate:show"
+                "visible": "show",
+                "onUpdate:visible": "onUpdate:show"
             },
             "RadioGroup": {
                 "modelValue": 'value',
@@ -615,41 +666,41 @@ export const uiMapping: IUiMapping = {
                 "checkStrictly": {
                     "checkStrategy": "all",
                     "separator": ".",
-                    "virtualScroll":false,
-                    "cascade":false
+                    "virtualScroll": false,
+                    "cascade": false
                 },
-                "modelValue": (value:string[])=>{
+                "modelValue": (value: string[]) => {
                     return {
-                        "value":value[value.length -1]
+                        "value": value[value.length - 1]
                     }
                 },
                 "onUpdate:modelValue": "onUpdate:value",
             },
             "CascaderPanel": {
-                "component":"Cascader",
+                "component": "Cascader",
                 "optionItems": "options",
                 "checkStrictly": {
                     "checkStrategy": "all",
                     "separator": ".",
-                    "virtualScroll":false,
-                    "cascade":false
+                    "virtualScroll": false,
+                    "cascade": false
                 },
-                "modelValue": (value:string[])=>{
+                "modelValue": (value: string[]) => {
                     return {
-                        "value":value[value.length -1]
+                        "value": value[value.length - 1]
                     }
                 },
                 "onUpdate:modelValue": "onUpdate:value",
             },
             "Dropdown": {
-                "optionItems": (data)=>{
+                "optionItems": (data) => {
                     return {
-                        "options":data.map(item =>{
+                        "options": data.map(item => {
                             return {
-                                label:item.label,
-                                key:item.value,
-                                disabled:item.disabled,
-                                props:{
+                                label: item.label,
+                                key: item.value,
+                                disabled: item.disabled,
+                                props: {
                                     onClick: item.onclick,
                                 }
                             }
@@ -658,14 +709,14 @@ export const uiMapping: IUiMapping = {
                 }
             },
             "Dialog": {
-                "component":"Modal",
+                "component": "Modal",
                 "visible": "show",
                 "onUpdate:visible": "onUpdate:show",
                 "destroyOnClose": "destroy-on-close",
-                "appendToBody":{
+                "appendToBody": {
                     "preset": "dialog",
-                    "style":{
-                        "width":"80vw"
+                    "style": {
+                        "width": "80vw"
                     },
                 },
                 "header": "title",

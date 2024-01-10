@@ -87,9 +87,10 @@ export const createJS = function (compObj: IComp, globalAttrs: { lifecycle: any;
     }).map(key => {
       const rename = `on` + key.charAt(0).toUpperCase() + key.slice(1);
       importModule.vue.push(rename)
-      if(lifecycle[key].value && lifecycle[key].value.code){
+      const {code, functionMode} = lifecycle[key].value || null
+      if(code){
         return `
-  ${rename}${parseJSCode(lifecycle[key].value, "lifecycle")}
+  ${rename}(${functionMode === 'asyncFunction' ? 'async ' : ''}()=>{${code}})
 `}else{
   return ``
 }
@@ -115,7 +116,7 @@ ${jsCode}
       return !!lifecycle[key]
     }).map(key => {
       if(lifecycle[key].value && lifecycle[key].value.code){
-        return `${key}${parseJSCode(lifecycle[key].value, "lifecycle")}`
+        return `${lifecycle[key].value.functionMode === 'asyncFunction' ? 'async ' : ''}${key}${parseJSCode(lifecycle[key].value, "lifecycle")}`
       }else{
         return ``
       }
@@ -231,5 +232,9 @@ const parseJSCode = ({
   codeVar: string[],
   code: string
 }, type = "arrowFunction") => {
-  return `${functionMode === 'asyncFunction' ? 'async ' : ''}${type === 'function' ? 'function' : ''}(${codeVar && codeVar.join(', ') || ''})${type === 'arrowFunction' ? '=>' : ''}{\n${code}\n}`
+  if(type === 'lifecycle'){
+    return `(${codeVar && codeVar.join(', ') || ''}){\n${code}\n}`
+  }else{
+    return `${functionMode === 'asyncFunction' ? 'async ' : ''}${type === 'function' ? 'function' : ''}(${codeVar && codeVar.join(', ') || ''})${type === 'arrowFunction' ? '=>' : ''}{\n${code}\n}`
+  }
 }

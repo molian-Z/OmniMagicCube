@@ -25,14 +25,14 @@ const props = defineProps({
   }
 })
 const emits = defineEmits(['update:modelValue'])
-const customComps:any = inject('customComps')
+const customComps: any = inject('customComps')
 const { customButton, customDialog, customRadioGroup, customRadioButton } = customComps
 const codeMode = ref('javascript')
-const t:any = inject('mlLangs')
+const t: any = inject('mlLangs')
 const visible = ref(false)
 const codeObj = ref<any>({})
 
-const newValue:any = computed(()=>{
+const newValue: any = computed(() => {
   return props.modelValue || {}
 })
 
@@ -47,7 +47,7 @@ const showDialog = (type: string) => {
   } else {
     codeMode.value = "javascript"
     if (typeof props.modelValue !== 'object' || !props.modelValue) {
-      const obj:{
+      const obj: {
         code: string,
         codeVar: string[],
         functionMode: string,
@@ -103,18 +103,19 @@ const appendModifiers = (val: string[]) => {
 </script>
 
 <template>
-  <customButton :theme="newValue.code ? 'warning' : 'primary'" size="small"
-    @click="showDialog(mode)">
+  <customButton :theme="newValue.code ? 'warning' : 'primary'" size="small" @click="showDialog(mode)">
     {{ newValue.code ? t('options.modify') : t('options.edit') }}{{ t(`options.${mode}`) }}
 
     <customDialog appendToBody :header="keyName" width="80%" :close-on-click-modal="false" @escKeydown="visible = false"
       @closeBtnClick="visible = false" v-model:visible="visible" destroyOnClose>
       <template v-if="codeMode === 'javascript'">
         <div class="modeType">
-          <customRadioGroup style="width:160px;" v-model="codeObj.functionMode" variant="primary-filled" size="small">
-            <customRadioButton value="function">{{ t('options.function') }}</customRadioButton>
-            <customRadioButton value="asyncFunction">{{ t('options.asyncFunction') }}</customRadioButton>
-          </customRadioGroup>
+          <div style="width:160px;">
+            <customRadioGroup v-model="codeObj.functionMode" variant="primary-filled" size="small">
+              <customRadioButton value="function">{{ t('options.function') }}</customRadioButton>
+              <customRadioButton value="asyncFunction">{{ t('options.asyncFunction') }}</customRadioButton>
+            </customRadioGroup>
+          </div>
           <tagInput v-if="isModifiers" :inputText="t('options.addNewModifier')" class="tag-modifiers"
             :modelValue="codeObj.modifiers" @update:modelValue="appendModifiers" />
           <tagInput v-if="isVariable" :inputText="t('options.addNewVar')" class="tagInput" :modelValue="codeObj.codeVar"

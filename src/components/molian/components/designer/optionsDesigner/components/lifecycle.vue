@@ -16,7 +16,7 @@ const currentEmits = computed(() => {
     return {
       key: item,
       type: 'function',
-      codeVar: defaultLifecycleMap[item]
+      codeVar: defaultLifecycleMap[item].codeVar
     }
   })
 })
