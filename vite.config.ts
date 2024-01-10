@@ -35,8 +35,6 @@ export default defineConfig({
     alias: {
       "@": resolve(__dirname, 'src'), // 路径别名
       "@molian": resolve(__dirname, 'src/components/molian'),
-      "@molianDesigner": resolve(__dirname, 'src/components/molian/components/designer'),
-      "@molianRender": resolve(__dirname, 'src/components/molian/components/render'),
       "@molianComps": resolve(__dirname, 'src/components/molian/components'),
     }
   },

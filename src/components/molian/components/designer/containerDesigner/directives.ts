@@ -142,7 +142,7 @@ export const directives = {
       const attrObj = {
         id: props.comp.id,
         ['data-key']: props.comp.key,
-        style: { ...parseStyle(props.comp.css, null), ...!isShow.value && { display: 'none' } },
+        style: { ...parseStyle(props.comp.css, props.comp.key), ...!isShow.value && { display: 'none' } },
         ...propsData,
         // onMouseenter: withModifiers(($event) => onMouseEnter($event, props.comp, props.index), ['self', 'native']), // 暂且取消经过选择
         onClick: withModifiers(($event: any) => onClick($event, props.comp, props.index), ['native']),
@@ -168,8 +168,16 @@ export const directives = {
       }
       return h(currentTag, attrObj, nowSlots)
     }
+    const forData = function(){
+      const type = typeof props.comp.directives.for.value
+      if(type === 'string'){
+        return []
+      }else{
+        return props.comp.directives.for.value
+      }
+    }
     return () => [
-      isFor.value && props.comp.directives.for.data.map((item: any, index: any) => {
+      isFor.value && forData().map((item: any, index: any) => {
         return renderDom({
           row: item,
           index,

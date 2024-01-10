@@ -44,9 +44,13 @@ const type = computed(() => {
 .data2input-item {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   background-color: var(--ml-bg-color);
   padding: var(--ml-pd-base);
   border-radius: var(--ml-radius-base);
+  width: 100%;
+  &> :not(button){
+    width: 100%;
+  }
 }
 </style>

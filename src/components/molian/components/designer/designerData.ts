@@ -10,6 +10,7 @@ import {
     useMagicKeys,
     whenever
 } from '@vueuse/core'
+import { hoverNodes, hoverIndex, resetDraggable } from './draggable'
 
 // 菜单交互
 export const hiddenAllPanel = ref(false)
@@ -63,7 +64,7 @@ export const selectedComp = ref<any>(null)
 const keys = useMagicKeys({
     passive: false,
     onEventFired(e) {
-        if (e.ctrlKey && ['a', 's', 'd', 'f', 'z', 'y', 'c', 'v', 'b'].indexOf(e.key) > -1 && e.type === 'keydown') {
+        if (e.ctrlKey && ['a', 's', 'd', 'f', 'z', 'y', 'b'].indexOf(e.key) > -1 && e.type === 'keydown') {
             e.preventDefault();
             e.stopPropagation();
         }
@@ -79,13 +80,21 @@ whenever(keys.ctrl_s, () => globalMenu.value = 'option');
 whenever(keys.ctrl_d, () => globalMenu.value = 'action');
 whenever(keys.ctrl_f, () => globalMenu.value = 'global');
 // 复制
-whenever(keys.ctrl_c, () => console.log());
+// whenever(keys.ctrl_c, () => console.log());
 // 粘贴
-whenever(keys.ctrl_v, () => console.log());
+// whenever(keys.ctrl_v, () => console.log());
 // 显示树面板
 whenever(keys.ctrl_b, () => {
     treeDirRef.value.switchExpand(!treeDirRef.value.expand)
 });
+
+whenever(keys.delete, () => {
+    console.log(hoverNodes,hoverIndex)
+    if (hoverNodes.value && hoverNodes.value) {
+        hoverNodes.value.splice(hoverIndex.value, 1)
+    }
+    resetDraggable()
+})
 
 // 创建组件
 export const createComp = function (comp: {

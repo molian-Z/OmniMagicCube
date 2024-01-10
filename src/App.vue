@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import designer from '@molianDesigner/index.vue'
+import designer from '@molianComps/designer/index.vue'
 </script>
 
 <template>
@@ -7,7 +7,7 @@ import designer from '@molianDesigner/index.vue'
 </template>
 
 <style>
-body{
+body {
   background: #F9F9F9;
   overflow: hidden;
 }

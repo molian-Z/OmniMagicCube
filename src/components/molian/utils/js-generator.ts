@@ -61,19 +61,23 @@ export const createJS = function (compObj: IComp, globalAttrs: { lifecycle: any;
 
     // 变量生成
     const variableStr = Object.keys(variable).map(key => {
-      const value = variable[key]
-      if (value.type === 'computed') {
+      const type = variable[key].type
+      let value = variable[key].value
+      if(typeof value === 'object'){
+        value = JSON.stringify(value)
+      }
+      if (type === 'computed') {
         if(importModule.vue.indexOf("computed") === -1){
           importModule.vue.push("computed")
         }
-        return `  const ${key} = computed(()=> {${value.value && value.value.code || "return null" }})\n`
-      } else if (value.type === 'function') {
-        return `  const ${key} = ${parseJSCode(value.value)}\n`
+        return `  const ${key} = computed(()=> {${value && value.code || "return null" }})\n`
+      } else if (type === 'function') {
+        return `  const ${key} = ${parseJSCode(value)}\n`
       } else {
         if(importModule.vue.indexOf("ref") === -1){
           importModule.vue.push("ref")
         }
-        return `  const ${key} = ref(${value.value || 'null' })\n`
+        return `  const ${key} = ref(${value || 'null' })\n`
       }
     }).join('\n')
 
@@ -123,15 +127,19 @@ ${jsCode}
       methods: "",
     }
     Object.keys(variable).forEach(key => {
-      const value = variable[key]
-      if (value.type === 'computed') {
-        variableObj.computed += `${key}() {${value.value && value.value.code || "return null" }}\n`
-      } else if (value.type === 'function') {
-        if(value.value && value.value.code){
-          variableObj.methods += `  ['${key}']: ${parseJSCode(value.value)},\n`
+      const type = variable[key].type
+      let value = variable[key].value
+      if(typeof value === 'object'){
+        value = JSON.stringify(value)
+      }
+      if (type === 'computed') {
+        variableObj.computed += `${key}() {${value && value.code || "return null" }}\n`
+      } else if (type === 'function') {
+        if(value && value.code){
+          variableObj.methods += `  ['${key}']: ${parseJSCode(value)},\n`
         }
       } else {
-        variableObj.data += `"${key}": ${value.value || 'null' },\n`
+        variableObj.data += `"${key}": ${value || 'null' },\n`
       }
     })
     // jsCode 写入

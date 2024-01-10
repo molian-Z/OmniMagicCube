@@ -10,7 +10,7 @@ import render from '@molianComps/render/index.vue'
 
 const customComps:any = inject('customComps')
 const t:any = inject('mlLangs')
-const { customButton, customTooltip } = customComps
+const { customButton, customTooltip, customDialog } = customComps
 const message:any = inject('ml-message')
 const {
   isSupported,
@@ -96,16 +96,16 @@ const showRender = function(){
       </customButton>
     </div>
   </div>
-  <el-dialog v-model="showDialog" title="生成SFC" width="800px" append-to-body destroyOnClose>
+  <customDialog appendToBody header="生成SFC" width="80%" :close-on-click-modal="false" @escKeydown="showDialog = false"
+      @closeBtnClick="showDialog = false" v-model:visible="showDialog" destroyOnClose>
     <div>
       <codeEditor v-model="codeData" :lang="langMode" />
     </div>
-  </el-dialog>
-  <el-dialog v-model="showRenderDialog" title="同步render" width="1200px" append-to-body destroyOnClose>
-    <div>
-      <render :modelValue="modelValue" />
-    </div>
-  </el-dialog>
+  </customDialog>
+  <customDialog  appendToBody header="同步render" width="1200px" :close-on-click-modal="false" @escKeydown="showRenderDialog = false"
+      @closeBtnClick="showRenderDialog = false" v-model:visible="showRenderDialog" destroyOnClose>
+      <render :modelValue="modelValue" :globalAttrs="globalAttrs" />
+  </customDialog>
 </template>
 
 <style scoped lang="scss">

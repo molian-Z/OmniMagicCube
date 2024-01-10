@@ -6,9 +6,6 @@ import deepTree from './deepTreeToData.vue'
 import floatBall from '@molianComps/float-ball/index.vue'
 
 const t: any = inject('mlLangs')
-const onActive = (value: any) => {
-  selectedComp.value = value
-}
 
 onClickOutside(treeDirRef, () => {
   if (treeDirRef.value.expand) {
@@ -20,7 +17,7 @@ onClickOutside(treeDirRef, () => {
 <template>
   <floatBall :title="t('container.treeDir')" ref="treeDirRef">
     <div class="tree-dir-container">
-      <deepTree v-model="modelValue" :selectedComp="selectedComp" @activeNode="onActive"></deepTree>
+      <deepTree v-model="modelValue" @activeNode="onActive"></deepTree>
     </div>
   </floatBall>
 </template>

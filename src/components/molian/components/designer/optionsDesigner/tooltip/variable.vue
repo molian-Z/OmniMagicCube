@@ -103,7 +103,7 @@ const newProp = function (column: { prop: string; }, item: { type: any; }) {
 </script>
 <template>
   <customDialog appendToBody :header="t('options.variable')" width="80%" :close-on-click-modal="false" @escKeydown="visible = false"
-    @closeBtnClick="visible = false" :visible="visible">
+    @closeBtnClick="visible = false" v-model:visible="visible">
     <subForm ref="subFormRef" :columns="subFormColumns" v-model="modelValue">
       <template #item="{ column, item }">
         <data2input v-model="item[column.prop]" :propData="newProp(column, item)"></data2input>

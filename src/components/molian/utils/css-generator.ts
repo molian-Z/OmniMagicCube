@@ -2,7 +2,7 @@ import {
   toKebabCase
 } from './util'
 import { useElementBounding } from '@vueuse/core'
-import { compsRef } from '@molianDesigner/designerData'
+import { compsRef } from '@molianComps/designer/designerData'
 export interface IStyleMap {
   opacity?: IOpacity;
   rotate?: IOpacity;
@@ -47,6 +47,12 @@ const suffix: {
   'paragraphSpacing': '%',
 }
 const styleMap: IStyleMap = {
+  moveX:{
+    value: ()=>''
+  },
+  moveY:{
+    value: ()=>''
+  },
   opacity: {
     prop: 'opacity',
     value: function (val: string) {
@@ -99,11 +105,11 @@ const styleMap: IStyleMap = {
   // 暂不转换xy,实际使用应根据组件因素考虑是否替换为margin-left、margin-top
   constX: {
     rawValue: function (val: string, obj: { moveX: string; }, key: any) {
-      if (!obj.moveX || obj.moveX == '0') return ''
+      if (!obj.moveX || obj.moveX == '0' && !compsRef[key]) return ''
       const elementBounding: {
         left: any;
         right: any;
-      } = useElementBounding(compsRef[key])
+      } = useElementBounding(compsRef[key] && compsRef[key].$el && compsRef[key].$el.nextElementSibling)
       const { left, right } = elementBounding
       if (val === 'left') {
         return {
@@ -123,11 +129,11 @@ const styleMap: IStyleMap = {
   },
   constY: {
     rawValue: function (val: string, obj: { moveY: string; }, key: any) {
-      if (!obj.moveY || obj.moveY == '0') return ''
+      if (!obj.moveY || obj.moveY == '0' && !compsRef[key]) return ''
       const elementBounding:{
         top: any;
         bottom: any;
-      } = useElementBounding(compsRef[key])
+      } = useElementBounding(compsRef[key] && compsRef[key].$el && compsRef[key].$el.nextElementSibling)
       const { bottom, top } = elementBounding
       if (val === 'top') {
         return {
@@ -203,10 +209,9 @@ export const parseStyle = function (styleObj: { [x: string]: any; }, compKey: an
     if (Object.hasOwnProperty.call(styleObj, key)) {
       // 获取属性值
       const val = styleObj[key];
-
       // 如果属性值为空，则跳过当前循环
       if (!val) continue
-
+      
       // 如果styleMap对象中存在当前属性
       if (styleMap[key]) {
         // 如果属性值是数组

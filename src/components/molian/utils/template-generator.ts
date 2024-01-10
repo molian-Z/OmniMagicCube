@@ -54,7 +54,7 @@ function parseTemplate(obj: { tag: any; attrs: any; on: any; nativeOn: any; dire
   templateStr += `\n<${obj.tag}`
   if (obj.id) {
     // 如果存在id属性
-    templateStr += ` id="${obj.id}"`
+    templateStr += ` ref="${obj.id}"`
   }
   if (obj.key) {
     // 如果存在key属性
@@ -66,9 +66,15 @@ function parseTemplate(obj: { tag: any; attrs: any; on: any; nativeOn: any; dire
       if (Object.hasOwnProperty.call(obj.attrs, key)) {
         // 遍历属性对象的属性
         const elementType = obj.attrs[key].type;
-        const element = obj.attrs[key].value;
+        let element = obj.attrs[key].value;
+        if(typeof element === 'object'){
+          element = JSON.stringify(element)
+        }
+        if(element === "{}" || element === "[]" || element === 'null'){
+          element = undefined
+        }
         // 可通过比对默认值是否相同取消属性的添加
-        if(element || element === 0 || element === false || element === ''){
+        if(element != undefined){
           const propKey = elementType !== 'string' && `:${key}` || `${key}`
           templateStr += ` ${propKey}="${element}"`
         }

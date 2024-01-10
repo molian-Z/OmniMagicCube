@@ -172,6 +172,10 @@ const tabType = () => {
     position: relative;
   }
 
+  .data2form-item__input > *{
+    width: 100%;
+  }
+
   .data2form-item__icon {
     width: 24px;
     padding: 3px;

@@ -46,8 +46,6 @@ export default defineConfig({
     alias: {
       "@": resolve(__dirname, 'src'), // 路径别名
       "@molian": resolve(__dirname, 'src/components/molian'),
-      "@molianDesigner": resolve(__dirname, 'src/components/molian/components/designer'),
-      "@molianRender": resolve(__dirname, 'src/components/molian/components/render'),
       "@molianComps": resolve(__dirname, 'src/components/molian/components'),
     }
   },
@@ -80,7 +78,7 @@ app.use(plug, {
 ### 4.最后在需要使用我们的组件的地方引入即可
 ```
 <script setup>
-import designer from '@molianDesigner/index.vue'
+import designer from '@molianComps/designer/index.vue'
 </script>
 
 <template>

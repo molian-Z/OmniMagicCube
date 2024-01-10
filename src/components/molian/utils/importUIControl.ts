@@ -66,13 +66,15 @@ export const createControl = function (prefix: any, compName: any, newAttrs: { [
               let newAttr = newAttrs[key](element)
               Object.keys(newAttr).forEach(key => {
                 const currentAttr = newAttr[key]
-                if (!currentAttr._isSlot) {
+                if (currentAttr && !currentAttr._isSlot) {
                   objAttrs = {
                     ...objAttrs,
                     [key]: currentAttr
                   }
-                } else {
+                } else if(currentAttr) {
                   currentSlots[key] = createRender(currentAttr, comps.value)
+                }else{
+                  // console.log(currentAttr,key)
                 }
               })
             } else {

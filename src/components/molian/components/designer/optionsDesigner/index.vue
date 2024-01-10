@@ -75,7 +75,7 @@ const actived = function (item: { label: string; value: string; icon: string; sh
 }
 
 const showFn = (type: any, value: any) => {
-    console.log(type, value)
+    // console.log(type, value)
 }
 
 const openDialog = (type: string) => {
@@ -90,18 +90,18 @@ const openDialog = (type: string) => {
             :foldWidth="365" :foldHeight="600" :isShow="globalMenu === 'option'">
             <template #toolbar>
                 <div style="height: 32px;align-items: center;display: flex;">
-                    <customTooltip :content="item.label" v-for="item in toolbarData" :key="item.value">
-                        <customPopup trigger="click" placement="bottom" :destroyOnClose="true" v-model:visible="item.show">
+                    <template v-for="item in toolbarData" :key="item.value">
+                        <customPopup trigger="click" placement="bottom" :destroyOnClose="true" :disabled="!selectedComp" :visible="item.show && !!selectedComp" @update:visible="($event: boolean) => {item.show = $event}">
                             <svg-icon
                                 :class="['css-svg-icon', 'toolbar-icon', actived(item) && 'is-active', !selectedComp && 'disabled']"
                                 :icon="`option-${item.icon}`" @click="showFn(item.type, item.value)" />
                             <template #content>
-                                <vueif @close="item.show = false" v-if="item.value === 'if'" />
-                                <vuefor @close="item.show = false" v-else-if="item.value === 'for'" />
-                                <vueshow @close="item.show = false" v-else-if="item.value === 'show'" />
+                                <vueif :title="item.label" @close="item.show = false" v-if="item.value === 'if'" />
+                                <vuefor :title="item.label" @close="item.show = false" v-else-if="item.value === 'for'" />
+                                <vueshow :title="item.label" @close="item.show = false" v-else-if="item.value === 'show'" />
                             </template>
                         </customPopup>
-                    </customTooltip>
+                    </template>
                 </div>
                 <customTooltip :content="t('options.variable')">
                     <svg-icon :class="['css-svg-icon', 'toolbar-icon', actived('variable') && 'is-active']"

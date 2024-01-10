@@ -1,36 +1,28 @@
 <script setup lang="ts">
-import { defineProps, computed, reactive, watch, ref, onUnmounted } from 'vue'
+import { defineProps, watch, onUnmounted } from 'vue'
 import { useCloned, useStyleTag } from '@vueuse/core'
 import renderTree from './deepTreeToRender.vue'
-import {asyncFunction} from '@molian/utils/asyncFunction'
+import { asyncFunction } from '@molian/utils/asyncFunction'
 import { createCss } from '@molian/utils/css-generator'
+import { renderRef, variable } from './renderData'
 const props = defineProps(<{
   modelValue: any
+  globalAttrs: any
 }>{
     modelValue: {
       type: Array,
       default: () => []
+    },
+    globalAttrs: {
+      type: Object,
+      default: () => { }
     }
   })
-
-// 数据变量
-const variables = reactive({})
-// 全局变量
 // 渲染数据
 const renderData = ref<Ref[]>([])
-
-// 全局组件Ref
-const compsRef:{
-  [key:string]:any
-} = reactive({})
-const setRef = (el: any, comp: any) => {
-  compsRef[comp.key] = el
-}
-
+// 生命周期
+const lifecycle = ref<{ [key: string]: any }>({})
 // 注册css
-// const globalCss = computed(()=>{
-//   return createCss(renderData.value)
-// })
 const {
   id,
   css,
@@ -39,7 +31,14 @@ const {
   isLoaded,
 } = useStyleTag('')
 
-console.log(id)
+watch(() => props.globalAttrs, (newVal) => {
+  const { cloned } = useCloned(newVal)
+  variable.value = cloned.value.variable
+  lifecycle.value = cloned.value.lifecycle
+}, {
+  immediate: true
+})
+
 watch(() => props.modelValue, (newVal) => {
   const { cloned } = useCloned(newVal)
   renderData.value = cloned.value
@@ -51,8 +50,13 @@ watch(() => props.modelValue, (newVal) => {
 onUnmounted(() => {
   unload()
 })
+
+defineExpose({
+  renderRef,
+  variable
+})
 </script>
 
 <template>
-  <renderTree :modelValue="renderData" :variables="variables" :setRef="setRef"></renderTree>
+  <renderTree :modelValue="renderData"></renderTree>
 </template>

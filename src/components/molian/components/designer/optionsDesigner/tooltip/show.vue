@@ -1,8 +1,14 @@
 <script setup lang="ts">
-import { ref, inject, computed, defineEmits } from 'vue'
+import { inject, computed, defineEmits, defineProps } from 'vue'
 import { deepObjToArray } from '@molian/utils/util'
 import { selectedComp, globalAttrs } from '../../designerData'
 import svgIcon from '@molianComps/svg-icon/index.vue'
+defineProps({
+  title:{
+    type: String,
+    default: ''
+  }
+})
 const emit = defineEmits(['close'])
 const customComps:any = inject('customComps')
 const { customCascaderPanel } = customComps
@@ -22,7 +28,7 @@ const variableList = computed(() => {
       }
       let children = []
       try {
-        children = deepObjToArray(JSON.parse(variableValue.value))
+        children = deepObjToArray(variableValue.value)
       } catch (error) {
         message.error(currentObjValue.label + t('options.isNotJSONFormatData'))
       }
@@ -62,16 +68,30 @@ const clearData = ()=>{
   emit('close')
 }
 
+const changeValue = function(val: any, option: any, pathValues: any){
+  if(typeof val === 'string' && Array.isArray(pathValues)){
+    directives.value = pathValues.map(item => item.value)
+  }else{
+    directives.value = val
+  }
+}
+
 </script>
 <template>
-  <div style="text-align: right;">
+  <div class="flex-container">
+    <span>{{ title }}</span>
     <svgIcon class="svg-icon " icon="clear" @click="clearData"></svgIcon>
   </div>
   <customCascaderPanel size="small" :options="variableList" :checkStrictly="true" :clearable="true" valueType="full"
-    v-model="directives" />
+    :modelValue="directives"  @update:modelValue="changeValue" />
 </template>
 
 <style scoped lang="scss">
+.flex-container{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
 .svg-icon {
   cursor: pointer;
   transition: var(--ml-transition-base);

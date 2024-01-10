@@ -1,8 +1,14 @@
 <script setup lang="ts">
-import { ref, inject, computed, defineEmits } from 'vue'
+import { ref, inject, computed, defineEmits, defineProps } from 'vue'
 import { deepObjToArray } from '@molian/utils/util'
 import { selectedComp, globalAttrs } from '../../designerData'
 import svgIcon from '@molianComps/svg-icon/index.vue'
+defineProps({
+  title:{
+    type: String,
+    default: ''
+  }
+})
 const emit = defineEmits(['close'])
 const customComps:any = inject('customComps')
 const { customCascader, customInput } = customComps
@@ -28,7 +34,7 @@ const variableList = computed(() => {
       }
       let children = []
       try {
-        children = deepObjToArray(JSON.parse(variableValue.value))
+        children = deepObjToArray(variableValue.value)
       } catch (error) {
         message.error(currentObjValue.label + t('options.isNotJSONFormatData'))
       }
@@ -66,18 +72,23 @@ const updateValue = (key: string | number, val: any) => {
   }
   selectedComp.value.directives.for[key] = val
 }
-const changeValue = (val: any) =>{
+const changeValue = function(val: any, option: any, pathValues: any){
   if(!selectedComp.value.directives.for){
     selectedComp.value.directives.for = {
       type: 'variable',
       value:[]
     }
   }
-  selectedComp.value.directives.for.value = val
+  if(typeof val === 'string' && Array.isArray(pathValues)){
+    selectedComp.value.directives.for.value = pathValues.map(item => item.value)
+  }else{
+    selectedComp.value.directives.for.value = val
+  }
 }
 </script>
 <template>
-  <div style="text-align: right;">
+  <div class="flex-container">
+    <span>{{ title }}</span>
     <svgIcon class="svg-icon " icon="clear" @click="clearData"></svgIcon>
   </div>
   <div class="for-list">
@@ -120,6 +131,11 @@ const changeValue = (val: any) =>{
 </template>
 
 <style scoped lang="scss">
+.flex-container{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
 .svg-icon {
   cursor: pointer;
   transition: var(--ml-transition-base);
@@ -151,6 +167,9 @@ const changeValue = (val: any) =>{
   .for-list__input {
     width: 160px;
     position: relative;
+    &> *{
+      width: 100%;
+    }
   }
 }
 </style>

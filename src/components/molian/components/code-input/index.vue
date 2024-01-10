@@ -39,7 +39,11 @@ const newValue:any = computed(()=>{
 const showDialog = (type: string) => {
   if (type === 'object' || type === 'array') {
     codeMode.value = "json"
-    codeObj.value = props.modelValue || type === 'object' ? {} : []
+    try {
+      codeObj.value = JSON.stringify(props.modelValue)
+    } catch (error) {
+      codeObj.value = props.modelValue || type === 'object' ? "{}" : "[]"
+    }
   } else {
     codeMode.value = "javascript"
     if (typeof props.modelValue !== 'object' || !props.modelValue) {
@@ -65,8 +69,11 @@ const showDialog = (type: string) => {
 }
 
 const saveCode = () => {
+  if (codeMode.value === 'json') {
+    codeObj.value = JSON.parse(codeObj.value)
+  }
+  emits('update:modelValue', codeObj.value);
   visible.value = false;
-  emits('update:modelValue', codeObj.value)
 }
 
 // 追加变量
@@ -101,10 +108,10 @@ const appendModifiers = (val: string[]) => {
     {{ newValue.code ? t('options.modify') : t('options.edit') }}{{ t(`options.${mode}`) }}
 
     <customDialog appendToBody :header="keyName" width="80%" :close-on-click-modal="false" @escKeydown="visible = false"
-      @closeBtnClick="visible = false" :visible="visible" destroyOnClose>
+      @closeBtnClick="visible = false" v-model:visible="visible" destroyOnClose>
       <template v-if="codeMode === 'javascript'">
         <div class="modeType">
-          <customRadioGroup v-model="codeObj.functionMode" variant="primary-filled" size="small">
+          <customRadioGroup style="width:160px;" v-model="codeObj.functionMode" variant="primary-filled" size="small">
             <customRadioButton value="function">{{ t('options.function') }}</customRadioButton>
             <customRadioButton value="asyncFunction">{{ t('options.asyncFunction') }}</customRadioButton>
           </customRadioGroup>

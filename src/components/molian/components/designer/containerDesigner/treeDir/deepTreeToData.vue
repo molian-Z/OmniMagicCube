@@ -1,25 +1,31 @@
 <script setup lang="ts">
 import { defineProps, defineEmits, inject } from 'vue'
 import svgIcon from '@molianComps/svg-icon/index.vue'
+import { selectedComp, compsRef } from '@molianComps/designer/designerData'
+import {hoverComp, hoverRef, hoverNodes, hoverIndex} from '@molianComps/designer/draggable'
 
-defineProps<{
-  modelValue: any[],
-  selectedComp: any
+const props = defineProps<{
+  modelValue: any[]
 }>()
 const mlComps:any = inject('mlComps')
 
 const emit = defineEmits(['activeNode'])
 
-const sendActive = function (comp: any) {
-  emit('activeNode', comp)
+const onActive = (comp: any, index:number) => {
+  hoverNodes.value = props.modelValue
+  hoverIndex.value = index
+  //有错误暂未修复，先允许删除
+  // hoverComp.value = comp
+  // hoverRef.value = compsRef[comp.key]
+  selectedComp.value = comp
 }
 </script>
 
 <template>
-  <div class="tree-node" v-for="comp in modelValue" :key="comp.key">
+  <div class="tree-node" v-for="(comp,index) in modelValue" :key="comp.key">
     <div class="tree-node-header" :class="[selectedComp && selectedComp.key === comp.key && 'is-active']">
       <svg-icon icon="node-fold" style="transform:rotate(90deg)"></svg-icon>
-      <div class="tree-node-header__title" @click="sendActive(comp)">{{ mlComps[comp.name].title }}</div>
+      <div class="tree-node-header__title" @click.stop="onActive(comp,index)">{{ mlComps[comp.name].title }}</div>
     </div>
     <div class="tree-node-content">
       <template v-for="(slotVal, slotKey) in comp.slots" :key="slotKey">

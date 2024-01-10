@@ -1,37 +1,80 @@
 <script setup lang="ts">
-import { defineProps, reactive } from 'vue'
-import { toKebabCase } from '@molian/utils/util'
+import { defineProps } from 'vue'
+import slotTemplate from './slotTemplate.vue'
+import vCustomDirectives from '@molian/utils/useDirectives'
+import { variable } from './renderData'
 const props = defineProps(<{
-  modelValue: any
-  variables?: any
-  setRef: any
+  modelValue: any;
+  slotProps?: any;
 }>{
     modelValue: {
       type: Array,
       default: () => []
     },
-    variables: {
+    slotProps: {
       type: Object,
       default: () => { }
-    },
-    setRef: Function
+    }
   })
 
+const value = computed(() => {
+  return props.modelValue.map((item: { directives: { [x: string]: { [key: string]: any; type: string; value: (string | number)[]; }; }; }) => {
+    let directivesVariable: {
+      [key: string]: any;
+    } = {}
+    Object.keys(item.directives).forEach(key => {
+      if(!item.directives[key]) return false;
+      const { type, value } = item.directives[key]
+      let obj = variable.value
+      if (type === 'variable') {
+        value.forEach((item: string | number, index: number) => {
+          if (index === 0) {
+            obj = obj[item].value
+          } else {
+            obj = obj[item]
+          }
+        })
+      }
+      directivesVariable[key] = obj
+    })
+    return {
+      directivesVariable,
+      ...item
+    }
+  })
+})
+const isFor = (comp: { directivesVariable: any; }) => {
+  const { directivesVariable } = comp
+  if (!directivesVariable.for) {
+    return false
+  }
+  return !!directivesVariable.for
+}
+
+const isIf = (comp: { directivesVariable: any; }) => {
+  const { directivesVariable } = comp
+  if (!directivesVariable.if && directivesVariable.if !== false || directivesVariable.if === true) {
+    return true
+  }
+  console.log(directivesVariable.if)
+  return !!directivesVariable.if
+}
+
+const isShow = (comp: { directivesVariable: any; }) => {
+  const { show } = comp.directivesVariable || null
+  if (!show && show !== false || show === true) {
+    return true
+  }
+  return !!show
+}
 
 </script>
 <template>
-  <template v-for="(comp, index) in modelValue" :key="comp.key">
-    <component :id="comp.id" :is="comp.name" :ref="(el: any) => setRef(el, comp)" :data-key="comp.key" v-bind="comp.attrs"
-      :class="toKebabCase(comp.name + '__' + comp.key)">
-      <template v-for="(slotVal, slotKey) in comp.slots" :key="slotKey" #[slotKey]="slotProps">
-        <template v-if="slotVal && slotVal.children">
-          <template v-if="JSON.stringify(slotProps) !== '{}'">
-            <deepTree v-model="slotVal.children" :slotProp="slotProps"></deepTree>
-          </template>
-          <deepTree v-else v-model="slotVal.children"></deepTree>
-        </template>
-      </template>
-    </component>
+  <template v-for="comp in value" :key="comp.key">
+    <slotTemplate :variable="variable" :comp="comp" v-if="isIf(comp) && isFor(comp)" :key="forItem[comp.directives.for.idKey] || forIndex" v-for="(forItem, forIndex) in comp.directivesVariable.for" v-show="isShow(comp)"
+      v-customDirectives="comp" />
+    <slotTemplate :variable="variable" :comp="comp" v-else-if="isIf(comp)" v-show="isShow(comp)"
+      v-customDirectives="comp" />
   </template>
 </template>
 

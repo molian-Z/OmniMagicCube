@@ -68,7 +68,7 @@ const clickIcon = function (key: string | number, value: any) {
                 </customInput>
             </div>
             <div class="designer-list-item">
-                <customInput class="designer-input-base" size="small" :disabled="!selectedComp"
+                <customInput class="designer-input-bas" style="width:95px;" size="small" :disabled="!selectedComp"
                     v-model="css.paragraphSpacing" placeholder="Auto">
                     <template #prefixIcon>
                         <customTooltip :content="t('css.paragraphSpacing')">

@@ -29,8 +29,6 @@
     "paths": {
       "@/*": ["src/*"],
       "@molian/*": ["src/components/molian/*"],
-      "@molianDesigner/*": ["src/components/molian/components/designer/*"],
-      "@molianRender/*": ["src/components/molian/components/render/*"],
       "@molianComps/*": ["src/components/molian/components/*"]
     },
     // "rootDirs": [],                                   /* Allow multiple folders to be treated as one when resolving modules. */

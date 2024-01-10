@@ -24,14 +24,14 @@ export interface IDefaultSlotsMap {
 export interface IUiMapping {
     current: string;
     data: Array<IData>;
-  }
-  export type IData = {
+}
+export type IData = {
     name: string;
     prefix: string;
     icon?: string;
     compMapping?: ICompMapping;
-  };
-  export interface ICompMapping {
+};
+export interface ICompMapping {
     Button?: IButton;
     Tag?: Record<string, unknown>;
     Input?: IInput;
@@ -46,55 +46,76 @@ export interface IUiMapping {
     CascaderPanel?: ICascader;
     Dropdown?: IDropdown;
     Dialog?: IDialog;
-  }
+}
 
-  export interface IDialog {
+export interface IDialog {
     appendToBody?: IAppendToBody | string;
     visible?: boolean | string;
     destroyOnClose?: string;
     header?: string;
-  }
-  export interface IAppendToBody {
+    component?: string;
+    [key: string]: any;
+}
+export interface IAppendToBody {
     attach?: string;
-  }
-  export interface IDropdown {
+    component?: string;
+    [key: string]: any;
+}
+export interface IDropdown {
     optionItems?: unknown;
-  }
-  export interface ICascader {
+    component?: string;
+    [key: string]: any;
+}
+export interface ICascader {
     optionItems?: string;
     checkStrictly?: any;
-  }
-  export interface IRadioButton {
+    component?: string;
+    valueType?: string | any;
+    [key: string]: any;
+}
+export interface IRadioButton {
     value?: string;
-  }
-  export interface IPopup {
+    component?: string;
+    [key: string]: any;
+}
+export interface IPopup {
     component?: string;
     default?: string;
     content?: string;
-  }
-  export interface ITooltip {
+    trigger?: any;
+    visible?: any;
+    [key: string]: any;
+}
+export interface ITooltip {
     content?: IContent | string;
-  }
-  export interface IContent {
+    component?: string;
+    [key: string]: any;
+}
+export interface IContent {
     content?: string;
     destroyOnClose?: boolean;
-  }
-  export interface IInput {
+    component?: string;
+    [key: string]: any;
+}
+export interface IInput {
     prefixIcon?: string;
     onKeyup?: Record<string, unknown>;
     onEnter?: Record<string, unknown>;
     modelValue?: string;
-    ['onUpdate:modelValue']?:string;
-  }
-  export interface IButton {
-    theme?: string;
+    ['onUpdate:modelValue']?: string;
+    component?: string;
+}
+export interface IButton {
+    theme?: string | any;
     text?: IText | string;
-  }
-  export interface IText {
+    component?: string;
+}
+export interface IText {
     variant?: string;
     type?: string;
-  }
-  
+    component?: string;
+}
+
 
 /**
  * defaultCategory 默认分类
@@ -200,7 +221,7 @@ export const defaultLifecycleMap: IEventMap = {
  * @returns {ComponentMap} ComponentMap 返回默认插槽地图
  */
 
-export const defaultSlotsMap:IDefaultSlotsMap = {
+export const defaultSlotsMap: IDefaultSlotsMap = {
     TRow: {
         default: {
             auto: true,
@@ -256,7 +277,7 @@ export const defaultSlotsMap:IDefaultSlotsMap = {
  * 输入项目中使用的UI方便框架内部解析
  */
 
-export const uiMapping:IUiMapping = {
+export const uiMapping: IUiMapping = {
     current: "tdesign-vue-next",
     data: [{
         name: 'tdesign-vue-next',
@@ -299,9 +320,9 @@ export const uiMapping:IUiMapping = {
                 "optionItems": "options"
             },
             "Dropdown": {
-                "optionItems": (data :any) => {
+                "optionItems": (data: any) => {
                     return {
-                        "options": data.map((item:any) => {
+                        "options": data.map((item: any) => {
                             return {
                                 content: item.label,
                                 value: item.value,
@@ -351,7 +372,11 @@ export const uiMapping:IUiMapping = {
             "Popup": {
                 "component": "Popover",
                 "default": "reference",
-                "content": "default"
+                "content": "default",
+                "trigger": {
+                    "trigger": "click",
+                    "width": "auto"
+                }
             },
             "RadioGroup": {},
             "RadioButton": {
@@ -365,14 +390,22 @@ export const uiMapping:IUiMapping = {
                     }
                 }
             },
+            "CascaderPanel": {
+                "optionItems": "options",
+                "checkStrictly": {
+                    "props": {
+                        "checkStrictly": true,
+                    }
+                }
+            },
             "Dropdown": {
-                "optionItems": (data:any) => {
+                "optionItems": (data: any) => {
                     return {
                         dropdown: {
                             _isSlot: true,
                             tag: 'ElDropdownMenu',
                             attrs: {},
-                            slots: data.map((item:any) => {
+                            slots: data.map((item: any) => {
                                 return {
                                     _isSlot: true,
                                     tag: "ElDropdownItem",
@@ -390,6 +423,7 @@ export const uiMapping:IUiMapping = {
             },
             "Dialog": {
                 "visible": "modelValue",
+                "onUpdate:visible": "onUpdate:modelValue",
                 "destroyOnClose": "destroy-on-close",
                 "appendToBody": "append-to-body",
                 "header": "title"
@@ -401,22 +435,42 @@ export const uiMapping:IUiMapping = {
         icon: "Ant",
         compMapping: {
             "Button": {
-                "theme": "type",
+                "theme": (type: string) => {
+                    if (type === 'warning') {
+                        return {
+                            type: 'primary',
+                            danger: true
+                        }
+                    }
+                    return {
+                        type: 'primary'
+                    }
+                },
                 "text": {
-                    "type": "text"
+                    "type": "link"
                 },
             },
+            "Tag": {},
             "Input": {
                 "prefixIcon": "prefix",
                 "modelValue": "value",
                 "onUpdate:modelValue": "onUpdate:value"
             },
-            "InputNumber": {},
+            "InputNumber": {
+                "modelValue": 'value',
+                "onUpdate:modelValue": "onUpdate:value",
+            },
             "Select": {
                 "modelValue": "value",
                 "onUpdate:modelValue": "onUpdate:value"
             },
-            "Tooltip": {},
+            "Switch": {
+                "modelValue": 'value',
+                "onUpdate:modelValue": "onUpdate:value",
+            },
+            "Tooltip": {
+                "content": "title"
+            },
             "Popup": {
                 "component": "Popover"
             },
@@ -429,6 +483,66 @@ export const uiMapping:IUiMapping = {
             },
             "RadioButton": {
                 "value": "label"
+            },
+            "Cascader": {
+                "optionItems": "options",
+                "valueType": (data: string) => {
+                    if (data === 'full') {
+                        return {
+                            "changeOnSelect": true
+                        }
+                    }
+                    return {}
+                },
+                "modelValue": 'value',
+                "onUpdate:modelValue": "onUpdate:value",
+            },
+            "CascaderPanel": {
+                "component": "Cascader",
+                "optionItems": "options",
+                "valueType": (data: string) => {
+                    if (data === 'full') {
+                        return {
+                            "changeOnSelect": true
+                        }
+                    }
+                    return {}
+                },
+                "modelValue": 'value',
+                "onUpdate:modelValue": "onUpdate:value",
+            },
+            "Dropdown": {
+                "optionItems": (data: any) => {
+                    return {
+                        overlay: {
+                            _isSlot: true,
+                            tag: 'AMenu',
+                            attrs: {},
+                            slots: data.map((item: any) => {
+                                return {
+                                    _isSlot: true,
+                                    tag: "AMenuItem",
+                                    attrs: {
+                                        disabled: item.disabled,
+                                        onClick: item.onclick,
+                                        command: item.value
+                                    },
+                                    slots: item.label
+                                }
+                            })
+                        }
+                    }
+                }
+            },
+            "Dialog": {
+                "component": "Modal",
+                "appendToBody": {
+                    "getContainer": () => document.body,
+                    "zIndex": 1001
+                },
+                "header": "title",
+                "visible": "open",
+                "onUpdate:visible": "onUpdate:open"
             }
         }
     }, {
@@ -438,17 +552,125 @@ export const uiMapping:IUiMapping = {
         compMapping: {
             "Button": {
                 "theme": "type",
-                "text": {
-                    "variant": "text"
+                "text": "text"
+            },
+            "Tag": {
+                "theme": "type"
+            },
+            "Input": {
+                "prefixIcon": "prefix",
+                "onEnter": {},
+                "modelValue": 'value',
+                "onUpdate:modelValue": "onUpdate:value",
+            },
+            "InputNumber": {
+                "modelValue": 'value',
+                "onUpdate:modelValue": "onUpdate:value",
+            },
+            "Select": {
+                "modelValue": "value",
+                "onUpdate:modelValue": "onUpdate:value",
+                "size":{
+                    "size":"small",
+                    "virtualScroll":false
+                }
+            },
+            "Switch": {
+                "modelValue": 'value',
+                "onUpdate:modelValue": "onUpdate:value",
+            },
+            "Tooltip": {
+                "default": "trigger",
+                "content": (text) => {
+                    return {
+                        "default": {
+                            _isSlot: true,
+                            tag: "NEllipsis",
+                            attrs: {},
+                            slots: text
+                        }
+                    }
                 },
             },
-            "Input": {},
-            "InputNumber": {},
-            "Select": {},
-            "Switch": {},
-            "Tooltip": {},
-            "Popup": {},
-            "RadioGroup": {},
+            "Popup": {
+                "component": "Popover",
+                "default": "trigger",
+                "content": "default",
+                "trigger": {
+                    "trigger": "click",
+                    "style":"min-width:180px;"
+                },
+                "visible":"show",
+                "onUpdate:visible":"onUpdate:show"
+            },
+            "RadioGroup": {
+                "modelValue": 'value',
+                "onUpdate:modelValue": "onUpdate:value",
+            },
+            "RadioButton": {
+                "value": "label"
+            },
+            "Cascader": {
+                "optionItems": "options",
+                "checkStrictly": {
+                    "checkStrategy": "all",
+                    "separator": ".",
+                    "virtualScroll":false,
+                    "cascade":false
+                },
+                "modelValue": (value:string[])=>{
+                    return {
+                        "value":value[value.length -1]
+                    }
+                },
+                "onUpdate:modelValue": "onUpdate:value",
+            },
+            "CascaderPanel": {
+                "component":"Cascader",
+                "optionItems": "options",
+                "checkStrictly": {
+                    "checkStrategy": "all",
+                    "separator": ".",
+                    "virtualScroll":false,
+                    "cascade":false
+                },
+                "modelValue": (value:string[])=>{
+                    return {
+                        "value":value[value.length -1]
+                    }
+                },
+                "onUpdate:modelValue": "onUpdate:value",
+            },
+            "Dropdown": {
+                "optionItems": (data)=>{
+                    return {
+                        "options":data.map(item =>{
+                            return {
+                                label:item.label,
+                                key:item.value,
+                                disabled:item.disabled,
+                                props:{
+                                    onClick: item.onclick,
+                                }
+                            }
+                        })
+                    }
+                }
+            },
+            "Dialog": {
+                "component":"Modal",
+                "visible": "show",
+                "onUpdate:visible": "onUpdate:show",
+                "destroyOnClose": "destroy-on-close",
+                "appendToBody":{
+                    "preset": "dialog",
+                    "style":{
+                        "width":"80vw"
+                    },
+                },
+                "header": "title",
+                "footer": "action"
+            }
         }
     }, {
         name: 'vexip',
