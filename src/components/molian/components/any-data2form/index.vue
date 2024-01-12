@@ -139,7 +139,7 @@ const tabType = () => {
           v-else-if="propData.optionItems" />
         <customInputNumber size="small" v-model="value" v-else-if="type === 'number'">
         </customInputNumber>
-        <codeInput :isModifiers="isModifiers" :mode="type" :keyName="keyName" v-model="value"
+        <codeInput :isModifiers="isModifiers" :defaultData="propData" :mode="type" :keyName="keyName" v-model="value"
           v-else-if="['promise', 'function', 'object', 'array'].indexOf(type) > -1" />
         <customInput size="small" v-model="value" v-else></customInput>
       </transition>

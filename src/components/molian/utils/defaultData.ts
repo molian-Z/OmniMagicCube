@@ -192,12 +192,12 @@ export const defaultAttrsMap: IDefaultAttrsMap = {
  */
 export const defaultNativeEventMap: IEventMap = {
     click: ['evt'], //点击
-    dblClick: ['evt'], //双击
-    mouseEnter: ['evt'], //鼠标移入
-    mouseLeave: ['evt'], //鼠标移出
-    keyDown: ['evt'], //按键按下
-    keyUp: ['evt'], //按键抬起
-    keyPress: ['evt'], //按键按下
+    dblclick: ['evt'], //双击
+    mouseenter: ['evt'], //鼠标移入
+    mouseleave: ['evt'], //鼠标移出
+    keydown: ['evt'], //按键按下
+    keyup: ['evt'], //按键抬起
+    keypress: ['evt'], //按键按下
     wheel: ['evt'], //滚轮滚动
     contextmenu: ['evt'], //右键
     scroll: ['evt'], //滚动

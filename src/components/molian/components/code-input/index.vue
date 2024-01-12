@@ -22,6 +22,10 @@ const props = defineProps({
   isVariable: {
     type: Boolean,
     default: true
+  },
+  defaultData:{
+    type: Object,
+    default: {}
   }
 })
 const emits = defineEmits(['update:modelValue'])
@@ -54,7 +58,7 @@ const showDialog = (type: string) => {
         modifiers?: string[]
       } = {
         code: '',
-        codeVar: [],
+        codeVar: props.defaultData.codeVar ? props.defaultData.codeVar : [],
         functionMode: 'function'
       }
       if (props.isModifiers) {
@@ -95,10 +99,8 @@ const updateCacheCode = (val: string) => {
 
 const appendModifiers = (val: string[]) => {
   if (!props.isModifiers) return false
-  emits('update:modelValue', {
-    ...codeObj.value,
-    modifiers: val
-  })
+  codeObj.value.modifiers = val
+  emits('update:modelValue', codeObj.value)
 }
 </script>
 
@@ -110,7 +112,7 @@ const appendModifiers = (val: string[]) => {
       @closeBtnClick="visible = false" v-model:visible="visible" destroyOnClose>
       <template v-if="codeMode === 'javascript'">
         <div class="modeType">
-          <div style="width:160px;">
+          <div style="width:160px;display:flex;align-items:center;">
             <customRadioGroup v-model="codeObj.functionMode" variant="primary-filled" size="small">
               <customRadioButton value="function">{{ t('options.function') }}</customRadioButton>
               <customRadioButton value="asyncFunction">{{ t('options.asyncFunction') }}</customRadioButton>
@@ -143,11 +145,11 @@ const appendModifiers = (val: string[]) => {
   align-items: center;
 
   .tagInput {
-    width: calc(100% - 400px);
+    width: 40%;
   }
 
   .tag-modifiers {
-    width: 270px;
+    width: 40%;
   }
 }
 

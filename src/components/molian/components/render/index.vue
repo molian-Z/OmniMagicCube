@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import { defineProps, watch, onUnmounted } from 'vue'
-import { defaultLifecycleMap } from '@molian/utils/defaultData'
 import { useCloned, useStyleTag } from '@vueuse/core'
 import renderTree from './deepTreeToRender.vue'
-import { asyncFunction, syncFunction } from '@molian/utils/customFunction'
+import { runLifecycle } from '@molian/utils/customFunction'
 import { createCss } from '@molian/utils/css-generator'
 import { renderRef, variable } from './renderData'
 const props = defineProps(<{
@@ -36,6 +35,8 @@ watch(() => props.globalAttrs, (newVal) => {
   const { cloned } = useCloned(newVal)
   variable.value = cloned.value.variable
   lifecycle.value = cloned.value.lifecycle
+  // 执行生命周期
+  runLifecycle(lifecycle)
 }, {
   immediate: true
 })
@@ -48,29 +49,6 @@ watch(() => props.modelValue, (newVal) => {
   immediate: true
 })
 
-const runFunc = async (type: string, codeVar: any, code: any) => {
-  if (type === 'function') {
-    const customFn = new syncFunction(...codeVar, code)
-    customFn()
-  } else if (type === 'asyncFunction') {
-    const customFn = new asyncFunction(...codeVar, code)
-    await customFn(...codeVar)
-  }
-}
-const runLifecycle = function () {
-  for (const key in lifecycle.value) {
-    if (Object.prototype.hasOwnProperty.call(lifecycle.value, key)) {
-      const { type, value } = lifecycle.value[key];
-      const { code, codeVar } = value;
-      if (!defaultLifecycleMap[key].function) {
-        runFunc(type, codeVar, code)
-      } else {
-        defaultLifecycleMap[key].function(()=>runFunc(type, codeVar, code))
-      }
-    }
-  }
-}
-runLifecycle()
 onUnmounted(() => {
   unload()
 })
@@ -83,4 +61,4 @@ defineExpose({
 
 <template>
   <renderTree :modelValue="renderData"></renderTree>
-</template>@/components/molian/utils/customFunction
+</template>

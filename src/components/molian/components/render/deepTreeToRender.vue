@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { defineProps } from 'vue'
+import { defineProps, computed } from 'vue'
 import slotTemplate from './slotTemplate.vue'
 import vCustomDirectives from '@molian/utils/useDirectives'
+import { getCurrentOn, getVariableData } from '@molian/utils/customFunction'
 import { variable } from './renderData'
 const props = defineProps(<{
   modelValue: any;
@@ -18,27 +19,17 @@ const props = defineProps(<{
   })
 
 const value = computed(() => {
-  return props.modelValue.map((item: { directives: { [x: string]: { [key: string]: any; type: string; value: (string | number)[]; }; }; }) => {
+  return props.modelValue.map((item: { directives: { [x: string]: { [x: string]: any; type: any; value: any } }; on: { [x: string]: any }; nativeOn: { [x: string]: any } }) => {
     let directivesVariable: {
       [key: string]: any;
     } = {}
     Object.keys(item.directives).forEach(key => {
-      if(!item.directives[key]) return false;
-      const { type, value } = item.directives[key]
-      let obj = variable.value
-      if (type === 'variable') {
-        value.forEach((item: string | number, index: number) => {
-          if (index === 0) {
-            obj = obj[item].value
-          } else {
-            obj = obj[item]
-          }
-        })
-      }
-      directivesVariable[key] = obj
+      if (!item.directives[key]) return false;
+      directivesVariable[key] = getVariableData(item.directives[key], variable)
     })
     return {
       directivesVariable,
+      cacheOn: getCurrentOn({ on: item.on, nativeOn: item.nativeOn }, variable),
       ...item
     }
   })
@@ -56,7 +47,6 @@ const isIf = (comp: { directivesVariable: any; }) => {
   if (!directivesVariable.if && directivesVariable.if !== false || directivesVariable.if === true) {
     return true
   }
-  console.log(directivesVariable.if)
   return !!directivesVariable.if
 }
 
@@ -67,13 +57,13 @@ const isShow = (comp: { directivesVariable: any; }) => {
   }
   return !!show
 }
-
 </script>
 <template>
   <template v-for="comp in value" :key="comp.key">
-    <slotTemplate :variable="variable" :comp="comp" v-if="isIf(comp) && isFor(comp)" :key="forItem[comp.directives.for.idKey] || forIndex" v-for="(forItem, forIndex) in comp.directivesVariable.for" v-show="isShow(comp)"
-      v-customDirectives="comp" />
-    <slotTemplate :variable="variable" :comp="comp" v-else-if="isIf(comp)" v-show="isShow(comp)"
+    <slotTemplate :variable="variable" :comp="comp" v-if="isIf(comp) && isFor(comp)"
+      :key="forItem[comp.directives.for.idKey] || forIndex" v-for="(forItem, forIndex) in comp.directivesVariable.for"
+      v-show="isShow(comp)" v-on="comp.cacheOn" v-customDirectives="comp" />
+    <slotTemplate :variable="variable" :comp="comp" v-else-if="isIf(comp)" v-show="isShow(comp)" v-on="comp.cacheOn"
       v-customDirectives="comp" />
   </template>
 </template>
