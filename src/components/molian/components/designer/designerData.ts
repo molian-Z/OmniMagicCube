@@ -89,7 +89,6 @@ whenever(keys.ctrl_b, () => {
 });
 
 whenever(keys.delete, () => {
-    console.log(hoverNodes,hoverIndex)
     if (hoverNodes.value && hoverNodes.value) {
         hoverNodes.value.splice(hoverIndex.value, 1)
     }

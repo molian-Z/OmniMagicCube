@@ -54,6 +54,7 @@ export const directives = {
       }
     })
     const {
+      onDragStart,
       onDragenter,
       onDrop,
       onDragend,
@@ -146,8 +147,9 @@ export const directives = {
         ...propsData,
         // onMouseenter: withModifiers(($event) => onMouseEnter($event, props.comp, props.index), ['self', 'native']), // 暂且取消经过选择
         onClick: withModifiers(($event: any) => onClick($event, props.comp, props.index), ['native']),
+        onDragstart:withModifiers((evt: any)=> onDragStart(evt, props.comp), ['self', 'prevent']),
         onDragend: onDragend,
-        onDragover: withModifiers(() => onDragenter(props.index, props.comp), ['self', 'prevent']),
+        onDragover: withModifiers((evt: any) => onDragenter(props.index, props.comp), ['self', 'prevent']),
         onDrop: withModifiers(($event: any) => onDrop($event, null), ['self', 'stop']),
         class: computedClass.value
       }

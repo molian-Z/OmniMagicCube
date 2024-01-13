@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { defineProps, defineEmits, inject } from 'vue'
+import { defineProps, inject } from 'vue'
 import svgIcon from '@molianComps/svg-icon/index.vue'
 import { selectedComp, compsRef } from '@molianComps/designer/designerData'
 import {hoverComp, hoverRef, hoverNodes, hoverIndex} from '@molianComps/designer/draggable'
@@ -9,8 +9,6 @@ const props = defineProps<{
 }>()
 const mlComps:any = inject('mlComps')
 
-const emit = defineEmits(['activeNode'])
-
 const onActive = (comp: any, index:number) => {
   hoverNodes.value = props.modelValue
   hoverIndex.value = index
@@ -19,6 +17,7 @@ const onActive = (comp: any, index:number) => {
   // hoverRef.value = compsRef[comp.key]
   selectedComp.value = comp
 }
+console.log(props.modelValue)
 </script>
 
 <template>
@@ -32,7 +31,7 @@ const onActive = (comp: any, index:number) => {
         <div class="slot-container" :class="slotKey">
           <template v-if="slotVal && slotVal.children && slotVal.children.length > 0">
             <span class="slotTitle">{{ slotKey }}</span>
-            <deepTree v-model="slotVal.children" :selectedComp="selectedComp" @activeNode="sendActive"></deepTree>
+            <deepTreeToData v-model="slotVal.children" :selectedComp="selectedComp" />
           </template>
         </div>
       </template>

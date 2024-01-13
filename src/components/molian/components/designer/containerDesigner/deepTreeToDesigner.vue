@@ -15,16 +15,24 @@ const props = defineProps({
     treeIndex: {
         type: Number,
         default: 1
+    },
+    slotKey: {
+        type: [String, Number],
+        default: ''
+    },
+    slotVal: {
+        type: Object,
+        default: () => { }
     }
 })
 const emit = defineEmits(['update:modelValue'])
-const comps:any = inject('mlComps')
-const message:any = inject('ml-message')
-const t:any = inject('mlLangs')
-const treeIndexNext = computed(()=>{
+const comps: any = inject('mlComps')
+const message: any = inject('ml-message')
+const t: any = inject('mlLangs')
+const treeIndexNext = computed(() => {
     return props.treeIndex + 1
 })
-const compData:any = computed({
+const compData: any = computed({
     get() {
         return props.modelValue
     },
@@ -47,18 +55,20 @@ const setRef = (el: any, comp: { key: string | number; }) => {
     <template v-for="(comp, index) in compData" :key="comp.key">
         <transition name="fade">
             <div :class="['prefix-drop-slot designer-comp__empty', dropKey === comp.key && dropType === 'prev' && 'dropping-comp']"
-                v-if="isDraggable && index === 0" @drop.self.stop="onDrop($event, index)"
+                v-if="isDraggable && index === 0" @drop.self.stop="onDrop($event, index, slotVal)"
                 @dragover.self.prevent="onDragenter(index, comp, 'prev')">{{ t('container.drop') }}</div>
         </transition>
-        <directives :ref="(el:any) => setRef(el, comp)" :comp="comp" :index="index" :modelValue="compData">
+        <directives :ref="(el: any) => setRef(el, comp)" :comp="comp" :index="index" :modelValue="compData">
             <template v-for="(slotVal, slotKey) in comp.slots" :key="slotKey" #[slotKey]="slotProps">
                 <template v-if="slotVal && slotVal.children">
                     <template v-if="JSON.stringify(slotProps) !== '{}'">
-                        <deepTree v-model="slotVal.children" :slotProp="slotProps"></deepTree>
+                        <deepTreeToDesigner v-model="slotVal.children" :slotProp="slotProps" :slotKey="slotKey"
+                            :slotVal="slotVal" />
                     </template>
-                    <deepTree v-else v-model="slotVal.children" :treeIndex="treeIndex + 1"></deepTree>
+                    <deepTreeToDesigner v-else v-model="slotVal.children" :slotKey="slotKey" :slotVal="slotVal"
+                        :treeIndex="treeIndex + 1" />
                     <div :class="['designer-comp__empty', dropKey === comp.key && !dropType && 'dropping-comp']"
-                        @dragover.self.prevent.stop="onDragenter(index, comp)"
+                        @dragover.self.prevent.stop="onDragenter(index, comp, null)"
                         @drop.self.stop="onDropSlot($event, slotVal)" v-if="isDraggable && slotVal.children.length === 0">
                         {{ t("container.dropComp") + t('component.' + comps[comp.name].title) +
                             t('container.component') + t('slot.' + slotKey) + t('container.slot') }}
@@ -69,7 +79,7 @@ const setRef = (el: any, comp: { key: string | number; }) => {
         <transition name="fade">
             <div :class="['suffix-drop-slot designer-comp__empty', dropKey === comp.key && dropType === 'next' && 'dropping-comp']"
                 v-if="isDraggable" @dragover.self.prevent="onDragenter(index, comp, 'next')"
-                @drop.self.stop="onDrop($event, index + 1)">{{ t('container.drop') }}</div>
+                @drop.self.stop="onDrop($event, index + 1, slotVal)">{{ t('container.drop') }}</div>
         </transition>
     </template>
 </template>

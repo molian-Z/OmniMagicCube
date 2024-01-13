@@ -63,7 +63,7 @@ export const createJS = function (compObj: IComp, globalAttrs: { lifecycle: any;
     const variableStr = Object.keys(variable).map(key => {
       const type = variable[key].type
       let value = variable[key].value
-      if(typeof value === 'object'){
+      if(typeof value === 'object' && type !== 'function'){
         value = JSON.stringify(value)
       }
       if (type === 'computed') {
@@ -72,12 +72,12 @@ export const createJS = function (compObj: IComp, globalAttrs: { lifecycle: any;
         }
         return `  const ${key} = computed(()=> {${value && value.code || "return null" }})\n`
       } else if (type === 'function') {
-        return `  const ${key} = ${parseJSCode(value)}\n`
+        return `  const ${key} = ${parseJSCode(value)};\n`
       } else {
         if(importModule.vue.indexOf("ref") === -1){
           importModule.vue.push("ref")
         }
-        return `  const ${key} = ref(${value || 'null' })\n`
+        return `  const ${key} = ref(${value || 'null' });\n`
       }
     }).join('\n')
 
@@ -90,7 +90,7 @@ export const createJS = function (compObj: IComp, globalAttrs: { lifecycle: any;
       const {code, functionMode} = lifecycle[key].value || null
       if(code){
         return `
-  ${rename}(${functionMode === 'asyncFunction' ? 'async ' : ''}()=>{${code}})
+  ${rename}(${functionMode === 'asyncFunction' ? 'async ' : ''}()=>{${code}};)
 `}else{
   return ``
 }
@@ -98,7 +98,7 @@ export const createJS = function (compObj: IComp, globalAttrs: { lifecycle: any;
 
     // 函数代码生成
     let jsCode = Object.keys(jsCodeObj).map(key => {
-      return `  const ${key} = ${jsCodeObj[key]}`
+      return `  const ${key} = ${jsCodeObj[key]};`
     }).join('\n')
 
     return `<script setup>
@@ -120,7 +120,7 @@ ${jsCode}
       }else{
         return ``
       }
-    }).join(',\n')
+    }).filter(item => !!item).join(',\n')
     // 变量写入
     const variableObj = {
       data: "",

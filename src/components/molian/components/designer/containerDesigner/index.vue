@@ -15,7 +15,8 @@ const { onDragenter } = useDraggable(null, null, null)
 
 const onDrop = function (evt: any) {
     const name = evt.dataTransfer.getData('compName')
-    if (name) {
+    const isCreate = evt.dataTransfer.getData('isCreate')
+    if (!!isCreate) {
         const { cloned } = useCloned(createComp(comps.value[name]))
         if (dropIndex.value !== null) {
             modelValue.value.splice(dropIndex.value, 0, cloned.value)

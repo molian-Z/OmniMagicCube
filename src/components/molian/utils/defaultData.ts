@@ -632,7 +632,7 @@ export const uiMapping: IUiMapping = {
             },
             "Tooltip": {
                 "default": "trigger",
-                "content": (text) => {
+                "content": (text: any) => {
                     return {
                         "default": {
                             _isSlot: true,
@@ -693,9 +693,9 @@ export const uiMapping: IUiMapping = {
                 "onUpdate:modelValue": "onUpdate:value",
             },
             "Dropdown": {
-                "optionItems": (data) => {
+                "optionItems": (data: any[]) => {
                     return {
-                        "options": data.map(item => {
+                        "options": data.map((item: { label: any; value: any; disabled: any; onclick: any; }) => {
                             return {
                                 label: item.label,
                                 key: item.value,

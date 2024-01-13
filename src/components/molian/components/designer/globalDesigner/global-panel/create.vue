@@ -87,12 +87,17 @@ const showRender = function(){
     </div>
     <div class="create-item">
       <customButton theme="primary" size="small" @click="exportModelData">
-        导出训练数据
+        查看原始数据
       </customButton>
     </div>
     <div class="create-item">
       <customButton theme="primary" size="small" @click="showRender">
         同步render
+      </customButton>
+    </div>
+    <div class="create-item">
+      <customButton theme="primary" size="small" @click="showRender">
+        导入Template文件
       </customButton>
     </div>
   </div>

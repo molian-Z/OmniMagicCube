@@ -1,4 +1,4 @@
-import { withModifiers } from 'vue'
+import { withModifiers, mergeProps } from 'vue'
 import { defaultLifecycleMap } from '@molian/utils/defaultData'
 import { useCloned } from '@vueuse/core'
 const asyncFunction = Object.getPrototypeOf(async function () { }).constructor
@@ -70,6 +70,9 @@ export const runModifier = function (key: string, data: { [x: string]: { value: 
 
 export const getCurrentOn = (data: { on: any; nativeOn: any }, variable: globalThis.Ref<{ [key: string]: any }>) => {
   const {on, nativeOn} = data
+  const newNativeOn: {
+    [key: string]: any;
+  } = {}
   const newOn: {
     [key: string]: any;
   } = {}
@@ -79,9 +82,9 @@ export const getCurrentOn = (data: { on: any; nativeOn: any }, variable: globalT
       if (!!nativeOn[key].value.code) {
         const { newKey, modifiers } = runModifier(key, nativeOn)
         if (nativeOn[key].type === 'variable') {
-          newOn[newKey] = withModifiers(runOn({ value: getVariableData(nativeOn[key], variable) }), modifiers)
+          newNativeOn[newKey] = withModifiers(runOn({ value: getVariableData(nativeOn[key], variable) }), modifiers)
         } else {
-          newOn[newKey] = withModifiers(runOn(nativeOn[key]), modifiers)
+          newNativeOn[newKey] = withModifiers(runOn(nativeOn[key]), modifiers)
         }
       }
     }
@@ -98,7 +101,7 @@ export const getCurrentOn = (data: { on: any; nativeOn: any }, variable: globalT
       }
     }
   }
-  return newOn
+  return mergeProps(newOn, newNativeOn)
 }
 
 export const getVariableData = (data: { [x: string]: any; type: any; value: any }, variable: { [x: string]: any; }) => {
