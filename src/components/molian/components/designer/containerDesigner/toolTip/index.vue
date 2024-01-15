@@ -32,7 +32,7 @@ const currentBounding = computed(() => {
 
 const slotsData = computed(() => {
   if (selectedComp.value) {
-    return Object.keys(slotsMap.value[selectedComp.value.name]).map(key => {
+    return slotsMap.value[selectedComp.value.name] && Object.keys(slotsMap.value[selectedComp.value.name]).map(key => {
       return {
         value: key,
         label: key,

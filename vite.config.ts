@@ -8,6 +8,10 @@ import components from 'unplugin-vue-components/vite'
 // https://vitejs.dev/config/
 export default defineConfig({
   base: './', // 这里更改打包相对绝对路径
+  server:{
+    port: 53000,
+    open: true,
+  },
   plugins: [
     vue(),
     createSvgIconsPlugin({

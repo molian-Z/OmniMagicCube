@@ -52,19 +52,27 @@ export default defineConfig({
     }, //库编译模式配置
     rollupOptions: {
       // 确保外部化处理那些你不想打包进库的依赖
-      external: ["vue", "element-plus", "naive-ui", "tdesign-vue-next", "vexip-ui", "ant-design-vue", "ace-builds", "ace-builds/src-min-noconflict/snippets/javascript", "ace-builds/src-min-noconflict/ext-beautify", "ace-builds/esm-resolver"],
+      external: ["vue", "element-plus", "naive-ui", "tdesign-vue-next", "vexip-ui", "ant-design-vue", "ace-builds",
+        "ace-builds/src-min-noconflict/snippets/javascript",
+        "ace-builds/src-min-noconflict/ext-beautify",
+        "ace-builds/src-min-noconflict/theme-dracula",
+        'ace-builds/src-min-noconflict/mode-javascript',
+        'ace-builds/src-min-noconflict/mode-html',
+        'ace-builds/src-min-noconflict/mode-css',
+        'ace-builds/src-min-noconflict/ext-language_tools'
+      ],
       output: {
         // 在 UMD 构建模式下为这些外部化的依赖提供一个全局变量
         globals: {
           vue: "Vue",
           ['ace-builds']: "ace-builds",
-          ['ace-builds/src-min-noconflict/snippets/javascript']:"ace-builds/src-min-noconflict/snippets/javascript",
+          ['ace-builds/src-min-noconflict/snippets/javascript']: "ace-builds/src-min-noconflict/snippets/javascript",
           // ['ace-builds/src-min-noconflict/worker-javascript']: "ace-builds/src-min-noconflict/worker-javascript",
           ['ace-builds/src-min-noconflict/ext-beautify']: "ace-builds/src-min-noconflict/ext-beautify",
           ['ace-builds/esm-resolver']: "ace-builds/esm-resolver"
         },
         assetFileNames: 'index.css',
-        exports:"named"
+        exports: "named"
       },
     },
   }

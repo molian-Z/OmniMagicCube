@@ -91,6 +91,7 @@ const changeValue = function(val: any, option: any, pathValues: any){
   display: flex;
   justify-content: space-between;
   align-items: center;
+  min-width: 120px;
 }
 .svg-icon {
   cursor: pointer;

@@ -24,7 +24,6 @@ app.use(naive);
 app.use(Antd);
 app.use(ElementPlus);
 app.use(plug, {
-    useUI:"element-plus",
     compsConfig: {
         globalComps:{
             message:MessagePlugin,

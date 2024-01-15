@@ -19,7 +19,7 @@ export default {
     install(app: App<any>, options: any = {
         customComps: {}
     }) {
-        uiMapping.current = options.useUI
+        uiMapping.current = options.useUI || uiMapping.current
         if(options.useData){
             uiMapping.data = options.useData
         }

@@ -11,7 +11,7 @@
 # 使用说明
 
 - 注意下方内容默认采用element-plus组件库作为示例。其他UI库请按照实际名称进行替换。
-- 目前已经支持tdesign-vue-next、element-plus、naive、ant-design-vue库。
+- 目前已经支持tdesign-vue-next、element-plus、naive、ant-design-vue、vexip库。
 - 只有设计器需要。单独引入render时不需要。
 
 ## 集成到项目中

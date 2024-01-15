@@ -60,7 +60,7 @@ export interface ICompMapping {
 export interface IDialog {
     appendToBody?: IAppendToBody | string;
     visible?: boolean | string;
-    destroyOnClose?: string;
+    destroyOnClose?: string | any;
     header?: string;
     component?: string;
     [key: string]: any;
@@ -102,7 +102,7 @@ export interface ITooltip {
 }
 export interface IContent {
     content?: string;
-    destroyOnClose?: boolean;
+    destroyOnClose?: any;
     component?: string;
     [key: string]: any;
 }
@@ -219,47 +219,47 @@ export const defaultLifecycleMap: ILifecycleMap = {
     beforeMount: {
         codeVar: [],
         code: '',
-        function:onBeforeMount,
+        function: onBeforeMount,
     },
     mounted: {
         codeVar: [],
         code: '',
-        function:onMounted,
+        function: onMounted,
     },
     beforeUpdate: {
         codeVar: [],
         code: '',
-        function:onBeforeUpdate,
+        function: onBeforeUpdate,
     },
     updated: {
         codeVar: [],
         code: '',
-        function:onUpdated,
+        function: onUpdated,
     },
     beforeUnmount: {
         codeVar: [],
         code: '',
-        function:onBeforeUnmount,
+        function: onBeforeUnmount,
     },
     unmounted: {
         codeVar: [],
         code: '',
-        function:onUnmounted,
+        function: onUnmounted,
     },
     errorCaptured: {
         codeVar: ['err', 'vm', 'info'],
         code: '',
-        function:onErrorCaptured,
+        function: onErrorCaptured,
     },
     activated: {
         codeVar: [],
         code: '',
-        function:onActivated,
+        function: onActivated,
     },
     deactivated: {
         codeVar: [],
         code: '',
-        function:onDeactivated,
+        function: onDeactivated,
     }
 }
 
@@ -329,7 +329,7 @@ export const defaultSlotsMap: IDefaultSlotsMap = {
  */
 
 export const uiMapping: IUiMapping = {
-    current: "tdesign-vue-next",
+    current: "element-plus",
     data: [{
         name: 'tdesign-vue-next',
         prefix: 'T',
@@ -730,17 +730,126 @@ export const uiMapping: IUiMapping = {
         compMapping: {
             "Button": {
                 "theme": "type",
-                "text": {
-                    "variant": "text"
-                },
+                "text": "text"
             },
-            "Input": {},
-            "InputNumber": {},
-            "Select": {},
-            "Switch": {},
-            "Tooltip": {},
-            "Popup": {},
-            "RadioGroup": {},
+            "Tag": {
+                "theme": "type"
+            },
+            "Input": {
+                "prefixIcon": "prefix",
+                "onEnter": {},
+                "modelValue": "value",
+                "onUpdate:modelValue": "onUpdate:value"
+            },
+            "InputNumber": {
+                "component": "NumberInput",
+                "modelValue": "value",
+                "onUpdate:modelValue": "onUpdate:value"
+            },
+            "Select": {
+                "size": { // 设置大小的同时设置组件的props
+                    "size": "small",
+                    "props": {
+                        options: 'children'
+                    },
+                    "transfer": "body"
+                },
+                "modelValue": "value",
+                "onUpdate:modelValue": "onUpdate:value"
+            },
+            "Switch": {
+                "modelValue": "value",
+                "onUpdate:modelValue": "onUpdate:value"
+            },
+            "Tooltip": {
+                "content": (text: string) => {
+                    return {
+                        "default": {
+                            _isSlot: true,
+                            tag: "NEllipsis",
+                            attrs: {},
+                            slots: text
+                        }
+                    }
+                },
+                "default": "trigger"
+            },
+            "Popup": {
+                "component": "Tooltip",
+                "default": "trigger",
+                "content": "default",
+                "trigger": {
+                    "trigger": "click",
+                    "transfer": true
+                }
+            },
+            "RadioGroup": {
+                "size": {
+                    "size": "small",
+                    "shape": "button-group",
+                },
+                "modelValue": "value",
+                "onUpdate:modelValue": "onUpdate:value"
+            },
+            "RadioButton": {
+                "component": "Radio",
+                "value": "label"
+            },
+            "Cascader": {
+                "optionItems": "options",
+                "checkStrictly": {
+                    "clearable": true,
+                    "noCascaded": true
+                },
+                "modelValue": "value",
+                "onUpdate:modelValue": "onUpdate:value"
+            },
+            "CascaderPanel": {
+                "component": "Cascader",
+                "optionItems": "options",
+                "checkStrictly": {
+                    "clearable": true,
+                    "noCascaded": true
+                },
+                "modelValue": "value",
+                "onUpdate:modelValue": "onUpdate:value"
+            },
+            "Dropdown": {
+                "optionItems": (data: any) => {
+                    return {
+                        drop: {
+                            _isSlot: true,
+                            tag: 'VDropdownList',
+                            attrs: {},
+                            slots: data && data.map((item: any) => {
+                                return {
+                                    _isSlot: true,
+                                    tag: "VDropdownItem",
+                                    attrs: {
+                                        disabled: item.disabled,
+                                        onClick: item.onclick,
+                                        command: item.value
+                                    },
+                                    slots: item.label
+                                }
+                            })
+                        }
+                    }
+                }
+            },
+            "Dialog": {
+                "component": "Modal",
+                "visible": "active",
+                "onUpdate:visible": "onUpdate:active",
+                "destroyOnClose": {
+                    "auto-remove": true,
+                    "undivided":true
+                },
+                "appendToBody": {
+                    "transfer": true
+                },
+                "header": "title"
+            }
         }
     }]
 }

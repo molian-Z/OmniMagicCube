@@ -7,13 +7,11 @@
 <script lang="ts">
 // @ts-nocheck
 import ace from 'ace-builds'
-import 'ace-builds/esm-resolver'
-// import 'ace-builds/src-min-noconflict/theme-dracula'
-// import 'ace-builds/src-min-noconflict/mode-javascript'
-// import 'ace-builds/src-min-noconflict/mode-html'
-// import 'ace-builds/src-min-noconflict/mode-css'
-// import 'ace-builds/src-min-noconflict/worker-javascript'
-// import 'ace-builds/src-min-noconflict/ext-language_tools'
+import 'ace-builds/src-min-noconflict/theme-dracula'
+import 'ace-builds/src-min-noconflict/mode-javascript'
+import 'ace-builds/src-min-noconflict/mode-html'
+import 'ace-builds/src-min-noconflict/mode-css'
+import 'ace-builds/src-min-noconflict/ext-language_tools'
 import workerJavascriptUrl from "ace-builds/src-min-noconflict/worker-javascript?url";
 import snippetsUrl from "ace-builds/src-min-noconflict/snippets/javascript";
 import { beautify } from 'ace-builds/src-min-noconflict/ext-beautify';
@@ -57,8 +55,8 @@ export default {
       maxLines: 20, // 最大行数，超过会自动出现滚动条
       minLines: 5, // 最小行数，还未到最大行数时，编辑器会自动伸缩大小
       fontSize: 14, // 编辑器内字体大小
-      theme: this.themePath, // 默认设置的主题
-      mode: this.modePath, // 默认设置的语言模式
+      theme: 'ace/theme/dracula', // 默认设置的主题
+      mode: 'ace/mode/'+this.mode, // 默认设置的语言模式
       useWorker: this.userWorker,
       tabSize: 4, // 制表符设置为4个空格大小
       readOnly: this.readonly,
@@ -77,15 +75,6 @@ export default {
       enableSnippets: true, // 设置代码片段提示
       enableLiveAutocompletion: true, // 设置自动提示
     })
-    if (this.mode === 'json') {
-      this.setJsonMode()
-    } else if (this.mode === 'css') {
-      this.setCssMode()
-    } else if (this.mode == 'javascript') {
-      this.setJavascriptMode()
-    } else if (this.mode == 'html') {
-      this.setHtmlMode()
-    }
     /* const innerText = this.$parent.$el.innerText
     if(innerText.indexOf('onFormCreated') > -1 || innerText.indexOf('onFormMounted') > -1 || innerText.indexOf('onFormDataChange') > -1){
       completData.push(...snippetsData.map(item =>{
@@ -104,9 +93,6 @@ export default {
   data() {
     return {
       aceEditor: null,
-      themePath: 'ace/theme/dracula',
-      modePath: 'ace/mode/javascript',
-      workerPath:'ace/worker/javascript',
       codeValue: this.modelValue,
     }
   },
@@ -330,23 +316,6 @@ export default {
     //     })
     //   })
     // },
-
-    setJavascriptMode() {
-      this.aceEditor.getSession().setMode('ace/mode/javascript')
-      // this.addAutoCompletion(ace) //添加自定义代码提示！！
-    },
-
-    setJsonMode() {
-      this.aceEditor.getSession().setMode('ace/mode/json')
-    },
-
-    setCssMode() {
-      this.aceEditor.getSession().setMode('ace/mode/css')
-    },
-
-    setHtmlMode() {
-      this.aceEditor.getSession().setMode('ace/mode/html')
-    },
 
     getEditorAnnotations() {
       return this.aceEditor.getSession().getAnnotations()
