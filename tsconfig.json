@@ -113,6 +113,7 @@
     "src/**/*.d.ts",
     "src/**/*.tsx",
     "src/**/*.vue",
-    "@molian/**/*.ts"
+    "@molian/**/*.ts",
+    "@molianComps/**/*.vue"
   ]
 }

@@ -5,6 +5,7 @@ import {
 } from '@vueuse/core'
 import deepComps from './deepTreeToDesigner.vue'
 import treeDir from './treeDir/index.vue'
+import aiIm from './aiIm/index.vue'
 import toolTip from './toolTip/index.vue'
 import { modelValue, hiddenAllPanel, selectedComp, createComp } from '../designerData'
 import { isDraggable, resetHover, hoverComp, hoverNodes, hoverIndex, dragNodes, dragIndex, dropIndex, resetDraggable, useDraggable } from '../draggable'
@@ -58,6 +59,7 @@ const onClick = function () {
             <svg-icon class="svg-icon-transh" icon="trash"></svg-icon>
         </div>
         <treeDir></treeDir>
+        <ai-im></ai-im>
     </div>
 </template>
 

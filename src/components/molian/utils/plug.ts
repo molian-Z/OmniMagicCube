@@ -4,7 +4,8 @@ import {
 import {
     compsInstall
 } from './compsConfig'
-import { App } from 'vue'
+import { uiMapping } from './defaultData'
+import type { App } from 'vue'
 
 console.log(`%c无界魔方%cOmni Magic Cube V1.0.0%c
 %cTo:墨联墨客`,
@@ -18,6 +19,10 @@ export default {
     install(app: App<any>, options: any = {
         customComps: {}
     }) {
+        uiMapping.current = options.useUI
+        if(options.useData){
+            uiMapping.data = options.useData
+        }
         langInstall(app)
         compsInstall(app, options.compsConfig)
     }

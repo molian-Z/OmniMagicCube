@@ -19,7 +19,6 @@ const currentBounding = computed(() => {
   if (hoverComp.value) {
     let obj:any = {
       left: left.value + width.value / 2 <= (isWidth / 2) ? '5px' : Number(left.value - (isWidth / 2)) + width.value / 2 + 'px',
-      height: 60 + 'px',
       width: isWidth + 'px'
     }
     if (top.value < 60) {

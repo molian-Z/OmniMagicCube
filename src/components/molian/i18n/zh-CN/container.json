@@ -9,5 +9,6 @@
     "dropComp":"组件将放置于",
     "appendComp":"插入组件",
     "appendSlot":"插入插槽",
-    "drop":"放置"
+    "drop":"放置",
+    "aiIm":"AI交互"
 }

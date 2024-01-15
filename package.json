@@ -1,12 +1,33 @@
 {
   "name": "omni-magic-cube",
-  "version": "0.8.3",
+  "version": "0.9.5",
   "title": "无界魔方",
+  "private": false,
   "scripts": {
     "dev": "vite --host",
     "build": "vite build",
-    "serve": "vite preview"
+    "serve": "vite preview",
+    "lib": "vite build --config scripts/lib.config.ts && cd libDist && npm publish"
   },
+  "author": "molian-Z",
+  "main": "./libDist/index.umd.js",
+  "module": "./libDist/index.es.js",
+  "types":"./libDist/index.d.ts",
+  "keywords": [
+    "designer",
+    "vue3",
+    "vite",
+    "vueuse",
+    "render",
+    "next",
+    "vue3-designer"
+  ],
+  "homepage": "https://github.com/molian-Z/OmniMagicCube#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/molian-Z/OmniMagicCube"
+  },
+  "license": "Apache-2.0",
   "dependencies": {
     "@vueuse/core": "^10.5.0",
     "ace-builds": "^1.31.2",
@@ -20,6 +41,7 @@
     "unplugin-auto-import": "^0.17.3",
     "unplugin-vue-components": "^0.26.0",
     "vexip-ui": "^2.2.10",
+    "vite-plugin-dts": "^3.7.0",
     "vue": "^3.2.8",
     "vue3-colorpicker": "^2.2.3"
   },
@@ -27,6 +49,7 @@
     "@types/dexie": "^1.3.1",
     "@types/node": "^20.10.6",
     "@vitejs/plugin-vue": "^5.0.2",
+    "rollup-plugin-visualizer": "^5.12.0",
     "sass": "^1.69.5",
     "typescript": "^5.3.3",
     "vite": "^5.0.10",

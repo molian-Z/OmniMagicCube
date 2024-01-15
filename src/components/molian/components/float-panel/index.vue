@@ -4,7 +4,7 @@ import { useDraggable, useWindowSize } from '@vueuse/core'
 import svgIcon from '@molianComps/svg-icon/index.vue'
 import mlAnimate from '@molianComps/animate-height/index.vue'
 
-const props = withDefaults(defineProps <{
+const props = withDefaults(defineProps<{
     shape: 'square' | 'round';
     offset: any;
     title?: string;
@@ -15,7 +15,7 @@ const props = withDefaults(defineProps <{
     isShow: boolean;
     float: 'left' | 'right';
     isClose: boolean;
-}> (), {
+}>(), {
     shape: 'square',
     offset: [15, 105],
     title: '',
@@ -38,7 +38,7 @@ const activeName = computed({
         emit('update:modelValue', val)
     }
 })
-const activeObj:any = ref({})
+const activeObj: any = ref({})
 const el = ref(null)
 const dragHeader = ref(null)
 const isFold = ref(true)
@@ -293,7 +293,9 @@ const closePanel = function (evt: any) {
             .float-panel-header__title {
                 position: absolute;
                 top: 0;
-                padding: 12px var(--ml-pd-lg);
+                display: flex;
+                align-items: center;
+                padding-left: 12px;
                 font-weight: 600;
                 font-size: 14px;
                 color: var(--ml-text-color-1);

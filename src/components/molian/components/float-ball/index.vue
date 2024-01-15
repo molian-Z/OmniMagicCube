@@ -5,10 +5,18 @@ defineProps({
   title: {
     type: String,
     default: ''
+  },
+  offsetX: {
+    type: String,
+    default: '0px'
+  },
+  offsetY: {
+    type: Number,
+    default: '0px'
   }
 })
 const expand = ref(false)
-const switchExpand = (bool: boolean)=>{
+const switchExpand = (bool: boolean) => {
   expand.value = bool
 }
 defineExpose({
@@ -18,14 +26,17 @@ defineExpose({
 </script>
 <template>
   <div :class="['float-ball-body', expand && 'expand']">
+
     <div class="toggle" @click="expand = !expand">
-      <span></span>
-      <span></span>
-      <span></span>
+      <slot name="toggle">
+        <span></span>
+        <span></span>
+        <span></span>
+      </slot>
     </div>
     <div class="float-ball__header" v-if="$slots.header || !!title">
       <slot name="header">
-        <div class="float-ball__title">{{title}}</div>
+        <div class="float-ball__title">{{ title }}</div>
       </slot>
     </div>
     <div :class="['float-ball__container', $slots.header || !!title && 'hasHeader']" v-if="expand">
@@ -40,8 +51,8 @@ defineExpose({
 
 .float-ball-body {
   position: fixed;
-  bottom: 16px;
-  right: 16px;
+  bottom: calc(v-bind(offsetY) + 16px);
+  right: calc(v-bind(offsetX) + 16px);
   z-index: 9999999999;
   width: 48px;
   height: 48px;
@@ -62,7 +73,6 @@ defineExpose({
     justify-content: center;
     align-items: center;
     cursor: pointer;
-    overflow: hidden;
 
     span {
       position: absolute;
@@ -116,6 +126,7 @@ defineExpose({
 
       span:nth-child(3) {
         transform: translateX(60px);
+        opacity: 0;
       }
     }
 
@@ -126,7 +137,7 @@ defineExpose({
       padding-bottom: 0;
       align-items: center;
 
-      .float-ball__title{
+      .float-ball__title {
         font-size: 14px;
         font-weight: bold;
       }
@@ -137,7 +148,7 @@ defineExpose({
       height: calc(100% - 32px);
       padding: var(--ml-pd-base);
 
-      &.hasHeader{
+      &.hasHeader {
         height: calc(100% - 64px - var(--ml-pd-base));
       }
     }

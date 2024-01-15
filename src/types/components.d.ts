@@ -8,6 +8,7 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     ActionDesigner: typeof import('./../components/molian/components/designer/actionDesigner/index.vue')['default']
+    AiIm: typeof import('./../components/molian/components/designer/containerDesigner/aiIm/index.vue')['default']
     AnimateHeight: typeof import('./../components/molian/components/animate-height/index.vue')['default']
     AnyData2form: typeof import('./../components/molian/components/any-data2form/index.vue')['default']
     Basic: typeof import('./../components/molian/components/designer/optionsDesigner/components/basic.vue')['default']

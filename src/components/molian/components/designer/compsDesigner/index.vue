@@ -41,12 +41,6 @@ const i18nList = computed(()=>{
 </template>
 
 <style lang="scss" scoped>
-.toolbar-icon {
-    font-size: 22px;
-    width: 26px;
-    height: 26px;
-}
-
 :deep(.css-svg-icon) {
     // fill: var(--ml-primary-color);
     cursor: pointer;

@@ -18,7 +18,7 @@ const registerCompMap = function(app:App, currentCompMap: any[], options: { comp
  * @param {* App} app 
  * @param {* 配置数据} options 
  */
-export const install = function (app: App<any>, options: { compMap: any; iconPrefix?: string | undefined; }) {
+export const compMapInstall = function (app: App<any>, options: { compMap: any; iconPrefix?: string | undefined; }) {
     let currentCompMap = []
     currentCompMap.push(...defaultCompMap)
     if(options.compMap && options.compMap.length > 0){

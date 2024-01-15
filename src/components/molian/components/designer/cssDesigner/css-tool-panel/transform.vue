@@ -33,7 +33,7 @@ import transformBottom from './transform/transform-bottom.vue'
             padding-bottom: var(--ml-pd-base);
 
             .transform-container__body-list_item {
-                width: calc(50% - 15px);
+                width: calc(50% - 25px);
                 padding: var(--ml-pd-small);
             }
         }

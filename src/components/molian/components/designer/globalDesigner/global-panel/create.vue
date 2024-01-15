@@ -19,8 +19,10 @@ const {
 } = useBroadcastChannel({ name: 'molian_createVue' })
 const showDialog = ref(false)
 const showRenderDialog = ref(false)
+const showTemplateDialog = ref(false)
 const codeData = ref(``)
 const langMode = ref(``)
+const cacheImportTemplateData = ref(``)
 
 const createSFC = function (type: string | any) {
   const template = createTemplate(modelValue.value)
@@ -60,6 +62,10 @@ const showRender = function(){
   showRenderDialog.value = true
 }
 
+const importTemplate = function(){
+  showTemplateDialog.value = true
+}
+
 </script>
 
 <template>
@@ -96,8 +102,8 @@ const showRender = function(){
       </customButton>
     </div>
     <div class="create-item">
-      <customButton theme="primary" size="small" @click="showRender">
-        导入Template文件
+      <customButton theme="primary" size="small" @click="importTemplate">
+        导入Template
       </customButton>
     </div>
   </div>
@@ -110,6 +116,10 @@ const showRender = function(){
   <customDialog  appendToBody header="同步render" width="1200px" :close-on-click-modal="false" @escKeydown="showRenderDialog = false"
       @closeBtnClick="showRenderDialog = false" v-model:visible="showRenderDialog" destroyOnClose>
       <render :modelValue="modelValue" :globalAttrs="globalAttrs" />
+  </customDialog>
+  <customDialog  appendToBody header="导入Template" width="1200px" :close-on-click-modal="false" @escKeydown="showTemplateDialog = false"
+      @closeBtnClick="showTemplateDialog = false" v-model:visible="showTemplateDialog" destroyOnClose>
+      <codeEditor v-model="cacheImportTemplateData"></codeEditor>
   </customDialog>
 </template>
 

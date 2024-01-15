@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { inject } from 'vue'
 import { onClickOutside } from '@vueuse/core'
-import { modelValue, selectedComp, treeDirRef } from '@molianComps/designer/designerData'
+import { modelValue, treeDirRef } from '@molianComps/designer/designerData'
 import deepTree from './deepTreeToData.vue'
 import floatBall from '@molianComps/float-ball/index.vue'
 
@@ -17,7 +17,7 @@ onClickOutside(treeDirRef, () => {
 <template>
   <floatBall :title="t('container.treeDir')" ref="treeDirRef">
     <div class="tree-dir-container">
-      <deepTree v-model="modelValue" @activeNode="onActive"></deepTree>
+      <deepTree v-model="modelValue"></deepTree>
     </div>
   </floatBall>
 </template>

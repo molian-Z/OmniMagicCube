@@ -17,7 +17,6 @@ const onActive = (comp: any, index:number) => {
   // hoverRef.value = compsRef[comp.key]
   selectedComp.value = comp
 }
-console.log(props.modelValue)
 </script>
 
 <template>

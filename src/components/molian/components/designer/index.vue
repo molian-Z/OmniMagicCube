@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { defineProps } from 'vue'
 import { hiddenAllPanel, selectedComp } from './designerData'
 import globalTool from './globalTool/index.vue'
@@ -32,8 +32,11 @@ defineProps({
         <container-designer></container-designer>
     </div>
 </template>
-<style scoped lang="scss">
+<style lang="scss">
 .designer-page {
-    
-}
-</style>
+    *,
+    *:before,
+    *:after {
+        box-sizing: border-box;
+    }
+}</style>

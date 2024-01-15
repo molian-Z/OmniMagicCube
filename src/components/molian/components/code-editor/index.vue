@@ -7,14 +7,15 @@
 <script lang="ts">
 // @ts-nocheck
 import ace from 'ace-builds'
-import 'ace-builds/src-min-noconflict/theme-dracula' // 默认设置的主题
-import 'ace-builds/src-min-noconflict/mode-javascript' // 默认设置的语言模式
-import 'ace-builds/src-min-noconflict/mode-json'
-import 'ace-builds/src-min-noconflict/mode-html'
-import 'ace-builds/src-min-noconflict/mode-css'
-import 'ace-builds/src-min-noconflict/ext-language_tools'
+import 'ace-builds/esm-resolver'
+// import 'ace-builds/src-min-noconflict/theme-dracula'
+// import 'ace-builds/src-min-noconflict/mode-javascript'
+// import 'ace-builds/src-min-noconflict/mode-html'
+// import 'ace-builds/src-min-noconflict/mode-css'
+// import 'ace-builds/src-min-noconflict/worker-javascript'
+// import 'ace-builds/src-min-noconflict/ext-language_tools'
 import workerJavascriptUrl from "ace-builds/src-min-noconflict/worker-javascript?url";
-import snippetsUrl from "ace-builds/src-min-noconflict/snippets/javascript.js";
+import snippetsUrl from "ace-builds/src-min-noconflict/snippets/javascript";
 import { beautify } from 'ace-builds/src-min-noconflict/ext-beautify';
 // import loadBeautifier, { beautifierOpts } from '@/utils/beautifierLoader'
 // import {
@@ -22,7 +23,7 @@ import { beautify } from 'ace-builds/src-min-noconflict/ext-beautify';
 //   completions,
 //   highRules
 // } from '@/utils/ace-editor-data'
-const ACE_BASE_PATH = 'ace-builds/src-min-noconflict'
+// const ACE_BASE_PATH = 'ace'
 export default {
   name: 'CodeEditor',
   props: {
@@ -49,7 +50,7 @@ export default {
   },
   emits: ['update:modelValue'],
   mounted() {
-    //ace.config.set('basePath', ACE_BASE_PATH)
+    // ace.config.set('basePath', ACE_BASE_PATH)
     ace.config.setModuleUrl('ace/mode/javascript_worker', workerJavascriptUrl);
     ace.config.setModuleUrl('ace/mode/snippetsUrl', snippetsUrl);
     this.aceEditor = ace.edit(this.$refs.ace, {
@@ -58,6 +59,7 @@ export default {
       fontSize: 14, // 编辑器内字体大小
       theme: this.themePath, // 默认设置的主题
       mode: this.modePath, // 默认设置的语言模式
+      useWorker: this.userWorker,
       tabSize: 4, // 制表符设置为4个空格大小
       readOnly: this.readonly,
       highlightActiveLine: true,
@@ -84,9 +86,6 @@ export default {
     } else if (this.mode == 'html') {
       this.setHtmlMode()
     }
-    if (!this.userWorker) {
-      this.aceEditor.getSession().setUseWorker(false)
-    }
     /* const innerText = this.$parent.$el.innerText
     if(innerText.indexOf('onFormCreated') > -1 || innerText.indexOf('onFormMounted') > -1 || innerText.indexOf('onFormDataChange') > -1){
       completData.push(...snippetsData.map(item =>{
@@ -105,8 +104,9 @@ export default {
   data() {
     return {
       aceEditor: null,
-      themePath: 'ace/theme/dracula', // 不导入 webpack-resolver，该模块路径会报错
-      modePath: 'ace/mode/javascript', // 同上
+      themePath: 'ace/theme/dracula',
+      modePath: 'ace/mode/javascript',
+      workerPath:'ace/worker/javascript',
       codeValue: this.modelValue,
     }
   },

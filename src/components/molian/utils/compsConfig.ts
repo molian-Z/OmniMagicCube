@@ -1,5 +1,5 @@
 // import {
-//     install as compMapInstall
+//     compMapInstall
 // } from './compMap'
 import {
     ref,

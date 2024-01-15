@@ -84,8 +84,8 @@
   }
 
   .css-svg-icon {
-    width: 24px;
-    height: 24px;
+    width: 20px;
+    height: 20px;
     padding: 2px;
     transition: var(--ml-transition-base);
     border-radius: var(--ml-radius-small);
@@ -216,6 +216,6 @@
 
 .toolbar-icon {
   font-size: 22px;
-  width: 28px;
-  height: 28px;
+  width: 28px !important;
+  height: 28px !important;
 }

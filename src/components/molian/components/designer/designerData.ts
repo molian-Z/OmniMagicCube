@@ -21,6 +21,7 @@ export const optionsPanel = ref('')
 export const actionPanel = ref('')
 export const globalPanel = ref('')
 export const treeDirRef = ref()
+export const aiImRef = ref()
 
 // 页面数据
 // 缓存数据
@@ -64,7 +65,7 @@ export const selectedComp = ref<any>(null)
 const keys = useMagicKeys({
     passive: false,
     onEventFired(e) {
-        if (e.ctrlKey && ['a', 's', 'd', 'f', 'z', 'y', 'b'].indexOf(e.key) > -1 && e.type === 'keydown') {
+        if (e.ctrlKey && ['a', 's', 'd', 'f', 'z', 'y', 'b', 'h'].indexOf(e.key) > -1 && e.type === 'keydown') {
             e.preventDefault();
             e.stopPropagation();
         }
@@ -86,6 +87,10 @@ whenever(keys.ctrl_f, () => globalMenu.value = 'global');
 // 显示树面板
 whenever(keys.ctrl_b, () => {
     treeDirRef.value.switchExpand(!treeDirRef.value.expand)
+});
+// 显示AI交互面板
+whenever(keys.ctrl_h, () => {
+    aiImRef.value.switchExpand(!aiImRef.value.expand)
 });
 
 whenever(keys.delete, () => {
