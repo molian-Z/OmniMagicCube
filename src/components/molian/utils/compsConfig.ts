@@ -64,6 +64,25 @@ const registerCategory = function (data: any[]) {
     }
 }
 
+export const parseSlot = function(slots: { [x: string]: any }){
+    const autoSlots: { [key: string]: any } = {}
+    for (const skey in slots) {
+        if (Object.hasOwnProperty.call(slots, skey)) {
+            const {
+                cloned
+            } = useCloned(slots[skey])
+            if (cloned.value === 'auto' || typeof cloned.value === 'object' && !!cloned.value.auto) {
+                cloned.value = {
+                    allowComps: typeof cloned.value === 'object' && cloned.value.allowComps || [],
+                    children: []
+                }
+                autoSlots[skey] = cloned.value
+            }
+        }
+    }
+    return autoSlots
+}
+
 /**
  * 格式化组件并返回JSON
  * @param {* 键} key
@@ -72,8 +91,9 @@ const registerCategory = function (data: any[]) {
 const parseComp = function (key: string, element: { emits: any[]; props: any; slotsOption: { [x: string]: any } }, allowRegPropsAndEmit: any) {
     const currentEmits = [],
         currentUpdateModel = [],
-        currentProps: { [key: string]: any } = {},
-        autoSlots: { [key: string]: any } = {}
+        currentProps: { [key: string]: any } = {};
+        
+    let autoSlots: { [key: string]: any } = {};
     if (element.emits) {
         if (Array.isArray(element.emits)) {
             currentEmits.push(...element.emits)
@@ -152,20 +172,7 @@ const parseComp = function (key: string, element: { emits: any[]; props: any; sl
             }
         }
     }
-    for (const skey in slots) {
-        if (Object.hasOwnProperty.call(slots, skey)) {
-            const {
-                cloned
-            } = useCloned(slots[skey])
-            if (cloned.value === 'auto' || typeof cloned.value === 'object' && !!cloned.value.auto) {
-                cloned.value = {
-                    allowComps: typeof cloned.value === 'object' && cloned.value.allowComps || [],
-                    children: []
-                }
-                autoSlots[skey] = cloned.value
-            }
-        }
-    }
+    autoSlots = parseSlot(slots)
     if (!!defaultAttrsMap[key]) {
         const attrs = defaultAttrsMap[key]
         for (const attrKey in attrs) {
@@ -256,7 +263,7 @@ const registerComps = function (app: { _context: { components: any }; provide: (
         }
     })
     currentRegComps.value = newComps
-    getCloudData(newComps)
+    getCloudData()
         .catch((err: any) => {
             console.log('cloudData is error', err)
         })

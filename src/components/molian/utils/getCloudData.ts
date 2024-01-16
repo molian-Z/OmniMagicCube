@@ -8,14 +8,15 @@ import {
 } from './indexedDB'
 import {
   slotsMap,
-  currentRegComps
+  currentRegComps,
+  parseSlot
 } from './compsConfig'
 
 import {
   langObj,
   language
 } from './lang'
-export async function getCloudData(comps: { [x: string]: any }) {
+export async function getCloudData() {
   // 首先获取正在使用的组件库名
   const {
     current,
@@ -33,11 +34,11 @@ export async function getCloudData(comps: { [x: string]: any }) {
     [key: string]: any;
   } = {}
   if (prefixObj) {
-    const currentDBData = Object.keys(comps).reduce((result: any[], item) => {
+    const currentDBData = Object.keys(currentRegComps.value).reduce((result: any[], item) => {
       if (item.indexOf(prefixObj.prefix) === 0) {
         result.push({
           name: item,
-          component: comps[item]
+          component: currentRegComps.value[item]
         })
       }
       return result
@@ -147,9 +148,11 @@ export async function getCloudData(comps: { [x: string]: any }) {
         const element = nowData[key];
         if (key === 'slots') {
           element.forEach((item: { key: string | number; value: { [key: string]: string | boolean | { allowComps?: string[] | undefined; auto?: boolean | undefined } } }) => {
+            const compEl = currentRegComps.value[item.key]
             if (!slotsMap.value[item.key]) {
               slotsMap.value[item.key] = item.value
             }
+            compEl.slots = Object.assign({}, parseSlot(item.value), compEl.slots)
           })
         } else if (key === 'attrs') {
           element.forEach((item: { key: string | number; value: { [x: string]: any } }) => {

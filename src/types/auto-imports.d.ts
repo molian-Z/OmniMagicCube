@@ -108,6 +108,7 @@ declare global {
   const onUnmounted: typeof import('vue')['onUnmounted']
   const onUpdated: typeof import('vue')['onUpdated']
   const optionsPanel: typeof import('../components/molian/components/designer/designerData')['optionsPanel']
+  const parseSlot: typeof import('../components/molian/utils/compsConfig')['parseSlot']
   const parseStyle: typeof import('../components/molian/utils/css-generator')['parseStyle']
   const plug: typeof import('../components/molian/utils/plug')['default']
   const provide: typeof import('vue')['provide']
