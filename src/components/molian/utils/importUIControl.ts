@@ -6,15 +6,14 @@ import {
   inject,
 } from 'vue'
 
-function createRender(data: { slots: any; attrs: any; tag: any }, comps: { [x: string]: { comp: string | Component<any> } }) {
-  const { slots, attrs, tag } = data
+function createRender(slots: any, attrs: any, tag: string, comps: { [x: string]: { comp: string | Component<any> } }) {
   let currentSlots: any = ``
   if (Array.isArray(slots)) {
     currentSlots = slots.map(item => {
-      return createRender(item, comps)
+      return createRender(item.slots, item.attrs, item.tag, comps)
     })
   } else if (typeof slots === "object") {
-    currentSlots = createRender(slots, comps)
+    currentSlots = createRender(slots.slots, slots.attrs, slots.tag, comps)
   } else if (typeof slots === 'function') {
     currentSlots = slots()
   } else {
@@ -30,7 +29,7 @@ export const createControl = function (prefix: any, compName: any, newAttrs: { [
       slots,
       expose
     }) {
-      const comps:any = inject('mlComps')
+      const comps: any = inject('mlComps')
       const getSlots = () => {
         let objSlots: {
           [x: string]: any
@@ -47,7 +46,7 @@ export const createControl = function (prefix: any, compName: any, newAttrs: { [
         }
         return objSlots
       }
-      const currentSlots = getSlots() || {}
+      let currentSlots = getSlots() || {}
       const getAttrs = computed(() => {
         let objAttrs: {
           [x: string]: any
@@ -66,14 +65,19 @@ export const createControl = function (prefix: any, compName: any, newAttrs: { [
               let newAttr = newAttrs[key](element)
               Object.keys(newAttr).forEach(key => {
                 const currentAttr = newAttr[key]
-                if (currentAttr && !currentAttr._isSlot) {
+                if (Array.isArray(currentAttr)) {
+                  currentSlots = []
+                  currentAttr.forEach((item: { slots: any; attrs: any; tag: string }) => {
+                    currentSlots.push(createRender(item.slots, item.attrs, item.tag, comps.value))
+                  })
+                }else if (currentAttr && !currentAttr._isSlot) {
                   objAttrs = {
                     ...objAttrs,
                     [key]: currentAttr
                   }
-                } else if(currentAttr) {
-                  currentSlots[key] = createRender(currentAttr, comps.value)
-                }else{
+                } else if (currentAttr) {
+                  currentSlots[key] = createRender(currentAttr.slots, currentAttr.attrs, currentAttr.tag, comps.value)
+                } else {
                   // console.log(currentAttr,key)
                 }
               })
@@ -85,8 +89,12 @@ export const createControl = function (prefix: any, compName: any, newAttrs: { [
         objAttrs.ref = 'ref'
         return objAttrs
       })
-      let controlTag = comps.value[prefix + compName].comp
-      return () => h(controlTag, getAttrs.value, currentSlots)
+      try {
+        let controlTag = comps.value[prefix + compName].comp
+        return () => h(controlTag, getAttrs.value, currentSlots)
+      } catch (error) {
+        console.log(`组件${prefix + compName}不存在:\n` + error)
+      }
     }
   })
 }

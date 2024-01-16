@@ -238,7 +238,17 @@ const registerComps = function (app: { _context: { components: any }; provide: (
         if (Object.hasOwnProperty.call(comps, key)) {
             const element = comps[key];
             newComps[key] = parseComp(key, element, allowRegPropsAndEmit)
-            const prefixObj = uiMapping.data.find((fitem: { prefix: string }) => key.startsWith(fitem.prefix))
+            let prefixObj: any = null
+            if(!!uiMapping.usePrefix){
+                prefixObj = uiMapping.data.find((fitem: { prefix: string }) => {
+                    if(uiMapping.usePrefix === fitem.prefix){
+                        return key.startsWith(uiMapping.usePrefix)
+                    }
+                })
+            }
+            if(!prefixObj){
+                prefixObj = uiMapping.data.find((fitem: { prefix: string }) => key.startsWith(fitem.prefix))
+            }
             newComps[key].prefix = prefixObj && prefixObj.prefix || ''
             newComps[key].title = t('component.' + newComps[key].name.substring(newComps[key].prefix.length))
         }
@@ -283,10 +293,10 @@ const registerGlobalComps = function (app: { provide: (arg0: string, arg1: any) 
 
 const registerCustomComps = function (app: App<any>) {
     const {
-        current,
+        useUI,
         data
     } = uiMapping
-    const currentUIData: any = data.find((item: { name: any }) => item.name === current)
+    const currentUIData: any = data.find((item: { name: any }) => item.name === useUI)
     const { prefix, compMapping } = currentUIData
     for (const key in compMapping) {
         if (Object.hasOwnProperty.call(compMapping, key)) {

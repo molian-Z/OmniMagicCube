@@ -118,7 +118,7 @@ const actived = function (item: { type: string; value: any }) {
 <template>
     <div class="css-designer">
         <float-panel float="right" :list="menus" v-model="cssPanel" @clickClose="closeFloatPanel"
-            :title="t('css.styleEdit')" :foldWidth="365" :isShow="globalMenu === 'style'">
+            :title="t('css.styleEdit')" :foldWidth="400" :isShow="globalMenu === 'style'">
             <template #toolbar>
                 <customTooltip :content="item.label" v-for="item in toolbarData" :key="item.value">
                     <svg-icon

@@ -10,9 +10,9 @@ import svgIcon from '@molianComps/svg-icon/index.vue'
 const customComps:any = inject('customComps')
 const t:any = inject('mlLangs')
 const { customTooltip } = customComps
-const { current, data } = uiMapping
+const { useUI, data } = uiMapping
 
-const currentUI = ref(current)
+const currentUI = ref(useUI)
 
 const i18nList = computed(()=>{
     return categoryList.value.map(item =>{

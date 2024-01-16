@@ -31,7 +31,8 @@ export interface IDefaultSlotsMap {
 }
 
 export interface IUiMapping {
-    current: string;
+    useUI: string;
+    usePrefix?: string;
     data: Array<IData>;
 }
 export type IData = {
@@ -273,53 +274,11 @@ export const defaultLifecycleMap: ILifecycleMap = {
  */
 
 export const defaultSlotsMap: IDefaultSlotsMap = {
-    TRow: {
+    ArcoRow: {
         default: {
             auto: true,
             allowComps: ['TCol']
         }
-    },
-    TCol: {
-        default: 'auto'
-    },
-    TLayout: {
-        default: {
-            allowComps: ['THeader', 'TLayout', 'TContent', 'TAside', 'TFooter']
-        }
-    },
-    TSpace: {
-        default: 'auto'
-    },
-    TForm: {
-        default: {
-            allowComps: ['TFormItem']
-        },
-    },
-    TFormItem: {
-        default: 'auto'
-    },
-    TList: {
-        header: true,
-        default: {
-            auto: true,
-            allowComps: ['TListItem']
-        },
-        footer: true,
-        asyncLoading: true
-    },
-    TListItem: {
-        action: true,
-        default: {
-            auto: true,
-            allowComps: ['TListItemMeta']
-        },
-        content: true,
-    },
-    TListItemMeta: {
-        avatar: true,
-        description: true,
-        image: true,
-        title: true
     }
 }
 
@@ -329,7 +288,7 @@ export const defaultSlotsMap: IDefaultSlotsMap = {
  */
 
 export const uiMapping: IUiMapping = {
-    current: "element-plus",
+    useUI: "element-plus",
     data: [{
         name: 'tdesign-vue-next',
         prefix: 'T',
@@ -843,11 +802,120 @@ export const uiMapping: IUiMapping = {
                 "onUpdate:visible": "onUpdate:active",
                 "destroyOnClose": {
                     "auto-remove": true,
-                    "undivided":true
+                    "undivided": true
                 },
                 "appendToBody": {
                     "transfer": true
                 },
+                "header": "title"
+            }
+        }
+    }, {
+        name: 'arco',
+        prefix: 'A',
+        icon: "Arco",
+        compMapping: {
+            "Button": {
+                "theme": (text: string)=>{
+                    if(text !== 'default'){
+                        return {
+                            "type":text
+                        }
+                    }else{
+                        return {}
+                    }
+                },
+                "text": {
+                    "type": "text"
+                }
+            },
+            "Tag": {
+                "theme": (text:string)=>{
+                    return {
+                        color: text === 'primary' && "arcoblue" || text === 'default' && "gray" || "orangered"
+                    }
+                }
+            },
+            "Input": {
+                "prefixIcon": "prefix",
+                "onEnter": {}
+            },
+            "InputNumber": {},
+            "Select": {
+                "size": { // 设置大小的同时设置组件的props
+                    "size": "small",
+                    "fieldNames": {value: 'value', label: 'label'}
+                },
+            },
+            "Switch": {},
+            "Tooltip": {
+                "content": "content"
+            },
+            "Popup": {
+                "component": "Popover",
+                "default": "default",
+                "content": "content",
+                "trigger": {
+                    "trigger": "click",
+                }
+            },
+            "RadioGroup": {
+                "size": {
+                    "type": "button"
+                }
+            },
+            "RadioButton": {
+                "component": "Radio",
+                "value": "value"
+            },
+            "Cascader": {
+                "optionItems": "options",
+                "checkStrictly": "check-strictly",
+                "size":{
+                    "size":"small",
+                    "path-mode":true,
+                    "allow-clear":true
+                }
+            },
+            "CascaderPanel": {
+                "optionItems": "options",
+                "checkStrictly": "check-strictly",
+                "size":{
+                    "size":"small",
+                    "path-mode":true,
+                    "allow-clear":true,
+                    "style":"border-width: 0px;box-shadow: none;"
+                }
+            },
+            "Dropdown": {
+                "optionItems": (data: any) => {
+                    const prefix = uiMapping.usePrefix || uiMapping.data.find(item => item.name === 'arco')
+                    return {
+                        content: {
+                            _isSlot: true,
+                            tag: prefix+'Dgroup',
+                            attrs: {},
+                            slots: data && data.map((item: any) => {
+                                
+                                return {
+                                    _isSlot: true,
+                                    tag: prefix + "Doption",
+                                    attrs: {
+                                        disabled: item.disabled,
+                                        onClick: item.onclick,
+                                        command: item.value
+                                    },
+                                    slots: item.label
+                                }
+                            })
+                        }
+                    }
+                }
+            },
+            "Dialog": {
+                "component": "Modal",
+                "destroyOnClose": "unmount-on-close",
+                "appendToBody": "render-to-body",
                 "header": "title"
             }
         }

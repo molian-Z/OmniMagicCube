@@ -31,11 +31,6 @@ import transformBottom from './transform/transform-bottom.vue'
             flex-wrap: wrap;
             align-items: center;
             padding-bottom: var(--ml-pd-base);
-
-            .transform-container__body-list_item {
-                width: calc(50% - 25px);
-                padding: var(--ml-pd-small);
-            }
         }
     }
 }

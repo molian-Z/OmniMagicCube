@@ -19,14 +19,14 @@ import {
 export async function getCloudData() {
   // 首先获取正在使用的组件库名
   const {
-    current,
+    useUI,
     data
   } = uiMapping
   //其次获取已有的本地数据
-  const localData = await getAll(current)
+  const localData = await getAll(useUI)
   // 比对已有数据找出需云端获取的数据
   const prefixObj = data.find(item => {
-    return item.name === current
+    return item.name === useUI
   })
   const nowData: {
     type?: string | undefined;
@@ -114,7 +114,7 @@ export async function getCloudData() {
       const res = await fetch(cloudUrl, {
         method: 'post',
         body: JSON.stringify({
-          UIName: current,
+          UIName: useUI,
           lang: language.value,
           data: pendingData
         })
@@ -127,7 +127,7 @@ export async function getCloudData() {
             add(item.type, {
               key: fitem.tag,
               value: fitem.data,
-              UIName: current
+              UIName: useUI
             }).then(res => {
               //console.log(res)
             })
@@ -136,7 +136,7 @@ export async function getCloudData() {
             return {
               key: mItem.tag,
               value: mItem.data,
-              UIName: current
+              UIName: useUI
             }
           })
         })

@@ -21,6 +21,7 @@ const mixBlendModeData = computed(() => {
             label:t('css.effectObj.modeInfo.' + modeInfo[index]),
             type: 'group',
             group: t('css.effectObj.modeInfo.' + modeInfo[index]),
+            isGroup:true,
             children: children,
             options: children
         }

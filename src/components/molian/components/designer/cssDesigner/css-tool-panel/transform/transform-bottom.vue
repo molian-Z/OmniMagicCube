@@ -74,34 +74,34 @@ const svgClick = function (val: string) {
         <div class="transform-container__body-title">{{t('css.const')}}</div>
         <div class="transform-container__body-constraints">
             <div class="transform-constraints_panel">
-                <svg width="64" height="64">
+                <svg width="108" height="108">
                     <!-- 四周线条 -->
-                    <line :class="['hoverSvg', css.constX && css.constX.includes('left') && 'is-active']" x1="5" y1="32"
-                        x2="15" y2="32" stroke-width="3" @click="svgClick('left')" />
-                    <line :class="['hoverSvg', css.constY && css.constY.includes('top') && 'is-active']" x1="32" y1="5"
-                        x2="32" y2="15" stroke-width="3" @click="svgClick('top')" />
-                    <line :class="['hoverSvg', css.constX && css.constX.includes('right') && 'is-active']" x1="49" y1="32"
-                        x2="59" y2="32" stroke-width="3" @click="svgClick('right')" />
-                    <line :class="['hoverSvg', css.constY && css.constY.includes('bottom') && 'is-active']" x1="32" y1="59"
-                        x2="32" y2="49" stroke-width="3" @click="svgClick('bottom')" />
+                    <line :class="['hoverSvg', css.constX && css.constX.includes('left') && 'is-active']" x1="5" y1="54"
+                        x2="25" y2="54" stroke-width="5" @click="svgClick('left')" />
+                    <line :class="['hoverSvg', css.constY && css.constY.includes('top') && 'is-active']" x1="54" y1="5"
+                        x2="54" y2="25" stroke-width="5" @click="svgClick('top')" />
+                    <line :class="['hoverSvg', css.constX && css.constX.includes('right') && 'is-active']" x1="83" y1="54"
+                        x2="103" y2="54" stroke-width="5" @click="svgClick('right')" />
+                    <line :class="['hoverSvg', css.constY && css.constY.includes('bottom') && 'is-active']" x1="54" y1="103"
+                        x2="54" y2="83" stroke-width="5" @click="svgClick('bottom')" />
                     <!-- 十字线条 -->
-                    <line :class="['hoverSvg', css.constX && css.constX === 'left2right' && 'is-active']" x1="23" y1="32"
-                        x2="42" y2="32" stroke-width="2" @click="svgClick('left2right')" />
-                    <line :class="['hoverSvg', css.constY && css.constY === 'top2bottom' && 'is-active']" x1="32" y1="23"
-                        x2="32" y2="42" stroke-width="2" @click="svgClick('top2bottom')" />
+                    <line :class="['hoverSvg', css.constX && css.constX === 'left2right' && 'is-active']" x1="33" y1="54"
+                        x2="75" y2="54" stroke-width="4" @click="svgClick('left2right')" />
+                    <line :class="['hoverSvg', css.constY && css.constY === 'top2bottom' && 'is-active']" x1="54" y1="33"
+                        x2="54" y2="75" stroke-width="4" @click="svgClick('top2bottom')" />
                     <!-- 方形 -->
-                    <rect x="20" y="20" width="25" height="25" fill="none" stroke="#E0E0E0" stroke-dasharray="4" rx="3"
-                        ry="3" stroke-width="1"></rect>
+                    <rect x="29" y="29" width="50" height="50" fill="none" stroke="#E0E0E0" stroke-dasharray="4" rx="3"
+                        ry="3" stroke-width="2"></rect>
                 </svg>
             </div>
             <div class="transform-constraints_pos">
-                <customSelect size="small" class="transform-constraints_pos-input" :disabled="!selectedComp"
+                <customSelect class="transform-constraints_pos-input" :disabled="!selectedComp"
                     :options="leftOptions" v-model="css.constX">
                     <template #prefixIcon>
                         <svg-icon icon="ic_const_left" />
                     </template>
                 </customSelect>
-                <customSelect size="small" class="transform-constraints_pos-input" :disabled="!selectedComp"
+                <customSelect class="transform-constraints_pos-input" :disabled="!selectedComp"
                     :options="topOptions" v-model="css.constY">
                     <template #prefixIcon>
                         <svg-icon icon="ic_const_top" />
@@ -122,8 +122,8 @@ const svgClick = function (val: string) {
 
     .transform-constraints_panel {
         background-color: var(--ml-bg-page-color);
-        width: 64px;
-        height: 64px;
+        width: 108px;
+        height: 108px;
         border-radius: var(--ml-radius-small);
 
         .hoverSvg {
@@ -143,7 +143,8 @@ const svgClick = function (val: string) {
     }
 
     .transform-constraints_pos {
-        width: calc(100% - 64px);
+        width: calc(100% - 108px);
+        height: 108px;
         padding-left: var(--ml-pd-12);
         display: flex;
         justify-content: center;

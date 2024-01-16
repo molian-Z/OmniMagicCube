@@ -19,7 +19,14 @@ export default {
     install(app: App<any>, options: any = {
         customComps: {}
     }) {
-        uiMapping.current = options.useUI || uiMapping.current
+        uiMapping.useUI = options.useUI || uiMapping.useUI
+        if(!!options.usePrefix){
+            const uiIndex = uiMapping.data.findIndex(item => item.name === uiMapping.useUI)
+            if(uiIndex > -1){
+                uiMapping.data[uiIndex].prefix = options.usePrefix
+            }
+        }
+        uiMapping.usePrefix = options.usePrefix || null
         if(options.useData){
             uiMapping.data = options.useData
         }
