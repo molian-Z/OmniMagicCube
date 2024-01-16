@@ -35,7 +35,7 @@ interface registerComps {
     categoryList: any[]; // 添加了categoryList属性
     customComps?: any[];
     cateRules?: any;
-  }
+}
 // 注册配置
 const config = {
     allowDiffCateReg: false, // 允许不同分类重复注册同一组件(不推荐允许,显示过多组件并没有好处,只会增加用户使用难度)
@@ -134,7 +134,7 @@ const parseComp = function (key: string, element: { emits: any[]; props: any; sl
         return item.rule && item.rule.test(key)
     })
 
-    const slots:{
+    const slots: {
         [key: string]: any
     } = slotsMap.value[key]
     // defineSlots暂不支持JS
@@ -210,7 +210,7 @@ const registerComps = function (app: { _context: { components: any }; provide: (
             } else if (Array.isArray(hiddenComps)) {
                 let isHidden = false
                 for (let index = 0; index < hiddenComps.length; index++) {
-                    const item:any = hiddenComps[index];
+                    const item: any = hiddenComps[index];
                     if (typeof item === 'string') {
                         if (item === key) {
                             isHidden = true
@@ -240,14 +240,17 @@ const registerComps = function (app: { _context: { components: any }; provide: (
     defaultCategory.forEach((item: any) => {
         if (item.component) {
             item.component.forEach((mItem: string | number) => {
-                newComps[mItem] = {
-                    name: mItem,
-                    prefix: '',
-                    category: item.name,
-                    emits: [],
-                    props: {},
-                    slots: { default: { children: [] } },
-                    updateModel: [],
+                if (typeof mItem === 'string') {
+                    newComps[mItem] = {
+                        name: mItem,
+                        title: t('component.' + mItem),
+                        prefix: '',
+                        category: item.name,
+                        emits: [],
+                        props: {},
+                        slots: { default: { children: [] } },
+                        updateModel: [],
+                    }
                 }
             })
         }
@@ -276,7 +279,7 @@ const registerCustomComps = function (app: App<any>) {
         current,
         data
     } = uiMapping
-    const currentUIData:any = data.find((item: { name: any }) => item.name === current)
+    const currentUIData: any = data.find((item: { name: any }) => item.name === current)
     const { prefix, compMapping } = currentUIData
     for (const key in compMapping) {
         if (Object.hasOwnProperty.call(compMapping, key)) {
@@ -288,8 +291,8 @@ const registerCustomComps = function (app: App<any>) {
 }
 
 export const compsInstall = function (app: App<any>, options: { globalComps: any }) {
-    const currentConfig:registerComps = {
-        categoryList:[],
+    const currentConfig: registerComps = {
+        categoryList: [],
         ...config,
         ...options
     }
@@ -311,7 +314,7 @@ function parseProps(obj: { map: (arg0: (item: any) => "string" | "boolean" | "nu
             })
         }
     } else if (obj && typeof obj === 'object') {
-        let propObj:any = {
+        let propObj: any = {
             ...obj,
             required: obj.required,
             validator: obj.validator

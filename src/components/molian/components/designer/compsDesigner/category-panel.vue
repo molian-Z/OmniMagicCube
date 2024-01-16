@@ -54,6 +54,9 @@ const onDragend = function () {
                     <span class="comps-panel-list-item__text">
                         {{ item.title }}
                     </span>
+                    <span class="comps-panel-list-item__text——2">
+                        {{ item.name }}
+                    </span>
                 </div>
             </transition-group>
         </div>
@@ -109,6 +112,14 @@ const onDragend = function () {
                 user-select: none;
                 overflow: hidden;
                 font-size: 12px;
+                font-weight: bold;
+            }
+
+            .comps-panel-list-item__text——2{
+                margin-top: 3px;
+                user-select: none;
+                overflow: hidden;
+                font-size: 10px;
             }
         }
     }

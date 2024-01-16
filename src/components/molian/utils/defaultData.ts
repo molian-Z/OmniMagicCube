@@ -456,7 +456,7 @@ export const uiMapping: IUiMapping = {
                             _isSlot: true,
                             tag: 'ElDropdownMenu',
                             attrs: {},
-                            slots: data.map((item: any) => {
+                            slots: data && data.map((item: any) => {
                                 return {
                                     _isSlot: true,
                                     tag: "ElDropdownItem",
@@ -569,7 +569,7 @@ export const uiMapping: IUiMapping = {
                             _isSlot: true,
                             tag: 'AMenu',
                             attrs: {},
-                            slots: data.map((item: any) => {
+                            slots: data && data.map((item: any) => {
                                 return {
                                     _isSlot: true,
                                     tag: "AMenuItem",

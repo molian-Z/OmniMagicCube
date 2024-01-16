@@ -75,7 +75,7 @@ export const useDraggable = (comps: any, compData: any, message: any) => {
   const onDrop = function (evt: any, index: any, slotVal: any) {
     const name = evt.dataTransfer.getData('compName')
     const isCreate = evt.dataTransfer.getData('isCreate')
-    if (slotVal.allowComps && (slotVal.allowComps.length === 0 || slotVal.allowComps.indexOf(name) > -1) || !slotVal.allowComps) {
+    if (slotVal && slotVal.allowComps && (slotVal.allowComps.length === 0 || slotVal.allowComps.indexOf(name) > -1) || slotVal && !slotVal.allowComps || !slotVal) {
       if (!!isCreate) {
         const obj = createComp(comps.value[name])
         compData.value.splice(index && index || dropIndex.value, 0, obj)

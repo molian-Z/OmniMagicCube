@@ -178,7 +178,7 @@ export async function getCloudData(comps: { [x: string]: any }) {
             }
           })
         }
-      }
+      } 
     }
   }
 }
