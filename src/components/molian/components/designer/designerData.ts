@@ -41,7 +41,7 @@ const store = useStorage('history', {
 })
 // 数据
 export const modelValue = ref<any>(store.value.modelValue && store.value.modelValue.length > 0 ? store.value.modelValue[0].snapshot : [])
-export const globalAttrs = reactive(store.value.globalAttrs)
+export const globalAttrs = reactive<any>(store.value.globalAttrs)
 // 历史记录
 export const {
     history,

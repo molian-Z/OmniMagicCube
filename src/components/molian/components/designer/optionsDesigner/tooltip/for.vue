@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { ref, inject, computed, defineEmits, defineProps } from 'vue'
+import { inject, computed, defineEmits, defineProps } from 'vue'
 import { deepObjToArray } from '@molian/utils/util'
 import { selectedComp, globalAttrs } from '../../designerData'
 import svgIcon from '@molianComps/svg-icon/index.vue'
+import { getVariableData } from '@molian/utils/customFunction'
 defineProps({
   title:{
     type: String,
@@ -85,6 +86,13 @@ const changeValue = function(val: any, option: any, pathValues: any){
     selectedComp.value.directives.for.value = val
   }
 }
+
+const variable = computed(() => {
+    return globalAttrs.variable
+})
+const value =  computed(()=>{
+  return getVariableData(directives.value, variable)
+})
 </script>
 <template>
   <div class="flex-container">
@@ -106,17 +114,17 @@ const changeValue = function(val: any, option: any, pathValues: any){
         </customInput>
       </div>
     </div>
-    <div class="for-list__item">
-      <div class="for-list__label">{{ t("options.dataKey") }}</div>
+    <div class="for-list__item" v-if="(typeof value === 'object' && !Array.isArray(value))">
+      <div class="for-list__label">{{ t('options.objectKey') }}</div>
       <div class="for-list__input">
-        <customInput size="small" :modelValue="directives.dataKey" @update:modelValue="updateValue('dataKey', $event)">
+        <customInput size="small" :modelValue="directives.objectKey" @update:modelValue="updateValue('objectKey', $event)">
         </customInput>
       </div>
     </div>
     <div class="for-list__item">
-      <div class="for-list__label">{{ t('options.objectKey') }}</div>
+      <div class="for-list__label">{{ t("options.dataKey") }}</div>
       <div class="for-list__input">
-        <customInput size="small" :modelValue="directives.objectKey" @update:modelValue="updateValue('objectKey', $event)">
+        <customInput size="small" :modelValue="directives.dataKey" @update:modelValue="updateValue('dataKey', $event)">
         </customInput>
       </div>
     </div>

@@ -35,10 +35,10 @@ export const customText = (el: { addEventListener?: (arg0: string, arg1: any) =>
     if (text.type === 'variable') {
       const newText = binding.value.directivesVariable.text;
       let currentText = newText;
-      if(typeof currentText === 'function'){
+      if (typeof currentText === 'function') {
         currentText = newText(el, binding);
       }
-      if(typeof newText === 'object'){
+      if (typeof newText === 'object') {
         currentText = JSON.stringify(currentText);
       }
       el.textContent = currentText
@@ -47,12 +47,40 @@ export const customText = (el: { addEventListener?: (arg0: string, arg1: any) =>
     }
   })
 }
+
+export const customOnce = {
+  mounted: (el: { _once: boolean; textContent: any; innerHTML: any; }, binding: { value: any; }) => {
+    el._once = true;
+    if (binding.value) {
+      el.textContent = binding.value;
+    } else {
+      el.textContent = el.innerHTML;
+    }
+  },
+  updated: (el: { _once: any; textContent: any; }, binding: { value: any; }) => {
+    if (!el._once && binding.value) {
+      console.log(binding.value)
+      el.textContent = binding.value;
+    }
+  }
+}
 export default {
-  mounted(el: { addEventListener: (arg0: string, arg1: any) => void; }, binding: any) {
+  mounted(el: any, binding: any) {
     if (el) {
       if (!!binding.value.directives.text) {
         customText(el, binding)
       }
+      if (!!binding.value.directives.once) {
+        customOnce.mounted(el, binding)
+      }
     }
-  }
+  },
+  updated(el: any, binding: any) {
+    if (!!binding.value.directives.text) {
+      customText(el, binding)
+    }
+    if (!!binding.value.directives.once) {
+      customOnce.updated(el, binding)
+    }
+  },
 }

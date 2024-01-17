@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { computed, inject, defineOptions, defineProps, defineEmits } from 'vue'
 import { directives } from './directives'
-import { compsRef } from '../designerData'
+import { compsRef, globalAttrs } from '../designerData'
 import { isDraggable, dropKey, useDraggable, dropType } from '../draggable'
+import { getValue } from '@molian/utils/useCore'
 defineOptions({
     name: 'deepTree'
 })
@@ -41,7 +42,13 @@ const compData: any = computed({
     }
 })
 
-const { onDragenter, onDrop, onDropSlot } = useDraggable(comps, compData, message)
+const variable = computed(() => {
+    return globalAttrs.variable
+})
+
+const value = getValue(compData.value, variable)
+
+const { onDragenter, onDrop, onDropSlot } = useDraggable(comps, value, message)
 
 const setRef = (el: any, comp: { key: string | number; }) => {
     // if (el && el.$el && el.$el.nodeName === '#text' && !nest) {
@@ -52,13 +59,13 @@ const setRef = (el: any, comp: { key: string | number; }) => {
 </script>
 
 <template>
-    <template v-for="(comp, index) in compData" :key="comp.key">
+    <template v-for="(comp, index) in value" :key="comp.key">
         <transition name="fade">
             <div :class="['prefix-drop-slot designer-comp__empty', dropKey === comp.key && dropType === 'prev' && 'dropping-comp']"
                 v-if="isDraggable && index === 0" @drop.self.stop="onDrop($event, index, slotVal)"
                 @dragover.self.prevent="onDragenter(index, comp, 'prev')">{{ t('container.drop') }}</div>
         </transition>
-        <directives :ref="(el: any) => setRef(el, comp)" :comp="comp" :index="index" :modelValue="compData">
+        <directives :ref="(el: any) => setRef(el, comp)" :comp="comp" :index="index" :modelValue="value">
             <template v-for="(slotVal, slotKey) in comp.slots" :key="slotKey" #[slotKey]="slotProps">
                 <template v-if="slotVal && slotVal.children">
                     <template v-if="JSON.stringify(slotProps) !== '{}'">

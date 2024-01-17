@@ -4,9 +4,11 @@ import {
   withModifiers,
   inject,
   markRaw,
+  withDirectives
 } from 'vue'
 import {
   selectedComp,
+  globalAttrs
 } from '../designerData'
 import {
   isDraggable,
@@ -17,6 +19,9 @@ import {
 import {
   parseStyle
 } from '@molian/utils/css-generator'
+import vCustomDirectives from '@molian/utils/useDirectives'
+import { isIf, isFor, isShow, getForEachList } from '@molian/utils/useCore'
+
 export const directives = {
   props: <any>['comp', 'index', 'modelValue'],
   setup(props: {
@@ -37,7 +42,7 @@ export const directives = {
       name: string | number;
       attrs: { [x: string]: any };
       id: any; css: { [x: string]: any }
-    }|any; 
+    } | any;
     index: number | any
   }, {
     slots, emits
@@ -49,7 +54,6 @@ export const directives = {
         return props.modelValue
       },
       set(val: any) {
-        console.log(val)
         emits('update:modelValue', val)
       }
     })
@@ -79,44 +83,6 @@ export const directives = {
       showToolbar(evt, comp, index, props.modelValue)
     }
 
-    const isIf = computed(() => {
-      let btn: boolean = true
-      if (props.comp.directives) {
-        if (props.comp.directives.if) {
-          if (props.comp.directives.if.type === 'function') {
-            btn = !!props.comp.directives.if.value()
-          } else {
-            btn = !!props.comp.directives.if.value
-          }
-        }
-      }
-      return btn
-    })
-
-    const isShow = computed(() => {
-      let btn: boolean = true
-      if (props.comp.directives) {
-        if (props.comp.directives.show) {
-          if (props.comp.directives.show.type === 'function') {
-            btn = !!props.comp.directives.show.value()
-          } else {
-            btn = !!props.comp.directives.show.value
-          }
-        }
-      }
-      return btn
-    })
-
-    const isFor = computed(() => {
-      if (!props.comp.directives) {
-        return false
-      }
-      if (!isIf.value) return false
-      if (props.comp.directives && props.comp.directives.for && props.comp.directives.for.value) {
-        return true
-      }
-    })
-
     const computedClass = computed(() => {
       return {
         'designer-comp': true,
@@ -126,12 +92,14 @@ export const directives = {
       }
     })
 
-    // 动态指令支持
+    const variable = computed(() => {
+      return globalAttrs.variable
+  })
 
     // 自定义指令支持
     const currentTag = comps.value[props.comp.name].comp ? markRaw(comps.value[props.comp.name].comp) : comps.value[props.comp.name].name
-    const renderDom: any = (domForAttr: { row?: any; index?: any; keyProp?: any }) => {
-      const { row, index, keyProp } = domForAttr
+    const renderDom: any = (domForAttr: { row?: any; index?: any; keyProps?: any; type?: any }) => {
+      const { row, index, keyProps, type } = domForAttr
       // props
       const propsData: any = {}
       for (const key in props.comp.attrs) {
@@ -143,53 +111,67 @@ export const directives = {
       const attrObj = {
         id: props.comp.id,
         ['data-key']: props.comp.key,
-        style: { ...parseStyle(props.comp.css, props.comp.key), ...!isShow.value && { display: 'none' } },
+        style: { ...parseStyle(props.comp.css, props.comp.key), ...!isShow(props.comp) && { display: 'none' } || {} },
         ...propsData,
         // onMouseenter: withModifiers(($event) => onMouseEnter($event, props.comp, props.index), ['self', 'native']), // 暂且取消经过选择
         onClick: withModifiers(($event: any) => onClick($event, props.comp, props.index), ['native']),
-        onDragstart:withModifiers((evt: any)=> onDragStart(evt, props.comp), ['self', 'prevent']),
+        onDragstart: withModifiers((evt: any) => onDragStart(evt, props.comp), ['self', 'prevent']),
         onDragend: onDragend,
         onDragover: withModifiers((evt: any) => onDragenter(props.index, props.comp), ['self', 'prevent']),
-        onDrop: withModifiers(($event: any) => onDrop($event, null), ['self', 'stop']),
-        class: computedClass.value
+        onDrop: withModifiers(($event: any) => onDrop($event, null, null), ['self', 'stop']),
+        class: computedClass.value,
       }
       if (index >= 0) {
-        attrObj.key = row[keyProp] || index || null
+        attrObj.key = keyProps.idKey && row[keyProps.idKey] || index || null
       }
-      const nowSlots:{
-        [key:string]:any;
+      const nowSlots: {
+        [key: string]: any;
       } = {}
       for (const key in slots) {
         if (Object.hasOwnProperty.call(slots, key)) {
           const value = slots[key];
-          nowSlots[key] = value({
-            row,
-            index
-          })
+          if (keyProps) {
+            const obj: any = {}
+            if (!!keyProps['dataKey']) {
+              if (type === 'object') {
+                obj[keyProps['dataKey']] = row.value
+              } else {
+                obj[keyProps['dataKey']] = row
+              }
+            }
+            if (!!keyProps['objectKey'] && type === 'object') {
+              obj[keyProps['objectKey']] = row.key
+            }
+            if (!!keyProps['indexKey'] && !!keyProps['dataKey']) {
+              obj[keyProps['indexKey']] = index
+            }
+            nowSlots[key] = value(obj)
+          } else {
+            nowSlots[key] = value({
+              row,
+              index
+            })
+          }
         }
       }
-      if(typeof currentTag === 'string'){
-        return h('div',attrObj,nowSlots.default)
-      }else{
-        return h(currentTag, attrObj, nowSlots)
+      if (typeof currentTag === 'string') {
+        return withDirectives(h('div', attrObj, nowSlots.default),[[vCustomDirectives, props.comp]])
+      } else {
+        return withDirectives(h(currentTag, attrObj, nowSlots), [[vCustomDirectives, props.comp]])
       }
     }
-    const forData = function(){
-      const type = typeof props.comp.directives.for.value
-      if(type === 'string'){
-        return []
-      }else{
-        return props.comp.directives.for.value
-      }
-    }
+    let newForEachList = computed(()=>{
+      return getForEachList(props.comp, variable)
+    })
     return () => [
-      isFor.value && forData().map((item: any, index: any) => {
+      isFor(props.comp) && newForEachList.value.data.map((row: any, index: any) => {
         return renderDom({
-          row: item,
+          row,
           index,
-          keyProp: props.comp.directives.for.idkey
+          keyProps: props.comp.directives.for,
+          type: newForEachList.value.type
         })
-      }) || renderDom({})
+      }) || isIf(props.comp) && renderDom({}) || null
     ]
   }
 }
