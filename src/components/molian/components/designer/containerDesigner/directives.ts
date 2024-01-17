@@ -129,7 +129,7 @@ export const directives = {
     // 动态指令支持
 
     // 自定义指令支持
-    const currentTag = markRaw(comps.value[props.comp.name].comp)
+    const currentTag = comps.value[props.comp.name].comp ? markRaw(comps.value[props.comp.name].comp) : comps.value[props.comp.name].name
     const renderDom: any = (domForAttr: { row?: any; index?: any; keyProp?: any }) => {
       const { row, index, keyProp } = domForAttr
       // props
@@ -168,7 +168,11 @@ export const directives = {
           })
         }
       }
-      return h(currentTag, attrObj, nowSlots)
+      if(typeof currentTag === 'string'){
+        return h('div',attrObj,nowSlots.default)
+      }else{
+        return h(currentTag, attrObj, nowSlots)
+      }
     }
     const forData = function(){
       const type = typeof props.comp.directives.for.value

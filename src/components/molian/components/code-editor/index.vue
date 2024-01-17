@@ -10,9 +10,10 @@ import ace from 'ace-builds'
 import 'ace-builds/src-min-noconflict/theme-dracula'
 import 'ace-builds/src-min-noconflict/mode-javascript'
 import 'ace-builds/src-min-noconflict/mode-html'
+import 'ace-builds/src-min-noconflict/mode-json'
 import 'ace-builds/src-min-noconflict/mode-css'
 import 'ace-builds/src-min-noconflict/ext-language_tools'
-import workerJavascriptUrl from "ace-builds/src-min-noconflict/worker-javascript?url";
+// import workerJavascriptUrl from "ace-builds/src-min-noconflict/worker-javascript?url";
 import snippetsUrl from "ace-builds/src-min-noconflict/snippets/javascript";
 import { beautify } from 'ace-builds/src-min-noconflict/ext-beautify';
 // import loadBeautifier, { beautifierOpts } from '@/utils/beautifierLoader'
@@ -39,7 +40,7 @@ export default {
     },
     userWorker: { //是否开启语法检查，默认开启
       type: Boolean,
-      default: true
+      default: false
     },
 
   },
@@ -49,7 +50,7 @@ export default {
   emits: ['update:modelValue'],
   mounted() {
     // ace.config.set('basePath', ACE_BASE_PATH)
-    ace.config.setModuleUrl('ace/mode/javascript_worker', workerJavascriptUrl);
+    // ace.config.setModuleUrl('ace/mode/javascript_worker', workerJavascriptUrl);
     ace.config.setModuleUrl('ace/mode/snippetsUrl', snippetsUrl);
     this.aceEditor = ace.edit(this.$refs.ace, {
       maxLines: 20, // 最大行数，超过会自动出现滚动条

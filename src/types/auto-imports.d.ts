@@ -34,6 +34,7 @@ declare global {
   const customIf: typeof import('../components/molian/utils/useDirectives')['customIf']
   const customRef: typeof import('vue')['customRef']
   const customShow: typeof import('../components/molian/utils/useDirectives')['customShow']
+  const customText: typeof import('../components/molian/utils/useDirectives')['customText']
   const dbName: typeof import('../components/molian/utils/defaultData')['dbName']
   const deepObjToArray: typeof import('../components/molian/utils/util')['deepObjToArray']
   const defaultAttrsMap: typeof import('../components/molian/utils/defaultData')['defaultAttrsMap']

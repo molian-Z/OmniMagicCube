@@ -114,16 +114,19 @@ export interface IInput {
     modelValue?: string;
     ['onUpdate:modelValue']?: string;
     component?: string;
+    [key: string]: any;
 }
 export interface IButton {
     theme?: string | any;
     text?: IText | string;
     component?: string;
+    [key: string]: any;
 }
 export interface IText {
     variant?: string;
     type?: string;
     component?: string;
+    [key: string]: any;
 }
 
 
@@ -363,7 +366,10 @@ export const uiMapping: IUiMapping = {
             },
             "Input": {
                 "prefixIcon": "prefix",
-                "onEnter": {}
+                "onEnter": {},
+                "textarea":{
+                    "type":"textarea"
+                }
             },
             "InputNumber": {},
             "Select": {

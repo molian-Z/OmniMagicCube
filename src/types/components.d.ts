@@ -48,6 +48,7 @@ declare module 'vue' {
     SubForm: typeof import('./../components/molian/components/sub-form/index.vue')['default']
     SvgIcon: typeof import('./../components/molian/components/svg-icon/index.vue')['default']
     TagInput: typeof import('./../components/molian/components/tag-input/index.vue')['default']
+    Text: typeof import('./../components/molian/components/designer/optionsDesigner/tooltip/text.vue')['default']
     ToolTip: typeof import('./../components/molian/components/designer/containerDesigner/toolTip/index.vue')['default']
     Transform: typeof import('./../components/molian/components/designer/cssDesigner/css-tool-panel/transform.vue')['default']
     TransformBottom: typeof import('./../components/molian/components/designer/cssDesigner/css-tool-panel/transform/transform-bottom.vue')['default']

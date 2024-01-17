@@ -88,7 +88,7 @@ const changeValue = function(val: any, option: any, pathValues: any){
 </script>
 <template>
   <div class="flex-container">
-    <span>{{ title }}</span>
+    <span>{{ t('options.'+title) }}</span>
     <svgIcon class="svg-icon " icon="clear" @click="clearData"></svgIcon>
   </div>
   <div class="for-list">

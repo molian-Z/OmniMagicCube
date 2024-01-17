@@ -117,5 +117,12 @@ export const getVariableData = (data: { [x: string]: any; type: any; value: any 
       }
     })
   }
+  if(typeof obj === 'object'){
+    if(!!obj.functionMode && ['asyncFunction','function'].indexOf(obj.functionMode) > -1){
+      obj = createFunc(obj.functionMode, obj.codeVar, obj.code)
+    }else if(!!obj.functionMode && obj.functionMode === 'computed'){
+      console.log(obj)
+    }
+  }
   return obj
 }

@@ -12,6 +12,7 @@ import variable from './tooltip/variable.vue'
 import vueif from './tooltip/if.vue'
 import vuefor from './tooltip/for.vue'
 import vueshow from './tooltip/show.vue'
+import vuetext from './tooltip/text.vue'
 const t: any = inject('mlLangs')
 const customComps: any = inject('customComps')
 const { customTooltip, customPopup } = customComps
@@ -58,6 +59,11 @@ const toolbarData = ref<{
     value: 'show',
     icon: 'show',
     show: false
+}, {
+    label: t('options.text'),
+    value: 'text',
+    icon: 'text',
+    show: false
 }])
 
 const varRef = ref()
@@ -99,6 +105,7 @@ const openDialog = (type: string) => {
                                 <vueif :title="item.label" @close="item.show = false" v-if="item.value === 'if'" />
                                 <vuefor :title="item.label" @close="item.show = false" v-else-if="item.value === 'for'" />
                                 <vueshow :title="item.label" @close="item.show = false" v-else-if="item.value === 'show'" />
+                                <vuetext :title="item.label" @close="item.show = false" v-else-if="item.value === 'text'" />
                             </template>
                         </customPopup>
                     </template>

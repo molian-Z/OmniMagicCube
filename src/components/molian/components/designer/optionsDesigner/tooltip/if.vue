@@ -79,7 +79,7 @@ const changeValue = function(val: any, option: any, pathValues: any){
 </script>
 <template>
   <div class="flex-container">
-    <span>{{ title }}</span>
+    <span>{{ t('options.'+title) }}</span>
     <svgIcon class="svg-icon " icon="clear" @click="clearData"></svgIcon>
   </div>
   <customCascaderPanel size="small" :options="variableList" :checkStrictly="true" :clearable="true" valueType="full"
