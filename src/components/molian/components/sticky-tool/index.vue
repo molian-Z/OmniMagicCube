@@ -70,7 +70,7 @@ defineExpose({
     border: 1px solid var(--color-fill-3, #E5E6EB);
     background-color: rgba(global.$bgColor, 0.15);
     box-shadow: var(--ml-shadow-lg);
-    backdrop-filter: var(--ml-bg-blur-base);
+    backdrop-filter:saturate(150%) var(--ml-bg-blur-base);
     z-index: 1000;
 
     &.round {

@@ -8,5 +8,18 @@
   "treeDir":"树目录",
   "loadLib":"载入库",
   "sendToChannel":"发送到频道",
-  "onChannel":"请监听频道广播"
+  "onChannel":"请监听频道广播",
+  "device":"设备",
+  "Android":"Android",
+  "IOS":"IOS",
+  "PC":"电脑",
+  "Phone":"手机",
+  "Pad":"平板",
+  "iPad":"平板",
+  "TV":"TV",
+  "Other":"其他",
+  "custom":"自定义分辨率",
+  "deviceOrientation":"设备方向",
+  "deviceOrientationPortrait":"旋转",
+  "deviceOrientationLandscape":"正常"
 }

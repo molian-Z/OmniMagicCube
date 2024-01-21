@@ -11,6 +11,7 @@ import {
     whenever
 } from '@vueuse/core'
 import { hoverNodes, hoverIndex, resetDraggable } from './draggable'
+import { deviceList } from '@molian/utils/defaultData'
 
 // 菜单交互
 export const hiddenAllPanel = ref(false)
@@ -52,6 +53,8 @@ export const {
     debounce: 500,
     capacity: 20
 })
+
+export const screenRatioInfo:any = useStorage('screenRatio',{...deviceList.value[0], rotate:false})
 watch(history, (val: any) => {
     store.value = {
         modelValue: val,

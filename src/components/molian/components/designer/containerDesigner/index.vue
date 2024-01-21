@@ -1,19 +1,17 @@
 <script setup lang="ts">
-import { inject } from 'vue'
+import { ref, inject } from 'vue'
 import {
-    useCloned
+    useCloned, useElementSize
 } from '@vueuse/core'
 import deepComps from './deepTreeToDesigner.vue'
-import treeDir from './treeDir/index.vue'
-import aiIm from './aiIm/index.vue'
 import toolTip from './toolTip/index.vue'
-import { modelValue, hiddenAllPanel, selectedComp, createComp } from '../designerData'
-import { isDraggable, resetHover, hoverComp, hoverNodes, hoverIndex, dragNodes, dragIndex, dropIndex, resetDraggable, useDraggable } from '../draggable'
-import svgIcon from '@molianComps/svg-icon/index.vue'
-const comps:any = inject('mlComps')
-const t:any = inject('mlLangs')
+import { modelValue, selectedComp, createComp, screenRatioInfo } from '../designerData'
+import { isDraggable, resetHover, hoverNodes, hoverIndex, dragNodes, dragIndex, dropIndex, resetDraggable, useDraggable } from '../draggable'
+import { calculateRatio, scaleCalculate } from '@molian/utils/util'
+const comps: any = inject('mlComps')
+const t: any = inject('mlLangs')
 const { onDragenter } = useDraggable(null, null, null)
-
+const containerRef = ref()
 const onDrop = function (evt: any) {
     const name = evt.dataTransfer.getData('compName')
     const isCreate = evt.dataTransfer.getData('isCreate')
@@ -44,22 +42,64 @@ const onClick = function () {
     selectedComp.value = null
     resetHover()
 }
+const containerSize = useElementSize(containerRef)
+const layoutSize = computed(() => {
+    const { width, height, rotate } = screenRatioInfo.value
+    const elWidth = containerSize.width
+    const elHeight = containerSize.height
+    const { heightRatio, widthRatio } = calculateRatio(!!rotate ? height : width, !!rotate ? width : height)
+    const divisorX = Math.floor(elWidth.value / widthRatio)
+    const divisorY = Math.floor(elHeight.value / heightRatio)
+    let newDivisor = divisorX < divisorY ? divisorX : divisorY
+    return {
+        autoDivisor: newDivisor,
+        width: newDivisor * widthRatio,
+        height: newDivisor * heightRatio,
+        widthRatio,
+        heightRatio
+    }
+})
+
+// 按比例更新Cover背景
+const getCoverStyle = function (cover: { left: any; width: any; top: any; height: any; borderRadius: any }) {
+    const { left, width, top, height, borderRadius } = cover
+    const { rotate } = screenRatioInfo.value
+    if (!!rotate) {
+        const widthAndHeight = scaleCalculate(screenRatioInfo.value.width, screenRatioInfo.value.height, height, width, layoutSize.value.height, layoutSize.value.width)
+        const leftAndTop = scaleCalculate(screenRatioInfo.value.width, screenRatioInfo.value.height, top, left, layoutSize.value.height, layoutSize.value.width)
+        return {
+            borderRadius: [borderRadius[3], borderRadius[1], borderRadius[0], borderRadius[2]].map((item: string) => item + 'px').join(' '),
+            top: leftAndTop.y - 2.5 + 'px',
+            height: widthAndHeight.y - 2.5 + 'px',
+            right: leftAndTop.x + 'px',
+            width: widthAndHeight.x + 'px'
+        }
+    } else {
+        const widthAndHeight = scaleCalculate(screenRatioInfo.value.width, screenRatioInfo.value.height, width, height, layoutSize.value.width, layoutSize.value.height)
+        const leftAndTop = scaleCalculate(screenRatioInfo.value.width, screenRatioInfo.value.height, left, top, layoutSize.value.width, layoutSize.value.height)
+        return {
+            borderRadius: borderRadius.map((item: string) => item + 'px').join(' '),
+            left: leftAndTop.x - 2.5 + 'px',
+            width: widthAndHeight.x - 2.5 + 'px',
+            top: leftAndTop.y + 'px',
+            height: widthAndHeight.y + 'px'
+        }
+    }
+}
 </script>
 <template>
-    <div class="container-designer">
-        <div class="container-draggable-body" @dragover.prevent @dragenter.self="onDragenter(-1, modelValue)" @drop="onDrop"
-            @click.self="onClick">
+    <div ref="containerRef" class="container-designer">
+        <div class="container-draggable-body" :style="{ width: layoutSize.width + 'px', height: layoutSize.height + 'px' }"
+            @dragover.prevent @dragenter.self="onDragenter(-1, modelValue)" @drop="onDrop" @click.self="onClick">
             <deepComps v-model="modelValue"></deepComps>
+            <div class="container-draggable-cover" :style="getCoverStyle(item)" :key="index"
+                v-for="(item, index) in screenRatioInfo.coverBackground"
+                v-if="!!screenRatioInfo.coverBackground && screenRatioInfo.coverBackground.length > 0"></div>
         </div>
         <!-- 组件提示栏 -->
         <div class="drag-tips" v-if="isDraggable">{{ t('container.dropContent') }}</div>
         <!-- 组件工具栏 -->
         <toolTip :deleteComp="deleteComp"></toolTip>
-        <div class="designer-page-delete-comp" @dragover.prevent @drop="deleteComp" v-if="hiddenAllPanel && !hoverComp">
-            <svg-icon class="svg-icon-transh" icon="trash"></svg-icon>
-        </div>
-        <treeDir></treeDir>
-        <ai-im></ai-im>
     </div>
 </template>
 
@@ -69,15 +109,24 @@ const onClick = function () {
 .container-designer {
     width: 100%;
     height: 100%;
-    padding: var(--ml-pd-base);
+    position: relative;
 
     .container-draggable-body {
-        width: 100%;
-        height: 100%;
         border: 5px solid var(--ml-fill-color);
         border-radius: var(--ml-radius-xlg);
         overflow-y: auto;
         overflow-x: hidden;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        transition: var(--ml-transition-base);
+    }
+
+    .container-draggable-cover {
+        background-color: black;
+        position: absolute;
+        z-index: 1001;
     }
 
     .drag-tips {
@@ -93,7 +142,7 @@ const onClick = function () {
         border: 1px solid var(--color-fill-3, #E5E6EB);
         background-color: rgba(global.$bgColor, 0.15);
         box-shadow: var(--ml-shadow-lg);
-        backdrop-filter: var(--ml-bg-blur-base);
+        backdrop-filter: saturate(150%) var(--ml-bg-blur-base);
         display: flex;
         justify-content: center;
         align-items: center;

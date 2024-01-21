@@ -94,7 +94,7 @@ const onDragend = function () {
             border: 1px solid var(--ml-fill-color-3, #E5E6EB);
             background-color: rgba(global.$bgColor, 0.15);
             box-shadow: var(--ml-shadow-small);
-            backdrop-filter: var(--ml-bg-blur-base);
+            backdrop-filter: saturate(150%) drop-shadow(4px 4px 10px var(--ml-primary-color-light-hover)) var(--ml-bg-blur-base);
             color: var(--ml-fill-color-1);
             transition: var(--ml-transition-base);
 

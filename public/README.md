@@ -26,6 +26,7 @@ import 'omni-magic-cube/index.css'
 // ...UI框架引入,注意一定要在其他UI库引入完成后在对我们的组件进行引入。因为它首先会获取所有的全局组件进行配置
 app.use(omc, {
     useUI:"element-plus",
+    usePrefix:"El", // 该功能是当你对组件库前缀重命名后做正确引导
     compsConfig: {
         globalComps:{
             message:ElMessage,

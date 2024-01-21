@@ -93,7 +93,7 @@ const appendSlot = function (key: string, val: any) {
   position: absolute;
   background-color: rgba(global.$bgColor, 0.15);
   box-shadow: var(--ml-shadow-lg);
-  backdrop-filter: var(--ml-bg-blur-base);
+  backdrop-filter:saturate(150%) var(--ml-bg-blur-base);
   border-radius: var(--ml-radius-lg);
   display: flex;
   justify-content: space-around;

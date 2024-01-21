@@ -3,9 +3,14 @@ import { ref, inject } from 'vue'
 import { globalPanel, globalMenu } from '../designerData'
 import floatPanel from '@molianComps/float-panel/index.vue'
 import create from './global-panel/create.vue'
+import device from './global-panel/device.vue'
 const t: any = inject('mlLangs')
 const menus = ref([{
-    icon: 'transform',
+    icon: 'device',
+    text: t('global.device'),
+    name: 'device'
+},{
+    icon: 'create',
     text: t('global.create'),
     name: 'create'
 }])
@@ -20,6 +25,7 @@ const closeFloatPanel = function () {
             :isShow="globalMenu === 'global'">
             <template v-slot:default="{ activeData }">
                 <create v-if="activeData.name === 'create'" />
+                <device v-else-if="activeData.name === 'device'"></device>
             </template>
         </float-panel>
     </div>

@@ -8,6 +8,8 @@ import compsDesigner from './compsDesigner/index.vue'
 import optionsDesigner from './optionsDesigner/index.vue'
 import actionDesigner from './actionDesigner/index.vue'
 import globalDesigner from './globalDesigner/index.vue'
+import treeDir from './tools/treeDir/index.vue'
+import aiIm from './tools/aiIm/index.vue'
 defineProps({
     width: {
         type: String,
@@ -30,6 +32,8 @@ defineProps({
             <comps-designer :style="`display:${selectedComp ? 'none' : 'block'}`"></comps-designer>
         </div>
         <container-designer></container-designer>
+        <treeDir></treeDir>
+        <ai-im></ai-im>
     </div>
 </template>
 <style lang="scss">
