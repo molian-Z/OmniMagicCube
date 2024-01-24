@@ -48,7 +48,7 @@ const variable = computed(() => {
 
 const value = getValue(compData.value, variable)
 
-const { onDragenter, onDrop, onDropSlot } = useDraggable(comps, value, message)
+const { onDragenter, onDrop, onDropSlot } = useDraggable(comps, compData, message)
 
 const setRef = (el: any, comp: { key: string | number; }) => {
     // if (el && el.$el && el.$el.nodeName === '#text' && !nest) {
