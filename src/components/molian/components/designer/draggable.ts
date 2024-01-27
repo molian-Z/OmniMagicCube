@@ -78,9 +78,7 @@ export const useDraggable = (comps: any, compData: any, message: any) => {
     if (slotVal && slotVal.allowComps && (slotVal.allowComps.length === 0 || slotVal.allowComps.indexOf(name) > -1) || slotVal && !slotVal.allowComps || !slotVal) {
       if (!!isCreate) {
         const obj = createComp(comps.value[name])
-        console.log(obj, dropIndex.value, index)
         compData.value.splice(index >= 0 && index || dropIndex.value, 0, obj)
-        console.log(compData.value)
       } else {
         let moveComp = dragNodes.value.splice(dragIndex.value, 1)[0]
         compData.value.splice(index >= 0 && index || dropIndex.value, 0, moveComp)

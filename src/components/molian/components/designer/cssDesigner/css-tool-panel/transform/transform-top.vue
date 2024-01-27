@@ -156,53 +156,57 @@ const updateModelValue = function (prop: string, val: any) {
             </div>
         </div>
         <template v-if="activeRadius">
-            <div class=" designer-input-base">
-                <customInput size="small" :modelValue="css.borderRadius[0] || '0'"
-                    @update:modelValue="updateModelValue('borderRadius', { index: 0, value: $event })"
-                    :disabled="!selectedComp" placeholder="">
-                    <template #prefixIcon>
-                        <svg-icon icon="ic_corner"></svg-icon>
-                    </template>
-                    <template #suffix>
-                        <span class="suffix-tag">px</span>
-                    </template>
-                </customInput>
+            <div class="designer-list-item">
+                <div class=" designer-input-base">
+                    <customInput size="small" :modelValue="css.borderRadius[0] || '0'"
+                        @update:modelValue="updateModelValue('borderRadius', { index: 0, value: $event })"
+                        :disabled="!selectedComp" placeholder="">
+                        <template #prefixIcon>
+                            <svg-icon icon="ic_corner"></svg-icon>
+                        </template>
+                        <template #suffix>
+                            <span class="suffix-tag">px</span>
+                        </template>
+                    </customInput>
+                </div>
+                <div class=" designer-input-base">
+                    <customInput size="small" :modelValue="css.borderRadius[1] || '0'"
+                        @update:modelValue="updateModelValue('borderRadius', { index: 1, value: $event })"
+                        :disabled="!selectedComp" placeholder="">
+                        <template #prefixIcon>
+                            <svg-icon icon="ic_corner" style="transform: rotate(90deg);"></svg-icon>
+                        </template>
+                        <template #suffix>
+                            <span class="suffix-tag">px</span>
+                        </template>
+                    </customInput>
+                </div>
             </div>
-            <div class=" designer-input-base">
-                <customInput size="small" :modelValue="css.borderRadius[1] || '0'"
-                    @update:modelValue="updateModelValue('borderRadius', { index: 1, value: $event })"
-                    :disabled="!selectedComp" placeholder="">
-                    <template #prefixIcon>
-                        <svg-icon icon="ic_corner" style="transform: rotate(90deg);"></svg-icon>
-                    </template>
-                    <template #suffix>
-                        <span class="suffix-tag">px</span>
-                    </template>
-                </customInput>
-            </div>
-            <div class=" designer-input-base">
-                <customInput size="small" :modelValue="css.borderRadius[3] || '0'"
-                    @update:modelValue="updateModelValue('borderRadius', { index: 3, value: $event })"
-                    :disabled="!selectedComp" placeholder="">
-                    <template #prefixIcon>
-                        <svg-icon icon="ic_corner" style="transform: rotate(270deg);"></svg-icon>
-                    </template>
-                    <template #suffix>
-                        <span class="suffix-tag">px</span>
-                    </template>
-                </customInput>
-            </div>
-            <div class=" designer-input-base">
-                <customInput size="small" :modelValue="css.borderRadius[2] || '0'"
-                    @update:modelValue="updateModelValue('borderRadius', { index: 2, value: $event })"
-                    :disabled="!selectedComp" placeholder="">
-                    <template #prefixIcon>
-                        <svg-icon icon="ic_corner" style="transform: rotate(180deg);"></svg-icon>
-                    </template>
-                    <template #suffix>
-                        <span class="suffix-tag">px</span>
-                    </template>
-                </customInput>
+            <div class="designer-list-item">
+                <div class=" designer-input-base">
+                    <customInput size="small" :modelValue="css.borderRadius[3] || '0'"
+                        @update:modelValue="updateModelValue('borderRadius', { index: 3, value: $event })"
+                        :disabled="!selectedComp" placeholder="">
+                        <template #prefixIcon>
+                            <svg-icon icon="ic_corner" style="transform: rotate(270deg);"></svg-icon>
+                        </template>
+                        <template #suffix>
+                            <span class="suffix-tag">px</span>
+                        </template>
+                    </customInput>
+                </div>
+                <div class=" designer-input-base">
+                    <customInput size="small" :modelValue="css.borderRadius[2] || '0'"
+                        @update:modelValue="updateModelValue('borderRadius', { index: 2, value: $event })"
+                        :disabled="!selectedComp" placeholder="">
+                        <template #prefixIcon>
+                            <svg-icon icon="ic_corner" style="transform: rotate(180deg);"></svg-icon>
+                        </template>
+                        <template #suffix>
+                            <span class="suffix-tag">px</span>
+                        </template>
+                    </customInput>
+                </div>
             </div>
         </template>
     </div>

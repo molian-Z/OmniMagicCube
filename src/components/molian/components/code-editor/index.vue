@@ -98,7 +98,12 @@ export default {
     }
   },
   watch: {
-    //
+    modelValue(newVal, oldVal) {
+      if(newVal !== oldVal){
+        this.codeValue = newVal
+        this.aceEditor.setValue(newVal)
+      }
+    },
   },
   methods: {
     keyDown(e) {
@@ -326,21 +331,21 @@ export default {
       this.aceEditor.getSession().setValue(newValue)
     },
 
-    // formatCode() {
-    //   let data
-    //   loadBeautifier(beautifier =>{
-    //     if (this.mode === 'json') {
-    //       data = JSON.parse(this.modelValue)
-    //     } else if (this.mode === 'css') {
-    //       data = beautifier.css(this.modelValue, beautifierOpts.css)
-    //     } else if (this.mode == 'javascript') {
-    //       data = beautifier.js(this.modelValue, beautifierOpts.js)
-    //     }else if (this.mode === 'html'){
-    //       data = beautifier.html(this.modelValue)
-    //     }
-    //   })
-    //   this.setValue(data)
-    // },
+    formatCode() {
+      let data
+      loadBeautifier(beautifier =>{
+        if (this.mode === 'json') {
+          data = JSON.parse(this.modelValue)
+        } else if (this.mode === 'css') {
+          data = beautifier.css(this.modelValue, beautifierOpts.css)
+        } else if (this.mode == 'javascript') {
+          data = beautifier.js(this.modelValue, beautifierOpts.js)
+        }else if (this.mode === 'html'){
+          data = beautifier.html(this.modelValue)
+        }
+      })
+      this.setValue(data)
+    },
   }
 }
 </script>

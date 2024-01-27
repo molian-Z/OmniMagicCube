@@ -29,6 +29,7 @@
   },
   "license": "Apache-2.0",
   "dependencies": {
+    "@opentiny/vue": "^3.13.0",
     "@vueuse/core": "^10.5.0",
     "ace-builds": "^1.31.2",
     "animejs": "^3.2.2",

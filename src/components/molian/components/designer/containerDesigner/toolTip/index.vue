@@ -1,23 +1,26 @@
 <script setup lang="ts">
-import { computed, defineProps, inject } from 'vue'
-import { hoverComp, hoverBounding, startDraggable, useDraggable } from '../../draggable'
+import { computed, inject } from 'vue'
+import { hoverComp, hoverBounding, startDraggable, useDraggable, hoverNodes, hoverIndex, resetDraggable } from '../../draggable'
 import { useCloned } from '@vueuse/core'
 import { selectedComp } from '../../designerData'
 import svgIcon from '@molianComps/svg-icon/index.vue'
 import { slotsMap } from '@molian/utils/compsConfig'
-defineProps<{
-  deleteComp:Function
-}>()
-const customComps:any = inject('customComps')
-const t:any = inject('mlLangs')
+
+const customComps: any = inject('customComps')
+const t: any = inject('mlLangs')
 const { onDragend } = useDraggable(null, null, null)
 const { top, left, width, height } = hoverBounding
 const { customDropdown } = customComps
-
+const deleteComp = function () {
+  if (hoverNodes.value) {
+    hoverNodes.value.splice(hoverIndex.value, 1)
+  }
+  resetDraggable()
+}
 const currentBounding = computed(() => {
   let isWidth = 360
   if (hoverComp.value) {
-    let obj:any = {
+    let obj: any = {
       left: left.value + width.value / 2 <= (isWidth / 2) ? '5px' : Number(left.value - (isWidth / 2)) + width.value / 2 + 'px',
       width: isWidth + 'px'
     }
@@ -36,7 +39,7 @@ const slotsData = computed(() => {
       return {
         value: key,
         label: key,
-        disabled:!!selectedComp.value.slots[key],
+        disabled: !!selectedComp.value.slots[key],
         onclick: () => appendSlot(key, hoverComp.value)
       }
     })
@@ -79,7 +82,7 @@ const appendSlot = function (key: string, val: any) {
         <span>{{ t('container.appendSlot') }}</span>
       </div>
     </customDropdown>
-    <div class="drag-delete" @click.stop="deleteComp()">
+    <div class="drag-delete" @click.stop="deleteComp">
       <svg-icon class="svg-icon-transh" icon="trash"></svg-icon>
       <span>{{ t('container.deleteComp') }}</span>
     </div>
@@ -93,7 +96,7 @@ const appendSlot = function (key: string, val: any) {
   position: absolute;
   background-color: rgba(global.$bgColor, 0.15);
   box-shadow: var(--ml-shadow-lg);
-  backdrop-filter:saturate(150%) var(--ml-bg-blur-base);
+  backdrop-filter: saturate(150%) var(--ml-bg-blur-base);
   border-radius: var(--ml-radius-lg);
   display: flex;
   justify-content: space-around;
@@ -108,7 +111,7 @@ const appendSlot = function (key: string, val: any) {
     font-size: 16px;
     cursor: all-scroll;
     transition: var(--ml-transition-base);
-    padding-right:var(--ml-pd-base);
+    padding-right: var(--ml-pd-base);
 
     &:hover {
       color: var(--ml-primary-color-light-hover);
@@ -120,7 +123,7 @@ const appendSlot = function (key: string, val: any) {
     font-size: 16px;
     transition: var(--ml-transition-base);
     cursor: pointer;
-    padding-right:var(--ml-pd-base);
+    padding-right: var(--ml-pd-base);
 
     &:hover {
       color: var(--ml-primary-color-light-hover);
@@ -132,7 +135,7 @@ const appendSlot = function (key: string, val: any) {
     font-size: 16px;
     cursor: pointer;
     transition: var(--ml-transition-base);
-    padding-right:var(--ml-pd-base);
+    padding-right: var(--ml-pd-base);
 
     &:hover {
       color: var(--ml-primary-color-light-hover);

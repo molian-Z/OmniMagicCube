@@ -40,6 +40,7 @@ export type IData = {
     name: string;
     prefix: string;
     icon?: string;
+    removeAttrs?: string[];
     compMapping?: ICompMapping;
 };
 export interface ICompMapping {
@@ -278,10 +279,10 @@ export const defaultLifecycleMap: ILifecycleMap = {
  */
 
 export const defaultSlotsMap: IDefaultSlotsMap = {
-    ArcoRow: {
+    TinyRow: {
         default: {
             auto: true,
-            allowComps: ['TCol']
+            allowComps: ['TinyCol']
         }
     }
 }
@@ -294,6 +295,264 @@ export const defaultSlotsMap: IDefaultSlotsMap = {
 export const uiMapping: IUiMapping = {
     useUI: "element-plus",
     data: [{
+        name: 'tiny-vue',
+        prefix: 'Tiny',
+        icon: "tinyvue",
+        removeAttrs:["tiny_template","tiny_renderless","tiny_mode","tiny_mode_root","tiny_theme","tiny_chart_theme"],
+        compMapping: {
+            "Button": {
+                "theme": "type",
+                "text": {
+                    "type": "text"
+                },
+                "size": {
+                    "size": "mini"
+                }
+            },
+            "Tag": {
+                "size": {
+                    "size": "mini"
+                }
+            },
+            "Input": {
+                "prefixIcon": "prefix",
+                "size": {
+                    "size": "mini"
+                }
+            },
+            "InputNumber": {
+                "component": "Numeric",
+                "size": {
+                    "size": "mini"
+                }
+            },
+            "Select": {
+                "size": {
+                    "size": "mini"
+                },
+                "options": (data: any[]) => {
+                    return {
+                        default: data.map((item: {
+                            [x: string]: any; isGroup: any; label: any; children: any[];
+                        }) => {
+                            if (item.isGroup) {
+                                return {
+                                    _isSlot: true,
+                                    tag: 'TinyOptionGroup',
+                                    attrs: {
+                                        label: item.label
+                                    },
+                                    slots: item && item.children.map((fItem: any) => {
+                                        return {
+                                            _isSlot: true,
+                                            tag: "TinyOption",
+                                            attrs: {
+                                                disabled: fItem.disabled,
+                                                label: fItem.label,
+                                                value: fItem.value
+                                            }
+                                        }
+                                    })
+                                }
+                            } else {
+                                return {
+                                    _isSlot: true,
+                                    tag: "TinyOption",
+                                    attrs: {
+                                        disabled: item.disabled,
+                                        label: item.label,
+                                        value: item.value
+                                    }
+                                }
+                            }
+                        })
+                    }
+                }
+            },
+            "Switch": {
+                "size": {
+                    "size": "mini"
+                }
+            },
+            "Tooltip": {},
+            "Popup": {
+                "component": "Popover",
+                "default": "reference",
+                "content": "default"
+            },
+            "RadioGroup": {
+                "size": {
+                    "size": "mini"
+                }
+            },
+            "RadioButton": {
+                "value": "label",
+                "size": {
+                    "size": "mini"
+                }
+            },
+            "Cascader": {
+                "optionItems": "options",
+                "size": {
+                    "size": "mini",
+                    "separator":"."
+                },
+                "checkStrictly":{
+                    "props":{
+                        "checkStrictly":true
+                    }
+                }
+            },
+            "CascaderPanel": {
+                "optionItems": "options",
+                "size": {
+                    "size": "mini",
+                    "separator":"."
+                },
+                "checkStrictly":{
+                    "props":{
+                        "checkStrictly":true
+                    }
+                }
+            },
+            "Dropdown": {
+                "optionItems": (data: any) => {
+                    return {
+                        dropdown: {
+                            _isSlot: true,
+                            tag: 'TinyDropdownMenu',
+                            attrs: {},
+                            slots: data && data.map((item: any) => {
+                                return {
+                                    _isSlot: true,
+                                    tag: "TinyDropdownItem",
+                                    attrs: {
+                                        disabled: item.disabled,
+                                        onClick: item.onclick,
+                                        name: item.value
+                                    },
+                                    slots: item.label
+                                }
+                            })
+                        }
+                    }
+                }
+            },
+            "Dialog": {
+                "component":"DialogBox",
+                
+            }
+        }
+    }, {
+        name: 'arco',
+        prefix: 'A',
+        icon: "Arco",
+        compMapping: {
+            "Button": {
+                "theme": (text: string) => {
+                    if (text !== 'default') {
+                        return {
+                            "type": text
+                        }
+                    } else {
+                        return {}
+                    }
+                },
+                "text": {
+                    "type": "text"
+                }
+            },
+            "Tag": {
+                "theme": (text: string) => {
+                    return {
+                        color: text === 'primary' && "arcoblue" || text === 'default' && "gray" || "orangered"
+                    }
+                }
+            },
+            "Input": {
+                "prefixIcon": "prefix",
+                "onEnter": {}
+            },
+            "InputNumber": {},
+            "Select": {
+                "size": { // 设置大小的同时设置组件的props
+                    "size": "small",
+                    "fieldNames": { value: 'value', label: 'label' }
+                },
+            },
+            "Switch": {},
+            "Tooltip": {
+                "content": "content"
+            },
+            "Popup": {
+                "component": "Popover",
+                "default": "default",
+                "content": "content",
+                "trigger": {
+                    "trigger": "click",
+                }
+            },
+            "RadioGroup": {
+                "size": {
+                    "type": "button"
+                }
+            },
+            "RadioButton": {
+                "component": "Radio",
+                "value": "value"
+            },
+            "Cascader": {
+                "optionItems": "options",
+                "checkStrictly": "check-strictly",
+                "size": {
+                    "size": "small",
+                    "path-mode": true,
+                    "allow-clear": true
+                }
+            },
+            "CascaderPanel": {
+                "optionItems": "options",
+                "checkStrictly": "check-strictly",
+                "size": {
+                    "size": "small",
+                    "path-mode": true,
+                    "allow-clear": true,
+                    "style": "border-width: 0px;box-shadow: none;"
+                }
+            },
+            "Dropdown": {
+                "optionItems": (data: any) => {
+                    const prefix = uiMapping.usePrefix || uiMapping.data.find(item => item.name === 'arco')
+                    return {
+                        content: {
+                            _isSlot: true,
+                            tag: prefix + 'Dgroup',
+                            attrs: {},
+                            slots: data && data.map((item: any) => {
+
+                                return {
+                                    _isSlot: true,
+                                    tag: prefix + "Doption",
+                                    attrs: {
+                                        disabled: item.disabled,
+                                        onClick: item.onclick,
+                                        command: item.value
+                                    },
+                                    slots: item.label
+                                }
+                            })
+                        }
+                    }
+                }
+            },
+            "Dialog": {
+                "component": "Modal",
+                "destroyOnClose": "unmount-on-close",
+                "appendToBody": "render-to-body",
+                "header": "title"
+            }
+        }
+    }, {
         name: 'tdesign-vue-next',
         prefix: 'T',
         icon: "TDesign",
@@ -368,8 +627,8 @@ export const uiMapping: IUiMapping = {
             "Input": {
                 "prefixIcon": "prefix",
                 "onEnter": {},
-                "textarea":{
-                    "type":"textarea"
+                "textarea": {
+                    "type": "textarea"
                 }
             },
             "InputNumber": {},
@@ -817,115 +1076,6 @@ export const uiMapping: IUiMapping = {
                 "header": "title"
             }
         }
-    }, {
-        name: 'arco',
-        prefix: 'A',
-        icon: "Arco",
-        compMapping: {
-            "Button": {
-                "theme": (text: string)=>{
-                    if(text !== 'default'){
-                        return {
-                            "type":text
-                        }
-                    }else{
-                        return {}
-                    }
-                },
-                "text": {
-                    "type": "text"
-                }
-            },
-            "Tag": {
-                "theme": (text:string)=>{
-                    return {
-                        color: text === 'primary' && "arcoblue" || text === 'default' && "gray" || "orangered"
-                    }
-                }
-            },
-            "Input": {
-                "prefixIcon": "prefix",
-                "onEnter": {}
-            },
-            "InputNumber": {},
-            "Select": {
-                "size": { // 设置大小的同时设置组件的props
-                    "size": "small",
-                    "fieldNames": {value: 'value', label: 'label'}
-                },
-            },
-            "Switch": {},
-            "Tooltip": {
-                "content": "content"
-            },
-            "Popup": {
-                "component": "Popover",
-                "default": "default",
-                "content": "content",
-                "trigger": {
-                    "trigger": "click",
-                }
-            },
-            "RadioGroup": {
-                "size": {
-                    "type": "button"
-                }
-            },
-            "RadioButton": {
-                "component": "Radio",
-                "value": "value"
-            },
-            "Cascader": {
-                "optionItems": "options",
-                "checkStrictly": "check-strictly",
-                "size":{
-                    "size":"small",
-                    "path-mode":true,
-                    "allow-clear":true
-                }
-            },
-            "CascaderPanel": {
-                "optionItems": "options",
-                "checkStrictly": "check-strictly",
-                "size":{
-                    "size":"small",
-                    "path-mode":true,
-                    "allow-clear":true,
-                    "style":"border-width: 0px;box-shadow: none;"
-                }
-            },
-            "Dropdown": {
-                "optionItems": (data: any) => {
-                    const prefix = uiMapping.usePrefix || uiMapping.data.find(item => item.name === 'arco')
-                    return {
-                        content: {
-                            _isSlot: true,
-                            tag: prefix+'Dgroup',
-                            attrs: {},
-                            slots: data && data.map((item: any) => {
-                                
-                                return {
-                                    _isSlot: true,
-                                    tag: prefix + "Doption",
-                                    attrs: {
-                                        disabled: item.disabled,
-                                        onClick: item.onclick,
-                                        command: item.value
-                                    },
-                                    slots: item.label
-                                }
-                            })
-                        }
-                    }
-                }
-            },
-            "Dialog": {
-                "component": "Modal",
-                "destroyOnClose": "unmount-on-close",
-                "appendToBody": "render-to-body",
-                "header": "title"
-            }
-        }
     }]
 }
 
@@ -933,109 +1083,109 @@ export const dbName = "molian-cube"
 
 export const cloudUrl = "http://wujie.mlyt.top/getData"
 
-export const deviceList = useStorage('deviceList',[{
-    name:"PC(720P)",
-    width:1280,
-    height:720,
+export const deviceList = useStorage('deviceList', [{
+    name: "PC(720P)",
+    width: 1280,
+    height: 720,
     device: "PC(720P)",
     deviceType: "PC",
-    resolutionRatio:"720P",
-},{
-    name:"PC(1080P)",
-    width:1920,
-    height:1080,
+    resolutionRatio: "720P",
+}, {
+    name: "PC(1080P)",
+    width: 1920,
+    height: 1080,
     device: "PC(1080P)",
     deviceType: "PC",
-    resolutionRatio:"1080P",
-},{
-    name:"PC(1440P)",
-    width:2560,
-    height:1440,
+    resolutionRatio: "1080P",
+}, {
+    name: "PC(1440P)",
+    width: 2560,
+    height: 1440,
     device: "PC(1440P)",
     deviceType: "PC",
-    resolutionRatio:"1440P",
-},{
-    name:"PC(3.1K)",
-    width:3120,
-    height:2080,
+    resolutionRatio: "1440P",
+}, {
+    name: "PC(3.1K)",
+    width: 3120,
+    height: 2080,
     device: "PC(3.1K)",
     deviceType: "PC",
-    resolutionRatio:"3.1K",
-},{
-    name:"PC(4K)",
-    width:4096,
-    height:2160,
+    resolutionRatio: "3.1K",
+}, {
+    name: "PC(4K)",
+    width: 4096,
+    height: 2160,
     device: "PC(4K)",
     deviceType: "PC",
-    resolutionRatio:"4K",
-},{
-    name:"Phone(750P)",
-    width:750,
-    height:1334,
+    resolutionRatio: "4K",
+}, {
+    name: "Phone(750P)",
+    width: 750,
+    height: 1334,
     device: "Phone(750P)",
     deviceType: "Phone",
-    resolutionRatio:"750P",
-    coverBackground:[]
-},{
-    name:"iPhone15",
-    width:1179,
-    height:2556,
+    resolutionRatio: "750P",
+    coverBackground: []
+}, {
+    name: "iPhone15",
+    width: 1179,
+    height: 2556,
     device: "iPhone15",
     deviceType: "Phone",
-    resolutionRatio:"iPhone15",
-    coverBackground:[{
-        left:100,
-        width:979,
-        top:0,
-        height:140,
-        borderRadius:[0,0,50,50]
+    resolutionRatio: "iPhone15",
+    coverBackground: [{
+        left: 100,
+        width: 979,
+        top: 0,
+        height: 140,
+        borderRadius: [0, 0, 50, 50]
     }]
-},{
-    name:"iPhone15Pro",
-    width:1179,
-    height:2556,
+}, {
+    name: "iPhone15Pro",
+    width: 1179,
+    height: 2556,
     device: "iPhone15Pro",
     deviceType: "Phone",
-    resolutionRatio:"iPhone15Pro",
-    coverBackground:[{
-        left:300,
-        width:579,
-        top:70,
-        height:120,
-        borderRadius:[50,50,50,50]
+    resolutionRatio: "iPhone15Pro",
+    coverBackground: [{
+        left: 300,
+        width: 579,
+        top: 70,
+        height: 120,
+        borderRadius: [50, 50, 50, 50]
     }]
-},{
-    name:"twoCamera",
-    width:1179,
-    height:2556,
+}, {
+    name: "twoCamera",
+    width: 1179,
+    height: 2556,
     device: "twoCamera",
     deviceType: "Phone",
-    resolutionRatio:"twoCamera",
-    coverBackground:[{
-        left:450,
-        width:110,
-        top:70,
-        height:100,
-        borderRadius:[50,50,50,50]
-    },{
-        left:629,
-        width:110,
-        top:70,
-        height:100,
-        borderRadius:[50,50,50,50]
+    resolutionRatio: "twoCamera",
+    coverBackground: [{
+        left: 450,
+        width: 110,
+        top: 70,
+        height: 100,
+        borderRadius: [50, 50, 50, 50]
+    }, {
+        left: 629,
+        width: 110,
+        top: 70,
+        height: 100,
+        borderRadius: [50, 50, 50, 50]
     }]
-},{
-    name:"iPad(1024P)",
-    width:1024,
-    height:1366,
+}, {
+    name: "iPad(1024P)",
+    width: 1024,
+    height: 1366,
     device: "iPad(1024P)",
     deviceType: "iPad",
-    resolutionRatio:"1024P",
-},{
-    name:"custom",
-    width:1080,
-    height:1920,
+    resolutionRatio: "1024P",
+}, {
+    name: "custom",
+    width: 1080,
+    height: 1920,
     device: "custom",
     deviceType: "custom",
-    resolutionRatio:"custom",
+    resolutionRatio: "custom",
 }])

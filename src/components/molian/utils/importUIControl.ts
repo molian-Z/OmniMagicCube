@@ -23,6 +23,7 @@ function createRender(slots: any, attrs: any, tag: string, comps: { [x: string]:
 }
 export const createControl = function (prefix: any, compName: any, newAttrs: { [x: string]: any }) {
   return defineComponent({
+    inheritAttrs:false,
     setup(props, {
       attrs,
       emit,

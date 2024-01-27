@@ -6,7 +6,7 @@ import {
 import deepComps from './deepTreeToDesigner.vue'
 import toolTip from './toolTip/index.vue'
 import { modelValue, selectedComp, createComp, screenRatioInfo } from '../designerData'
-import { isDraggable, resetHover, hoverNodes, hoverIndex, dragNodes, dragIndex, dropIndex, resetDraggable, useDraggable } from '../draggable'
+import { isDraggable, resetHover, dragNodes, dragIndex, dropIndex, resetDraggable, useDraggable } from '../draggable'
 import { calculateRatio, scaleCalculate } from '@molian/utils/util'
 const comps: any = inject('mlComps')
 const t: any = inject('mlLangs')
@@ -31,12 +31,7 @@ const onDrop = function (evt: any) {
     resetDraggable()
 }
 
-const deleteComp = function () {
-    if (hoverNodes.value && hoverNodes.value) {
-        hoverNodes.value.splice(hoverIndex.value, 1)
-    }
-    resetDraggable()
-}
+
 
 const onClick = function () {
     selectedComp.value = null
@@ -99,7 +94,7 @@ const getCoverStyle = function (cover: { left: any; width: any; top: any; height
         <!-- 组件提示栏 -->
         <div class="drag-tips" v-if="isDraggable">{{ t('container.dropContent') }}</div>
         <!-- 组件工具栏 -->
-        <toolTip :deleteComp="deleteComp"></toolTip>
+        <toolTip></toolTip>
     </div>
 </template>
 

@@ -59,13 +59,13 @@ const setRef = (el: any, comp: { key: string | number; }) => {
 </script>
 
 <template>
-    <template v-for="(comp, index) in value" :key="comp.key">
+    <template v-for="(comp, index) in compData" :key="comp.key">
         <transition name="fade">
             <div :class="['prefix-drop-slot designer-comp__empty', dropKey === comp.key && dropType === 'prev' && 'dropping-comp']"
                 v-if="isDraggable && index === 0" @drop.self.stop="onDrop($event, index, slotVal)"
                 @dragover.self.prevent="onDragenter(index, comp, 'prev')">{{ t('container.drop') }}</div>
         </transition>
-        <directives :ref="(el: any) => setRef(el, comp)" :comp="comp" :index="index" :modelValue="value">
+        <directives :ref="(el: any) => setRef(el, comp)" :comp="value[index]" :index="index" :modelValue="compData">
             <template v-for="(slotVal, slotKey) in comp.slots" :key="slotKey" #[slotKey]="slotProps">
                 <template v-if="slotVal && slotVal.children">
                     <template v-if="JSON.stringify(slotProps) !== '{}'">

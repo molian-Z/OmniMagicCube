@@ -64,7 +64,7 @@ const registerCategory = function (data: any[]) {
     }
 }
 
-export const parseSlot = function(slots: { [x: string]: any }){
+export const parseSlot = function (slots: { [x: string]: any }) {
     const autoSlots: { [key: string]: any } = {}
     for (const skey in slots) {
         if (Object.hasOwnProperty.call(slots, skey)) {
@@ -92,7 +92,7 @@ const parseComp = function (key: string, element: { emits: any[]; props: any; sl
     const currentEmits = [],
         currentUpdateModel = [],
         currentProps: { [key: string]: any } = {};
-        
+
     let autoSlots: { [key: string]: any } = {};
     if (element.emits) {
         if (Array.isArray(element.emits)) {
@@ -184,6 +184,15 @@ const parseComp = function (key: string, element: { emits: any[]; props: any; sl
             }
         }
     }
+    const { useUI } = uiMapping
+    const useCurrentUI = uiMapping.data.find((item) => useUI === item.name )
+    if(!!useCurrentUI && !!useCurrentUI.removeAttrs){
+        useCurrentUI.removeAttrs.forEach(item =>{
+            if(currentProps[item]){
+                delete currentProps[item]
+            }
+        })
+    }
     return {
         name: key,
         emits: currentEmits,
@@ -239,14 +248,14 @@ const registerComps = function (app: { _context: { components: any }; provide: (
             const element = comps[key];
             newComps[key] = parseComp(key, element, allowRegPropsAndEmit)
             let prefixObj: any = null
-            if(!!uiMapping.usePrefix){
+            if (!!uiMapping.usePrefix) {
                 prefixObj = uiMapping.data.find((fitem: { prefix: string }) => {
-                    if(uiMapping.usePrefix === fitem.prefix){
+                    if (uiMapping.usePrefix === fitem.prefix) {
                         return key.startsWith(uiMapping.usePrefix)
                     }
                 })
             }
-            if(!prefixObj){
+            if (!prefixObj) {
                 prefixObj = uiMapping.data.find((fitem: { prefix: string }) => key.startsWith(fitem.prefix))
             }
             newComps[key].prefix = prefixObj && prefixObj.prefix || ''

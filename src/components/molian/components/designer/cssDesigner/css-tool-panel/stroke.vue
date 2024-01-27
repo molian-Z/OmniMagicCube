@@ -84,4 +84,8 @@ const deleteBorder = function (index: number) {
 :deep(.ant-radio-group-small :where(.css-dev-only-do-not-override-185kyl0).ant-radio-button-wrapper){
     padding-inline: 5px;
 }
+
+:deep(.tiny-radio-button--mini .tiny-radio-button__inner){
+    padding: 5px 8px;
+}
 </style>

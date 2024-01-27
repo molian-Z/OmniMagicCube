@@ -14,6 +14,8 @@ import Antd from 'ant-design-vue';
 import ElementPlus from 'element-plus'
 // arco
 import ArcoVue from '@arco-design/web-vue';
+// tiny-vue
+import TinyVue from '@opentiny/vue'
 
 import 'tdesign-vue-next/es/style/index.css';
 import 'element-plus/dist/index.css'
@@ -32,9 +34,9 @@ app.use(ArcoVue, {
     // 用于改变使用组件时的前缀名称
     componentPrefix: 'Arco'
 });
+app.use(TinyVue)
 app.use(plug, {
     useUI:"element-plus",
-    // usePrefix:"Arco",
     compsConfig: {
         globalComps: {
             message: MessagePlugin,
