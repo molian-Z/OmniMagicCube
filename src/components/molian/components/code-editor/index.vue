@@ -101,7 +101,7 @@ export default {
     modelValue(newVal, oldVal) {
       if(newVal !== oldVal){
         this.codeValue = newVal
-        this.aceEditor.setValue(newVal)
+        //this.aceEditor.setValue(newVal)
       }
     },
   },
@@ -344,6 +344,7 @@ export default {
           data = beautifier.html(this.modelValue)
         }
       })
+      console.log(data)
       this.setValue(data)
     },
   }

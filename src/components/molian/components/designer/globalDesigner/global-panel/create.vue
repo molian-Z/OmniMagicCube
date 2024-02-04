@@ -48,7 +48,10 @@ const sendChannel = function () {
 
 const exportModelData = function () {
   langMode.value = 'json'
-  codeData.value = JSON.stringify(modelValue.value)
+  codeData.value = JSON.stringify({
+    designerCode:modelValue.value,
+    globalAttrs
+  })
   showDialog.value = true
 }
 
