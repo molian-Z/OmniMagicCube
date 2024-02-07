@@ -8,22 +8,24 @@ import {
     useDebouncedRefHistory,
     useStorage,
     useMagicKeys,
-    whenever
+    whenever,
+    useActiveElement
 } from '@vueuse/core'
+import { logicAnd } from '@vueuse/math'
 import { hoverNodes, hoverIndex, resetDraggable } from './draggable'
 import { deviceList } from '@molian/utils/defaultData'
 
 // 菜单交互
 export const hiddenAllPanel = ref(false)
-export const compPanel = ref('')
-export const globalMenu = ref('')
-export const cssPanel = ref('')
-export const optionsPanel = ref('')
-export const actionPanel = ref('')
-export const globalPanel = ref('')
+export const compPanel = ref<string>('')
+export const globalMenu = ref<string>('')
+export const cssPanel = ref<string>('')
+export const optionsPanel = ref<string>('')
+export const actionPanel = ref<string>('')
+export const globalPanel = ref<string>('')
 export const treeDirRef = ref()
 export const aiImRef = ref()
-
+export const fullLoading = ref<boolean>(false)
 // 页面数据
 // 缓存数据
 const store = useStorage('history', {
@@ -54,7 +56,7 @@ export const {
     capacity: 20
 })
 
-export const screenRatioInfo:any = useStorage('screenRatio',{...deviceList.value[0], rotate:false})
+export const screenRatioInfo: any = useStorage('screenRatio', { ...deviceList.value[0], rotate: false })
 watch(history, (val: any) => {
     store.value = {
         modelValue: val,
@@ -64,39 +66,47 @@ watch(history, (val: any) => {
 export const compsRef = reactive<any>({})
 export const selectedComp = ref<any>(null)
 
+
+// 编辑输入框内容时不触发魔术键
+const activeElement = useActiveElement()
+const notUsingInput = computed(() =>
+    activeElement.value?.tagName !== 'INPUT'
+    && activeElement.value?.tagName !== 'TEXTAREA',)
 // 魔术键（快捷键）
 const keys = useMagicKeys({
     passive: false,
     onEventFired(e) {
-        if (e.ctrlKey && ['a', 's', 'd', 'f', 'z', 'y', 'b', 'h'].indexOf(e.key) > -1 && e.type === 'keydown') {
-            e.preventDefault();
-            e.stopPropagation();
+        if(notUsingInput.value){
+            if (e.ctrlKey && ['a', 's', 'd', 'f', 'z', 'y', 'b', 'h'].indexOf(e.key) > -1 && e.type === 'keydown') {
+                e.preventDefault();
+                e.stopPropagation();
+            }
         }
     }
 })
 // 撤销
-whenever(keys.ctrl_z, () => undo());
+whenever(logicAnd(keys.ctrl_z, notUsingInput), () => undo());
 // 重做
-whenever(keys.ctrl_y, () => redo());
+whenever(logicAnd(keys.ctrl_y, notUsingInput), () => redo());
 // 切换面板
-whenever(keys.ctrl_a, () => globalMenu.value = 'style');
-whenever(keys.ctrl_s, () => globalMenu.value = 'option');
-whenever(keys.ctrl_d, () => globalMenu.value = 'action');
-whenever(keys.ctrl_f, () => globalMenu.value = 'global');
+whenever(logicAnd(keys.ctrl_a, notUsingInput), () => globalMenu.value = 'style');
+whenever(logicAnd(keys.ctrl_s, notUsingInput), () => globalMenu.value = 'option');
+whenever(logicAnd(keys.ctrl_d, notUsingInput), () => globalMenu.value = 'action');
+whenever(logicAnd(keys.ctrl_f, notUsingInput), () => globalMenu.value = 'global');
 // 复制
-// whenever(keys.ctrl_c, () => console.log());
+// whenever(logicAnd(keys.ctrl_c, notUsingInput), () => console.log());
 // 粘贴
-// whenever(keys.ctrl_v, () => console.log());
+// whenever(logicAnd(keys.ctrl_v, notUsingInput), () => console.log());
 // 显示树面板
-whenever(keys.ctrl_b, () => {
+whenever(logicAnd(keys.ctrl_b, notUsingInput), () => {
     treeDirRef.value.switchExpand(!treeDirRef.value.expand)
 });
 // 显示AI交互面板
-whenever(keys.ctrl_h, () => {
+whenever(logicAnd(keys.ctrl_h, notUsingInput), () => {
     aiImRef.value.switchExpand(!aiImRef.value.expand)
 });
 
-whenever(keys.delete, () => {
+whenever(logicAnd(keys.delete, notUsingInput), () => {
     if (hoverNodes.value && hoverNodes.value) {
         hoverNodes.value.splice(hoverIndex.value, 1)
     }

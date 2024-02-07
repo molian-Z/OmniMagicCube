@@ -1082,6 +1082,7 @@ export const uiMapping: IUiMapping = {
 export const dbName = "molian-cube"
 
 export const cloudUrl = "http://wujie.mlyt.top/getData"
+export const AIURL = "http://wujie.mlyt.top/getAI"
 
 export const deviceList = useStorage('deviceList', [{
     name: "PC(720P)",

@@ -53,7 +53,7 @@ defineExpose({
   position: fixed;
   bottom: calc(v-bind(offsetY) + 16px);
   right: calc(v-bind(offsetX) + 16px);
-  z-index: 9999999999;
+  z-index: 999;
   width: 48px;
   height: 48px;
   border-radius: 50px;

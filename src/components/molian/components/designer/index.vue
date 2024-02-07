@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { defineProps } from 'vue'
+import fullLoadingComps from '@molianComps/loading/full-loading-1.vue'
 import { hiddenAllPanel, selectedComp } from './designerData'
 import globalTool from './globalTool/index.vue'
 import cssDesigner from './cssDesigner/index.vue'
@@ -34,6 +35,7 @@ defineProps({
         <container-designer></container-designer>
         <treeDir></treeDir>
         <ai-im></ai-im>
+        <fullLoadingComps></fullLoadingComps>
     </div>
 </template>
 <style lang="scss">

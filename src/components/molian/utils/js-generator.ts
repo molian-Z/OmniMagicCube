@@ -100,14 +100,18 @@ export const createJS = function (compObj: IComp, globalAttrs: { lifecycle: any;
     let jsCode = Object.keys(jsCodeObj).map(key => {
       return `  const ${key} = ${jsCodeObj[key]};`
     }).join('\n')
-
-    return `<script setup>
-import { ${importModule.vue.join(', ')} } from 'vue'
-
-${variableStr}
-${lifecycleStr}
-${jsCode}
-</script>`
+    let code = `<script setup>`
+    // import引入
+    code += importModule.vue.length > 0 ? '\nimport { '+ importModule.vue.join(', ') + " } from 'vue'" : ''
+    // 变量写入
+    code += !!variableStr ? '\n'+variableStr : ''
+    // 生命周期写入
+    code += !!lifecycleStr ? '\n'+lifecycleStr : ''
+    // js执行函数写入
+    code += !!jsCode ? '\n'+jsCode : ''
+    // 结尾写入
+    code += '\n </script>'
+    return code
 
   } else if (type === 'options') {
     // OptionsAPI代码

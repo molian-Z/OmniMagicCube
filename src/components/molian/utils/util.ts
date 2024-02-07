@@ -1,12 +1,15 @@
+import { useChangeCase } from '@vueuse/integrations/useChangeCase'
 /**
  * 将字符串转换为驼峰命名法
  * @param {string} str - 待转换的字符串
  * @returns {string} - 转换后的字符串
  */
 const toCamelCase = function (str: string): string {
-  return str.replace(/[\s-]+(.)?/g, function (match: any, chr: string) {
-    return chr ? chr.toUpperCase() : '';
-  });
+  // return str.replace(/[\s-]+(.)?/g, function (match: any, chr: string) {
+  //   return chr ? chr.toUpperCase() : '';
+  // });
+  const changeCase = useChangeCase(str, 'camelCase')
+  return changeCase.value;
 }
 
 /**
@@ -15,10 +18,12 @@ const toCamelCase = function (str: string): string {
  * @returns {string} - 转换后的大驼峰命名法字符串
  */
 const toUpperCamelCase = function (str: string): string {
-  const reg = /(?:(?:^-?)|\-)([A-z])/g
-  return str.trim().replace(reg, (match: any, p1: string) => {
-    return p1 ? p1.toUpperCase() : ''
-  })
+  // const reg = /(?:(?:^-?)|\-)([A-z])/g
+  // return str.trim().replace(reg, (match: any, p1: string) => {
+  //   return p1 ? p1.toUpperCase() : ''
+  // })
+  const changeCase = useChangeCase(str, 'pascalCase')
+  return changeCase.value;
 }
 
 /**
@@ -27,12 +32,13 @@ const toUpperCamelCase = function (str: string): string {
  * @returns {string} - 转换后的字符串
  */
 export const toKebabCase = function (str: string): string {
-  const reg = /([A-Z])/g;
-  let ret = str.replace(reg, '-$1').toLowerCase();
-  if (ret.startsWith('-')) {
-    return ret.slice(1);
-  }
-  return ret;
+  // const reg = /([A-Z])/g;
+  // let ret = str.replace(reg, '-$1').toLowerCase();
+  // if (ret.startsWith('-')) {
+  //   return ret.slice(1);
+  // }
+  const changeCase = useChangeCase(str, 'paramCase')
+  return changeCase.value;
 }
 
 export const deepObjToArray: any = function (obj: any) {

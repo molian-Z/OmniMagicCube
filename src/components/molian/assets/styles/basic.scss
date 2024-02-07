@@ -2,13 +2,6 @@
   height: 420px;
   overflow-y: auto;
 
-  &::-webkit-scrollbar {
-    width: 0px;
-    height: 0px;
-    border-radius: 10px;
-    background-color: #F5F5F5;
-  }
-
   .designer-container__body-title {
     display: flex;
     justify-content: space-between;
@@ -143,6 +136,27 @@
   position: absolute;
 }
 
+/* 1. 声明过渡效果 */
+.fade1-move,
+.fade1-enter-active,
+.fade1-leave-active {
+  opacity: 1;
+  transition: all 0.5s cubic-bezier(0.55, 0, 0.1, 1);
+}
+
+/* 2. 声明进入和离开的状态 */
+.fade1-enter-from,
+.fade1-leave-to {
+  opacity: 0;
+}
+
+/* 3. 确保离开的项目被移除出了布局流
+      以便正确地计算移动时的动画效果。 */
+.fade1-leave-active {
+  position: absolute;
+}
+
+
 
 .list-move,
 /* 对移动中的元素应用的过渡 */
@@ -223,4 +237,11 @@
   font-size: 22px;
   width: 28px !important;
   height: 28px !important;
+}
+
+::-webkit-scrollbar {
+  width: 0px;
+  height: 2px;
+  border-radius: 10px;
+  background-color: #F5F5F5;
 }

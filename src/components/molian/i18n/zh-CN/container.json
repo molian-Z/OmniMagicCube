@@ -10,5 +10,6 @@
     "appendComp":"插入组件",
     "appendSlot":"插入插槽",
     "drop":"放置",
-    "aiIm":"AI交互"
+    "aiIm":"AI交互",
+    "inputEmpty":"请输入内容"
 }
