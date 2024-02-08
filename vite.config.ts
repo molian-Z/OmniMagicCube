@@ -18,6 +18,11 @@ export default defineConfig({
     VitePWA({
       // 使用注入模式
       registerType: 'autoUpdate',
+      injectRegister:'auto',
+      devOptions: {
+        enabled: true
+        /* other options */
+      },
       // PWA的配置
       manifest: {
         name: '无界魔方',
@@ -71,5 +76,5 @@ export default defineConfig({
       "@molian": resolve(__dirname, 'src/components/molian'),
       "@molianComps": resolve(__dirname, 'src/components/molian/components'),
     }
-  },
+  }
 })

@@ -42,7 +42,7 @@ const store = useStorage('history', {
             export:{},
             lifecycle: {},
             variable: {}
-        }
+        } 
 })
 // 数据
 export const modelValue = ref<any>(store.value.modelValue && store.value.modelValue.length > 0 ? store.value.modelValue[0].snapshot : [])
