@@ -72,7 +72,4 @@ export default defineConfig({
       "@molianComps": resolve(__dirname, 'src/components/molian/components'),
     }
   },
-  build:{
-    sourcemap: true
-  }
 })

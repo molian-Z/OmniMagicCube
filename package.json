@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite --host",
     "build": "vite build",
+    "build:map":"vite build --sourcemap",
     "serve": "vite preview",
     "lib": "vite build --config scripts/lib.config.ts && cd libDist && npm publish"
   },

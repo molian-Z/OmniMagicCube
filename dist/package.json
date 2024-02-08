@@ -1,0 +1,28 @@
+{
+  "name": "omni-magic-cube",
+  "version": "0.10.5",
+  "private": false,
+  "description": "",
+  "author": "molian-Z",
+  "main": "./index.umd.js",
+  "module": "./index.es.js",
+  "types":"./index.d.ts",
+  "keywords": [
+    "designer",
+    "vue3",
+    "vite",
+    "vueuse",
+    "render",
+    "next",
+    "vue3-designer"
+  ],
+  "homepage": "https://github.com/molian-Z/OmniMagicCube#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/molian-Z/OmniMagicCube"
+  },
+  "license": "Apache-2.0",
+  "dependencies":{
+    "ace-builds": "^1.31.2"
+  }
+}
