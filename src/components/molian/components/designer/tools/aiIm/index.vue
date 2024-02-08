@@ -23,9 +23,10 @@ const messageData = ref<{
 }[]>([{
   role: "assistant",
   key: 123123,
-  content: `您好,我是墨。\n有什么需要我为您做的么？`
+  content: `您好,我是墨。有什么需要我为您做的么？`
 }])
 const messageText = ref<string>('')
+const currentStatus = ref<'' | null | 'primary' | 'success' | 'error'>(null)
 const aiMessageRef = ref()
 
 // 始终保持底部显示
@@ -59,6 +60,7 @@ const sendMsg = () => {
 
 const getCloudData = async () => {
   fullLoading.value = true
+  scrollToBottom()
   try {
     const res = await fetch(AIURL, {
       method: 'post',
@@ -74,11 +76,7 @@ const getCloudData = async () => {
     })
     const data = await res.json()
     console.log(data)
-    messageData.value.push({
-      content: "正在为您写入数据请稍候。",
-      key: Math.random(),
-      role: 'assistant'
-    })
+    scrollToBottom()
   } catch (error) {
     message.error(error)
   }
@@ -87,12 +85,12 @@ const getCloudData = async () => {
 </script>
 
 <template>
-  <floatBall :title="t('container.aiIm')" ref="aiImRef" offsetX="52px">
+  <floatBall :title="t('container.aiIm')" ref="aiImRef" offsetX="52px" expandWidth="455px">
     <template v-slot:toggle>
-      <span class="newSpan"></span>
+      <span></span>
       <span class="newSpan"></span>
       <span></span>
-      <span></span>
+      <span class="newSpan"></span>
       <span></span>
     </template>
     <div class="ai-body">
@@ -113,6 +111,7 @@ const getCloudData = async () => {
           </div>
         </template>
         <div class="ai-loading">
+          <div :class="['ai-holdOnPlease', currentStatus]" v-if="currentStatus !== null">{{ t('container.settingData') }} {{ t('container.holdOnPlease') }}</div>
           <loadComp v-if="fullLoading"></loadComp>
         </div>
       </div>
@@ -127,6 +126,7 @@ const getCloudData = async () => {
 <style lang="scss" scoped>
 :deep(.toggle) {
   overflow: visible;
+  width: calc(100% - var(--ml-mg-lg)) !important;
 }
 
 .toggle {
@@ -187,17 +187,16 @@ const getCloudData = async () => {
     span:nth-child(1) {
       transform: translateX(-15px);
       transition-delay: 0.125s;
-      width: 16px;
-      animation: steamer 8s linear infinite;
+      opacity: 0;
     }
 
     span:nth-child(2) {
       transform: translateY(0px);
       transition-delay: 0.125s;
-      width: 6px;
-      height: 6px;
+      width: 12px;
+      height: 12px;
       border-radius: 50%;
-      left: 23px;
+      left: calc(100% - 24px);
       animation: steamer 8s linear infinite;
     }
 
@@ -208,9 +207,10 @@ const getCloudData = async () => {
     }
 
     span:nth-child(4) {
-      width: 20px;
-      transform: translateY(40px) rotate(315deg);
-      opacity: 0;
+      width: calc(100% - 44px);
+      animation: steamer 8s linear infinite;
+      height: 6px;
+      transform: translateY(0px);
     }
 
     .newSpan {
@@ -244,7 +244,7 @@ const getCloudData = async () => {
 
 .ai-body {
   width: 100%;
-  height: calc(100% - 16px);
+  height: 100%;
   background-color: var(--ml-bg-color);
   padding: var(--ml-pd-base);
   box-sizing: border-box;
@@ -292,7 +292,7 @@ const getCloudData = async () => {
 
         .ai-message-text {
           color: var(--ml-text-reverse-color-1);
-          background-color: var(--ml-primary-color);
+          background: linear-gradient(-45deg, var(--ml-primary-color-4) ,var(--ml-primary-color));
         }
       }
 
@@ -305,9 +305,35 @@ const getCloudData = async () => {
 
         .ai-message-text {
           color: var(--ml-info-color-9);
-          background-color: var(--ml-fill-color-5);
+          background: linear-gradient(-45deg, var(--ml-fill-color-4), var(--ml-fill-color-5));
         }
       }
+    }
+  }
+
+  .ai-holdOnPlease{
+    margin: var(--ml-mg-lg) 0;
+    padding: var(--ml-mg-base) var(--ml-pd-lg);
+    font-weight: bold;
+    background: var(--ml-bg-color);
+    border-radius: var(--ml-mg-base);
+    box-shadow: var(--ml-shadow-small);
+    text-align: center;
+    user-select: none;
+
+    &.success{
+      color:var(--ml-text-reverse-color-1);
+      background-color: var(--ml-success-color);
+    }
+
+    &.error{
+      color:var(--ml-text-reverse-color-1);
+      background-color: var(--ml-danger-color);
+    }
+
+    &.primary{
+      color:var(--ml-text-reverse-color-1);
+      background-color: var(--ml-primary-color);
     }
   }
 

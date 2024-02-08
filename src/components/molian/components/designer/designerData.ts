@@ -38,6 +38,8 @@ const store = useStorage('history', {
             [key: string]: any;
         };
     }>{
+            import:{},
+            export:{},
             lifecycle: {},
             variable: {}
         }

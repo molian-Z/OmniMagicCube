@@ -13,6 +13,10 @@ defineProps({
   offsetY: {
     type: Number,
     default: '0px'
+  },
+  expandWidth:{
+    type:String,
+    default:"260px"
   }
 })
 const expand = ref(false)
@@ -107,7 +111,7 @@ defineExpose({
   }
 
   &.expand {
-    width: 260px;
+    width: v-bind(expandWidth);
     height: 80vh;
     border-radius: var(--ml-radius-lg);
 

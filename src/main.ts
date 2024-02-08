@@ -36,7 +36,7 @@ app.use(ArcoVue, {
 });
 app.use(TinyVue)
 app.use(plug, {
-    useUI:"element-plus",
+    useUI: "element-plus",
     compsConfig: {
         globalComps: {
             message: MessagePlugin,
@@ -44,4 +44,11 @@ app.use(plug, {
         }
     },
 });
+
+// 注册service worker
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/service-worker.js');
+    });
+}
 app.mount('#app');

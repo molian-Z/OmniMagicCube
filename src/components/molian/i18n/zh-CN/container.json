@@ -11,5 +11,7 @@
     "appendSlot":"插入插槽",
     "drop":"放置",
     "aiIm":"AI交互",
-    "inputEmpty":"请输入内容"
+    "inputEmpty":"请输入内容",
+    "settingData":"正在写入数据",
+    "holdOnPlease":"请稍候..."
 }

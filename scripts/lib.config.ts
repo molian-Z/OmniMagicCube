@@ -44,6 +44,7 @@ export default defineConfig({
   },
   build: {
     outDir: "libDist", //输出文件名称
+    sourcemap: true,
     lib: {
       entry: resolve(__dirname, "../src/lib-main.ts"), //指定组件编译入口文件
       name: "omni-magic-cube",
