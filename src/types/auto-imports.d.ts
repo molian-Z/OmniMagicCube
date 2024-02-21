@@ -102,6 +102,7 @@ declare global {
   const langObj: typeof import('../components/molian/utils/lang')['langObj']
   const language: typeof import('../components/molian/utils/lang')['language']
   const libMain: typeof import('../lib-main')['default']
+  const libRenderMain: typeof import('../lib-render-main')['default']
   const lifecycle: typeof import('../components/molian/components/render/renderData')['lifecycle']
   const markRaw: typeof import('vue')['markRaw']
   const modelValue: typeof import('../components/molian/components/designer/designerData')['modelValue']

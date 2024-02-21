@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { defineProps } from 'vue'
+import { defineProps, provide } from 'vue'
 import fullLoadingComps from '@molianComps/loading/full-loading-1.vue'
 import { hiddenAllPanel, selectedComp } from './designerData'
 import globalTool from './globalTool/index.vue'
@@ -11,6 +11,7 @@ import actionDesigner from './actionDesigner/index.vue'
 import globalDesigner from './globalDesigner/index.vue'
 import treeDir from './tools/treeDir/index.vue'
 import aiIm from './tools/aiIm/index.vue'
+
 defineProps({
     width: {
         type: String,

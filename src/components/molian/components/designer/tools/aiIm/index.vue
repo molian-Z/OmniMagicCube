@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, inject, nextTick, watch } from 'vue'
 import { onClickOutside } from '@vueuse/core'
-import { modelValue, aiImRef, fullLoading } from '@molianComps/designer/designerData'
+import { modelValue, aiImRef, fullLoading, compsRef } from '@molianComps/designer/designerData'
 import { AIURL } from '@molian/utils/defaultData'
 import svgIcon from '@molianComps/svg-icon/index.vue'
 import floatBall from '@molianComps/float-ball/index.vue'
@@ -10,12 +10,14 @@ const t: any = inject('mlLangs')
 const customComps: any = inject('customComps')
 const { customInput, customButton } = customComps
 const message: any = inject('ml-message')
-onClickOutside(aiImRef, () => {
-  if (aiImRef.value.expand) {
+const { showMenu, isOpenedMenu } = <any>inject('cmdMenu');
+onClickOutside(aiImRef, (event) => {
+  if (aiImRef.value.expand && !isOpenedMenu()) {
     aiImRef.value.switchExpand(false)
   }
+}, {
+  ignore: [],
 })
-
 const messageData = ref<{
   content: string;
   key: number;
@@ -29,20 +31,31 @@ const messageText = ref<string>('')
 const currentStatus = ref<'' | null | 'primary' | 'success' | 'error'>(null)
 const aiMessageRef = ref()
 
-// 始终保持底部显示
-const scrollToBottom = () => {
- nextTick(() => {
-   if (aiMessageRef.value) {
-    aiMessageRef.value.scrollTop = aiMessageRef.value.scrollHeight;
-   }
- });
-};
-
 watch(messageData, () => {
- scrollToBottom();
+  scrollToBottom();
 }, {
- deep: true, // If your messages contain nested objects, you might need deep watching
+  deep: true, // If your messages contain nested objects, you might need deep watching
 });
+
+
+
+const onContextMenu = (e: MouseEvent) => {
+  e.preventDefault();
+  console.log(compsRef)
+  showMenu({
+    zIndex: 1200,
+    x: e.x,
+    y: e.y,
+    items: Object.values(compsRef).map((item: any) => {
+      return {
+        label: item.comp.name + '_' + item.comp.key,
+        onClick: () => {
+          console.log(item)
+        }
+      }
+    })
+  });
+}
 
 const sendMsg = () => {
   if (messageText.value) {
@@ -69,8 +82,8 @@ const getCloudData = async () => {
       },
       body: JSON.stringify({
         messages: [{
-          role:"user",
-          content:messageText.value
+          role: "user",
+          content: messageText.value
         }]
       })
     })
@@ -82,6 +95,15 @@ const getCloudData = async () => {
   }
   fullLoading.value = false
 }
+
+// 始终保持底部显示
+const scrollToBottom = () => {
+  nextTick(() => {
+    if (aiMessageRef.value) {
+      aiMessageRef.value.scrollTop = aiMessageRef.value.scrollHeight;
+    }
+  });
+};
 </script>
 
 <template>
@@ -105,13 +127,17 @@ const getCloudData = async () => {
                 墨
               </template>
             </div>
-            <div class="ai-message-text">
+            <div class="ai-message-text" @click="onContextMenu">
               {{ msg.content }}
+              <div class="ai-message-action" v-if="msg.role === 'assistant'">
+                放置
+              </div>
             </div>
           </div>
         </template>
         <div class="ai-loading">
-          <div :class="['ai-holdOnPlease', currentStatus]" v-if="currentStatus !== null">{{ t('container.settingData') }} {{ t('container.holdOnPlease') }}</div>
+          <div :class="['ai-holdOnPlease', currentStatus]" v-if="currentStatus !== null">{{ t('container.settingData') }}
+            {{ t('container.holdOnPlease') }}</div>
           <loadComp v-if="fullLoading"></loadComp>
         </div>
       </div>
@@ -292,7 +318,7 @@ const getCloudData = async () => {
 
         .ai-message-text {
           color: var(--ml-text-reverse-color-1);
-          background: linear-gradient(-45deg, var(--ml-primary-color-4) ,var(--ml-primary-color));
+          background: linear-gradient(-45deg, var(--ml-primary-color-4), var(--ml-primary-color));
         }
       }
 
@@ -311,7 +337,7 @@ const getCloudData = async () => {
     }
   }
 
-  .ai-holdOnPlease{
+  .ai-holdOnPlease {
     margin: var(--ml-mg-lg) 0;
     padding: var(--ml-mg-base) var(--ml-pd-lg);
     font-weight: bold;
@@ -321,18 +347,18 @@ const getCloudData = async () => {
     text-align: center;
     user-select: none;
 
-    &.success{
-      color:var(--ml-text-reverse-color-1);
+    &.success {
+      color: var(--ml-text-reverse-color-1);
       background-color: var(--ml-success-color);
     }
 
-    &.error{
-      color:var(--ml-text-reverse-color-1);
+    &.error {
+      color: var(--ml-text-reverse-color-1);
       background-color: var(--ml-danger-color);
     }
 
-    &.primary{
-      color:var(--ml-text-reverse-color-1);
+    &.primary {
+      color: var(--ml-text-reverse-color-1);
       background-color: var(--ml-primary-color);
     }
   }

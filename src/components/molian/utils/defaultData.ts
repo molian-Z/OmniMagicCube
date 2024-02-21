@@ -33,6 +33,7 @@ export interface IDefaultSlotsMap {
 
 export interface IUiMapping {
     useUI: string;
+    debug?: boolean;
     usePrefix?: string;
     data: Array<IData>;
 }
@@ -294,6 +295,7 @@ export const defaultSlotsMap: IDefaultSlotsMap = {
 
 export const uiMapping: IUiMapping = {
     useUI: "element-plus",
+    debug: false,
     data: [{
         name: 'tiny-vue',
         prefix: 'Tiny',
