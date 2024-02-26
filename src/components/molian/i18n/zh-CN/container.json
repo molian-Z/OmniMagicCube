@@ -13,5 +13,9 @@
     "aiIm":"AI交互",
     "inputEmpty":"请输入内容",
     "settingData":"正在写入数据",
-    "holdOnPlease":"请稍候..."
+    "holdOnPlease":"请稍候...",
+    "send":"发送",
+    "pleaseUse":"请使用",
+    "ui":"组件库",
+    "getDataError":"获取数据错误"
 }

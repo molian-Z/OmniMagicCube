@@ -6,6 +6,8 @@ import { AIURL } from '@molian/utils/defaultData'
 import svgIcon from '@molianComps/svg-icon/index.vue'
 import floatBall from '@molianComps/float-ball/index.vue'
 import loadComp from '@molianComps/loading/loading-1.vue'
+import { generateUUID } from '@molian/utils/util'
+import { uiMapping } from '@molian/utils/defaultData'
 const t: any = inject('mlLangs')
 const customComps: any = inject('customComps')
 const { customInput, customButton } = customComps
@@ -19,12 +21,13 @@ onClickOutside(aiImRef, (event) => {
   ignore: [],
 })
 const messageData = ref<{
-  content: string;
-  key: number;
-  role: 'user' | 'assistant';
+  content?: string;
+  key: number | string;
+  role: 'user' | 'assistant' | 'system';
+  type?: 'menu' | 'info';
 }[]>([{
   role: "assistant",
-  key: 123123,
+  key: 1000000,
   content: `您好,我是墨。有什么需要我为您做的么？`
 }])
 const messageText = ref<string>('')
@@ -37,11 +40,8 @@ watch(messageData, () => {
   deep: true, // If your messages contain nested objects, you might need deep watching
 });
 
-
-
 const onContextMenu = (e: MouseEvent) => {
   e.preventDefault();
-  console.log(compsRef)
   showMenu({
     zIndex: 1200,
     x: e.x,
@@ -59,10 +59,10 @@ const onContextMenu = (e: MouseEvent) => {
 
 const sendMsg = () => {
   if (messageText.value) {
-    getCloudData()
+    getCloudData(messageText.value)
     messageData.value.push({
       content: messageText.value,
-      key: Math.random(),
+      key: generateUUID(),
       role: 'user'
     })
     messageText.value = ''
@@ -71,9 +71,10 @@ const sendMsg = () => {
   }
 }
 
-const getCloudData = async () => {
+const getCloudData = async (messageText: string) => {
   fullLoading.value = true
   scrollToBottom()
+  let pleaseUse = t("container.pleaseUse") + '"' + uiMapping.useUI + '"' + t("container.ui") + '\n'
   try {
     const res = await fetch(AIURL, {
       method: 'post',
@@ -83,13 +84,28 @@ const getCloudData = async () => {
       body: JSON.stringify({
         messages: [{
           role: "user",
-          content: messageText.value
+          content: pleaseUse + messageText
         }]
       })
     })
     const data = await res.json()
     console.log(data)
-    scrollToBottom()
+    if (!data.success) {
+      message.error(t('container.getDataError'))
+    } else {
+      messageData.value.push({
+        content: data.info,
+        key: generateUUID(),
+        role: 'assistant'
+      })
+      messageData.value.push({
+        key: generateUUID(),
+        role: "system",
+        type: 'menu'
+      })
+      scrollToBottom()
+    }
+
   } catch (error) {
     message.error(error)
   }
@@ -118,7 +134,7 @@ const scrollToBottom = () => {
     <div class="ai-body">
       <div class="ai-container" ref="aiMessageRef">
         <template v-for="msg in messageData" :key="msg.key">
-          <div class="ai-message" :class="msg.role === 'user' ? 'user' : 'assistant'">
+          <div class="ai-message" :class="[msg.role, !!msg.type ? msg.type : '']" v-if="msg.role !== 'system'">
             <div class="ai-message-avatar">
               <template v-if="msg.role === 'user'">
                 <svg-icon icon="avatar"></svg-icon>
@@ -127,11 +143,13 @@ const scrollToBottom = () => {
                 墨
               </template>
             </div>
-            <div class="ai-message-text" @click="onContextMenu">
+            <div class="ai-message-text">
               {{ msg.content }}
-              <div class="ai-message-action" v-if="msg.role === 'assistant'">
-                放置
-              </div>
+            </div>
+          </div>
+          <div class="ai-message-action" @click="onContextMenu" v-else>
+            <div :class="['ai-message-action__text', msg.type]">
+              {{ t('container.dropContent') }}
             </div>
           </div>
         </template>
@@ -142,8 +160,9 @@ const scrollToBottom = () => {
         </div>
       </div>
       <div class="ai-footer-input">
-        <customInput type="textarea" size="small" v-model="messageText" />
-        <customButton theme="primary" size="small" :text="true" @click="sendMsg">发送</customButton>
+        <customInput type="textarea" :autosize="true" size="small" v-model="messageText" />
+        <customButton theme="primary" style="margin-left:var(--ml-mg-small);height:100%;" size="small" :text="true"
+          @click="sendMsg">{{ t('container.send') }}</customButton>
       </div>
     </div>
   </floatBall>
@@ -333,6 +352,32 @@ const scrollToBottom = () => {
           color: var(--ml-info-color-9);
           background: linear-gradient(-45deg, var(--ml-fill-color-4), var(--ml-fill-color-5));
         }
+      }
+    }
+
+    .ai-message-action {
+      margin: var(--ml-mg-lg);
+      text-align: center;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      .ai-message-action__text {
+        padding: var(--ml-pd-base) var(--ml-pd-lg);
+        box-shadow: var(--ml-shadow-small);
+        border-radius: var(--ml-radius-small);
+      }
+
+      .ai-message-action__text.menu {
+        background-color: var(--ml-primary-color);
+        color: var(--ml-text-reverse-color-1);
+        cursor: pointer;
+        user-select: none;
+      }
+
+      .ai-message-action__text.info {
+        background-color: var(--ml-bg-color);
+        color: var(--ml-fill-color-1);
       }
     }
   }

@@ -63,6 +63,11 @@ export const deepObjToArray: any = function (obj: any) {
   return newArr
 }
 
+export const deepModelValueToTree = (modelValue:cubeData.modelValue[]) => {
+  const data:cubeData.modelValue[] = []
+  return data
+}
+
 export const calculateRatio = function (width: number, height: number) {
   const gcd: any = (a: number, b: number) => {
     if (!b) return a;
@@ -87,12 +92,26 @@ export const scaleCalculate = function (originalWidth: number, originalHeight: n
   // 计算缩放比例
   const scaleX = newWidth / originalWidth;
   const scaleY = newHeight / originalHeight;
-   
+
   // 将原屏幕中的坐标转换为新屏幕的坐标
   const newBlockX = originalBlockX * scaleX;
   const newBlockY = originalBlockY * scaleY;
   return {
-    x:newBlockX,
-    y:newBlockY
+    x: newBlockX,
+    y: newBlockY
+  }
+}
+
+export const generateUUID = function () {
+  if (typeof crypto !== 'undefined' && !!crypto.randomUUID) {
+    return crypto.randomUUID();
+  } else {
+    let d = new Date().getTime();
+    if (typeof performance !== 'undefined' && typeof performance.now === 'function') {
+      d += performance.now(); // 高精度时间戳   
+    }
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+      let r = (d + Math.random() * 16) % 16 | 0; d = Math.floor(d / 16); return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+    });
   }
 }

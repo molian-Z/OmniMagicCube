@@ -61,7 +61,7 @@ export default defineConfig({
       ],
       dts: './src/types/auto-imports.d.ts',
       dirs: [
-        './src/**',
+        './src/types/**',
       ],
     }),
     components({

@@ -30,14 +30,7 @@ export const fullLoading = ref<boolean>(false)
 // 缓存数据
 const store = useStorage('history', {
     modelValue: <any[]>[],
-    globalAttrs: <{
-        lifecycle: {
-            [key: string]: any;
-        };
-        variable: {
-            [key: string]: any;
-        };
-    }>{
+    globalAttrs: <cubeData.globalAttrs>{
             import:{},
             export:{},
             lifecycle: {},
@@ -45,8 +38,8 @@ const store = useStorage('history', {
         } 
 })
 // 数据
-export const modelValue = ref<any>(store.value.modelValue && store.value.modelValue.length > 0 ? store.value.modelValue[0].snapshot : [])
-export const globalAttrs = reactive<any>(store.value.globalAttrs)
+export const modelValue = ref<cubeData.modelValue[]>(store.value.modelValue && store.value.modelValue.length > 0 ? store.value.modelValue[0].snapshot : [])
+export const globalAttrs = reactive<cubeData.globalAttrs>(store.value.globalAttrs)
 // 历史记录
 export const {
     history,
@@ -59,14 +52,14 @@ export const {
 })
 
 export const screenRatioInfo: any = useStorage('screenRatio', { ...deviceList.value[0], rotate: false })
-watch(history, (val: any) => {
+watch(history as  any, (val: cubeData.modelValue[]) => {
     store.value = {
         modelValue: val,
         globalAttrs
     }
 })
 export const compsRef = reactive<any>({})
-export const selectedComp = ref<any>(null)
+export const selectedComp = ref<cubeData.modelValue | null>(null)
 
 
 // 编辑输入框内容时不触发魔术键
