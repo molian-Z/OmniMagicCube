@@ -75,13 +75,13 @@ type FunctionDefinition = {
 };
 
 /**
-* 为 cubeData 命名空间声明类型和接口。
+* 为 CubeData 命名空间声明类型和接口。
 */
-declare namespace cubeData {
+declare namespace CubeData {
     /**
      * 表示模型值的接口。
      */
-    interface modelValue {
+    interface ModelValue {
         /**
          * 模型名称。
          */
@@ -204,7 +204,7 @@ declare namespace cubeData {
                 /**
                  * 插槽的子元素数组。
                  */
-                children: cubeData.modelValue[];
+                children: CubeData.ModelValue[];
             };
         };
         /**
@@ -337,11 +337,15 @@ declare namespace cubeData {
          * 模型的 ID。
          */
         id: string;
+        /**
+         * 组件标签。
+         */
+        tag: string;
     };
     /**
     * 全局属性接口。
     */
-    interface globalAttrs {
+    interface GlobalAttrs {
         /**
          * 导入配置。
          */
@@ -382,5 +386,176 @@ declare namespace cubeData {
                 value?: ValueTypes[keyof ValueTypes];
             };
         };
+    }
+}
+
+/**
+ * AI 命名空间生命类型和接口。
+ */
+declare namespace AI {
+    interface CreateData {
+        autoDesc?: string;
+        messageText?: messageText;
+        useUI?: string;
+        dropRef?: string;
+        contextCode?:string;
+    }
+
+    interface message{
+        content?: string;
+        role: 'user' | 'assistant';
+    }
+}
+
+declare namespace Device {
+    interface Config {
+        name: string;
+        width: number;
+        height: number;
+        device: string;
+        deviceType: "Phone" | "PC" | "Pad" | "iPad" | "custom";
+        resolutionRatio: string;
+        coverBackground?: {
+            left: number;
+            width: number;
+            top: number;
+            height: number;
+            borderRadius: number[];
+        };
+    }
+}
+
+
+declare namespace IConfig {
+    type IDefaultCategory = {
+        icon?: string;
+        name?: string;
+        component?: (string)[];
+        rule?: RegExp;
+    };
+    interface IDefaultAttrsMap {
+        [key: string]: any;
+    }
+    
+    interface IEventMap {
+        [key: string]: (string)[] | string;
+    }
+    
+    interface ILifecycleMap {
+        [key: string]: {
+            codeVar: string[];
+            code: string;
+            function?: any;
+        };
+    }
+    
+    interface IDefaultSlotsMap {
+        [key: string]: {
+            [key: string]: {
+                allowComps?: (string)[];
+                auto?: boolean;
+            } | string | boolean;
+        };
+    }
+    
+    // interface IUIMap {
+    //     useUI: string;
+    //     debug?: boolean;
+    //     usePrefix?: string;
+    //     data: Array<IData>;
+    // }
+    interface IData {
+        name: string;
+        prefix: string;
+        icon?: string;
+        removeAttrs?: string[];
+        compMapping?: ICompMapping;
+    };
+    interface ICompMapping {
+        Button?: IButton;
+        Tag?: Record<string, unknown>;
+        Input?: IInput;
+        InputNumber?: Record<string, unknown>;
+        Select?: Record<string, unknown>;
+        Switch?: Record<string, unknown>;
+        Tooltip?: ITooltip;
+        Popup?: IPopup;
+        RadioGroup?: Record<string, unknown>;
+        RadioButton?: IRadioButton;
+        Cascader?: ICascader;
+        CascaderPanel?: ICascader;
+        Dropdown?: IDropdown;
+        Dialog?: IDialog;
+    }
+    
+    interface IDialog {
+        appendToBody?: IAppendToBody | string;
+        visible?: boolean | string;
+        destroyOnClose?: string | any;
+        header?: string;
+        component?: string;
+        [key: string]: any;
+    }
+    interface IAppendToBody {
+        attach?: string;
+        component?: string;
+        [key: string]: any;
+    }
+    interface IDropdown {
+        optionItems?: unknown;
+        component?: string;
+        [key: string]: any;
+    }
+    interface ICascader {
+        optionItems?: string;
+        checkStrictly?: any;
+        component?: string;
+        valueType?: string | any;
+        [key: string]: any;
+    }
+    interface IRadioButton {
+        value?: string;
+        component?: string;
+        [key: string]: any;
+    }
+    export interface IPopup {
+        component?: string;
+        default?: string;
+        content?: string;
+        trigger?: any;
+        visible?: any;
+        [key: string]: any;
+    }
+    interface ITooltip {
+        content?: IContent | string;
+        component?: string;
+        [key: string]: any;
+    }
+    interface IContent {
+        content?: string;
+        destroyOnClose?: any;
+        component?: string;
+        [key: string]: any;
+    }
+    interface IInput {
+        prefixIcon?: string;
+        onKeyup?: Record<string, unknown>;
+        onEnter?: Record<string, unknown>;
+        modelValue?: string;
+        ['onUpdate:modelValue']?: string;
+        component?: string;
+        [key: string]: any;
+    }
+    interface IButton {
+        theme?: string | any;
+        text?: IText | string;
+        component?: string;
+        [key: string]: any;
+    }
+    interface IText {
+        variant?: string;
+        type?: string;
+        component?: string;
+        [key: string]: any;
     }
 }

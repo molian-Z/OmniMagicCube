@@ -4,15 +4,12 @@ import floatPanel from '@molianComps/float-panel/index.vue'
 import categroyPanel from './category-panel.vue'
 import { compPanel } from '../designerData'
 import { categoryList } from '@molian/utils/compsConfig'
-import { uiMapping } from '@molian/utils/defaultData'
+import { useUI, UIData } from '@molian/utils/UIMap'
 import svgIcon from '@molianComps/svg-icon/index.vue'
 
 const customComps:any = inject('customComps')
 const t:any = inject('mlLangs')
 const { customTooltip } = customComps
-const { useUI, data } = uiMapping
-
-const currentUI = ref(useUI)
 
 const i18nList = computed(()=>{
     return categoryList.value.map(item =>{
@@ -27,15 +24,15 @@ const i18nList = computed(()=>{
 <template>
     <float-panel float="left" :list="i18nList" v-model="compPanel" :offset="[5, 150]" :foldWidth="500" :isClose="false">
         <template #toolbar>
-            <svg-icon :class="['css-svg-icon', 'toolbar-icon', currentUI === 'all' && 'is-actived']"
-                    icon="uiLib-all" @click="currentUI = 'all'" />
-            <customTooltip :content="item.name" v-for="item in data" :key="item.name">
-                <svg-icon :class="['css-svg-icon', 'toolbar-icon', currentUI === item.name && 'is-actived']"
-                    :icon="`uiLib-${item.icon}`" @click="currentUI = item.name" />
+            <svg-icon :class="['css-svg-icon', 'toolbar-icon', useUI === 'all' && 'is-actived']"
+                    icon="uiLib-all" @click="useUI = 'all'" />
+            <customTooltip :content="item.name" v-for="item in UIData" :key="item.name">
+                <svg-icon :class="['css-svg-icon', 'toolbar-icon', useUI === item.name && 'is-actived']"
+                    :icon="`uiLib-${item.icon}`" @click="useUI = item.name" />
             </customTooltip>
         </template>
         <template v-slot:default="{ activeData }">
-            <categroy-panel :currentData="activeData" :currentUI="currentUI" />
+            <categroy-panel :currentData="activeData" :currentUI="useUI" />
         </template>
     </float-panel>
 </template>

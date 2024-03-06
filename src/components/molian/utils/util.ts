@@ -63,8 +63,8 @@ export const deepObjToArray: any = function (obj: any) {
   return newArr
 }
 
-export const deepModelValueToTree = (modelValue:cubeData.modelValue[]) => {
-  const data:cubeData.modelValue[] = []
+export const deepModelValueToTree = (modelValue:CubeData.ModelValue[]) => {
+  const data:CubeData.ModelValue[] = []
   return data
 }
 

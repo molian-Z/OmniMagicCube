@@ -4,7 +4,7 @@ import {
 import {
     compsInstall
 } from './compsConfig'
-import { uiMapping } from './defaultData'
+import { useUI, UIData, usePrefix, debug } from './UIMap'
 import type { App } from 'vue'
 import '@imengyu/vue3-context-menu/lib/vue3-context-menu.css';
 import ContextMenu from '@imengyu/vue3-context-menu';
@@ -21,16 +21,18 @@ export default {
     install(app: App<any>, options: any = {
         customComps: {}
     }) {
-        uiMapping.useUI = options.useUI || uiMapping.useUI
+        useUI.value = options.useUI || useUI.value
         if (!!options.usePrefix) {
-            const uiIndex = uiMapping.data.findIndex(item => item.name === uiMapping.useUI)
+            const uiIndex = UIData.findIndex(item => item.name === useUI.value)
             if (uiIndex > -1) {
-                uiMapping.data[uiIndex].prefix = options.usePrefix
+                UIData[uiIndex].prefix = options.usePrefix
             }
         }
-        uiMapping.usePrefix = options.usePrefix || null
+        usePrefix.value = options.usePrefix || null
         if (options.useData) {
-            uiMapping.data = options.useData
+            // UIData = options.useData
+            UIData.length = 0
+            UIData.push(...options.useData)
         }
         langInstall(app)
         compsInstall(app, options.compsConfig)
@@ -45,7 +47,7 @@ export default {
             moveMenu: transformMenuPosition,
             isOpenedMenu: isAnyContextMenuOpen
         })
-        if(!!uiMapping.debug){
+        if(!!debug.value){
             const vConsole = new VConsole();
         }
     }

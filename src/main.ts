@@ -22,7 +22,6 @@ import 'element-plus/dist/index.css';
 import 'vexip-ui/css/index.css';
 import 'ant-design-vue/dist/reset.css';
 import '@arco-design/web-vue/dist/arco.css';
-import '@imengyu/vue3-context-menu/lib/vue3-context-menu.css';
 import '@molian/assets/styles/global.scss';
 
 const app = createApp(App);

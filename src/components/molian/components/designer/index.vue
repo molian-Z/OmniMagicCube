@@ -35,7 +35,7 @@ defineProps({
         </div>
         <container-designer></container-designer>
         <treeDir></treeDir>
-        <ai-im></ai-im>
+        <!-- <ai-im></ai-im> -->
         <fullLoadingComps></fullLoadingComps>
     </div>
 </template>

@@ -16,12 +16,12 @@ import {
   dropIndex,
   useDraggable,
 } from '../draggable'
+import { menuData } from './menus'
 import {
   parseStyle
 } from '@molian/utils/css-generator'
 import vCustomDirectives from '@molian/utils/useDirectives'
 import { isIf, isFor, isShow, getForEachList } from '@molian/utils/useCore'
-
 export const directives = {
   props: <any>['comp', 'index', 'modelValue'],
   setup(props: {
@@ -49,6 +49,7 @@ export const directives = {
   }: any) {
     const comps: any = inject('mlComps')
     const message: any = inject('ml-message')
+    const { showMenu, isOpenedMenu } = <any>inject('cmdMenu');
     const compData: any = computed({
       get() {
         return props.modelValue
@@ -83,6 +84,28 @@ export const directives = {
       showToolbar(evt, comp, index, props.modelValue)
     }
 
+    const onContextmenu = function (evt: any, comp: null, index: null) {
+      evt.preventDefault();
+      try {
+        if (evt.e) {
+          evt.e.stopPropagation()
+        } else {
+          evt.stopPropagation()
+        }
+      } catch (e) {
+        console.log(e)
+      }
+      selectedComp.value = props.comp
+      showMenu({
+        zIndex: 1200,
+        x: evt.x,
+        y: evt.y,
+        minWidth: 130,
+        customClass:"context-menu__list",
+        items: menuData.value
+      });
+    }
+
     const computedClass = computed(() => {
       return {
         'designer-comp': true,
@@ -94,7 +117,7 @@ export const directives = {
 
     const variable = computed(() => {
       return globalAttrs.variable
-  })
+    })
 
     // 自定义指令支持
     const currentTag = comps.value[props.comp.name].comp ? markRaw(comps.value[props.comp.name].comp) : comps.value[props.comp.name].name
@@ -115,6 +138,7 @@ export const directives = {
         ...propsData,
         // onMouseenter: withModifiers(($event) => onMouseEnter($event, props.comp, props.index), ['self', 'native']), // 暂且取消经过选择
         onClick: withModifiers(($event: any) => onClick($event, props.comp, props.index), ['native']),
+        onContextmenu: withModifiers(($event: any) => onContextmenu($event, props.comp, props.index), ['native']),
         onDragstart: withModifiers((evt: any) => onDragStart(evt, props.comp), ['self', 'prevent']),
         onDragend: onDragend,
         onDragover: withModifiers((evt: any) => onDragenter(props.index, props.comp), ['self', 'prevent']),
@@ -155,12 +179,12 @@ export const directives = {
         }
       }
       if (typeof currentTag === 'string') {
-        return withDirectives(h('div', attrObj, nowSlots.default),[[vCustomDirectives, props.comp]])
+        return withDirectives(h('div', attrObj, nowSlots.default), [[vCustomDirectives, props.comp]])
       } else {
         return withDirectives(h(currentTag, attrObj, nowSlots), [[vCustomDirectives, props.comp]])
       }
     }
-    let newForEachList = computed(()=>{
+    let newForEachList = computed(() => {
       return getForEachList(props.comp, variable)
     })
     return () => [

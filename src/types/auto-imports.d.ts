@@ -7,6 +7,7 @@ export {}
 declare global {
   const AIURL: typeof import('../components/molian/utils/defaultData')['AIURL']
   const EffectScope: typeof import('vue')['EffectScope']
+  const UIMap: typeof import('../components/molian/utils/defaultData')['UIMap']
   const actionPanel: typeof import('../components/molian/components/designer/designerData')['actionPanel']
   const add: typeof import('../components/molian/utils/indexedDB')['add']
   const aiImRef: typeof import('../components/molian/components/designer/designerData')['aiImRef']
@@ -157,7 +158,6 @@ declare global {
   const toValue: typeof import('vue')['toValue']
   const treeDirRef: typeof import('../components/molian/components/designer/designerData')['treeDirRef']
   const triggerRef: typeof import('vue')['triggerRef']
-  const uiMapping: typeof import('../components/molian/utils/defaultData')['uiMapping']
   const undo: typeof import('../components/molian/components/designer/designerData')['undo']
   const unref: typeof import('vue')['unref']
   const update: typeof import('../components/molian/utils/indexedDB')['update']

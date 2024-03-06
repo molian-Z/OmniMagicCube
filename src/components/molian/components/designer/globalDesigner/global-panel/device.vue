@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { inject, computed } from 'vue'
-import { deviceList } from '@molian/utils/defaultData'
+import { deviceList } from '@molian/utils/device'
 import { screenRatioInfo } from '@molianComps/designer/designerData'
 const customComps:any = inject('customComps')
 const t:any = inject('mlLangs')

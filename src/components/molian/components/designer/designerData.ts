@@ -13,7 +13,7 @@ import {
 } from '@vueuse/core'
 import { logicAnd } from '@vueuse/math'
 import { hoverNodes, hoverIndex, resetDraggable } from './draggable'
-import { deviceList } from '@molian/utils/defaultData'
+import { deviceList } from '@molian/utils/device'
 
 // 菜单交互
 export const hiddenAllPanel = ref(false)
@@ -30,7 +30,7 @@ export const fullLoading = ref<boolean>(false)
 // 缓存数据
 const store = useStorage('history', {
     modelValue: <any[]>[],
-    globalAttrs: <cubeData.globalAttrs>{
+    globalAttrs: <CubeData.GlobalAttrs>{
             import:{},
             export:{},
             lifecycle: {},
@@ -38,8 +38,8 @@ const store = useStorage('history', {
         } 
 })
 // 数据
-export const modelValue = ref<cubeData.modelValue[]>(store.value.modelValue && store.value.modelValue.length > 0 ? store.value.modelValue[0].snapshot : [])
-export const globalAttrs = reactive<cubeData.globalAttrs>(store.value.globalAttrs)
+export const modelValue = ref<CubeData.ModelValue[]>(store.value.modelValue && store.value.modelValue.length > 0 ? store.value.modelValue[0].snapshot : [])
+export const globalAttrs = reactive<CubeData.GlobalAttrs>(store.value.globalAttrs)
 // 历史记录
 export const {
     history,
@@ -52,14 +52,14 @@ export const {
 })
 
 export const screenRatioInfo: any = useStorage('screenRatio', { ...deviceList.value[0], rotate: false })
-watch(history as  any, (val: cubeData.modelValue[]) => {
+watch(history as  any, (val: CubeData.ModelValue[]) => {
     store.value = {
         modelValue: val,
         globalAttrs
     }
 })
 export const compsRef = reactive<any>({})
-export const selectedComp = ref<cubeData.modelValue | null>(null)
+export const selectedComp = ref<CubeData.ModelValue | null>(null)
 
 
 // 编辑输入框内容时不触发魔术键

@@ -245,3 +245,36 @@
   border-radius: 10px;
   background-color: #F5F5F5;
 }
+
+
+.context-menu__list{
+  .mx-context-menu-item{
+    padding:var(--ml-pd-base) var(--ml-pd-lg);
+    .mx-item-row{
+      .label{
+        font-size: 16px;
+      }
+    }
+
+    &.menu-danger{
+      color:var(--ml-danger-color);
+    }
+
+    &.menu-success{
+      color:var(--ml-success-color);
+    }
+    &.menu-info{
+      color:var(--ml-info-color);
+    }
+    &.menu-warning{
+      color:var(--ml-warning-color);
+    }
+    &.menu-primary{
+      color:var(--ml-primary-color);
+    }
+
+    &.disabled{
+      color:var(--mx-menu-disabled-text);
+    }
+  }
+}

@@ -104,3 +104,57 @@ export const getForEachList = function (comp: { directives: { [x: string]: { [x:
   }
 
 }
+
+/**
+ * 获取页面模型上下文数据
+ * @params compRef 组件id
+ * @params level 上下文层级
+ */
+export const getNthParent = (tree:CubeData.ModelValue[], id: any, level: number) => {
+  // 定义一个数组来保存从根到当前节点的路径
+  let path:CubeData.ModelValue[] = [];
+    
+  // 递归函数来搜索具有特定ID的节点，并记录路径
+  function search(node: CubeData.ModelValue):any {
+    if (node.id === id) {
+      // 找到节点，返回路径
+      return path;
+    }
+    if (node.slots) {
+      let exist = false
+      path.push(node); // 将当前节点添加到路径中
+      for (const key in node.slots) {
+        if (Object.prototype.hasOwnProperty.call(node.slots, key)) {
+          const element = node.slots[key];
+          const result = getChildren(element.children)
+          if(result){
+            exist = true
+            return result
+          }
+        }
+      }
+      path.pop(); // 如果子节点没有找到目标，移除当前节点，回溯
+    }
+    return null;
+  }
+
+  function getChildren(slot: CubeData.ModelValue[]){
+    for (const child of slot) {
+      const result = search(child);
+      if (result) {
+        return result
+      };
+    }
+  }
+  
+  // 遍历树，开始搜索
+  for (const root of tree) {
+    const resultPath = search(root);
+    if (resultPath) {
+      // 如果找到路径，获取第n级父节点
+      const nthParentIndex = resultPath.length - level;
+      return nthParentIndex >= 0 ? resultPath[nthParentIndex] : resultPath[0];
+    }
+  }
+  return null; // 如果没有找到节点，返回null
+}

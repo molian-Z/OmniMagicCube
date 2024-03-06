@@ -2,7 +2,7 @@
 import { computed, defineProps, inject } from 'vue'
 import { hiddenAllPanel } from '../designerData'
 import { isDraggable, resetDraggable } from '../draggable'
-import { uiMapping } from '@molian/utils/defaultData'
+import { UIData } from '@molian/utils/UIMap'
 import svgIcon from '@molianComps/svg-icon/index.vue'
 const props = defineProps({
     currentData: {
@@ -15,12 +15,11 @@ const props = defineProps({
     }
 })
 
-const { data } = uiMapping
 const comps: any = inject('mlComps')
 const t = inject('mlLangs')
 
 const getCurrentUI = computed(() => {
-    return props.currentUI !== 'all' ? data.find(item => item.name === props.currentUI) || 'all' : 'all'
+    return props.currentUI !== 'all' ? UIData.find(item => item.name === props.currentUI) || 'all' : 'all'
 })
 
 const compList: any = computed(() => {

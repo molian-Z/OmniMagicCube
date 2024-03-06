@@ -7,7 +7,7 @@ import svgIcon from '@molianComps/svg-icon/index.vue'
 import floatBall from '@molianComps/float-ball/index.vue'
 import loadComp from '@molianComps/loading/loading-1.vue'
 import { generateUUID } from '@molian/utils/util'
-import { uiMapping } from '@molian/utils/defaultData'
+import { useUI } from '@molian/utils/UIMap'
 const t: any = inject('mlLangs')
 const customComps: any = inject('customComps')
 const { customInput, customButton } = customComps
@@ -74,7 +74,7 @@ const sendMsg = () => {
 const getCloudData = async (messageText: string) => {
   fullLoading.value = true
   scrollToBottom()
-  let pleaseUse = t("container.pleaseUse") + '"' + uiMapping.useUI + '"' + t("container.ui") + '\n'
+  let pleaseUse = t("container.pleaseUse") + '"' + useUI.value + '"' + t("container.ui") + '\n'
   try {
     const res = await fetch(AIURL, {
       method: 'post',
