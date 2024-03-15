@@ -12,11 +12,13 @@
     user-select: none;
     background-color: var(--ml-bg-color);
     border-radius: var(--ml-radius-small);
+    border-bottom-left-radius: 0;
   }
 
   .designer-container__body {
     background-color: var(--ml-bg-color);
     border-radius: var(--ml-radius-small);
+    border-top-left-radius: 0;
     padding: 0 var(--ml-pd-lg);
 
     &:nth-child(2) {

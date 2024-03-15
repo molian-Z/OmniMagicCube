@@ -2,9 +2,9 @@
 import { ref, computed, inject, watch } from 'vue'
 import { selectedComp } from '@molianComps/designer/designerData'
 import svgIcon from '@molianComps/svg-icon/index.vue'
-const customComps:any = inject('customComps')
-const t:any = inject('mlLangs')
-const { customInput } = customComps
+const customComps: any = inject('customComps')
+const t: any = inject('mlLangs')
+const { customInput, customTooltip } = customComps
 
 const css = computed(() => {
   return selectedComp.value && selectedComp.value.css || {
@@ -16,7 +16,7 @@ const css = computed(() => {
 const activeMargin = ref(false)
 const activePadding = ref(false)
 
-watch(selectedComp, (val) => {
+watch(selectedComp, (val: any) => {
   if (val) {
     ['margin', 'padding'].forEach((item) => {
       if (val.css[item]) {
@@ -64,50 +64,60 @@ const updateModelValue = function (prop: string, obj: { value: any; index: strin
 <template>
   <div :class="['designer-container', !selectedComp && 'disabled']">
     <div class="designer-container__body-title">
-      <span>{{ t('css.margin') }}</span>
+      <span>{{ t('css.margin.margin') }}</span>
     </div>
     <div class="designer-container__body">
       <div class="designer-list-item">
-        <customInput class="designer-input-base" size="small" :modelValue="css.margin[0]"
+        <customInput class="designer-input-base" size="small" :modelValue="Array.isArray(css.margin) && css.margin[0]"
           @update:modelValue="updateModelValue('margin', { index: 0, value: $event })" :disabled="!selectedComp"
           placeholder="">
           <template #prefixIcon>
-            <svg-icon icon="ic_corner"></svg-icon>
+            <customTooltip :content="t('css.margin.top')">
+              <svg-icon icon="ic_corner"></svg-icon>
+            </customTooltip>
           </template>
           <template #suffix>
             <span class="suffix-tag">px</span>
           </template>
         </customInput>
-        <customInput class="designer-input-base" size="small" :modelValue="css.margin[2]"
+        <customInput class="designer-input-base" size="small" :modelValue="Array.isArray(css.margin) && css.margin[2]"
           @update:modelValue="updateModelValue('margin', { index: 2, value: $event })" :disabled="!selectedComp"
           placeholder="">
           <template #prefixIcon>
-            <svg-icon icon="ic_corner" style="transform: rotate(90deg);"></svg-icon>
+            <customTooltip :content="t('css.margin.bottom')">
+              <svg-icon icon="ic_corner" style="transform: rotate(90deg);"></svg-icon>
+            </customTooltip>
           </template>
           <template #suffix>
             <span class="suffix-tag">px</span>
           </template>
         </customInput>
         <div :class="['link-icon', activeMargin && 'is-active']" @click="changeMarign('margin')">
-          <svg-icon class="svg" icon="link" />
+          <customTooltip :content="t('css.link')">
+            <svg-icon class="svg" icon="link" />
+          </customTooltip>
         </div>
       </div>
       <div class="designer-list-item">
-        <customInput class="designer-input-base" size="small" :modelValue="css.margin[3]"
+        <customInput class="designer-input-base" size="small" :modelValue="Array.isArray(css.margin) && css.margin[3]"
           @update:modelValue="updateModelValue('margin', { index: 3, value: $event })" :disabled="!selectedComp"
           placeholder="">
           <template #prefixIcon>
-            <svg-icon icon="ic_corner" style="transform: rotate(270deg);"></svg-icon>
+            <customTooltip :content="t('css.margin.left')">
+              <svg-icon icon="ic_corner" style="transform: rotate(270deg);"></svg-icon>
+            </customTooltip>
           </template>
           <template #suffix>
             <span class="suffix-tag">px</span>
           </template>
         </customInput>
-        <customInput class="designer-input-base" size="small" :modelValue="css.margin[1]"
+        <customInput class="designer-input-base" size="small" :modelValue="Array.isArray(css.margin) && css.margin[1]"
           @update:modelValue="updateModelValue('margin', { index: 1, value: $event })" :disabled="!selectedComp"
           placeholder="">
           <template #prefixIcon>
-            <svg-icon icon="ic_corner" style="transform: rotate(180deg);"></svg-icon>
+            <customTooltip :content="t('css.margin.right')">
+              <svg-icon icon="ic_corner" style="transform: rotate(180deg);"></svg-icon>
+            </customTooltip>
           </template>
           <template #suffix>
             <span class="suffix-tag">px</span>
@@ -117,50 +127,60 @@ const updateModelValue = function (prop: string, obj: { value: any; index: strin
     </div>
 
     <div class="designer-container__body-title designer-mg-top">
-      <span>{{ t('css.padding') }}</span>
+      <span>{{ t('css.padding.padding') }}</span>
     </div>
     <div class="designer-container__body">
       <div class="designer-list-item">
-        <customInput class="designer-input-base" size="small" :modelValue="css.padding[0]"
+        <customInput class="designer-input-base" size="small" :modelValue="Array.isArray(css.padding) && css.padding[0]"
           @update:modelValue="updateModelValue('padding', { index: 0, value: $event })" :disabled="!selectedComp"
           placeholder="">
           <template #prefixIcon>
-            <svg-icon icon="ic_corner"></svg-icon>
+            <customTooltip :content="t('css.padding.top')">
+              <svg-icon icon="ic_corner"></svg-icon>
+            </customTooltip>
           </template>
           <template #suffix>
             <span class="suffix-tag">px</span>
           </template>
         </customInput>
-        <customInput class="designer-input-base" size="small" :modelValue="css.padding[2]"
+        <customInput class="designer-input-base" size="small" :modelValue="Array.isArray(css.padding) && css.padding[2]"
           @update:modelValue="updateModelValue('padding', { index: 2, value: $event })" :disabled="!selectedComp"
           placeholder="">
           <template #prefixIcon>
-            <svg-icon icon="ic_corner"  style="transform: rotate(90deg);"></svg-icon>
+            <customTooltip :content="t('css.padding.bottom')">
+              <svg-icon icon="ic_corner" style="transform: rotate(90deg);"></svg-icon>
+            </customTooltip>
           </template>
           <template #suffix>
             <span class="suffix-tag">px</span>
           </template>
         </customInput>
         <div :class="['link-icon', activePadding && 'is-active']" @click="changeMarign('padding')">
+          <customTooltip :content="t('css.link')">
           <svg-icon class="svg" icon="link" />
+          </customTooltip>
         </div>
       </div>
       <div class="designer-list-item">
-        <customInput class="designer-input-base" size="small" :modelValue="css.padding[3]"
+        <customInput class="designer-input-base" size="small" :modelValue="Array.isArray(css.padding) && css.padding[3]"
           @update:modelValue="updateModelValue('padding', { index: 3, value: $event })" :disabled="!selectedComp"
           placeholder="">
           <template #prefixIcon>
-            <svg-icon icon="ic_corner" style="transform: rotate(270deg);"></svg-icon>
+            <customTooltip :content="t('css.padding.left')">
+              <svg-icon icon="ic_corner" style="transform: rotate(270deg);"></svg-icon>
+            </customTooltip>
           </template>
           <template #suffix>
             <span class="suffix-tag">px</span>
           </template>
         </customInput>
-        <customInput class="designer-input-base" size="small" :modelValue="css.padding[1]"
+        <customInput class="designer-input-base" size="small" :modelValue="Array.isArray(css.padding) && css.padding[1]"
           @update:modelValue="updateModelValue('padding', { index: 1, value: $event })" :disabled="!selectedComp"
           placeholder="">
           <template #prefixIcon>
-            <svg-icon icon="ic_corner" style="transform: rotate(180deg);"></svg-icon>
+            <customTooltip :content="t('css.padding.right')">
+              <svg-icon icon="ic_corner" style="transform: rotate(180deg);"></svg-icon>
+            </customTooltip>
           </template>
           <template #suffix>
             <span class="suffix-tag">px</span>

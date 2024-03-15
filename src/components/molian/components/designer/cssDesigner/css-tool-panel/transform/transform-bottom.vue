@@ -39,7 +39,7 @@ const topOptions = ref([{
     value: 'top2bottom'
 }])
 
-const svgClick = function (val: string) {
+const svgClick = function (val: string | any) {
     const { constY, constX } = css.value
     if (['top', 'bottom', 'top2bottom'].indexOf(val) > -1) {
         if (constY === 'top' && val === 'bottom' || constY === 'bottom' && val === 'top'){
@@ -70,7 +70,7 @@ const svgClick = function (val: string) {
 </script>
 
 <template>
-    <div class="transform-container__body">
+    <div class="transform-container__body ">
         <div class="transform-container__body-title">{{t('css.const')}}</div>
         <div class="transform-container__body-constraints">
             <div class="transform-constraints_panel">
@@ -96,13 +96,13 @@ const svgClick = function (val: string) {
             </div>
             <div class="transform-constraints_pos">
                 <customSelect class="transform-constraints_pos-input" :disabled="!selectedComp"
-                    :options="leftOptions" v-model="css.constX">
+                    :options="leftOptions" :placeholder="t('css.constX')" v-model="css.constX">
                     <template #prefixIcon>
                         <svg-icon icon="ic_const_left" />
                     </template>
                 </customSelect>
                 <customSelect class="transform-constraints_pos-input" :disabled="!selectedComp"
-                    :options="topOptions" v-model="css.constY">
+                    :options="topOptions" :placeholder="t('css.constY')" v-model="css.constY">
                     <template #prefixIcon>
                         <svg-icon icon="ic_const_top" />
                     </template>

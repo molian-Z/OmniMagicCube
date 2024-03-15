@@ -7,16 +7,18 @@ const t: any = inject('mlLangs')
 const { onDragend } = useDraggable(null, null, null)
 const { top, left, width, height } = hoverBounding
 const currentBounding = computed(() => {
-  let isWidth = 180
+  let isWidth = 160
   if (hoverComp.value) {
     let obj: any = {
-      left: left.value + width.value / 2 <= (isWidth / 2) ? '5px' : Number(left.value - (isWidth / 2)) + width.value / 2 + 'px',
+      //left: left.value + width.value / 2 <= (isWidth / 2) ? '5px' : Number(left.value - (isWidth / 2)) + width.value / 2 + 'px',
+      left: left.value + 'px',
       width: isWidth + 'px'
     }
     if (top.value < 60) {
-      obj.top = top.value + height.value + 'px'
+      obj.top = top.value + height.value + 5 + 'px'
     } else {
-      obj.top = top.value - 60 + 'px'
+      // obj.top = top.value - 60 + 'px'
+      obj.top = top.value - 65 + 'px'
     }
     return obj
   }
@@ -25,11 +27,18 @@ const currentBounding = computed(() => {
 
 <template>
   <div class="drag-shadow" :style="currentBounding" v-if="hoverComp">
+    <div class="drag-tips">
+      <svg-icon class="drag-icon" :icon="hoverComp.icon || 'comps-default'" />
+      <div class="drag-title">
+        <div class="drag-title-text">{{ t('component.' + hoverComp.name) }}</div>
+        <div class="drag-title__desc">{{ hoverComp.name }}</div>
+      </div>
+    </div>
+
     <div class="drag-handler" draggable="true" @dragstart="startDraggable" @dragend="onDragend">
       <svgIcon icon="move"></svgIcon>
-      <span>{{ t('container.moveComp') }}</span>
+      <!-- <span>{{ t('container.moveComp') }}</span> -->
     </div>
-    <div>AI</div>
   </div>
 </template>
 
@@ -43,12 +52,40 @@ const currentBounding = computed(() => {
   backdrop-filter: saturate(150%) var(--ml-bg-blur-base);
   border-radius: var(--ml-radius-lg);
   display: flex;
-  justify-content: space-around;
+  justify-content: space-between;
   align-items: center;
   z-index: 100;
   user-select: none;
-  padding: var(--ml-pd-lg);
+  padding: 12px var(--ml-pd-base);
   transition: var(--ml-transition-base);
+
+  .drag-tips {
+    display: flex;
+    align-items: center;
+
+    .drag-icon{
+      width: 22px;
+      height: 22px;
+    }
+
+    .drag-title {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: flex-start;
+      padding-left: var(--ml-pd-small);
+
+      .drag-title-text {
+        font-weight: bold;
+        padding-bottom: var(--ml-pd-small);
+      }
+
+      .drag-title__desc {
+        font-size: 12px;
+        color: var(--ml-fill-color-1);
+      }
+    }
+  }
 
   .drag-handler {
     color: var(--ml-primary-color);

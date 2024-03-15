@@ -44,7 +44,10 @@ export const globalAttrs = reactive<CubeData.GlobalAttrs>(store.value.globalAttr
 export const {
     history,
     undo,
-    redo
+    redo,
+    clear,
+    canRedo,
+    canUndo,
 } = useDebouncedRefHistory(modelValue, {
     deep: true,
     debounce: 500,

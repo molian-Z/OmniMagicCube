@@ -226,11 +226,11 @@ declare namespace CubeData {
             /**
              * 水平对齐方式。
              */
-            constX?: 'left' | 'center' | 'right';
+            constX?: 'left' | 'center' | 'right' | 'left2right';
             /**
              * 垂直对齐方式。
              */
-            constY?: 'top' | 'center' | 'bottom';
+            constY?: 'top' | 'center' | 'bottom' | 'top2bottom';
             /**
              * 颜色样式。
              */

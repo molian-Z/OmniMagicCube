@@ -4,7 +4,7 @@ import { selectedComp } from '@molianComps/designer/designerData'
 import svgIcon from '@molianComps/svg-icon/index.vue'
 const customComps: any = inject('customComps')
 const t: any = inject('mlLangs')
-const { customInput } = customComps
+const { customInput, customTooltip } = customComps
 
 const css = computed(() => {
     return selectedComp.value && selectedComp.value.css || {
@@ -16,41 +16,47 @@ const activeLink = ref(false)
 const activeRadius = ref(false)
 
 watch(selectedComp, (val) => {
-    if (val && val.css.borderRadius) {
-        let value = ''
+    if (val && val.css && val.css.borderRadius) {
+        let value: string | number = ''
         let btn = false
-        val.css.borderRadius.forEach((item: string, index: number) => {
-            if (index === 0) {
-                value = item
-            }
-            if (item !== value) {
-                btn = true
-            }
-        })
+        if (Array.isArray(val.css.borderRadius)) {
+            val.css.borderRadius?.forEach((item: string | number, index: number) => {
+                if (index === 0) {
+                    value = item
+                }
+                if (item !== value) {
+                    btn = true
+                }
+            })
+        }
         activeRadius.value = btn
     }
 })
 
 onMounted(() => {
-    if (selectedComp.value && selectedComp.value.css.borderRadius) {
-        let value = ''
+    if (selectedComp.value && selectedComp.value.css && selectedComp.value.css.borderRadius) {
+        let value: string | number = ''
         let btn = false
-        selectedComp.value.css.borderRadius.forEach((item: string, index: number) => {
-            if (index === 0) {
-                value = item
-            }
-            if (item !== value) {
-                btn = true
-            }
-        })
+        if (Array.isArray(selectedComp.value.css.borderRadius)) {
+            selectedComp.value.css.borderRadius.forEach((item: string | number, index: number) => {
+                if (index === 0) {
+                    value = item
+                }
+                if (item !== value) {
+                    btn = true
+                }
+            })
+        }
         activeRadius.value = btn
     }
 })
 
 const switchRadius = function () {
-    let val = css.value.borderRadius[0]
-    css.value.borderRadius = [val, val, val, val]
-    activeRadius.value = !activeRadius.value
+    if (Array.isArray(css.value.borderRadius)) {
+        let val: any = css.value.borderRadius[0]
+        css.value.borderRadius = [val, val, val, val]
+        activeRadius.value = !activeRadius.value
+    }
 }
 
 const updateModelValue = function (prop: string, val: any) {
@@ -68,20 +74,24 @@ const updateModelValue = function (prop: string, val: any) {
         css.value[prop] = val
     } else if (css.value && !isNaN(Number(val.value))) {
         if (activeRadius.value) {
-            css.value.borderRadius[val.index] = Number(val.value).toString()
+            if (Array.isArray(css.value.borderRadius)) {
+                css.value.borderRadius[val.index] = Number(val.value).toString()
+            }
         }
     }
 }
 </script>
 <template>
     <div class="transform-container__body designer-container__body">
-        <div class="transform-container__body-title">{{ t('css.transform') }}</div>
+        <div class="transform-container__body-title" style="padding-left: 0;">{{ t('css.transform') }}</div>
         <div class="designer-list-item">
             <div class=" designer-input-base">
                 <customInput size="small" :modelValue="css.moveX" @update:modelValue="updateModelValue('moveX', $event)"
                     :disabled="!selectedComp" placeholder="">
                     <template #prefixIcon>
-                        <svg-icon icon="posX"></svg-icon>
+                        <customTooltip :content="t('css.moveX')">
+                            <svg-icon icon="posX"></svg-icon>
+                        </customTooltip>
                     </template>
                     <template #suffix>
                         <span class="suffix-tag">px</span>
@@ -92,7 +102,9 @@ const updateModelValue = function (prop: string, val: any) {
                 <customInput size="small" :modelValue="css.moveY" @update:modelValue="updateModelValue('moveY', $event)"
                     :disabled="!selectedComp" placeholder="">
                     <template #prefixIcon>
-                        <svg-icon icon="posY"></svg-icon>
+                        <customTooltip :content="t('css.moveY')">
+                            <svg-icon icon="posY"></svg-icon>
+                        </customTooltip>
                     </template>
                     <template #suffix>
                         <span class="suffix-tag">px</span>
@@ -105,7 +117,9 @@ const updateModelValue = function (prop: string, val: any) {
                 <customInput size="small" :modelValue="css.width" @update:modelValue="updateModelValue('width', $event)"
                     :disabled="!selectedComp" placeholder="">
                     <template #prefixIcon>
-                        <svg-icon icon="width"></svg-icon>
+                        <customTooltip :content="t('css.width')">
+                            <svg-icon icon="width"></svg-icon>
+                        </customTooltip>
                     </template>
                     <template #suffix>
                         <span class="suffix-tag">px</span>
@@ -113,10 +127,12 @@ const updateModelValue = function (prop: string, val: any) {
                 </customInput>
             </div>
             <div class=" designer-input-base">
-                <customInput size="small" :modelValue="css.height" @update:modelValue="updateModelValue('height', $event)"
-                    :disabled="!selectedComp" placeholder="">
+                <customInput size="small" :modelValue="css.height"
+                    @update:modelValue="updateModelValue('height', $event)" :disabled="!selectedComp" placeholder="">
                     <template #prefixIcon>
-                        <svg-icon icon="height"></svg-icon>
+                        <customTooltip :content="t('css.height')">
+                            <svg-icon icon="height"></svg-icon>
+                        </customTooltip>
                     </template>
                     <template #suffix>
                         <span class="suffix-tag">px</span>
@@ -124,15 +140,19 @@ const updateModelValue = function (prop: string, val: any) {
                 </customInput>
             </div>
             <div :class="['link-icon', activeLink && 'is-active']" @click="activeLink = !activeLink">
+                <customTooltip :content="t('css.link')">
                 <svg-icon icon="link" />
+                </customTooltip>
             </div>
         </div>
         <div class="designer-list-item">
             <div class=" designer-input-base">
-                <customInput size="small" :modelValue="css.rotate" @update:modelValue="updateModelValue('rotate', $event)"
-                    :disabled="!selectedComp" placeholder="">
+                <customInput size="small" :modelValue="css.rotate"
+                    @update:modelValue="updateModelValue('rotate', $event)" :disabled="!selectedComp" placeholder="">
                     <template #prefixIcon>
-                        <svg-icon icon="ic_angel"></svg-icon>
+                        <customTooltip :content="t('css.rotate')">
+                            <svg-icon icon="ic_angel"></svg-icon>
+                        </customTooltip>
                     </template>
                     <template #suffix>
                         <span class="suffix-tag">°</span>
@@ -140,11 +160,13 @@ const updateModelValue = function (prop: string, val: any) {
                 </customInput>
             </div>
             <div class=" designer-input-base">
-                <customInput size="small" :modelValue="activeRadius && '-' || css.borderRadius[0]"
-                    @update:modelValue="updateModelValue('borderRadius', $event)" :disabled="!selectedComp || activeRadius"
-                    placeholder="">
+                <customInput size="small" :modelValue="activeRadius && '-' || Array.isArray(css.borderRadius) && css.borderRadius[0]"
+                    @update:modelValue="updateModelValue('borderRadius', $event)"
+                    :disabled="!selectedComp || activeRadius" placeholder="">
                     <template #prefixIcon>
-                        <svg-icon icon="ic_corner"></svg-icon>
+                        <customTooltip :content="t('css.borderRadius')">
+                            <svg-icon icon="ic_corner"></svg-icon>
+                        </customTooltip>
                     </template>
                     <template #suffix>
                         <span class="suffix-tag">px</span>
@@ -152,13 +174,15 @@ const updateModelValue = function (prop: string, val: any) {
                 </customInput>
             </div>
             <div :class="['link-icon', activeRadius && 'is-active']" @click="switchRadius">
+                <customTooltip :content="t('css.setRadius')">
                 <svg-icon icon="ic_radius" />
+                </customTooltip>
             </div>
         </div>
         <template v-if="activeRadius">
             <div class="designer-list-item">
                 <div class=" designer-input-base">
-                    <customInput size="small" :modelValue="css.borderRadius[0] || '0'"
+                    <customInput size="small" :modelValue="Array.isArray(css.borderRadius) && css.borderRadius[0] || '0'"
                         @update:modelValue="updateModelValue('borderRadius', { index: 0, value: $event })"
                         :disabled="!selectedComp" placeholder="">
                         <template #prefixIcon>
@@ -170,7 +194,7 @@ const updateModelValue = function (prop: string, val: any) {
                     </customInput>
                 </div>
                 <div class=" designer-input-base">
-                    <customInput size="small" :modelValue="css.borderRadius[1] || '0'"
+                    <customInput size="small" :modelValue="Array.isArray(css.borderRadius) && css.borderRadius[1] || '0'"
                         @update:modelValue="updateModelValue('borderRadius', { index: 1, value: $event })"
                         :disabled="!selectedComp" placeholder="">
                         <template #prefixIcon>
@@ -184,7 +208,7 @@ const updateModelValue = function (prop: string, val: any) {
             </div>
             <div class="designer-list-item">
                 <div class=" designer-input-base">
-                    <customInput size="small" :modelValue="css.borderRadius[3] || '0'"
+                    <customInput size="small" :modelValue="Array.isArray(css.borderRadius) && css.borderRadius[3] || '0'"
                         @update:modelValue="updateModelValue('borderRadius', { index: 3, value: $event })"
                         :disabled="!selectedComp" placeholder="">
                         <template #prefixIcon>
@@ -196,7 +220,7 @@ const updateModelValue = function (prop: string, val: any) {
                     </customInput>
                 </div>
                 <div class=" designer-input-base">
-                    <customInput size="small" :modelValue="css.borderRadius[2] || '0'"
+                    <customInput size="small" :modelValue="Array.isArray(css.borderRadius) && css.borderRadius[2] || '0'"
                         @update:modelValue="updateModelValue('borderRadius', { index: 2, value: $event })"
                         :disabled="!selectedComp" placeholder="">
                         <template #prefixIcon>

@@ -17,5 +17,6 @@
     "send":"发送",
     "pleaseUse":"请使用",
     "ui":"组件库",
-    "getDataError":"获取数据错误"
+    "getDataError":"获取数据错误",
+    "empty":"空内容"
 }

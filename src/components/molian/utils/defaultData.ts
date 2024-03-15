@@ -151,6 +151,21 @@ export const defaultSlotsMap: IConfig.IDefaultSlotsMap = {
             auto: true,
             allowComps: ['TinyCol']
         }
+    },
+    div:{
+        default: 'auto'
+    },
+    span:{
+        default: 'auto'
+    },
+    ul:{
+        default: {
+            auto: true,
+            allowComps: ['li']
+        }
+    },
+    li:{
+        default: 'auto'
     }
 }
 

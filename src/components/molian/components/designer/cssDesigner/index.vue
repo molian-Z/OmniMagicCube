@@ -93,13 +93,21 @@ const flexSwitch = function (type: string, value: any) {
     if (type === 'h') {
         if (css.value.justifyContent === value) {
             css.value.justifyContent = ''
+            if(!css.value.alignItems){
+                delete css.value.display
+            }
         } else {
+            css.value.display = 'flex'
             css.value.justifyContent = value
         }
     } else if (type === 'v') {
         if (css.value.alignItems === value) {
             css.value.alignItems = ''
+            if(!css.value.justifyContent){
+                delete css.value.display
+            }
         } else {
+            css.value.display = 'flex'
             css.value.alignItems = value
         }
     }

@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { computed, inject, defineOptions, defineProps, defineEmits } from 'vue'
+import { computed, inject, defineOptions, defineProps, defineEmits, nextTick } from 'vue'
 import { directives } from './directives'
 import { compsRef, globalAttrs } from '../designerData'
 import { isDraggable, dropKey, useDraggable, dropType } from '../draggable'
 import { getValue } from '@molian/utils/useCore'
+import { useElementBounding } from '@vueuse/core'
 defineOptions({
     name: 'deepTree'
 })
@@ -42,6 +43,10 @@ const compData: any = computed({
     }
 })
 
+const empty = computed(()=>{
+    return t('container.empty')
+})
+
 const variable = computed(() => {
     return globalAttrs.variable
 })
@@ -50,11 +55,20 @@ const value = getValue(compData.value, variable)
 
 const { onDragenter, onDrop, onDropSlot } = useDraggable(comps, compData, message)
 
-const setRef = (el: any, comp: { key: string | number; }) => {
-    // if (el && el.$el && el.$el.nodeName === '#text' && !nest) {
-    //     comp.nest = true
-    // }
-    compsRef[comp.key] = el
+const setRef = async (el: any, comp: any) => {
+    await nextTick()
+    const elDoc = document.getElementById(comp.id)
+    compsRef[comp.key] = elDoc
+    const { width, height } = useElementBounding(elDoc)
+    if(width.value < 10){
+        comp.css.padding[1] = '26'
+        comp.css.padding[3] = '26'
+    }
+
+    if(height.value < 10){
+        comp.css.padding[0] = '10'
+        comp.css.padding[2] = '10'
+    }
 }
 </script>
 
@@ -100,6 +114,7 @@ const setRef = (el: any, comp: { key: string | number; }) => {
     position: relative;
     transition: var(--ml-transition-base);
     min-width: 60px;
+    padding:var(--ml-pd-small);
 
     &.comp-inline {
         display: inline-flex;
@@ -135,6 +150,15 @@ const setRef = (el: any, comp: { key: string | number; }) => {
             border: 2px solid var(--ml-primary-color);
         }
     }
+}
+
+.is-empty::after{
+    content: "空内容";
+    font-size: 12px;
+    color:var(--ml-info-color-1);
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .prefix-drop-slot {

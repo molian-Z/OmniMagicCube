@@ -3,10 +3,12 @@ import { ref, inject } from 'vue'
 import {
     useCloned, useElementSize
 } from '@vueuse/core'
+import toolSideBar from './toolSideBar/index.vue'
 import deepComps from './deepTreeToDesigner.vue'
 import toolTip from './toolTip/index.vue'
+import toolBar from './toolBar/index.vue'
 import { modelValue, selectedComp, createComp, screenRatioInfo } from '../designerData'
-import { isDraggable, resetHover, dragNodes, dragIndex, dropIndex, resetDraggable, useDraggable } from '../draggable'
+import { resetHover, dragNodes, dragIndex, dropIndex, resetDraggable, useDraggable } from '../draggable'
 import { calculateRatio, scaleCalculate } from '@molian/utils/util'
 const comps: any = inject('mlComps')
 const t: any = inject('mlLangs')
@@ -30,8 +32,6 @@ const onDrop = function (evt: any) {
     }
     resetDraggable()
 }
-
-
 
 const onClick = function () {
     selectedComp.value = null
@@ -83,16 +83,23 @@ const getCoverStyle = function (cover: { left: any; width: any; top: any; height
 }
 </script>
 <template>
-    <div ref="containerRef" class="container-designer">
-        <div class="container-draggable-body" :style="{ width: layoutSize.width + 'px', height: layoutSize.height + 'px' }"
-            @dragover.prevent @dragenter.self="onDragenter(-1, modelValue)" @drop="onDrop" @click.self="onClick">
-            <deepComps v-model="modelValue"></deepComps>
-            <div class="container-draggable-cover" :style="getCoverStyle(item)" :key="index"
-                v-for="(item, index) in screenRatioInfo.coverBackground"
-                v-if="!!screenRatioInfo.coverBackground && screenRatioInfo.coverBackground.length > 0"></div>
+    <div class="container-designer">
+        <div class="container-body">
+            <toolBar class="container-toolbar" />
+            <div class="container-main" ref="containerRef">
+                <div class="container-draggable-body"
+                    :style="{ width: layoutSize.width + 'px', height: layoutSize.height + 'px' }" @dragover.prevent
+                    @dragenter.self="onDragenter(-1, modelValue)" @drop="onDrop" @click.self="onClick">
+                    <deepComps v-model="modelValue"></deepComps>
+                    <div class="container-draggable-cover" :style="getCoverStyle(item)" :key="index"
+                        v-for="(item, index) in screenRatioInfo.coverBackground"
+                        v-if="!!screenRatioInfo.coverBackground && screenRatioInfo.coverBackground.length > 0"></div>
+                </div>
+            </div>
         </div>
+        <!-- <toolSideBar class="container-sidebar" /> -->
         <!-- 组件提示栏 -->
-        <div class="drag-tips" v-if="isDraggable">{{ t('container.dropContent') }}</div>
+        <!-- <div class="drag-tips" v-if="isDraggable">{{ t('container.dropContent') }}</div> -->
         <!-- 组件工具栏 -->
         <toolTip></toolTip>
     </div>
@@ -104,7 +111,28 @@ const getCoverStyle = function (cover: { left: any; width: any; top: any; height
 .container-designer {
     width: 100%;
     height: 100%;
-    position: relative;
+    display: flex;
+
+    .container-body {
+        height: 100%;
+        width: 100%;
+
+        .container-toolbar {
+            height: 42px;
+        }
+
+        .container-main {
+            height: 100%;
+            width: 100%;
+            position: relative;
+            padding: var(--ml-pd-lg);
+        }
+    }
+
+    .container-sidebar {
+        height: 100%;
+        width: 300px;
+    }
 
     .container-draggable-body {
         border: 5px solid var(--ml-fill-color);

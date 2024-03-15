@@ -158,3 +158,19 @@ export const getNthParent = (tree:CubeData.ModelValue[], id: any, level: number)
   }
   return null; // 如果没有找到节点，返回null
 }
+
+export const isNotSlot = (slots: { [x: string]: any; })=>{
+  if(Object.keys(slots).length === 0){
+    return true
+  }
+  let notSlot = true
+  for (const key in slots) {
+    if (Object.prototype.hasOwnProperty.call(slots, key)) {
+      const element = slots[key];
+      if(element.children.length > 0){
+        notSlot = false
+      }
+    }
+  }
+  return notSlot
+}

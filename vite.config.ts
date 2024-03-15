@@ -19,10 +19,9 @@ export default defineConfig({
       // 使用注入模式
       registerType: 'autoUpdate',
       injectRegister:'auto',
-      devOptions: {
-        enabled: true
-        /* other options */
-      },
+      // devOptions: {
+      //   enabled: true
+      // },
       // PWA的配置
       manifest: {
         name: '无界魔方',

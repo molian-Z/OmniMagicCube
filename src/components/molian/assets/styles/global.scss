@@ -18,6 +18,8 @@ $textColorObj:(
 // 背景色
 $bgColor:#FFFFFF;
 $bgPageColor:#F9F9F9;
+$borderColor:#E5E6EB;
+
 $bgBlur:(
     "small":blur(5px),
     "base":blur(13.5px),
@@ -58,7 +60,7 @@ $marginTypeObj: (
 :root {
     --ml-bg-color:#{$bgColor};
     --ml-bg-page-color:#{$bgPageColor};
-
+    --ml-border-color:#{$borderColor};
     // 生成常用的颜色
     @each $colorType,
     $colorValue in$colorTypeObj {

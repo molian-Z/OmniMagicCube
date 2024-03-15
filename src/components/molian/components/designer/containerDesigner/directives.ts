@@ -21,7 +21,7 @@ import {
   parseStyle
 } from '@molian/utils/css-generator'
 import vCustomDirectives from '@molian/utils/useDirectives'
-import { isIf, isFor, isShow, getForEachList } from '@molian/utils/useCore'
+import { isIf, isFor, isShow, getForEachList, isNotSlot } from '@molian/utils/useCore'
 export const directives = {
   props: <any>['comp', 'index', 'modelValue'],
   setup(props: {
@@ -111,7 +111,8 @@ export const directives = {
         'designer-comp': true,
         'hiddenComps': dragIndex.value === props.index,
         'is-margin': dropIndex.value === props.index && isDraggable.value,
-        'selectedComp': selectedComp && selectedComp.value && selectedComp.value.key === props.comp.key
+        'selectedComp': selectedComp && selectedComp.value && selectedComp.value.key === props.comp.key,
+        'is-empty': !props.comp.directives.text && !isDraggable.value && isNotSlot(props.comp.slots)
       }
     })
 
@@ -179,7 +180,7 @@ export const directives = {
         }
       }
       if (typeof currentTag === 'string') {
-        return withDirectives(h('div', attrObj, nowSlots.default), [[vCustomDirectives, props.comp]])
+        return withDirectives(h(currentTag, attrObj, nowSlots.default), [[vCustomDirectives, props.comp]])
       } else {
         return withDirectives(h(currentTag, attrObj, nowSlots), [[vCustomDirectives, props.comp]])
       }

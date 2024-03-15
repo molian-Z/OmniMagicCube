@@ -1,8 +1,31 @@
 {
     "margins":"边距",
-    "margin":"外边距",
-    "padding":"内边距",
+    "margin":{
+        "top":"顶部外边距",
+        "bottom":"底部外边距",
+        "left":"左侧外边距",
+        "right":"右侧外边距",
+        "margin":"外边距"
+    },
+    "padding":{
+        "top":"顶部内边距",
+        "bottom":"底部内边距",
+        "left":"左侧内边距",
+        "right":"右侧内边距",
+        "padding":"内边距"
+    },
     "const":"约束",
+    "constX":"水平约束",
+    "constY":"垂直约束",
+    "moveX":"水平移动",
+    "moveY":"垂直移动",
+    "width":"宽度",
+    "height":"高度",
+    "rotate":"旋转",
+    "border":"边框",
+    "borderRadius":"边框圆角",
+    "setRadius":"分离设置圆角",
+    "link":"链接",
     "left":{
         "left":"左侧约束",
         "right":"右侧约束",
