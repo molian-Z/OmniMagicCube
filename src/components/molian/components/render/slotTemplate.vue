@@ -22,7 +22,9 @@ const parseProps = (attrs: any) => {
   for (const key in attrs) {
     if (Object.hasOwnProperty.call(attrs, key)) {
       const element = attrs[key];
-      propsData[key] = element.value
+      if(!!element.value){
+        propsData[key] = element.value
+      }
     }
   }
   return propsData

@@ -96,7 +96,7 @@ const value =  computed(()=>{
 </script>
 <template>
   <div class="flex-container">
-    <span>{{ t('options.'+title) }}</span>
+    <span class="sub-title">{{ t('options.'+title) }}</span>
     <svgIcon class="svg-icon " icon="clear" @click="clearData"></svgIcon>
   </div>
   <div class="for-list">
@@ -144,6 +144,7 @@ const value =  computed(()=>{
   justify-content: space-between;
   align-items: center;
 }
+
 .svg-icon {
   cursor: pointer;
   transition: var(--ml-transition-base);

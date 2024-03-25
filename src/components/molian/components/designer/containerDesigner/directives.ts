@@ -7,6 +7,7 @@ import {
   withDirectives
 } from 'vue'
 import {
+  compsRef,
   selectedComp,
   globalAttrs
 } from '../designerData'
@@ -106,13 +107,27 @@ export const directives = {
       });
     }
 
+    // props
+    const propsData: any = computed(() =>{
+      let newProps: any = {}
+      for (const key in props.comp.attrs) {
+        if (Object.hasOwnProperty.call(props.comp.attrs, key)) {
+          const element = props.comp.attrs[key];
+          if(!!element.value){
+            newProps[key] = element.value
+          }
+        }
+      }
+      return newProps
+    })
+
     const computedClass = computed(() => {
       return {
         'designer-comp': true,
         'hiddenComps': dragIndex.value === props.index,
         'is-margin': dropIndex.value === props.index && isDraggable.value,
         'selectedComp': selectedComp && selectedComp.value && selectedComp.value.key === props.comp.key,
-        'is-empty': !props.comp.directives.text && !isDraggable.value && isNotSlot(props.comp.slots)
+        'designer-comp-is-empty': !props.comp.directives.text && !isDraggable.value && isNotSlot(props.comp.slots)
       }
     })
 
@@ -124,22 +139,14 @@ export const directives = {
     const currentTag = comps.value[props.comp.name].comp ? markRaw(comps.value[props.comp.name].comp) : comps.value[props.comp.name].name
     const renderDom: any = (domForAttr: { row?: any; index?: any; keyProps?: any; type?: any }) => {
       const { row, index, keyProps, type } = domForAttr
-      // props
-      const propsData: any = {}
-      for (const key in props.comp.attrs) {
-        if (Object.hasOwnProperty.call(props.comp.attrs, key)) {
-          const element = props.comp.attrs[key];
-          propsData[key] = element.value
-        }
-      }
       const attrObj = {
         id: props.comp.id,
         ['data-key']: props.comp.key,
         style: { ...parseStyle(props.comp.css, props.comp.key), ...!isShow(props.comp) && { display: 'none' } || {} },
-        ...propsData,
-        // onMouseenter: withModifiers(($event) => onMouseEnter($event, props.comp, props.index), ['self', 'native']), // 暂且取消经过选择
-        onClick: withModifiers(($event: any) => onClick($event, props.comp, props.index), ['native']),
-        onContextmenu: withModifiers(($event: any) => onContextmenu($event, props.comp, props.index), ['native']),
+        ...propsData.value,
+        // onMouseenter: withModifiers(($event) => onMouseEnter($event, props.comp, props.index), ['self','native']), // 暂且取消经过选择
+        onClick: withModifiers(($event: any) => onClick($event, props.comp, props.index), ['self','native','prevent']),
+        onContextmenu: withModifiers(($event: any) => onContextmenu($event, props.comp, props.index), ['self','native','prevent']),
         onDragstart: withModifiers((evt: any) => onDragStart(evt, props.comp), ['self', 'prevent']),
         onDragend: onDragend,
         onDragover: withModifiers((evt: any) => onDragenter(props.index, props.comp), ['self', 'prevent']),
@@ -188,6 +195,56 @@ export const directives = {
     let newForEachList = computed(() => {
       return getForEachList(props.comp, variable)
     })
+    // 出现极端情况解决方案。如元素不存在以及无法对元素进行修改的情况
+    // 监听inheritAttrs未false的组件
+    watch(()=>compsRef[props.comp.id], async (resetDom :any) => {
+      await nextTick()
+      if(!!resetDom?.forceWatch){
+        resetDom.id = props.comp.id
+        resetDom.dataset.key = props.comp.key
+        //...propsData,
+        resetDom.onclick = ($event: any) => onClick($event, props.comp, props.index)
+        resetDom.oncontextmenu = ($event: any) => onContextmenu($event, props.comp, props.index)
+        resetDom.ondragstart = (evt: any) => onDragStart(evt, props.comp)
+        resetDom.ondragend = onDragend,
+        resetDom.ondragover = (evt: any) => onDragenter(props.index, props.comp)
+        resetDom.ondrop = ($event: any) => onDrop($event, null, null)
+        const styleData :any = computed(() => {
+          return { ...parseStyle(props.comp.css, props.comp.key), ...!isShow(props.comp) && { display: 'none' } || {} }
+        })
+        // 监听并修改样式数据及更新视图组件
+        watch(styleData, (newAttrs) => {
+          Object.keys(newAttrs).forEach(item => {
+            resetDom.style[item] = newAttrs[item]
+          })
+        },{
+          immediate: true
+        })
+
+        // 监听并修改属性数据及更新视图组件
+        watch(propsData, (newProps) => {
+          Object.keys(newProps).forEach(item => {
+            resetDom[item] = newProps[item]
+          })
+        },{
+          immediate:true
+        })
+
+        // 监听并修改class数据及更新视图组件
+        watch(computedClass, (newClass:any) => {
+          Object.keys(newClass).forEach(item => {
+            if(!!newClass[item]){
+              resetDom.classList.add(item)
+            }else{
+              resetDom.classList.remove(item)
+            }
+          })
+        },{
+          immediate: true
+        })
+      }
+    })
+
     return () => [
       isFor(props.comp) && newForEachList.value.data.map((row: any, index: any) => {
         return renderDom({

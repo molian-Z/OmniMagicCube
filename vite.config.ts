@@ -75,5 +75,28 @@ export default defineConfig({
       "@molian": resolve(__dirname, 'src/components/molian'),
       "@molianComps": resolve(__dirname, 'src/components/molian/components'),
     }
+  },
+  build: {
+    rollupOptions: {
+      output: {
+        // 使用 manualChunks 来定义分割策略
+        manualChunks(id) {
+          // 按需分割第三方库
+          if (id.includes('node_modules')) {
+            return id.toString().split('node_modules/')[1].split('/')[0].toString();
+          }
+          // 根据文件名或目录分割你的代码
+          // 例如，将相同文件夹下的代码分割到同一个chunk
+          if (id.includes('src/components/')) {
+            return 'components';
+          }
+          // 如果有其他分割需求可以继续添加逻辑
+        },
+        // 以下配置可选，根据需要设置输出文件名
+        entryFileNames: 'js/[name].[hash].js',
+        chunkFileNames: 'js/[name].[hash].js',
+        assetFileNames: '[ext]/[name].[hash].[ext]'
+      }
+    }
   }
 })

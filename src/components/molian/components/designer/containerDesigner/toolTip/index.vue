@@ -6,13 +6,14 @@ import svgIcon from '@molianComps/svg-icon/index.vue'
 const t: any = inject('mlLangs')
 const { onDragend } = useDraggable(null, null, null)
 const { top, left, width, height } = hoverBounding
+const comps: any = inject('mlComps')
 const currentBounding = computed(() => {
   let isWidth = 160
   if (hoverComp.value) {
     let obj: any = {
       //left: left.value + width.value / 2 <= (isWidth / 2) ? '5px' : Number(left.value - (isWidth / 2)) + width.value / 2 + 'px',
       left: left.value + 'px',
-      width: isWidth + 'px'
+      // width: isWidth + 'px'
     }
     if (top.value < 60) {
       obj.top = top.value + height.value + 5 + 'px'
@@ -30,13 +31,13 @@ const currentBounding = computed(() => {
     <div class="drag-tips">
       <svg-icon class="drag-icon" :icon="hoverComp.icon || 'comps-default'" />
       <div class="drag-title">
-        <div class="drag-title-text">{{ t('component.' + hoverComp.name) }}</div>
+        <div class="drag-title-text">{{ t('component.' + comps[hoverComp.name].title) }}</div>
         <div class="drag-title__desc">{{ hoverComp.name }}</div>
       </div>
     </div>
 
     <div class="drag-handler" draggable="true" @dragstart="startDraggable" @dragend="onDragend">
-      <svgIcon icon="move"></svgIcon>
+      <svgIcon icon="drag-move"></svgIcon>
       <!-- <span>{{ t('container.moveComp') }}</span> -->
     </div>
   </div>
@@ -66,6 +67,7 @@ const currentBounding = computed(() => {
     .drag-icon{
       width: 22px;
       height: 22px;
+      color:var(--ml-text-color-1);
     }
 
     .drag-title {
@@ -78,6 +80,7 @@ const currentBounding = computed(() => {
       .drag-title-text {
         font-weight: bold;
         padding-bottom: var(--ml-pd-small);
+        color:var(--ml-text-color-1);
       }
 
       .drag-title__desc {
@@ -89,7 +92,7 @@ const currentBounding = computed(() => {
 
   .drag-handler {
     color: var(--ml-primary-color);
-    font-size: 16px;
+    font-size: 22px;
     cursor: all-scroll;
     transition: var(--ml-transition-base);
     padding-right: var(--ml-pd-base);

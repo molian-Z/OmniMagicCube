@@ -81,7 +81,9 @@ export const useDraggable = (comps: any, compData: any, message: any) => {
         compData.value.splice(index >= 0 && index || dropIndex.value, 0, obj)
       } else {
         let moveComp = dragNodes.value.splice(dragIndex.value, 1)[0]
-        compData.value.splice(index >= 0 && index || dropIndex.value, 0, moveComp)
+        if(moveComp){
+          compData.value.splice(index >= 0 && index || dropIndex.value, 0, moveComp)
+        }
       }
       resetDraggable()
     } else {
@@ -98,7 +100,9 @@ export const useDraggable = (comps: any, compData: any, message: any) => {
         slotVal.children.push(obj)
       } else {
         let moveComp = dragNodes.value.splice(dragIndex.value, 1)[0]
-        slotVal.children.push(moveComp)
+        if(moveComp){
+          slotVal.children.push(moveComp)
+        }
       }
     } else {
       message.error('拖拽组件不在允许的组件列表中')

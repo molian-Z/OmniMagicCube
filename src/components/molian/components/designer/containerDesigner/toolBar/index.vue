@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import svgIcon from '@molianComps/svg-icon/index.vue'
+import toolBarRight from './right.vue'
 import { undo, redo, canRedo, canUndo } from '@molian/components/designer/designerData'
 
 const runUndo = () => {
@@ -37,6 +38,7 @@ const runRedo = () => {
     </div>
     <div class="toolBar-right">
       <!-- 右侧功能 -->
+      <toolBarRight></toolBarRight>
     </div>
   </div>
 </template>
@@ -108,7 +110,7 @@ const runRedo = () => {
 
 .disabled {
   fill: var(--ml-text-color-5);
-
+  background-color: transparent !important;
   &:hover{
     fill: var(--ml-text-color-5);
   }

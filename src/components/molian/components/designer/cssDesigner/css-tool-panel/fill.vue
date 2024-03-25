@@ -15,7 +15,7 @@ const css = computed(() => {
         <div class="designer-container__body">
             <div class="designer-list-item between">
                 <colorPicker size="small" :disabled="!selectedComp" v-model="css.modelValue" />
-                <svg-icon class="css-svg-icon mg-left-base" :icon="css.isShow ? 'ic_eye' : 'ic_eye_close'" @click.native.stop="css.isShow = !css.isShow" />
+                <svg-icon class="css-svg-icon mg-left-base" :icon="css.isShow ? 'ic_eye' : 'ic_eye_close'" @click.stop="css.isShow = !css.isShow" />
             </div>
         </div>
     </div>

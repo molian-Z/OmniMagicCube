@@ -2,6 +2,7 @@
 import { inject } from 'vue'
 import { onClickOutside } from '@vueuse/core'
 import { modelValue, treeDirRef } from '@molianComps/designer/designerData'
+import { setting } from '@molian/utils/defaultData'
 import deepTree from './deepTreeToData.vue'
 import floatBall from '@molianComps/float-ball/index.vue'
 
@@ -15,7 +16,7 @@ onClickOutside(treeDirRef, () => {
 </script>
 
 <template>
-  <floatBall :title="t('container.treeDir')" ref="treeDirRef">
+  <floatBall :title="t('container.treeDir')" :offsetX="!setting.immerseMode ? '330px' : '0px'" ref="treeDirRef">
     <div class="tree-dir-container">
       <deepTree v-model="modelValue"></deepTree>
     </div>

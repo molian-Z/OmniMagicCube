@@ -18,5 +18,11 @@
     "pleaseUse":"请使用",
     "ui":"组件库",
     "getDataError":"获取数据错误",
-    "empty":"空内容"
+    "empty":"空内容",
+    "clearCanvas":"清空画布",
+    "preview":"效果预览",
+    "device":"设备像素",
+    "createCode":"生成代码",
+    "import/export":"导入/导出",
+    "globalSetting":"偏好设置"
 }

@@ -3,6 +3,7 @@ import { inject, ref, computed } from 'vue'
 import { selectedComp } from '@molianComps/designer/designerData'
 import colorPicker from '@molianComps/color-picker/index.vue'
 import svgIcon from '@molianComps/svg-icon/index.vue'
+import textComp from '@molianComps/designer/optionsDesigner/tooltip/text.vue'
 const customComps:any = inject('customComps')
 const t:any = inject('mlLangs')
 const { customInput, customSelect, customTooltip } = customComps
@@ -148,6 +149,11 @@ const clickIcon = function (key: string | number, value: any) {
                     <svg-icon class="css-svg-icon mg-left-base" :icon="css.color.isShow ? 'ic_eye' : 'ic_eye_close'"
                         @click="css.color.isShow = !css.color.isShow" />
                 </div>
+            </div>
+        </div>
+        <div class="designer-mg-top">
+            <div class="designer-container__body">
+                <textComp :title="t('css.textContent')"></textComp>
             </div>
         </div>
     </div>

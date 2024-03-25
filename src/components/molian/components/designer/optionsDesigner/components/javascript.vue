@@ -35,16 +35,3 @@ const currentEmits = computed(() => {
     </template>
   </div>
 </template>
-
-<style scoped lang="scss">
-.basic-list {
-  display: flex;
-  width: 100%;
-  height: 510px;
-  overflow-y: auto;
-  overflow-x: hidden;
-  background-color: var(--ml-bg-color);
-  border-radius: var(--ml-radius-base);
-  flex-direction: column;
-}
-</style>

@@ -3,14 +3,15 @@ import { ref, computed, inject } from 'vue'
 import { cssPanel, selectedComp, globalMenu } from '../designerData'
 import svgIcon from '@molianComps/svg-icon/index.vue'
 import floatPanel from '@molianComps/float-panel/index.vue'
+import { setting } from '@molian/utils/defaultData'
 import effect from './css-tool-panel/effect.vue'
 import fill from './css-tool-panel/fill.vue'
 import font from './css-tool-panel/font.vue'
 import stroke from './css-tool-panel/stroke.vue'
 import transform from './css-tool-panel/transform.vue'
 import margin from './css-tool-panel/margin.vue'
-const customComps:any = inject('customComps')
-const t:any = inject('mlLangs')
+const customComps: any = inject('customComps')
+const t: any = inject('mlLangs')
 const { customTooltip } = customComps
 const toolbarData = ref([{
     label: t('css.textAlign.left'),
@@ -93,7 +94,7 @@ const flexSwitch = function (type: string, value: any) {
     if (type === 'h') {
         if (css.value.justifyContent === value) {
             css.value.justifyContent = ''
-            if(!css.value.alignItems){
+            if (!css.value.alignItems) {
                 delete css.value.display
             }
         } else {
@@ -103,7 +104,7 @@ const flexSwitch = function (type: string, value: any) {
     } else if (type === 'v') {
         if (css.value.alignItems === value) {
             css.value.alignItems = ''
-            if(!css.value.justifyContent){
+            if (!css.value.justifyContent) {
                 delete css.value.display
             }
         } else {
@@ -126,7 +127,7 @@ const actived = function (item: { type: string; value: any }) {
 <template>
     <div class="css-designer">
         <float-panel float="right" :list="menus" v-model="cssPanel" @clickClose="closeFloatPanel"
-            :title="t('css.styleEdit')" :foldWidth="400" :isShow="globalMenu === 'style'">
+            :title="t('css.styleEdit')" :foldWidth="400" :isShow="globalMenu === 'style'" v-if="!!setting.immerseMode">
             <template #toolbar>
                 <customTooltip :content="item.label" v-for="item in toolbarData" :key="item.value">
                     <svg-icon
@@ -140,12 +141,27 @@ const actived = function (item: { type: string; value: any }) {
             </template>
             <template v-slot:default="{ activeData }">
                 <transform v-if="activeData.name === 'transform'" />
-                <margin v-else-if="activeData.name ==='margin'"></margin>
+                <margin v-else-if="activeData.name === 'margin'"></margin>
                 <font v-else-if="activeData.name === 'font'" />
                 <fill v-else-if="activeData.name === 'fill'" />
                 <stroke v-else-if="activeData.name === 'stroke'" />
                 <effect v-else-if="activeData.name === 'effect'" />
             </template>
         </float-panel>
+        <div class="is-side-bar" v-else>
+            <div class="designer-toolbar">
+                <customTooltip :content="item.label" v-for="item in toolbarData" :key="item.value">
+                    <svg-icon
+                        :class="['css-svg-icon', 'toolbar-icon', actived(item) && 'is-active', !selectedComp && 'disabled']"
+                        :icon="`flex-${item.type}-${item.icon}`" @click="flexSwitch(item.type, item.value)" />
+                </customTooltip>
+            </div>
+            <transform />
+            <margin style="margin-top: var(--ml-mg-base);" />
+            <font style="margin-top: var(--ml-mg-base);" />
+            <fill style="margin-top: var(--ml-mg-base);" />
+            <stroke style="margin-top: var(--ml-mg-base);" />
+            <effect style="margin-top: var(--ml-mg-base);" />
+        </div>
     </div>
 </template>

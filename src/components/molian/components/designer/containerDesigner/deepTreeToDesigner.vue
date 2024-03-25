@@ -1,10 +1,15 @@
 <script setup lang="ts">
 import { computed, inject, defineOptions, defineProps, defineEmits, nextTick } from 'vue'
 import { directives } from './directives'
-import { compsRef, globalAttrs } from '../designerData'
+import { compsRef, globalAttrs, selectedComp } from '../designerData'
 import { isDraggable, dropKey, useDraggable, dropType } from '../draggable'
 import { getValue } from '@molian/utils/useCore'
-import { useElementBounding } from '@vueuse/core'
+import { useElementBounding, useElementByPoint, useMouse } from '@vueuse/core'
+// const { x, y } = useMouse({ type: 'client' })
+// const { element } = useElementByPoint({ x, y })
+// watch(element, (newVal)=>{
+//     console.log(newVal.id)
+// })
 defineOptions({
     name: 'deepTree'
 })
@@ -43,7 +48,7 @@ const compData: any = computed({
     }
 })
 
-const empty = computed(()=>{
+const empty = computed(() => {
     return t('container.empty')
 })
 
@@ -53,23 +58,39 @@ const variable = computed(() => {
 
 const value = getValue(compData.value, variable)
 
-const { onDragenter, onDrop, onDropSlot } = useDraggable(comps, compData, message)
+const { onDragenter, onDrop, onDropSlot, showToolbar } = useDraggable(comps, compData, message)
 
-const setRef = async (el: any, comp: any) => {
+const setRef = async (el: any, comp: any, index: any) => {
     await nextTick()
-    const elDoc = document.getElementById(comp.id)
-    compsRef[comp.key] = elDoc
-    const { width, height } = useElementBounding(elDoc)
-    if(width.value < 10){
+    let elDom: any = document.getElementById(comp.id)
+    let elNextDom: any = el?.$el?.nextElementSibling
+    compsRef[comp.id] = elDom || elNextDom || compsRef[comp.id]
+    const { width, height } = useElementBounding(elDom)
+    if (width.value < 10) {
         comp.css.padding[1] = '26'
         comp.css.padding[3] = '26'
     }
 
-    if(height.value < 10){
+    if (height.value < 10) {
         comp.css.padding[0] = '10'
         comp.css.padding[2] = '10'
     }
+    // 出现极端情况解决方案。如元素不存在以及无法对元素进行修改的情况
+    // 索引不会被更新实时获取索引
+    // 如果inhertAttrs未被引入将导致无法获取到元素
+    const errorComp = computed(() => {
+        return width.value === 0 && height.value === 0
+    })
+    watch(() => errorComp.value, (newVal) => {
+        if (newVal && (!elDom || elDom && !elDom.nextElementSibling) && !!elNextDom) {
+            elNextDom.forceWatch = true
+            compsRef[comp.id] = elNextDom
+        }
+    }, {
+        immediate: true
+    })
 }
+
 </script>
 
 <template>
@@ -79,7 +100,8 @@ const setRef = async (el: any, comp: any) => {
                 v-if="isDraggable && index === 0" @drop.self.stop="onDrop($event, index, slotVal)"
                 @dragover.self.prevent="onDragenter(index, comp, 'prev')">{{ t('container.drop') }}</div>
         </transition>
-        <directives :ref="(el: any) => setRef(el, comp)" :comp="value[index]" :index="index" :modelValue="compData">
+        <directives :ref="(el: any) => setRef(el, comp, index)" :comp="value[index]" :index="index"
+            :modelValue="compData">
             <template v-for="(slotVal, slotKey) in comp.slots" :key="slotKey" #[slotKey]="slotProps">
                 <template v-if="slotVal && slotVal.children">
                     <template v-if="JSON.stringify(slotProps) !== '{}'">
@@ -90,9 +112,10 @@ const setRef = async (el: any, comp: any) => {
                         :treeIndex="treeIndex + 1" />
                     <div :class="['designer-comp__empty', dropKey === comp.key && !dropType && 'dropping-comp']"
                         @dragover.self.prevent.stop="onDragenter(index, comp, null)"
-                        @drop.self.stop="onDropSlot($event, slotVal)" v-if="isDraggable && slotVal.children.length === 0">
+                        @drop.self.stop="onDropSlot($event, slotVal)"
+                        v-if="isDraggable && slotVal.children.length === 0">
                         {{ t("container.dropComp") + t('component.' + comps[comp.name].title) +
-                            t('container.component') + t('slot.' + slotKey) + t('container.slot') }}
+        t('container.component') + t('slot.' + slotKey) + t('container.slot') }}
                     </div>
                 </template>
             </template>
@@ -114,7 +137,7 @@ const setRef = async (el: any, comp: any) => {
     position: relative;
     transition: var(--ml-transition-base);
     min-width: 60px;
-    padding:var(--ml-pd-small);
+    padding: var(--ml-pd-small);
 
     &.comp-inline {
         display: inline-flex;
@@ -152,10 +175,10 @@ const setRef = async (el: any, comp: any) => {
     }
 }
 
-.is-empty::after{
+.designer-comp-is-empty::after {
     content: "空内容";
     font-size: 12px;
-    color:var(--ml-info-color-1);
+    color: var(--ml-info-color-1);
     display: flex;
     justify-content: center;
     align-items: center;

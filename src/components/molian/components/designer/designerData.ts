@@ -18,7 +18,7 @@ import { deviceList } from '@molian/utils/device'
 // 菜单交互
 export const hiddenAllPanel = ref(false)
 export const compPanel = ref<string>('')
-export const globalMenu = ref<string>('')
+export const globalMenu = ref<string>('style')
 export const cssPanel = ref<string>('')
 export const optionsPanel = ref<string>('')
 export const actionPanel = ref<string>('')
@@ -31,15 +31,24 @@ export const fullLoading = ref<boolean>(false)
 const store = useStorage('history', {
     modelValue: <any[]>[],
     globalAttrs: <CubeData.GlobalAttrs>{
-            import:{},
-            export:{},
-            lifecycle: {},
-            variable: {}
-        } 
+        import: {},
+        export: {},
+        lifecycle: {},
+        variable: {}
+    }
 })
 // 数据
 export const modelValue = ref<CubeData.ModelValue[]>(store.value.modelValue && store.value.modelValue.length > 0 ? store.value.modelValue[0].snapshot : [])
 export const globalAttrs = reactive<CubeData.GlobalAttrs>(store.value.globalAttrs)
+
+// 清空画布
+export const clearCanvas = () => {
+    modelValue.value = []
+    globalAttrs.import = {}
+    globalAttrs.export = {}
+    globalAttrs.lifecycle = {}
+    globalAttrs.variable = {}
+}
 // 历史记录
 export const {
     history,
@@ -55,7 +64,7 @@ export const {
 })
 
 export const screenRatioInfo: any = useStorage('screenRatio', { ...deviceList.value[0], rotate: false })
-watch(history as  any, (val: CubeData.ModelValue[]) => {
+watch(history as any, (val: CubeData.ModelValue[]) => {
     store.value = {
         modelValue: val,
         globalAttrs
@@ -74,7 +83,7 @@ const notUsingInput = computed(() =>
 const keys = useMagicKeys({
     passive: false,
     onEventFired(e) {
-        if(notUsingInput.value){
+        if (notUsingInput.value) {
             if (e.ctrlKey && ['a', 's', 'd', 'f', 'z', 'y', 'b', 'h'].indexOf(e.key) > -1 && e.type === 'keydown') {
                 e.preventDefault();
                 e.stopPropagation();

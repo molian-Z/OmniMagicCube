@@ -106,7 +106,7 @@ watch(() => directives.value, (newVal) => {
 </script>
 <template>
   <div class="flex-container">
-    <span>{{ t('options.' + title) }}</span>
+    <span class="sub-title">{{ t('options.' + title) }}</span>
     <svgIcon class="svg-icon " icon="clear" @click="clearData"></svgIcon>
   </div>
   <div class="switch-tab">

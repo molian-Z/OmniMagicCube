@@ -1,4 +1,5 @@
-import { onMounted, onBeforeMount, onBeforeUnmount, onUpdated, onBeforeUpdate, onUnmounted, onErrorCaptured, onActivated, onDeactivated } from 'vue'
+import { onMounted, onBeforeMount, onBeforeUnmount, onUpdated, onBeforeUpdate, onUnmounted, onErrorCaptured, onActivated, onDeactivated, ref } from 'vue'
+import { useStorage } from '@vueuse/core'
 /**
  * defaultCategory 默认分类
  * basic会注册到所有UI面板中
@@ -173,3 +174,7 @@ export const dbName = "molian-cube"
 export const contextLevel = 3
 export const cloudUrl = "https://wujie.mlyt.top/getData"
 export const AIURL = "https://wujie.mlyt.top/getAI"
+
+export const setting = useStorage<Setting.Config>('setting', {
+    immerseMode:true
+})

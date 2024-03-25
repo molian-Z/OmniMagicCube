@@ -559,3 +559,12 @@ declare namespace IConfig {
         [key: string]: any;
     }
 }
+
+/**
+* 为 Setting 命名空间声明类型和接口。
+*/
+declare namespace Setting {
+    interface Config {
+        immerseMode:boolean;
+    }
+}

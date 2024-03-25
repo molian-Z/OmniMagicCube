@@ -6,12 +6,12 @@ import svgIcon from '@molianComps/svg-icon/index.vue'
 const props = withDefaults(defineProps<{
     shape?: 'round' | 'base',
     offset: any,
-    list?: any;
+    optionItems?: any;
     modelValue?: string;
 }>(), {
     shape: 'round',
     offset: [0, 15],
-    list: [],
+    optionItems: [],
     modelValue: ''
 })
 const emit = defineEmits(['clickTool', 'update:modelValue'])
@@ -50,7 +50,7 @@ defineExpose({
 <template>
     <div ref="el" :style="style" :class="['sticky-tool-container', shape === 'round' && 'round']">
         <div class="sticky-tool-content">
-            <template v-for="(item, index) in list" :key="index">
+            <template v-for="(item, index) in optionItems" :key="index">
                 <div :class="['sticky-tool-button', shape === 'round' && 'round', activeName == item.name && 'active']"
                     @click="setActive(item, index)">
                     <svg-icon class="sticky-tool-content-svg-icon" :icon="item.icon"></svg-icon>

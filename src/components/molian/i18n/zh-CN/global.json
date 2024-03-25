@@ -21,5 +21,8 @@
   "custom":"自定义分辨率",
   "deviceOrientation":"设备方向",
   "deviceOrientationPortrait":"旋转",
-  "deviceOrientationLandscape":"正常"
+  "deviceOrientationLandscape":"正常",
+  "setting":{
+    "immerseMode":"沉浸模式"
+  }
 }

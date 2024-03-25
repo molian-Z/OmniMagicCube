@@ -13,17 +13,17 @@ const onActive = (comp: any, index:number) => {
   hoverNodes.value = props.modelValue
   hoverIndex.value = index
   //有错误暂未修复，先允许删除
-  // hoverComp.value = comp
-  // hoverRef.value = compsRef[comp.key]
+  hoverComp.value = comp
+  hoverRef.value = compsRef[comp.key]
   selectedComp.value = comp
 }
 </script>
 
 <template>
-  <div class="tree-node" v-for="(comp,index) in modelValue" :key="comp.key">
+  <div class="tree-node" v-for="(comp,index) in modelValue" :key="comp.key"  @click.stop="onActive(comp,index)">
     <div class="tree-node-header" :class="[selectedComp && selectedComp.key === comp.key && 'is-active']">
       <svg-icon icon="node-fold" style="transform:rotate(90deg)"></svg-icon>
-      <div class="tree-node-header__title" @click.stop="onActive(comp,index)">{{ mlComps[comp.name].title }}</div>
+      <div class="tree-node-header__title">{{ mlComps[comp.name].title }}</div>
     </div>
     <div class="tree-node-content">
       <template v-for="(slotVal, slotKey) in comp.slots" :key="slotKey">

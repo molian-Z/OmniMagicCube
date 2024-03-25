@@ -53,6 +53,7 @@
     "italic":"倾斜",
     "ellipsis":"溢出省略",
     "textColor":"文本色",
+    "textContent":"文本内容",
     "textAlign":{
         "left":"左对齐",
         "center":"水平居中对齐",

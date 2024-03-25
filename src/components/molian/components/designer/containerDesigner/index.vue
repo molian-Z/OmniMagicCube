@@ -3,7 +3,6 @@ import { ref, inject } from 'vue'
 import {
     useCloned, useElementSize
 } from '@vueuse/core'
-import toolSideBar from './toolSideBar/index.vue'
 import deepComps from './deepTreeToDesigner.vue'
 import toolTip from './toolTip/index.vue'
 import toolBar from './toolBar/index.vue'
@@ -83,13 +82,13 @@ const getCoverStyle = function (cover: { left: any; width: any; top: any; height
 }
 </script>
 <template>
-    <div class="container-designer">
+    <div class="container-designer" @click="onClick">
         <div class="container-body">
             <toolBar class="container-toolbar" />
             <div class="container-main" ref="containerRef">
                 <div class="container-draggable-body"
                     :style="{ width: layoutSize.width + 'px', height: layoutSize.height + 'px' }" @dragover.prevent
-                    @dragenter.self="onDragenter(-1, modelValue)" @drop="onDrop" @click.self="onClick">
+                    @dragenter.self="onDragenter(-1, modelValue)" @drop="onDrop">
                     <deepComps v-model="modelValue"></deepComps>
                     <div class="container-draggable-cover" :style="getCoverStyle(item)" :key="index"
                         v-for="(item, index) in screenRatioInfo.coverBackground"
@@ -97,7 +96,6 @@ const getCoverStyle = function (cover: { left: any; width: any; top: any; height
                 </div>
             </div>
         </div>
-        <!-- <toolSideBar class="container-sidebar" /> -->
         <!-- 组件提示栏 -->
         <!-- <div class="drag-tips" v-if="isDraggable">{{ t('container.dropContent') }}</div> -->
         <!-- 组件工具栏 -->
@@ -111,7 +109,7 @@ const getCoverStyle = function (cover: { left: any; width: any; top: any; height
 .container-designer {
     width: 100%;
     height: 100%;
-    display: flex;
+    flex:1;
 
     .container-body {
         height: 100%;
@@ -122,16 +120,11 @@ const getCoverStyle = function (cover: { left: any; width: any; top: any; height
         }
 
         .container-main {
-            height: 100%;
+            height: calc(100% - 42px);
             width: 100%;
             position: relative;
             padding: var(--ml-pd-lg);
         }
-    }
-
-    .container-sidebar {
-        height: 100%;
-        width: 300px;
     }
 
     .container-draggable-body {

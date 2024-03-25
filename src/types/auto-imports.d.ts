@@ -18,6 +18,7 @@ declare global {
   const canUndo: typeof import('../components/molian/components/designer/designerData')['canUndo']
   const categoryList: typeof import('../components/molian/utils/compsConfig')['categoryList']
   const clear: typeof import('../components/molian/components/designer/designerData')['clear']
+  const clearCanvas: typeof import('../components/molian/components/designer/designerData')['clearCanvas']
   const cloudUrl: typeof import('../components/molian/utils/defaultData')['cloudUrl']
   const codeEditor: typeof import('../components/molian/components/code-editor/index.vue')['default']
   const compMap: typeof import('../components/molian/utils/compMap')['compMap']

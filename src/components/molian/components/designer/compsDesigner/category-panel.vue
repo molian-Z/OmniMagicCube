@@ -16,7 +16,6 @@ const props = defineProps({
 })
 
 const comps: any = inject('mlComps')
-const t = inject('mlLangs')
 
 const getCurrentUI = computed(() => {
     return props.currentUI !== 'all' ? UIData.find(item => item.name === props.currentUI) || 'all' : 'all'

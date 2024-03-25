@@ -11,7 +11,6 @@ import transformBottom from './transform/transform-bottom.vue'
 
 <style lang="scss" scoped>
 .designer-container {
-    height: 420px;
     overflow: auto;
 
     :deep(.transform-container__body) {
@@ -23,6 +22,7 @@ import transformBottom from './transform/transform-bottom.vue'
             font-weight: bold;
             padding: var(--ml-pd-lg);
             user-select: none;
+            color:var(--ml-text-color-1);
         }
 
         .transform-container__body-list {
