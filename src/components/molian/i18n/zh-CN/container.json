@@ -24,5 +24,6 @@
     "device":"设备像素",
     "createCode":"生成代码",
     "import/export":"导入/导出",
-    "globalSetting":"偏好设置"
+    "globalSetting":"偏好设置",
+    "AIInteraction":"AI交互"
 }

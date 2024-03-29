@@ -65,15 +65,16 @@ const setRef = async (el: any, comp: any, index: any) => {
     let elDom: any = document.getElementById(comp.id)
     let elNextDom: any = el?.$el?.nextElementSibling
     compsRef[comp.id] = elDom || elNextDom || compsRef[comp.id]
-    const { width, height } = useElementBounding(elDom)
-    if (width.value < 10) {
-        comp.css.padding[1] = '26'
-        comp.css.padding[3] = '26'
-    }
-
+    const { width, height } = useElementBounding(compsRef[comp.id])
+    let pd = ['0','0']
     if (height.value < 10) {
-        comp.css.padding[0] = '10'
-        comp.css.padding[2] = '10'
+        pd[0] = '10px'
+    }
+    if (width.value < 26) {
+        pd[1] = '26px'
+    }
+    if(pd[0] !== '0' || pd[1] !== '0'){
+        compsRef[comp.id].style.padding = `${pd[0]} ${pd[1]}`
     }
     // 出现极端情况解决方案。如元素不存在以及无法对元素进行修改的情况
     // 索引不会被更新实时获取索引
@@ -171,15 +172,16 @@ const setRef = async (el: any, comp: any, index: any) => {
     &.selectedComp {
         &::after {
             border: 2px solid var(--ml-primary-color);
+            display: block;
         }
     }
 }
 
 .designer-comp-is-empty::after {
-    content: "空内容";
+    content: "空内容" !important;
     font-size: 12px;
     color: var(--ml-info-color-1);
-    display: flex;
+    display: flex !important;
     justify-content: center;
     align-items: center;
 }

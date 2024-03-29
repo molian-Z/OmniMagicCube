@@ -157,6 +157,7 @@ declare global {
   const selectedComp: typeof import('../components/molian/components/designer/designerData')['selectedComp']
   const setRef: typeof import('../components/molian/components/render/renderData')['setRef']
   const setRenderRef: typeof import('../components/molian/components/render/renderData')['setRenderRef']
+  const setting: typeof import('../components/molian/utils/defaultData')['setting']
   const shallowReactive: typeof import('vue')['shallowReactive']
   const shallowReadonly: typeof import('vue')['shallowReadonly']
   const shallowRef: typeof import('vue')['shallowRef']
