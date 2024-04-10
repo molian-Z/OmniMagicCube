@@ -49,6 +49,7 @@ const directives = computed({
     return selectedComp.value && selectedComp.value.directives && selectedComp.value.directives.text && selectedComp.value.directives.text.value || null
   },
   set(val) {
+    if(!selectedComp.value) return 
     if (!selectedComp.value.directives) {
       selectedComp.value.directives = {}
     }
@@ -110,12 +111,12 @@ watch(() => directives.value, (newVal) => {
     <svgIcon class="svg-icon " icon="clear" @click="clearData"></svgIcon>
   </div>
   <div class="switch-tab">
-    <customRadioGroup v-model="switchTab" variant="primary-filled" size="small" @change="changeTab">
+    <customRadioGroup v-model="switchTab" variant="primary-filled" size="small" @change="changeTab" :disabled="!selectedComp">
       <customRadioButton value="string">{{ t('options.string') }}</customRadioButton>
       <customRadioButton value="variable">{{ t('options.variable') }}</customRadioButton>
     </customRadioGroup>
   </div>
-  <customInput size="small" :modelValue="directives" @update:modelValue="changeInput" :textarea="true" v-if="switchTab === 'string'" />
+  <customInput size="small" :modelValue="directives" @update:modelValue="changeInput" :textarea="true" :disabled="!selectedComp" v-if="switchTab === 'string'" />
   <customCascaderPanel size="small" :options="variableList" :checkStrictly="true" :clearable="true" valueType="full"
     :modelValue="directives" @update:modelValue="changeValue" v-else-if="switchTab === 'variable'" />
 </template>

@@ -9,6 +9,11 @@ import type { App } from 'vue'
 import '@imengyu/vue3-context-menu/lib/vue3-context-menu.css';
 import ContextMenu from '@imengyu/vue3-context-menu';
 import VConsole from 'vconsole';
+import { Icon, addAPIProvider } from '@iconify/vue'
+import IconPicker from '@molianComps/icon-picker/index.vue'
+addAPIProvider('', {
+    resources: ['http://flower.molianpro.com:33000'],
+})
 console.log(`%c无界魔方%cOmni Magic Cube V1.0.0%c
 %cTo:墨联墨客`,
     'background: #2D74FF; color: #fff; border-radius:3px;padding:4px 8px;font-size:14px;font-weight:bold;',
@@ -21,6 +26,8 @@ export default {
     install(app: App<any>, options: any = {
         customComps: {}
     }) {
+        app.component('Icon', Icon)
+        app.component('IconPicker', IconPicker)
         useUI.value = options.useUI || useUI.value
         if (!!options.usePrefix) {
             const uiIndex = UIData.findIndex(item => item.name === useUI.value)

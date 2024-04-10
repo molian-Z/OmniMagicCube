@@ -34,6 +34,8 @@ defineOptions({
     default: true
   }
 })
+console.log(props.propData, props.selectedComp)
+// 计算是否需要IconPicker
 const emit = defineEmits(['update:modelValue'])
 const value = computed({
   get() {

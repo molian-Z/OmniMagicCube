@@ -85,7 +85,7 @@ const updateModelValue = function (prop: string, obj: { value: any; index: strin
           placeholder="">
           <template #prefixIcon>
             <customTooltip :content="t('css.margin.bottom')">
-              <svg-icon icon="margin-bottom" style="transform: rotate(90deg);"></svg-icon>
+              <svg-icon icon="margin-bottom"></svg-icon>
             </customTooltip>
           </template>
           <template #suffix>
@@ -104,7 +104,7 @@ const updateModelValue = function (prop: string, obj: { value: any; index: strin
           placeholder="">
           <template #prefixIcon>
             <customTooltip :content="t('css.margin.left')">
-              <svg-icon icon="margin-left" style="transform: rotate(270deg);"></svg-icon>
+              <svg-icon icon="margin-left"></svg-icon>
             </customTooltip>
           </template>
           <template #suffix>
@@ -116,7 +116,7 @@ const updateModelValue = function (prop: string, obj: { value: any; index: strin
           placeholder="">
           <template #prefixIcon>
             <customTooltip :content="t('css.margin.right')">
-              <svg-icon icon="margin-right" style="transform: rotate(180deg);"></svg-icon>
+              <svg-icon icon="margin-right"></svg-icon>
             </customTooltip>
           </template>
           <template #suffix>
@@ -148,7 +148,7 @@ const updateModelValue = function (prop: string, obj: { value: any; index: strin
           placeholder="">
           <template #prefixIcon>
             <customTooltip :content="t('css.padding.bottom')">
-              <svg-icon icon="padding-bottom" style="transform: rotate(90deg);"></svg-icon>
+              <svg-icon icon="padding-bottom"></svg-icon>
             </customTooltip>
           </template>
           <template #suffix>
@@ -167,7 +167,7 @@ const updateModelValue = function (prop: string, obj: { value: any; index: strin
           placeholder="">
           <template #prefixIcon>
             <customTooltip :content="t('css.padding.left')">
-              <svg-icon icon="padding-left" style="transform: rotate(270deg);"></svg-icon>
+              <svg-icon icon="padding-left"></svg-icon>
             </customTooltip>
           </template>
           <template #suffix>
@@ -179,7 +179,7 @@ const updateModelValue = function (prop: string, obj: { value: any; index: strin
           placeholder="">
           <template #prefixIcon>
             <customTooltip :content="t('css.padding.right')">
-              <svg-icon icon="padding-right" style="transform: rotate(180deg);"></svg-icon>
+              <svg-icon icon="padding-right"></svg-icon>
             </customTooltip>
           </template>
           <template #suffix>

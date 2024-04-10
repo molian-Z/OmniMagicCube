@@ -97,6 +97,7 @@ declare global {
   const hoverNodes: typeof import('../components/molian/components/designer/draggable')['hoverNodes']
   const hoverRef: typeof import('../components/molian/components/designer/draggable')['hoverRef']
   const i18nt: typeof import('../components/molian/utils/lang')['i18nt']
+  const iconifyUrl: typeof import('../components/molian/utils/defaultData')['iconifyUrl']
   const initCompsData: typeof import('../components/molian/components/designer/designerData')['initCompsData']
   const inject: typeof import('vue')['inject']
   const install: typeof import('../lib-main')['install']

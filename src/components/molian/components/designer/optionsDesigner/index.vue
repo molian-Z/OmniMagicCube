@@ -93,9 +93,8 @@ const openDialog = (type: string) => {
 </script>
 <template>
     <div class="options-designer">
-        <float-panel class="float-panel" float="right" :list="menus" v-model="optionsPanel"
-            @clickClose="closeFloatPanel" :foldWidth="365" :foldHeight="600" :isShow="globalMenu === 'option'"
-            v-if="!!setting.immerseMode">
+        <float-panel class="float-panel" float="right" :list="menus" v-model="optionsPanel" @clickClose="closeFloatPanel"
+            :foldWidth="365" :foldHeight="600" :isShow="globalMenu === 'option'" v-if="!!setting.immerseMode">
             <template #toolbar>
                 <div>
                     <template v-for="item in toolbarData" :key="item.value">
@@ -107,12 +106,9 @@ const openDialog = (type: string) => {
                                 :icon="`option-${item.icon}`" @click="showFn(item.type, item.value)" />
                             <template #content>
                                 <vueif :title="item.label" @close="item.show = false" v-if="item.value === 'if'" />
-                                <vuefor :title="item.label" @close="item.show = false"
-                                    v-else-if="item.value === 'for'" />
-                                <vueshow :title="item.label" @close="item.show = false"
-                                    v-else-if="item.value === 'show'" />
-                                <vuetext :title="item.label" @close="item.show = false"
-                                    v-else-if="item.value === 'text'" />
+                                <vuefor :title="item.label" @close="item.show = false" v-else-if="item.value === 'for'" />
+                                <vueshow :title="item.label" @close="item.show = false" v-else-if="item.value === 'show'" />
+                                <vuetext :title="item.label" @close="item.show = false" v-else-if="item.value === 'text'" />
                             </template>
                         </customPopup>
                     </template>
@@ -142,12 +138,9 @@ const openDialog = (type: string) => {
                                 :icon="`option-${item.icon}`" @click="showFn(item.type, item.value)" />
                             <template #content>
                                 <vueif :title="item.label" @close="item.show = false" v-if="item.value === 'if'" />
-                                <vuefor :title="item.label" @close="item.show = false"
-                                    v-else-if="item.value === 'for'" />
-                                <vueshow :title="item.label" @close="item.show = false"
-                                    v-else-if="item.value === 'show'" />
-                                <vuetext :title="item.label" @close="item.show = false"
-                                    v-else-if="item.value === 'text'" />
+                                <vuefor :title="item.label" @close="item.show = false" v-else-if="item.value === 'for'" />
+                                <vueshow :title="item.label" @close="item.show = false" v-else-if="item.value === 'show'" />
+                                <vuetext :title="item.label" @close="item.show = false" v-else-if="item.value === 'text'" />
                             </template>
                         </customPopup>
                     </template>
@@ -189,12 +182,16 @@ const openDialog = (type: string) => {
     }
 }
 
-.comp-content{
+.comp-content {
     background-color: var(--ml-bg-color);
-    margin-bottom:var(--ml-mg-base);
+    margin-bottom: var(--ml-mg-base);
 
-    .comp-content{
+    .comp-content {
         padding: 0 var(--ml-pd-lg);
     }
+}
+
+:deep(.css-svg-icon){
+    margin: 0 var(--ml-mg-small) !important;
 }
 </style>

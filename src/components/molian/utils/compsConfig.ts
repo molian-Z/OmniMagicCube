@@ -113,13 +113,13 @@ const parseComp = function (key: string, element: { emits: any[]; props: any; sl
         }
     }
     if (element.props) {
-        function toParseProps(element: { props: any[] }, key: string) {
+        function toParseProps(element: { props: any[], name: string }, key: string) {
             if (Array.isArray(element.props)) {
                 element.props.forEach((item: any) => {
-                    currentProps[item] = parseProps(item, null)
+                    currentProps[item] = parseProps(item, null, element.name)
                 })
             } else {
-                currentProps[key] = parseProps(element.props[key], null)
+                currentProps[key] = parseProps(element.props[key], null, element.name)
             }
         }
         for (const key in element.props) {
@@ -325,7 +325,7 @@ export const compsInstall = function (app: App<any>, options: { globalComps: any
     registerGlobalComps(app, options.globalComps)
 }
 
-function parseProps(obj: { map: (arg0: (item: any) => "string" | "boolean" | "number" | "array" | "object" | "function" | "date" | "regexp" | "symbol" | "map" | "promise" | "input") => any; required: any; validator: any; type: any[]; default: () => any }, key: null | string | number) {
+function parseProps(obj: { map: (arg0: (item: any) => "string" | "boolean" | "number" | "array" | "object" | "function" | "date" | "regexp" | "symbol" | "map" | "promise" | "input") => any; required: any; validator: any; type: any[]; default: () => any }, key: null | string | number, testKey?:string) {
     let newObj = {}
     if (obj && Array.isArray(obj)) {
         newObj = {
@@ -348,13 +348,18 @@ function parseProps(obj: { map: (arg0: (item: any) => "string" | "boolean" | "nu
                 propObj.type = getPropType(obj.type)
             }
         }
-        if (propObj.type == 'array' || propObj.type === 'object') {
-            propObj.default = obj.default && typeof obj.default === 'function' && obj.default() || obj.default
-            if (!propObj.default && propObj.type == 'array') {
-                propObj.default = []
-            } else if (!propObj.default && propObj.type == 'object') {
-                propObj.default = {}
-            }
+        // if (propObj.type == 'array' || propObj.type === 'object') {
+        //     propObj.default = obj.default && typeof obj.default === 'function' && obj.default() || obj.default
+        //     if (!propObj.default && propObj.type == 'array') {
+        //         propObj.default = []
+        //     } else if (!propObj.default && propObj.type == 'object') {
+        //         propObj.default = {}
+        //     }
+        // }
+        try {
+            propObj.default = obj.default && (typeof obj.default === 'function' && obj.default() || obj.default)
+        } catch (error) {
+            propObj.default = null
         }
         newObj = propObj
     } else if (obj && typeof obj === 'function') {

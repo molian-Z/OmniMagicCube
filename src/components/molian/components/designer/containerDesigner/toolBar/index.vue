@@ -84,6 +84,9 @@ const runRedo = () => {
 
     .designer-history{
       display: flex;
+      > div{
+        margin: 0 10px;
+      }
     }
   }
 

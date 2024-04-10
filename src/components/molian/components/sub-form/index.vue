@@ -1,9 +1,12 @@
 <script setup lang="ts">
-import { inject, defineProps, defineEmits, defineExpose, withDefaults } from 'vue'
+import { inject, defineProps, defineEmits, defineExpose, withDefaults, defineOptions } from 'vue'
 import { useVModel } from '@vueuse/core'
 const t:any = inject('mlLangs')
 const customComps: any = inject('customComps')
 const { customButton } = customComps
+defineOptions({
+  name: 'SubForm'
+})
 const props = withDefaults(defineProps<{
   modelValue: any,
   columns: any,
@@ -157,7 +160,7 @@ defineExpose({
 
       .ml-sub-form-list__item-required::before {
         content: "*";
-        color: var(--el-color-danger);
+        color: var(--ml-color-danger);
         margin-right: 4px;
       }
     }

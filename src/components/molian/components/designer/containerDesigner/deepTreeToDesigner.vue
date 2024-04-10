@@ -137,7 +137,7 @@ const setRef = async (el: any, comp: any, index: any) => {
     margin: var(--ml-mg-base) 0;
     position: relative;
     transition: var(--ml-transition-base);
-    min-width: 60px;
+    min-width: 20px;
     padding: var(--ml-pd-small);
 
     &.comp-inline {

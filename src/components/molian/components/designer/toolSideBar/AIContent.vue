@@ -3,6 +3,7 @@ import { ref, inject } from 'vue'
 import svgIcon from '@molianComps/svg-icon/index.vue'
 const t: any = inject('mlLangs')
 const foldAI = ref(false)
+const iconValue = ref('')
 </script>
 
 <template>
@@ -11,7 +12,7 @@ const foldAI = ref(false)
     <svg-icon icon="y-fold" :class="['content-fold', foldAI && 'is-fold-icon']" @click="foldAI = !foldAI"></svg-icon>
   </div>
   <div :class="['ai-content', foldAI && 'is-fold']">
-
+    <icon-picker v-model="iconValue" :size="48" />
   </div>
 </template>
 

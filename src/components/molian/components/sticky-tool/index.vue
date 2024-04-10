@@ -1,8 +1,10 @@
 <script setup lang="ts">
-import { ref, defineProps, nextTick, defineExpose, defineEmits, computed, withDefaults } from 'vue'
+import { ref, defineProps, nextTick, defineExpose, defineEmits, computed, withDefaults, defineOptions } from 'vue'
 import { useDraggable, useElementBounding, useWindowSize } from '@vueuse/core'
 import svgIcon from '@molianComps/svg-icon/index.vue'
-
+defineOptions({
+    name: 'StickyTool'
+})
 const props = withDefaults(defineProps<{
     shape?: 'round' | 'base',
     offset: any,

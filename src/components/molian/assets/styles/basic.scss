@@ -270,7 +270,7 @@
 
 .css-svg-icon {
   // fill: var(--ml-primary-color);
-  margin: 0;
+  margin: 0 !important;
   cursor: pointer;
   transition: var(--ml-transition-base);
   border-radius: var(--ml-radius-small);

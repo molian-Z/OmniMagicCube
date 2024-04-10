@@ -44,7 +44,7 @@ const i18nList = computed(()=>{
     padding: 5px;
     transition: var(--ml-transition-base);
     border-radius: var(--ml-radius-small);
-
+    margin: 0 var(--ml-mg-small) !important;
     &:hover {
         background-color: var(--ml-fill-color-4);
     }

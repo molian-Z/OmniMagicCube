@@ -24,6 +24,7 @@ import 'ant-design-vue/dist/reset.css';
 import '@arco-design/web-vue/dist/arco.css';
 import '@molian/assets/styles/global.scss';
 import test from '@molianComps/test/index.vue'
+
 const app = createApp(App);
 app.component('ElRowTest', test)
 app.use(TDesign);

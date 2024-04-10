@@ -29,6 +29,21 @@ const toolbarData = ref([{
     icon: 'right',
     type: 'h'
 }, {
+    label: t('css.space.hbetween'),
+    value: 'space-between',
+    icon: 'space-between',
+    type: 'h'
+}, {
+    label: t('css.space.haround'),
+    value: 'space-around',
+    icon: 'space-around',
+    type: 'h'
+}, {
+    label: t('css.space.hevenly'),
+    value: 'space-evenly',
+    icon: 'space-evenly',
+    type: 'h'
+}, {
     label: t('css.verticalAlign.top'),
     value: 'flex-start',
     icon: 'top',
@@ -46,13 +61,18 @@ const toolbarData = ref([{
 }, {
     label: t('css.space.vbetween'),
     value: 'space-between',
-    icon: 'space',
+    icon: 'space-between',
     type: 'v'
 }, {
-    label: t('css.space.hbetween'),
-    value: 'space-between',
-    icon: 'space',
-    type: 'h'
+    label: t('css.space.varound'),
+    value: 'space-around',
+    icon: 'space-around',
+    type: 'v'
+}, {
+    label: t('css.space.vevenly'),
+    value: 'space-evenly',
+    icon: 'space-evenly',
+    type: 'v'
 }])
 
 const menus = ref([{
