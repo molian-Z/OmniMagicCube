@@ -151,23 +151,23 @@ const openDialog = (type: string) => {
                 </customTooltip>
             </div>
             <div class="comp-content">
-                <div class="designer-container__body-title">基础</div>
+                <div class="designer-container__body-title">{{t('options.basic')}}</div>
                 <basicComp class="comp-content" />
             </div>
             <div class="comp-content">
-                <div class="designer-container__body-title">插槽</div>
+                <div class="designer-container__body-title">{{t('options.slot')}}</div>
                 <slotComp class="comp-content" />
             </div>
             <div class="comp-content">
-                <div class="designer-container__body-title">事件</div>
+                <div class="designer-container__body-title">{{t('options.js')}}</div>
                 <javascriptComp class="comp-content" />
             </div>
             <div class="comp-content">
-                <div class="designer-container__body-title">原生事件</div>
+                <div class="designer-container__body-title">{{ t('options.nativeOn') }}</div>
                 <nativeOnComp class="comp-content" />
             </div>
             <div class="comp-content">
-                <div class="designer-container__body-title">生命周期</div>
+                <div class="designer-container__body-title">{{ t('options.lifecycle') }}</div>
                 <lifecycleComp class="comp-content" />
             </div>
         </div>

@@ -19,7 +19,6 @@ const i18nList = computed(()=>{
         }
     })
 })
-
 </script>
 <template>
     <float-panel float="left" :list="i18nList" v-model="compPanel" :offset="[5, 150]" :foldWidth="500" :isClose="false">

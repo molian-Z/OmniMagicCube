@@ -26,7 +26,6 @@ const compList: any = computed(() => {
         return item.category === props.currentData.name && (getCurrentUI.value === 'all' || item.prefix === getCurrentUI.value.prefix || item.category === 'basic')
     })
 })
-
 const onDragStart = function (evt: any, item: { name: any }) {
     evt.dataTransfer.setData('compName', item.name)
     evt.dataTransfer.setData('isCreate', true)

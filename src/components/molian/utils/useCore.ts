@@ -161,7 +161,7 @@ export const getNthParent = (tree:CubeData.ModelValue[], id: any, level: number)
 
 export const isNotSlot = (slots: { [x: string]: any; })=>{
   if(Object.keys(slots).length === 0){
-    return true
+    return false
   }
   let notSlot = true
   for (const key in slots) {

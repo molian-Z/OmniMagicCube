@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, inject, defineOptions, defineProps, defineEmits, nextTick } from 'vue'
 import { directives } from './directives'
-import { compsRef, globalAttrs, selectedComp } from '../designerData'
+import { compsRef, globalAttrs, selectedComp, compsEl } from '../designerData'
 import { isDraggable, dropKey, useDraggable, dropType } from '../draggable'
 import { getValue } from '@molian/utils/useCore'
 import { useElementBounding, useElementByPoint, useMouse } from '@vueuse/core'
@@ -13,7 +13,6 @@ import { useElementBounding, useElementByPoint, useMouse } from '@vueuse/core'
 defineOptions({
     name: 'deepTree'
 })
-
 const props = defineProps({
     modelValue: {
         type: Array,
@@ -62,9 +61,16 @@ const { onDragenter, onDrop, onDropSlot, showToolbar } = useDraggable(comps, com
 
 const setRef = async (el: any, comp: any, index: any) => {
     await nextTick()
+    compsEl[comp.id] = el
     let elDom: any = document.getElementById(comp.id)
     let elNextDom: any = el?.$el?.nextElementSibling
-    compsRef[comp.id] = elDom || elNextDom || compsRef[comp.id]
+    if(elDom?.classList?.contains('designer-comp')){
+        compsRef[comp.id] = elDom
+    }else if(elNextDom?.classList?.contains('designer-comp')){
+        compsRef[comp.id] = elNextDom
+    }else{
+        compsRef[comp.id] = elDom || elNextDom || compsRef[comp.id]
+    }
     const { width, height } = useElementBounding(compsRef[comp.id])
     let pd = ['0','0']
     if (height.value < 10) {

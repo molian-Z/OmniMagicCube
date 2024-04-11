@@ -198,6 +198,7 @@ const parseComp = function (key: string, element: { emits: any[]; props: any; sl
         props: currentProps, // 所有属性(是否应写入对应组件)
         comp: element,
         slots: autoSlots,
+        inheritAttrs:element.inheritAttrs,
         category: findCate ? findCate.name : '' // 此处应根据cateRules判断显示节点
     }
 }

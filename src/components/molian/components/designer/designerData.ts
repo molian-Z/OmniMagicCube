@@ -71,6 +71,7 @@ watch(history as any, (val: CubeData.ModelValue[]) => {
     }
 })
 export const compsRef = reactive<any>({})
+export const compsEl = reactive<any>({})
 export const selectedComp = ref<CubeData.ModelValue | null>(null)
 
 
