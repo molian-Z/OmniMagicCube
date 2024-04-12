@@ -25,5 +25,7 @@
     "createCode":"生成代码",
     "import/export":"导入/导出",
     "globalSetting":"偏好设置",
-    "AIInteraction":"AI交互"
+    "AIInteraction":"AI交互",
+    "before":"前方",
+    "after":"后方"
 }

@@ -53,14 +53,7 @@ export const resetHover = function () {
   hoverIndex.value = null
 }
 
-
-// methods
-export const useDraggable = (comps: any, compData: any, message: any) => {
-  const onDragStart = function (evt: any, item: { name: any }) {
-    evt.dataTransfer.setData('compName', item.name)
-    isDraggable.value = true
-  }
-  const onDragenter = useThrottleFn((index, comp, type = null) => {
+export const onDragenter =  useThrottleFn((index: number, comp: { key: string | null }, type = null, compData) => {
     if (index > -1) {
       dropIndex.value = index
     } else {
@@ -70,8 +63,15 @@ export const useDraggable = (comps: any, compData: any, message: any) => {
     dropNode.value = comp
     dropKey.value = comp.key
     dropNodes.value = compData
-  }, 100)
+  }, 200)
 
+// methods
+export const useDraggable = (comps?: any, compData?: any, message?: any) => {
+  const onDragStart = function (evt: any, item: { name: any }) {
+    evt.dataTransfer.setData('compName', item.name)
+    isDraggable.value = true
+  }
+  // const onDragenter = throttleDragEnter(compData)
   const onDrop = function (evt: any, index: any, slotVal: any) {
     const name = evt.dataTransfer.getData('compName')
     const isCreate = evt.dataTransfer.getData('isCreate')
@@ -124,7 +124,7 @@ export const useDraggable = (comps: any, compData: any, message: any) => {
 
   return {
     onDragStart,
-    onDragenter,
+    // onDragenter,
     onDrop,
     onDropSlot,
     onDragend,

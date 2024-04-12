@@ -2,14 +2,9 @@
 import { computed, inject, defineOptions, defineProps, defineEmits, nextTick } from 'vue'
 import { directives } from './directives'
 import { compsRef, globalAttrs, selectedComp, compsEl } from '../designerData'
-import { isDraggable, dropKey, useDraggable, dropType } from '../draggable'
+import { isDraggable, dropKey, useDraggable, dropType, onDragenter } from '../draggable'
 import { getValue } from '@molian/utils/useCore'
-import { useElementBounding, useElementByPoint, useMouse } from '@vueuse/core'
-// const { x, y } = useMouse({ type: 'client' })
-// const { element } = useElementByPoint({ x, y })
-// watch(element, (newVal)=>{
-//     console.log(newVal.id)
-// })
+import { useElementBounding } from '@vueuse/core'
 defineOptions({
     name: 'deepTree'
 })
@@ -57,8 +52,7 @@ const variable = computed(() => {
 
 const value = getValue(compData.value, variable)
 
-const { onDragenter, onDrop, onDropSlot, showToolbar } = useDraggable(comps, compData, message)
-
+const { onDrop, onDropSlot } = useDraggable(comps, compData, message)
 const setRef = async (el: any, comp: any, index: any) => {
     await nextTick()
     compsEl[comp.id] = el
@@ -97,15 +91,15 @@ const setRef = async (el: any, comp: any, index: any) => {
         immediate: true
     })
 }
-
 </script>
 
 <template>
     <template v-for="(comp, index) in compData" :key="comp.key">
         <transition name="fade">
             <div :class="['prefix-drop-slot designer-comp__empty', dropKey === comp.key && dropType === 'prev' && 'dropping-comp']"
-                v-if="isDraggable && index === 0" @drop.self.stop="onDrop($event, index, slotVal)"
-                @dragover.self.prevent="onDragenter(index, comp, 'prev')">{{ t('container.drop') }}</div>
+            v-if="isDraggable && dropKey === comp.key" @drop.self.stop="onDrop($event, index, slotVal)"
+                @dragover.self.prevent="onDragenter(index, comp, 'prev', compData)">{{ t('container.drop')+ t('component.' + comps[comp.name].title) +
+        t('container.component') + t('container.after') }}</div>
         </transition>
         <directives :ref="(el: any) => setRef(el, comp, index)" :comp="value[index]" :index="index"
             :modelValue="compData">
@@ -118,7 +112,7 @@ const setRef = async (el: any, comp: any, index: any) => {
                     <deepTreeToDesigner v-else v-model="slotVal.children" :slotKey="slotKey" :slotVal="slotVal"
                         :treeIndex="treeIndex + 1" />
                     <div :class="['designer-comp__empty', dropKey === comp.key && !dropType && 'dropping-comp']"
-                        @dragover.self.prevent.stop="onDragenter(index, comp, null)"
+                        @dragover.self.prevent.stop="onDragenter(index, comp, null, compData)"
                         @drop.self.stop="onDropSlot($event, slotVal)"
                         v-if="isDraggable && slotVal.children.length === 0">
                         {{ t("container.dropComp") + t('component.' + comps[comp.name].title) +
@@ -129,8 +123,9 @@ const setRef = async (el: any, comp: any, index: any) => {
         </directives>
         <transition name="fade">
             <div :class="['suffix-drop-slot designer-comp__empty', dropKey === comp.key && dropType === 'next' && 'dropping-comp']"
-                v-if="isDraggable" @dragover.self.prevent="onDragenter(index, comp, 'next')"
-                @drop.self.stop="onDrop($event, index + 1, slotVal)">{{ t('container.drop') }}</div>
+            v-if="isDraggable && dropKey === comp.key" @dragover.self.prevent="onDragenter(index, comp, 'next', compData)"
+                @drop.self.stop="onDrop($event, index + 1, slotVal)">{{ t('container.drop')+ t('component.' + comps[comp.name].title) +
+        t('container.component') + t('container.after') }}</div>
         </transition>
     </template>
 </template>
@@ -192,8 +187,9 @@ const setRef = async (el: any, comp: any, index: any) => {
     align-items: center;
 }
 
-.prefix-drop-slot {
+.prefix-drop-slot, .suffix-drop-slot {
     padding: var(--ml-pd-small);
+    display: inline-block;
 }
 
 .designer-comp__empty {
@@ -203,7 +199,7 @@ const setRef = async (el: any, comp: any, index: any) => {
     font-weight: bold;
     color: var(--ml-info-color-1);
     user-select: none;
-    line-height: 36px;
+    line-height: 24px;
     transition: var(--ml-transition-base);
     flex: 1;
     position: relative;

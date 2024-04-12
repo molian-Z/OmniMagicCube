@@ -17,6 +17,7 @@ import {
     dragIndex,
     dropIndex,
     useDraggable,
+    onDragenter
 } from '../draggable'
 import { menuData } from './menus'
 import {
@@ -61,7 +62,6 @@ export const directives = {
         })
         const {
             onDragStart,
-            onDragenter,
             onDrop,
             onDragend,
             showToolbar
@@ -147,9 +147,9 @@ export const directives = {
                 onClick: withModifiers(($event: any) => onClick($event, props.comp, props.index), ['self', 'native', 'prevent', 'stop']),
                 onContextmenu: withModifiers(($event: any) => onContextmenu($event, props.comp, props.index), ['self', 'native', 'prevent', 'stop']),
                 // onDragstart: withModifiers((evt: any) => onDragStart(evt, props.comp), ['self', 'prevent']),
-                onDragend: onDragend,
+                // onDragend: onDragend,
                 onDragover: withModifiers((evt: any) => onDragenter(props.index, props.comp), ['self', 'prevent']),
-                onDrop: withModifiers(($event: any) => onDrop($event, null, null), ['self', 'stop']),
+                //onDrop: withModifiers(($event: any) => onDrop($event, null, null), ['self', 'stop']),
                 class: computedClass.value,
                 id: props.comp.id,
                 ['data-key']: props.comp.key,
@@ -208,10 +208,14 @@ export const directives = {
             //...propsData,
             resetDom.onclick = ($event: any) => onClick($event, props.comp, props.index)
             resetDom.oncontextmenu = ($event: any) => onContextmenu($event, props.comp, props.index)
-            resetDom.ondragstart = (evt: any) => onDragStart(evt, props.comp)
-            resetDom.ondragend = onDragend,
-                resetDom.ondragover = (evt: any) => onDragenter(props.index, props.comp)
-            resetDom.ondrop = ($event: any) => onDrop($event, null, null)
+            // resetDom.ondragstart = (evt: any) => onDragStart(evt, props.comp)
+            // resetDom.ondragend = onDragend
+            // 不可使用
+            resetDom.ondragover = (evt: any) => {
+                // console.log(evt.target)
+                onDragenter(props.index, props.comp, null, compData)
+            }
+            // resetDom.ondrop = ($event: any) => onDrop($event, null, null)
             const styleData: any = computed(() => {
                 return { ...parseStyle(props.comp.css, props.comp.key), ...!isShow(props.comp) && { display: 'none' } || {} }
             })

@@ -7,11 +7,10 @@ import deepComps from './deepTreeToDesigner.vue'
 import toolTip from './toolTip/index.vue'
 import toolBar from './toolBar/index.vue'
 import { modelValue, selectedComp, createComp, screenRatioInfo } from '../designerData'
-import { resetHover, dragNodes, dragIndex, dropIndex, resetDraggable, useDraggable } from '../draggable'
+import { resetHover, dragNodes, dragIndex, dropIndex, resetDraggable, onDragenter } from '../draggable'
 import { calculateRatio, scaleCalculate } from '@molian/utils/util'
 const comps: any = inject('mlComps')
 const t: any = inject('mlLangs')
-const { onDragenter } = useDraggable(null, null, null)
 const containerRef = ref()
 const onDrop = function (evt: any) {
     const name = evt.dataTransfer.getData('compName')
@@ -80,6 +79,10 @@ const getCoverStyle = function (cover: { left: any; width: any; top: any; height
         }
     }
 }
+
+const confirmDropContainer = async() =>{
+   onDragenter(-1, modelValue, null, modelValue)
+}
 </script>
 <template>
     <div class="container-designer" @click="onClick">
@@ -88,7 +91,7 @@ const getCoverStyle = function (cover: { left: any; width: any; top: any; height
             <div class="container-main" ref="containerRef">
                 <div class="container-draggable-body"
                     :style="{ width: layoutSize.width + 'px', height: layoutSize.height + 'px' }" @dragover.prevent
-                    @dragenter.self="onDragenter(-1, modelValue)" @drop="onDrop">
+                    @dragenter.self="confirmDropContainer" @drop="onDrop">
                     <deepComps v-model="modelValue"></deepComps>
                     <div class="container-draggable-cover" :style="getCoverStyle(item)" :key="index"
                         v-for="(item, index) in screenRatioInfo.coverBackground"
