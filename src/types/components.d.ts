@@ -9,7 +9,7 @@ declare module 'vue' {
   export interface GlobalComponents {
     ActionDesigner: typeof import('./../components/molian/components/designer/actionDesigner/index.vue')['default']
     AIContent: typeof import('./../components/molian/components/designer/toolSideBar/AIContent.vue')['default']
-    AiIm: typeof import('./../components/molian/components/designer/tools/aiIm/index.vue')['default']
+    AiIm: typeof import('./../components/molian/components/designer/containerDesigner/aiIm/index.vue')['default']
     AnimateHeight: typeof import('./../components/molian/components/animate-height/index.vue')['default']
     AnyData2form: typeof import('./../components/molian/components/any-data2form/index.vue')['default']
     Basic: typeof import('./../components/molian/components/designer/optionsDesigner/components/basic.vue')['default']
@@ -22,7 +22,7 @@ declare module 'vue' {
     Create: typeof import('./../components/molian/components/designer/globalDesigner/global-panel/create.vue')['default']
     CssDesigner: typeof import('./../components/molian/components/designer/cssDesigner/index.vue')['default']
     Data2input: typeof import('./../components/molian/components/data2input/index.vue')['default']
-    DeepTreeToData: typeof import('./../components/molian/components/designer/tools/treeDir/deepTreeToData.vue')['default']
+    DeepTreeToData: typeof import('./../components/molian/components/designer/containerDesigner/treeDir/deepTreeToData.vue')['default']
     DeepTreeToDesigner: typeof import('./../components/molian/components/designer/containerDesigner/deepTreeToDesigner.vue')['default']
     DeepTreeToRender: typeof import('./../components/molian/components/render/deepTreeToRender.vue')['default']
     Designer: typeof import('./../components/molian/components/designer/index.vue')['default']
@@ -66,7 +66,7 @@ declare module 'vue' {
     Transform: typeof import('./../components/molian/components/designer/cssDesigner/css-tool-panel/transform.vue')['default']
     TransformBottom: typeof import('./../components/molian/components/designer/cssDesigner/css-tool-panel/transform/transform-bottom.vue')['default']
     TransformTop: typeof import('./../components/molian/components/designer/cssDesigner/css-tool-panel/transform/transform-top.vue')['default']
-    TreeDir: typeof import('./../components/molian/components/designer/tools/treeDir/index.vue')['default']
+    TreeDir: typeof import('./../components/molian/components/designer/containerDesigner/treeDir/index.vue')['default']
     Variable: typeof import('./../components/molian/components/designer/optionsDesigner/tooltip/variable.vue')['default']
   }
 }
