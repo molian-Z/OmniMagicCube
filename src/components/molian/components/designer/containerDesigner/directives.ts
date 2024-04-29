@@ -148,7 +148,7 @@ export const directives = {
                 onContextmenu: withModifiers(($event: any) => onContextmenu($event, props.comp, props.index), ['self', 'native', 'prevent', 'stop']),
                 // onDragstart: withModifiers((evt: any) => onDragStart(evt, props.comp), ['self', 'prevent']),
                 // onDragend: onDragend,
-                onDragover: withModifiers((evt: any) => onDragenter(props.index, props.comp), ['self', 'prevent']),
+                onDragover: withModifiers((evt: any) => onDragenter(props.index, props.comp, null, null), ['self', 'prevent']),
                 //onDrop: withModifiers(($event: any) => onDrop($event, null, null), ['self', 'stop']),
                 class: computedClass.value,
                 id: props.comp.id,

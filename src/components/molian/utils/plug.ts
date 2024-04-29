@@ -7,7 +7,7 @@ import {
 import { useUI, UIData, usePrefix, debug } from './UIMap'
 import type { App } from 'vue'
 import '@imengyu/vue3-context-menu/lib/vue3-context-menu.css';
-import ContextMenu from '@imengyu/vue3-context-menu';
+import ContextMenu from '@imengyu/vue3-context-menu/lib/vue3-context-menu.es';
 import VConsole from 'vconsole';
 import { Icon, addAPIProvider } from '@iconify/vue'
 import IconPicker from '@molianComps/icon-picker/index.vue'

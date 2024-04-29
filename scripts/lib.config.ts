@@ -5,6 +5,7 @@ import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
 import autoImport from 'unplugin-auto-import/vite'
 import components from 'unplugin-vue-components/vite'
 import visualizer from 'rollup-plugin-visualizer'
+import commonjs from '@rollup/plugin-commonjs';
 import dts from 'vite-plugin-dts'
 
 // https://vitejs.dev/config/
@@ -33,6 +34,7 @@ export default defineConfig({
       dts: './src/types/components.d.ts',
     }),
     visualizer(),
+    commonjs(),
     dts({ rollupTypes: true })
   ],
   resolve: {
@@ -45,6 +47,8 @@ export default defineConfig({
   build: {
     outDir: "libDist", //输出文件名称
     sourcemap: false,
+    minify: false,
+    // target: 'modules',
     lib: {
       entry: resolve(__dirname, "../src/lib-main.ts"), //指定组件编译入口文件
       name: "omni-magic-cube",

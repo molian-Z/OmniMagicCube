@@ -18,7 +18,9 @@ const props = defineProps(<{
     }
   })
 
-const value = getValue(props.modelValue, variable)
+const value = computed(() => {
+    return getValue(props.modelValue, variable)
+})
 </script>
 <template>
   <template v-for="comp in value" :key="comp.key">

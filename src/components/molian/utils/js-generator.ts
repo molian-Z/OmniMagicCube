@@ -44,7 +44,6 @@ export interface IAttrs {
 }
 // 创建JS函数
 export const createJS = function (compObj: IComp, globalAttrs: { lifecycle: any; variable: any }, type = "options") {
-  // console.log(globalAttrs.variable)
   const {
     lifecycle,
     variable
@@ -77,7 +76,7 @@ export const createJS = function (compObj: IComp, globalAttrs: { lifecycle: any;
         if(importModule.vue.indexOf("ref") === -1){
           importModule.vue.push("ref")
         }
-        return `  const ${key} = ref(${value || 'null' });\n`
+        return `  const ${key} = ref(${type === 'string' ? "'"+value+"'" : value || 'null' });\n`
       }
     }).join('\n')
 
@@ -144,7 +143,7 @@ export const createJS = function (compObj: IComp, globalAttrs: { lifecycle: any;
           variableObj.methods += `  ['${key}']: ${parseJSCode(value)},\n`
         }
       } else {
-        variableObj.data += `"${key}": ${value || 'null' },\n`
+        variableObj.data += `"${key}": ${type === 'string' ? '"'+value+'"' : value || 'null' },\n`
       }
     })
     // jsCode 写入

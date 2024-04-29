@@ -50,7 +50,9 @@ const variable = computed(() => {
     return globalAttrs.variable
 })
 
-const value = getValue(compData.value, variable)
+const value = computed(()=>{
+    return getValue(compData.value, variable)
+})
 
 const { onDrop, onDropSlot } = useDraggable(comps, compData, message)
 const setRef = async (el: any, comp: any, index: any) => {

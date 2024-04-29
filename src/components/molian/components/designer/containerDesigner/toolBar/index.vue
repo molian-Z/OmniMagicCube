@@ -25,6 +25,7 @@ const runRedo = () => {
         </div>
       </div>
     </div>
+    <slot name="left"></slot>
     <div class="toolBar-center">
       <div class="designer-history">
         <div>
@@ -36,9 +37,12 @@ const runRedo = () => {
         </div>
       </div>
     </div>
+    <slot name="center"></slot>
     <div class="toolBar-right">
       <!-- 右侧功能 -->
-      <toolBarRight></toolBarRight>
+      <toolBarRight>
+        <slot name="right"></slot>
+      </toolBarRight>
     </div>
   </div>
 </template>

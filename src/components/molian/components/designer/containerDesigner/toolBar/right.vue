@@ -56,7 +56,7 @@ const showRenderDialog = ref(false)
         <setting></setting>
       </template>
     </customPopup>
-
+    <slot></slot>
     <customDialog appendToBody header="效果预览" width="1200px" :close-on-click-modal="false"
       @escKeydown="showRenderDialog = false" @closeBtnClick="showRenderDialog = false"
       v-model:visible="showRenderDialog" destroyOnClose>

@@ -67,6 +67,10 @@ function parseTemplate(obj: { tag: any; attrs: any; on: any; nativeOn: any; dire
         // 遍历属性对象的属性
         const elementType = obj.attrs[key].type;
         let element = obj.attrs[key].value;
+        if (elementType === 'variable') {
+            console.log(element)
+            element = element.join('.')
+        }
         if(typeof element === 'object'){
           element = JSON.stringify(element)
         }

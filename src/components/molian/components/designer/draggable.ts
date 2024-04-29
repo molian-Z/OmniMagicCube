@@ -53,7 +53,7 @@ export const resetHover = function () {
   hoverIndex.value = null
 }
 
-export const onDragenter =  useThrottleFn((index: number, comp: { key: string | null }, type = null, compData) => {
+export const onDragenter =  useThrottleFn((index: number, comp: { key: string | null }, type: string | null | undefined = null, compData: any | undefined) => {
     if (index > -1) {
       dropIndex.value = index
     } else {

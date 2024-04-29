@@ -377,6 +377,10 @@ declare namespace CubeData {
              */
             [key: string]: {
                 /**
+                 * 变量的文本。
+                 */
+                label?: string;
+                /**
                  * 变量的类型。
                  */
                 type?: keyof ValueTypes;

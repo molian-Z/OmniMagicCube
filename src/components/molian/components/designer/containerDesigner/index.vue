@@ -87,7 +87,17 @@ const confirmDropContainer = async() =>{
 <template>
     <div class="container-designer" @click="onClick">
         <div class="container-body">
-            <toolBar class="container-toolbar" />
+            <toolBar class="container-toolbar" >
+                <template v-slot:left>
+                    <slot name="toolbar-left"></slot>
+                </template>
+                <template v-slot:center>
+                    <slot name="toolbar-center"></slot>
+                </template>
+                <template v-slot:right>
+                    <slot name="toolbar-right"></slot>
+                </template>
+            </toolBar>
             <div class="container-main" ref="containerRef">
                 <div class="container-draggable-body"
                     :style="{ width: layoutSize.width + 'px', height: layoutSize.height + 'px' }" @dragover.prevent

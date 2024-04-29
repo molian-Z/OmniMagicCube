@@ -29,58 +29,74 @@ import { nextTick } from 'vue';
 //   },
 // }
 
-export const customText = (el: { addEventListener?: (arg0: string, arg1: any) => void; textContent?: any; }, binding: { value: { directives: { text: any; }; directivesVariable: { text: any; }; }; }) => {
-  nextTick(() => {
-    const { text } = binding.value.directives
-    if (text.type === 'variable') {
-      const newText = binding.value.directivesVariable.text;
-      let currentText = newText;
-      if (typeof currentText === 'function') {
-        currentText = newText(el, binding);
-      }
-      if (typeof newText === 'object') {
-        currentText = JSON.stringify(currentText);
-      }
-      el.textContent = currentText
-    } else if (text.type === 'string') {
-      el.textContent = text.value;
-    }
-  })
+export const customText = (el: { childNodes: any[]; appendChild: (arg0: HTMLElement) => void; }, binding: { value: { directives: { text: any; }; directivesVariable: { text: any; }; }; }) => {
+    nextTick(() => {
+        const { text } = binding.value.directives
+        let textTag = document.createElement('text')
+        textTag.setAttribute('id', 'custom-text')
+        if (text.type === 'variable') {
+            const newText = binding.value.directivesVariable.text;
+            let currentText = newText;
+            if (typeof currentText === 'function') {
+                currentText = newText(el, binding);
+            }
+            if (typeof newText === 'object') {
+                currentText = JSON.stringify(currentText);
+            }
+            el.childNodes.forEach((item: { id: string; remove: () => void; }) => {
+                if(item.id === 'custom-text'){
+                    item.remove()
+                }
+            })
+            let tag = document.createTextNode(currentText)
+            textTag.appendChild(tag)
+            el.appendChild(textTag)
+        } else if (text.type === 'string') {
+            el.childNodes.forEach((item: { id: string; remove: () => void; }) => {
+                if(item.id === 'custom-text'){
+                    item.remove()
+                }
+            })
+            let tag = document.createTextNode(text.value)
+            textTag.appendChild(tag)
+            el.appendChild(textTag)
+            //el.innerText = text.value;
+        }
+    })
 }
 
 export const customOnce = {
-  mounted: (el: { _once: boolean; textContent: any; innerHTML: any; }, binding: { value: any; }) => {
-    el._once = true;
-    if (binding.value) {
-      el.textContent = binding.value;
-    } else {
-      el.textContent = el.innerHTML;
+    mounted: (el: { _once: boolean; textContent: any; innerHTML: any; }, binding: { value: any; }) => {
+        el._once = true;
+        if (binding.value) {
+            el.textContent = binding.value;
+        } else {
+            el.textContent = el.innerHTML;
+        }
+    },
+    updated: (el: { _once: any; textContent: any; }, binding: { value: any; }) => {
+        if (!el._once && binding.value) {
+            el.textContent = binding.value;
+        }
     }
-  },
-  updated: (el: { _once: any; textContent: any; }, binding: { value: any; }) => {
-    if (!el._once && binding.value) {
-      console.log(binding.value)
-      el.textContent = binding.value;
-    }
-  }
 }
 export default {
-  mounted(el: any, binding: any) {
-    if (el) {
-      if (!!binding.value.directives.text) {
-        customText(el, binding)
-      }
-      if (!!binding.value.directives.once) {
-        customOnce.mounted(el, binding)
-      }
-    }
-  },
-  updated(el: any, binding: any) {
-    if (!!binding.value.directives.text) {
-      customText(el, binding)
-    }
-    if (!!binding.value.directives.once) {
-      customOnce.updated(el, binding)
-    }
-  },
+    mounted(el: any, binding: any) {
+        if (el) {
+            if (!!binding.value.directives.text) {
+                customText(el, binding)
+            }
+            if (!!binding.value.directives.once) {
+                customOnce.mounted(el, binding)
+            }
+        }
+    },
+    updated(el: any, binding: any) {
+        if (!!binding.value.directives.text) {
+            customText(el, binding)
+        }
+        if (!!binding.value.directives.once) {
+            customOnce.updated(el, binding)
+        }
+    },
 }
