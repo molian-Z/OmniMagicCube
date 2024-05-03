@@ -349,7 +349,7 @@ declare namespace CubeData {
         /**
          * 导入配置。
          */
-        import?: {
+        import: {
             /**
              * 导入的键，可以是任意字符串。
              */
@@ -358,7 +358,7 @@ declare namespace CubeData {
         /**
          * 导出配置。
          */
-        export?: {
+        export: {
             /**
              * 导出的键，可以是任意字符串。
              */
@@ -367,11 +367,11 @@ declare namespace CubeData {
         /**
          * 生命周期钩子配置。
          */
-        lifecycle?: FunctionDefinition;
+        lifecycle: FunctionDefinition;
         /**
          * 变量配置。
          */
-        variable?: {
+        variable: {
             /**
              * 变量的键，可以是任意字符串。
              */

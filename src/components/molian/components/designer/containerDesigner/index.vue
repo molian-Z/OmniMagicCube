@@ -89,13 +89,13 @@ const confirmDropContainer = async() =>{
         <div class="container-body">
             <toolBar class="container-toolbar" >
                 <template v-slot:left>
-                    <slot name="toolbar-left"></slot>
+                    <slot name="toolbarLeft"></slot>
                 </template>
                 <template v-slot:center>
-                    <slot name="toolbar-center"></slot>
+                    <slot name="toolbarCenter"></slot>
                 </template>
                 <template v-slot:right>
-                    <slot name="toolbar-right"></slot>
+                    <slot name="toolbarRight"></slot>
                 </template>
             </toolBar>
             <div class="container-main" ref="containerRef">

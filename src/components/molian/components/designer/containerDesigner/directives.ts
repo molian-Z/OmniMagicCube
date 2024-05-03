@@ -10,7 +10,8 @@ import {
     compsRef,
     compsEl,
     selectedComp,
-    globalAttrs
+    globalAttrs,
+    variableData
 } from '../designerData'
 import {
     isDraggable,
@@ -132,10 +133,6 @@ export const directives = {
             }
         })
 
-        const variable = computed(() => {
-            return globalAttrs.variable
-        })
-
         // 自定义指令支持
         const currentTag = comps.value[props.comp.name].comp ? markRaw(comps.value[props.comp.name].comp) : comps.value[props.comp.name].name
         const renderDom: any = (domForAttr: { row?: any; index?: any; keyProps?: any; type?: any }) => {
@@ -195,7 +192,7 @@ export const directives = {
             }
         }
         let newForEachList = computed(() => {
-            return getForEachList(props.comp, variable)
+            return getForEachList(props.comp, variableData)
         })
         // 出现极端情况解决方案。如元素不存在以及无法对元素进行修改的情况
         // 监听inheritAttrs未false的组件

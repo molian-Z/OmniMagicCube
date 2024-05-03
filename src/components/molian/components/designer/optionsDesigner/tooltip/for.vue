@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { inject, computed, defineEmits, defineProps } from 'vue'
 import { deepObjToArray } from '@molian/utils/util'
-import { selectedComp, globalAttrs } from '../../designerData'
+import { selectedComp, globalAttrs, variableData } from '../../designerData'
 import svgIcon from '@molianComps/svg-icon/index.vue'
-import { getVariableData } from '@molian/utils/customFunction'
+import { data2Vars } from '@molian/utils/useCore'
 defineProps({
   title:{
     type: String,
@@ -87,11 +87,8 @@ const changeValue = function(val: any, option: any, pathValues: any){
   }
 }
 
-const variable = computed(() => {
-    return globalAttrs.variable
-})
-const value =  computed(()=>{
-  return getVariableData(directives.value, variable)
+const value = computed(()=>{
+  return data2Vars(directives.value, variableData.value)
 })
 </script>
 <template>

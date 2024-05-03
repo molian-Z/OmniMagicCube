@@ -14,6 +14,7 @@ import {
 import { logicAnd } from '@vueuse/math'
 import { hoverNodes, hoverIndex, resetDraggable } from './draggable'
 import { deviceList } from '@molian/utils/device'
+import { getVariableData } from '@molian/utils/customFunction'
 
 // 菜单交互
 export const hiddenAllPanel = ref(false)
@@ -40,7 +41,9 @@ const store = useStorage('history', {
 // 数据
 export const modelValue = ref<CubeData.ModelValue[]>(store.value.modelValue && store.value.modelValue.length > 0 ? store.value.modelValue[0].snapshot : [])
 export const globalAttrs = reactive<CubeData.GlobalAttrs>(store.value.globalAttrs)
-
+export const variableData = computed(() => {
+    return getVariableData(globalAttrs.variable)
+})
 // 清空画布
 export const clearCanvas = () => {
     modelValue.value = []

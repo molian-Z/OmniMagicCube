@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { computed, inject, defineOptions, defineProps, defineEmits, nextTick } from 'vue'
 import { directives } from './directives'
-import { compsRef, globalAttrs, selectedComp, compsEl } from '../designerData'
+import { compsRef, globalAttrs, selectedComp, compsEl, variableData } from '../designerData'
 import { isDraggable, dropKey, useDraggable, dropType, onDragenter } from '../draggable'
-import { getValue } from '@molian/utils/useCore'
+import { data2Vars, getValue } from '@molian/utils/useCore'
 import { useElementBounding } from '@vueuse/core'
 defineOptions({
     name: 'deepTree'
@@ -46,12 +46,9 @@ const empty = computed(() => {
     return t('container.empty')
 })
 
-const variable = computed(() => {
-    return globalAttrs.variable
-})
-
 const value = computed(()=>{
-    return getValue(compData.value, variable)
+    // return data2Vars(directives.value, variableData.value)
+    return getValue(compData.value, variableData.value, {}, 'designer')
 })
 
 const { onDrop, onDropSlot } = useDraggable(comps, compData, message)

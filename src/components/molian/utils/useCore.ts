@@ -1,63 +1,58 @@
-import { computed } from 'vue'
 import { getCurrentOn, getVariableData } from '@molian/utils/customFunction'
 
 // 循环判断
-export const isFor = (comp: { directivesVariable: any; }) => {
+export const isFor = (comp: any) => {
+    let isFor = true
     if (isIf(comp)) {
-        const { directivesVariable } = comp
-        if (!directivesVariable.for) {
-            return false
+        const { directives, vars } = comp
+        if (!directives.for) {
+            isFor = false
+        }else{
+            isFor = data2Vars(directives.for, vars)
         }
-        return !!directivesVariable.for
     }
-    return false
+    return !!isFor
 }
 
 // 渲染判断
-export const isIf = (comp: { directivesVariable: any; }) => {
-    const { directivesVariable } = comp
-    if (!directivesVariable.if && directivesVariable.if !== false || directivesVariable.if === true) {
-        return true
+export const isIf = (comp: any) => {
+    const { directives, vars } = comp
+    let isIf = true
+    if(!!directives.if){
+        isIf = data2Vars(directives.if, vars)
     }
-    return !!directivesVariable.if
+    return !!isIf
 }
 
 // 显示判断
-export const isShow = (comp: { directivesVariable: any; }) => {
-    const { show } = comp.directivesVariable || null
-    if (!show && show !== false || show === true) {
-        return true
+export const isShow = (comp: any) => {
+    const { directives, vars } = comp
+    const { show } = directives || null
+    let isShow = true
+    if(!!show){
+        isShow = data2Vars(show, vars)
     }
-    return !!show
+    return !!isShow
 }
 
-export const getValue = (modelValue: any, variable: globalThis.Ref<{ [key: string]: any; }> | globalThis.ComputedRef<{
-        [key: string]: {
-            type?: keyof ValueTypes |
-            // 循环判断
-            undefined; value?: any;
-        };
-    } | undefined>) => {
+export const getValue = (modelValue: any, variable: any, expandAPI: any, type?: 'designer') => {
     return modelValue.map((item: { directives: { [x: string]: { [x: string]: any; type: any; value: any } }; on: { [x: string]: any }; nativeOn: { [x: string]: any } }) => {
-        let directivesVariable: {
-            [key: string]: any;
-        } = {}
-        Object.keys(item.directives).forEach(key => {
-            if (!item.directives[key]) return false;
-            directivesVariable[key] = getVariableData(item.directives[key], variable)
-        })
+        // Object.keys(item.directives).forEach(key => {
+        //     if (!item.directives[key]) return false;
+        //     vars[key] = getVariableData(item.directives[key], variable)
+        // })
         return {
-            directivesVariable,
-            cacheOn: getCurrentOn({ on: item.on, nativeOn: item.nativeOn }, variable),
+            vars: variable,
+            cacheOn: type === 'designer' ? {} : getCurrentOn({ on: item.on, nativeOn: item.nativeOn }, variable, expandAPI),
             ...item
         }
     })
 }
 
 // 获取循环列表数据
-export const getForEachList = function (comp: { directives: { [x: string]: { [x: string]: any; type: any; value: any; }; for?: any; }; directivesVariable: { for: any; }; }, variable: globalThis.ComputedRef<any>) {
+export const getForEachList = function (comp: any, variable: any) {
     if (comp.directives && comp.directives.for && comp.directives.for.type === 'variable') {
-        let forEachData = getVariableData(comp.directives.for, variable)
+        let forEachData = data2Vars(comp.directives.for, variable.value)
         if (typeof forEachData === 'function') {
             forEachData = forEachData(comp)
         }
@@ -177,4 +172,24 @@ export const isNotSlot = (slots: { [x: string]: any; }) => {
         }
     }
     return notSlot
+}
+
+/**
+ * 对数据进行变量化处理
+ * @params compRef 组件id
+ * @params level 上下文层级
+ */
+export const data2Vars = (directive: any, vars: any) => {
+    const { type, value } = directive
+    let newVal: any = []
+    if (type === 'variable') {
+        value.forEach((item: string | number, index: number) => {
+            if (index === 0) {
+                newVal = vars[item]
+            } else {
+                newVal = newVal[item]
+            }
+        })
+    }
+    return newVal
 }
