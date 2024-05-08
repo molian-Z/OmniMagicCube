@@ -31,5 +31,26 @@
     "right": "排列右侧",
     "stretch": "伸展",
     "baseline": "基线"
+  },
+  "flexWrap":"开启换行",
+  
+  "MlSubContainer":{
+    "flexBasis":"宽度或高度",
+    "flexGrow":"剩余空间占比",
+    "flexShrink": "空间不足缩比",
+    "order": "容器排序"
+  },
+  "SvgIcon":{
+    "icon":"选择图标",
+    "flip": "图标翻转",
+    "rotate":"图标旋转",
+    "color":"图标颜色",
+    "size": "图标大小",
+    "flip_optionItems":{
+        "":"无翻转",
+        "horizontal":"水平翻转",
+        "vertical": "垂直翻转",
+        "both":"镜像翻转"
+    }
   }
 }

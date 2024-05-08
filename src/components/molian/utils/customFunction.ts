@@ -22,7 +22,7 @@ export const runLifecycle = function (lifecycle: any, variable: any, expandAPI: 
             const { code, codeVar } = value;
             if (!defaultLifecycleMap[key].function) {
                 const runFn: any = createFunc(type, codeVar, code)
-                runFn.bind({ app: Vue, var: variable, expandAPI }).call([])
+                runFn.bind({ app: Vue, vars: variable, ...expandAPI }).call([])
             } else {
                 defaultLifecycleMap[key].function(function () {
                     const _args: any[] = []
@@ -31,7 +31,7 @@ export const runLifecycle = function (lifecycle: any, variable: any, expandAPI: 
                         _args.push(newVar)
                     }
                     const runFn: any = createFunc(type, codeVar, code)
-                    runFn.bind({ app: Vue, var: variable, expandAPI }).call(..._args)
+                    runFn.bind({ app: Vue, vars: variable, ...expandAPI }).call(..._args)
                 })
             }
         }
@@ -47,7 +47,7 @@ export const runOn = function (data: { value: any }, variable: any, expandAPI: a
             prefixCode += `const ${item} = arguments[${index}];\n`
         })
     }
-    return createFunc(functionMode, [], prefixCode + code).bind({ app: Vue, var: variable, expandAPI })
+    return createFunc(functionMode, [], prefixCode + code).bind({ app: Vue, vars: variable, ...expandAPI })
 }
 
 export const runModifier = function (key: string, data: { [x: string]: { value: { modifiers: any[] } } }) {
@@ -105,14 +105,14 @@ export const getCurrentOn = (data: { on: any; nativeOn: any }, variable: globalT
     return mergeProps(newOn, newNativeOn)
 }
 
-export const getVariableData = (variable: { [x: string]: any; }) => {
+export const getVariableData = (variable: { [x: string]: any; }, expandAPI: any) => {
     const vars = reactive<any>({})
     const { cloned } = useCloned(variable)
     Object.keys(cloned.value).forEach(key => {
         const { type, value } = cloned.value[key]
         if (type === 'function') {
             if (!!value.functionMode && ['asyncFunction', 'function'].indexOf(value.functionMode) > -1) {
-                vars[key] = createFunc(value.functionMode, value.codeVar, value.code)
+                vars[key] = createFunc(value.functionMode, value.codeVar, value.code).bind({ app: Vue, vars: variable, ...expandAPI })
             } else if (!!value.functionMode && value.functionMode === 'computed') {
                 console.log(cloned.value)
             }

@@ -146,7 +146,7 @@ const clickIcon = function (key: string | number, value: any) {
             <div class="designer-container__body">
                 <div class="designer-list-item between">
                     <colorPicker size="small" use-type="pure" :disabled="!selectedComp" v-model="css.color.modelValue" />
-                    <svg-icon class="css-svg-icon mg-left-base" :icon="css.color.isShow ? 'ic_eye' : 'ic_eye_close'"
+                    <svg-icon class="css-svg-icon mg-left-base link-icon" :icon="css.color.isShow ? 'ic_eye' : 'ic_eye_close'"
                         @click="css.color.isShow = !css.color.isShow" />
                 </div>
             </div>
@@ -163,6 +163,7 @@ const clickIcon = function (key: string | number, value: any) {
 .f-icon {
     width: 24px !important;
     height: 24px !important;
+    font-size:24px;
     margin-left: var(--ml-mg-base) !important;
     padding: 0 !important;
 }

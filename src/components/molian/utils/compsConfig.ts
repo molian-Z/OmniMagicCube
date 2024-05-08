@@ -16,7 +16,7 @@ import {
     defaultSlotsMap,
     defaultAttrsMap
 } from './defaultData'
-import {useUI, UIData, usePrefix} from './UIMap'
+import { useUI, UIData, usePrefix } from './UIMap'
 import {
     createControl
 } from './importUIControl'
@@ -87,11 +87,11 @@ export const parseSlot = function (slots: { [x: string]: any }) {
  * @param {* 键} key
  * @param {*组件} component 
  */
-const parseComp = function (key: string, element: { emits: any[]; props: any; slotsOption: { [x: string]: any } }, allowRegPropsAndEmit: any) {
+const parseComp = function (key: string, element: any, allowRegPropsAndEmit: any, comps: any) {
     const currentEmits = [],
         currentUpdateModel = [],
         currentProps: { [key: string]: any } = {};
-
+    let orderIndex = 99
     let autoSlots: { [key: string]: any } = {};
     if (element.emits) {
         if (Array.isArray(element.emits)) {
@@ -150,27 +150,37 @@ const parseComp = function (key: string, element: { emits: any[]; props: any; sl
         }
     }
     const findCate = categoryList.value.find(item => {
-        return item.rule && item.rule.test(key)
+        if (item.rule) {
+            return item.rule && item.rule.test(key)
+        } else if (item.component) {
+            let btn = false
+            item.component.forEach((mItem: string | RegExp, index :number) => {
+                if(mItem instanceof RegExp){
+                    if(mItem.test(key)){
+                        btn = true
+                        orderIndex = index
+                    }
+                }else if(mItem === key){
+                    btn = true
+                    orderIndex = index
+                }
+            })
+            return btn
+        }
     })
-
-    const slots: {
-        [key: string]: any
-    } = slotsMap.value[key]
     // defineSlots暂不支持JS
     // if(element.slots){
     //     console.log(element.slots(),element)
     // }
     // slotsOption 暂且使用该方案
-    if (element.slotsOption) {
-        for (const eskey in element.slotsOption) {
-            if (Object.hasOwnProperty.call(element.slotsOption, eskey)) {
-                const slot = element.slotsOption[key];
-                if (!slots[eskey]) {
-                    slots[eskey] = slot
-                }
-            }
-        }
+    if (!!element.slotsOption) {
+        slotsMap.value[element.name] = element.slotsOption
     }
+
+    const slots: {
+        [key: string]: any
+    } = slotsMap.value[key]
+
     autoSlots = parseSlot(slots)
     if (!!defaultAttrsMap[key]) {
         const attrs = defaultAttrsMap[key]
@@ -183,10 +193,10 @@ const parseComp = function (key: string, element: { emits: any[]; props: any; sl
             }
         }
     }
-    const useCurrentUI = UIData.find((item) => useUI.value === item.name )
-    if(!!useCurrentUI && !!useCurrentUI.removeAttrs){
-        useCurrentUI.removeAttrs.forEach(item =>{
-            if(currentProps[item]){
+    const useCurrentUI = UIData.find((item) => useUI.value === item.name)
+    if (!!useCurrentUI && !!useCurrentUI.removeAttrs) {
+        useCurrentUI.removeAttrs.forEach(item => {
+            if (currentProps[item]) {
                 delete currentProps[item]
             }
         })
@@ -198,8 +208,9 @@ const parseComp = function (key: string, element: { emits: any[]; props: any; sl
         props: currentProps, // 所有属性(是否应写入对应组件)
         comp: element,
         slots: autoSlots,
-        inheritAttrs:element.inheritAttrs,
-        category: findCate ? findCate.name : '' // 此处应根据cateRules判断显示节点
+        inheritAttrs: element.inheritAttrs,
+        category: findCate ? findCate.name : '', // 此处应根据cateRules判断显示节点
+        orderIndex
     }
 }
 
@@ -245,7 +256,7 @@ const registerComps = function (app: { _context: { components: any }; provide: (
         }
         if (Object.hasOwnProperty.call(comps, key)) {
             const element = comps[key];
-            newComps[key] = parseComp(key, element, allowRegPropsAndEmit)
+            newComps[key] = parseComp(key, element, allowRegPropsAndEmit, comps)
             let prefixObj: any = null
             if (!!usePrefix.value) {
                 prefixObj = UIData.find((fitem: { prefix: string }) => {
@@ -261,25 +272,6 @@ const registerComps = function (app: { _context: { components: any }; provide: (
             newComps[key].title = t('component.' + newComps[key].name.substring(newComps[key].prefix.length))
         }
     }
-
-    defaultCategory.forEach((item: any) => {
-        if (item.component) {
-            item.component.forEach((mItem: string | number) => {
-                if (typeof mItem === 'string') {
-                    newComps[mItem] = {
-                        name: mItem,
-                        title: t('component.' + mItem),
-                        prefix: '',
-                        category: item.name,
-                        emits: [],
-                        props: {},
-                        slots: { default: { children: [] } },
-                        updateModel: [],
-                    }
-                }
-            })
-        }
-    })
     currentRegComps.value = newComps
     getCloudData()
         .catch((err: any) => {
@@ -326,7 +318,7 @@ export const compsInstall = function (app: App<any>, options: { globalComps: any
     registerGlobalComps(app, options.globalComps)
 }
 
-function parseProps(obj: { map: (arg0: (item: any) => "string" | "boolean" | "number" | "array" | "object" | "function" | "date" | "regexp" | "symbol" | "map" | "promise" | "input") => any; required: any; validator: any; type: any[]; default: () => any }, key: null | string | number, testKey?:string) {
+function parseProps(obj: any, key: null | string | number, testKey?: string) {
     let newObj = {}
     if (obj && Array.isArray(obj)) {
         newObj = {
@@ -343,10 +335,10 @@ function parseProps(obj: { map: (arg0: (item: any) => "string" | "boolean" | "nu
         if (obj.type) {
             if (Array.isArray(obj.type)) {
                 propObj.type = obj.type.map((item: any) => {
-                    return getPropType(item)
+                    return getPropType(item, obj.expandType)
                 })
             } else {
-                propObj.type = getPropType(obj.type)
+                propObj.type = getPropType(obj.type, obj.expandType)
             }
         }
         // if (propObj.type == 'array' || propObj.type === 'object') {
@@ -382,9 +374,10 @@ function parseProps(obj: { map: (arg0: (item: any) => "string" | "boolean" | "nu
  * @param {any} fun - 传入的参数
  * @returns {string} - 返回属性类型
  */
-function getPropType(fun: { name: any }) {
-    if (!fun) return 'string';
-    switch (fun.name) {
+function getPropType(fun: { name: any }, expandType ?:any) {
+    if (!fun && !expandType) return 'string';
+    let propType = expandType || fun.name
+    switch (propType) {
         case 'Boolean':
             return 'boolean';
         case 'String':
@@ -407,6 +400,10 @@ function getPropType(fun: { name: any }) {
             return 'map';
         case 'Promise':
             return 'promise';
+        case 'Icon':
+            return 'icon';
+        case 'Color':
+            return 'color';
         default:
             return 'input';
     }

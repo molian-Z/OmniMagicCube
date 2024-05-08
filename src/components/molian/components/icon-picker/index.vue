@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, defineModel, onMounted, computed, defineProps, inject, defineOptions } from 'vue'
-import { getIcon } from '@iconify/vue'
+import { getIcon, Icon } from '@iconify/vue'
 import Pagination from '@molianComps/pagination/index.vue'
 import { iconifyUrl } from '@molian/utils/defaultData'
 defineOptions({

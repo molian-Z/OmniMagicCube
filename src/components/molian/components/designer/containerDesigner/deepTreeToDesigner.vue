@@ -69,8 +69,8 @@ const setRef = async (el: any, comp: any, index: any) => {
     if (height.value < 10) {
         pd[0] = '10px'
     }
-    if (width.value < 26) {
-        pd[1] = '26px'
+    if (width.value < 10) {
+        pd[1] = '10px'
     }
     if(pd[0] !== '0' || pd[1] !== '0'){
         compsRef[comp.id].style.padding = `${pd[0]} ${pd[1]}`

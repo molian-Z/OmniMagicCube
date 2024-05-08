@@ -125,7 +125,7 @@ export const directives = {
 
         const computedClass = computed(() => {
             return {
-                'designer-comp': comps.value[props.comp.name].inheritAttrs !== false,
+                'designer-comp': comps.value[props.comp.name] && comps.value[props.comp.name].inheritAttrs !== false,
                 'hiddenComps': dragIndex.value === props.index,
                 'is-margin': dropIndex.value === props.index && isDraggable.value,
                 'selectedComp': selectedComp && selectedComp.value && selectedComp.value.key === props.comp.key,
@@ -134,7 +134,12 @@ export const directives = {
         })
 
         // 自定义指令支持
-        const currentTag = comps.value[props.comp.name].comp ? markRaw(comps.value[props.comp.name].comp) : comps.value[props.comp.name].name
+        let currentTag = ""
+        if(!comps.value[props.comp.name]){
+            currentTag = 'div'
+        }else{
+            currentTag = comps.value[props.comp.name].comp ? markRaw(comps.value[props.comp.name].comp) : comps.value[props.comp.name].name
+        }
         const renderDom: any = (domForAttr: { row?: any; index?: any; keyProps?: any; type?: any }) => {
             const { row, index, keyProps, type } = domForAttr
             const attrObj = {
@@ -150,6 +155,7 @@ export const directives = {
                 class: computedClass.value,
                 id: props.comp.id,
                 ['data-key']: props.comp.key,
+                isDesigner: true,
                 ref: elRef
             }
             if (index >= 0) {

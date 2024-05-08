@@ -434,7 +434,7 @@ declare namespace IConfig {
     type IDefaultCategory = {
         icon?: string;
         name?: string;
-        component?: (string)[];
+        component?: string[] | RegExp[];
         rule?: RegExp;
     };
     interface IDefaultAttrsMap {

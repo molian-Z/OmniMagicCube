@@ -131,6 +131,7 @@ defineExpose({
 
         &.active {
             border-color: var(--ml-primary-color-1);
+            color: var(--ml-primary-color);
             width: 160px;
         }
     }

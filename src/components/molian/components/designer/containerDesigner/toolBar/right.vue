@@ -82,6 +82,7 @@ const showRenderDialog = ref(false)
       cursor: pointer;
       width: 30px;
       height: 30px;
+      font-size: 30px;
       transition: var(--ml-transition-base);
       fill: var(--ml-primary-color);
       margin: 0;

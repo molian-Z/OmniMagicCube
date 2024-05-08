@@ -263,6 +263,7 @@ const closePanel = function (evt: any) {
                 &.is-active {
                     .float-panel-icon {
                         fill: var(--ml-primary-color-hover);
+                        color: var(--ml-primary-color-hover);
                     }
 
                     .float-panel-item-text {

@@ -63,6 +63,7 @@ const runRedo = () => {
     .logo {
       width: 36px;
       height: 36px;
+      font-size: 36px;
       margin: 0;
     }
 

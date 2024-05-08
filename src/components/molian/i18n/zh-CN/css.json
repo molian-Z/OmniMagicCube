@@ -15,6 +15,7 @@
         "padding":"内边距"
     },
     "const":"约束",
+    "position":"定位",
     "constX":"水平约束",
     "constY":"垂直约束",
     "moveX":"水平移动",
@@ -37,6 +38,13 @@
         "center":"居中约束",
         "bottom":"底部约束",
         "top2bottom":"两端约束"
+    },
+    "positions":{
+        "normal":"默认",
+        "static":"静态定位",
+        "relative":"相对定位",
+        "absolute":"绝对定位",
+        "fixed":"固定定位"
     },
     "transform":"变换",
     "fill":"填充",

@@ -10,6 +10,9 @@
     "more":"更多",
     "other":"其他"
   },
+  "MlVerticalContainer": "垂直布局容器",
+  "MlHorizontalContainer":"水平布局容器",
+  "MlSubContainer":"布局子容器",
   "div":"区块",
   "span":"行内",
   "ul":"列表",
@@ -20,6 +23,8 @@
   "Button":"按钮",
   "Affix":"固钉",
   "Icon":"图标",
+  "IconPicker":"图标选择器",
+  "SvgIcon":"图标",
   "Link":"连接",
   "Divider":"分割线",
   "Grid":"栅格",

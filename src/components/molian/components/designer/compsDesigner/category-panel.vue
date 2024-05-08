@@ -24,6 +24,8 @@ const getCurrentUI = computed(() => {
 const compList: any = computed(() => {
     return Object.values(comps.value).filter((item: any) => {
         return item.category === props.currentData.name && (getCurrentUI.value === 'all' || item.prefix === getCurrentUI.value.prefix || item.category === 'basic')
+    }).sort((a:any,b:any) => {
+        return a.orderIndex - b.orderIndex
     })
 })
 const onDragStart = function (evt: any, item: { name: any }) {

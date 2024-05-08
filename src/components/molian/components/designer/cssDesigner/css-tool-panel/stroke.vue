@@ -39,7 +39,7 @@ const deleteBorder = function (index: number) {
     <div :class="['designer-container', !selectedComp && 'disabled']">
         <div class="designer-container__body-title">
             <span>{{ t('css.stroke') }}</span>
-            <svg-icon class="css-svg-icon" icon="add" @click="addBorder"></svg-icon>
+            <svg-icon class="css-svg-icon link-icon" icon="add" @click="addBorder"></svg-icon>
         </div>
         <div :class="['designer-container__body', index > 0 && 'designer-mg-top']" v-for="(border, index) in css"
             :key="index">
@@ -49,9 +49,12 @@ const deleteBorder = function (index: number) {
                         <svg-icon :icon="item === 'all' ? `border` : `border-${item}`"></svg-icon>
                     </customRadioButton>
                 </customRadioGroup>
-                <svg-icon class="css-svg-icon" :icon="border.isShow ? 'ic_eye' : 'ic_eye_close'"
+                <div style="display:flex;">
+                    <svg-icon class="css-svg-icon link-icon" :icon="border.isShow ? 'ic_eye' : 'ic_eye_close'"
                     @click="border.isShow = !border.isShow" />
-                <svg-icon class="css-svg-icon" icon="delete" @click="deleteBorder(index)"></svg-icon>
+                <svg-icon class="css-svg-icon link-icon" icon="delete" @click="deleteBorder(index)"></svg-icon>
+                </div>
+                
             </div>
             <div class="designer-list-item">
                 <colorPicker class="designer-input" size="small" use-type="pure" :disabled="!selectedComp"

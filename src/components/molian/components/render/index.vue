@@ -40,7 +40,7 @@ const {
 } = useStyleTag('')
 
 watch(() => props.globalAttrs, (newVal) => {
-    variable.value = getVariableData(newVal.variable)
+    variable.value = getVariableData(newVal.variable, props.expandAPI)
     lifecycle.value = newVal.lifecycle
     // 执行生命周期
     runLifecycle(lifecycle, variable.value, props.expandAPI)

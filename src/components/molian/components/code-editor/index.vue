@@ -344,7 +344,6 @@ export default {
           data = beautifier.html(this.modelValue)
         }
       })
-      console.log(data)
       this.setValue(data)
     },
   }

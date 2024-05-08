@@ -29,7 +29,7 @@ const currentBounding = computed(() => {
 <template>
   <div class="drag-shadow" :style="currentBounding" v-if="hoverComp">
     <div class="drag-tips">
-      <svg-icon class="drag-icon" :icon="hoverComp.icon || 'comps-default'" />
+      <svg-icon size="22" class="drag-icon" :icon="hoverComp.icon || 'comps-default'" />
       <div class="drag-title">
         <div class="drag-title-text">{{ t('component.' + comps[hoverComp.name].title) }}</div>
         <div class="drag-title__desc">{{ hoverComp.name }}</div>

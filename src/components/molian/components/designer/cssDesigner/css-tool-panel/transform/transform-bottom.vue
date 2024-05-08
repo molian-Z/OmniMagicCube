@@ -39,6 +39,23 @@ const topOptions = ref([{
     value: 'top2bottom'
 }])
 
+const positionOptions = ref([{
+    label: t('css.positions.normal'),
+    value: ''
+}, {
+    label: t('css.positions.relative'),
+    value: 'relative'
+},{
+    label: t('css.positions.absolute'),
+    value: 'absolute'
+},{
+    label: t('css.positions.static'),
+    value: 'static'
+},{
+    label: t('css.positions.fixed'),
+    value: 'fixed'
+}])
+
 const svgClick = function (val: string | any) {
     const { constY, constX } = css.value
     if (['top', 'bottom', 'top2bottom'].indexOf(val) > -1) {
@@ -95,6 +112,9 @@ const svgClick = function (val: string | any) {
                 </svg>
             </div>
             <div class="transform-constraints_pos">
+                <customSelect class="transform-constraints_pos-input" :disabled="!selectedComp"
+                    :options="positionOptions" :placeholder="t('css.position')" v-model="css.position">
+                </customSelect>
                 <customSelect class="transform-constraints_pos-input" :disabled="!selectedComp"
                     :options="leftOptions" :placeholder="t('css.constX')" v-model="css.constX">
                     <template #prefixIcon>

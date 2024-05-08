@@ -2,6 +2,8 @@
 import { ref, computed, defineOptions, inject, defineProps, withDefaults } from 'vue';
 import { deepObjToArray } from '@molian/utils/util'
 import svgIcon from '@molianComps/svg-icon/index.vue'
+import IconPicker from '@molianComps/icon-picker/index.vue'
+import colorPicker from '@molianComps/color-picker/index.vue'
 import codeInput from '@molianComps/code-input/index.vue'
 import { globalAttrs } from '../designer/designerData'
 const t: any = inject('mlLangs')
@@ -63,7 +65,10 @@ const variableValue = computed({
 
 const getOptionItemI18n = (optionItems: any[]) => {
     return optionItems.map(item => {
-        const langStr = t('attrs.' + props.keyName + '.' + item)
+        let langStr = t(`attrs.${props.selectedComp.name}.${props.keyName}_optionItems.${item}`)
+        if(!langStr){
+            langStr = t('attrs.' + props.keyName + '.' + item)
+        }
         return {
             label: langStr === item ? t('attrs.' + item) : langStr,
             value: item
@@ -143,6 +148,8 @@ const tabType = () => {
                     v-else-if="propData.optionItems" />
                 <customInputNumber size="small" v-model="value" v-else-if="type === 'number'">
                 </customInputNumber>
+                <icon-picker v-model="value" :size="28" v-else-if="type === 'icon'"></icon-picker>
+                <colorPicker size="small" use-type="pure"  v-model="value" v-else-if="type === 'color'" />
                 <codeInput :isModifiers="isModifiers" :defaultData="propData" :mode="type" :keyName="keyName"
                     v-model="value" v-else-if="['promise', 'function', 'object', 'array'].indexOf(type) > -1" />
                 <customInput size="small" v-model="value" v-else></customInput>

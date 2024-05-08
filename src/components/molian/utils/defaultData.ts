@@ -7,11 +7,11 @@ import { useStorage } from '@vueuse/core'
 export const defaultCategory: IConfig.IDefaultCategory[] = [{
     icon: 'basic',
     name: 'basic',
-    component: ['div', 'span', 'ul', 'li', 'text']
+    component: ['MlHorizontalContainer', 'MlVerticalContainer', 'MlSubContainer', 'div', 'span', 'text', 'SvgIcon', 'IconPicker']
 }, {
     icon: 'container',
     name: 'layout',
-    rule: /.*(Row|Col|Container|Header|Main|Footer|Aside|Layout|Grid|Cell|Split|List).*/
+    component: [/.*Layout.*/, /.*Container.*/, /.*Header.*/, /.*Main.*/, /.*Footer.*/, /.*Aside.*/, /.*Grid.*/, /.*Cell.*/, /.*Split.*/, /.*List.*/,/.*Row.*/, /.*Col.*/]
 }, {
     icon: 'menu',
     name: 'menu',
@@ -58,11 +58,19 @@ export const defaultAttrsMap: IConfig.IDefaultAttrsMap = {
             default: 'center',
             optionItems: ['start', 'end', 'center', 'space-around', 'space-between', 'space-evenly']
         }
-    }
+    },
+    SvgIcon: {
+        icon: {
+            default: 'comps-default'
+        },
+        size: {
+            default: 32
+        },
+    },
 }
 
 /**
- * defaultAttrsMap 默认原生事件映射表
+ * defaultNativeEventMap 默认原生事件映射表
  */
 export const defaultNativeEventMap: IConfig.IEventMap = {
     click: ['evt'], //点击

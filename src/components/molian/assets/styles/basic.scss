@@ -17,6 +17,7 @@
   border-bottom-left-radius: 0;
   color: var(--ml-text-color-1);
 }
+
 .designer-container {
   height: 420px;
   overflow-y: auto;
@@ -81,10 +82,6 @@
     .designer-input-base+.designer-input-small,
     .mg-left-base {
       margin-left: var(--ml-mg-base);
-    }
-
-    .link-icon {
-      margin-left: var(--ml-mg-small);
     }
   }
 
@@ -287,6 +284,15 @@
     background-color: var(--ml-bg-color);
     cursor: auto;
   }
+}
+
+.link-icon {
+  margin-left: var(--ml-mg-small) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 28px !important;
+  height: 28px !important;
 }
 
 .toolbar-icon {

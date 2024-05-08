@@ -82,7 +82,7 @@ const updateBlurValue = function(val: any){
                         <span class="suffix-tag">%</span>
                     </template>
                 </customInput>
-                <svg-icon class="css-svg-icon" :icon="!!css.mixBlendMode.isShow ? 'ic_eye' : 'ic_eye_close'"
+                <svg-icon class="css-svg-icon link-icon" :icon="!!css.mixBlendMode.isShow ? 'ic_eye' : 'ic_eye_close'"
                     @click="iconClick('mixBlendMode')" />
             </div>
         </div>
@@ -107,21 +107,23 @@ const updateBlurValue = function(val: any){
                         <span class="suffix-tag">px</span>
                     </template>
                 </customInput>
-                <svg-icon class="css-svg-icon" :icon="!!css.blur.isShow ? 'ic_eye' : 'ic_eye_close'"
+                <svg-icon class="css-svg-icon link-icon" :icon="!!css.blur.isShow ? 'ic_eye' : 'ic_eye_close'"
                     @click="iconClick('blur')" />
             </div>
         </div>
 
         <div class="designer-container__body-title designer-mg-top">
             <span>{{ t('css.effectObj.shadow') }}</span>
-            <svg-icon class="css-svg-icon" icon="add" @click="addShadow"></svg-icon>
+            <svg-icon class="css-svg-icon link-icon" icon="add" @click="addShadow"></svg-icon>
         </div>
         <div :class="['designer-container__body', index > 0 && 'designer-mg-top']" v-for="(item, index) in css.boxShadow" :key="index">
             <div class="designer-list-item between">
                 <colorPicker class="designer-input" size="small" use-type="pure" :disabled="!selectedComp" v-model="item.color" />
-                <svg-icon class="css-svg-icon" :icon="!!item.isShow ? 'ic_eye' : 'ic_eye_close'"
+                <div style="display:flex;">
+                    <svg-icon class="css-svg-icon link-icon" :icon="!!item.isShow ? 'ic_eye' : 'ic_eye_close'"
                     @click="iconClickVar(item)" />
-                    <svg-icon class="css-svg-icon" icon="delete" @click="deleteShadow(index)"></svg-icon>
+                    <svg-icon class="css-svg-icon link-icon" icon="delete" @click="deleteShadow(index)"></svg-icon>
+                </div>
             </div>
             <div class="designer-list-item">
                 <customInput class="designer-input-base" size="small" :placeholder="t('css.hX')" v-model="item.h">

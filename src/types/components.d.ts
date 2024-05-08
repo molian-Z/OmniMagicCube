@@ -37,6 +37,7 @@ declare module 'vue' {
     FullLoading1: typeof import('./../components/molian/components/loading/full-loading-1.vue')['default']
     GlobalDesigner: typeof import('./../components/molian/components/designer/globalDesigner/index.vue')['default']
     GlobalTool: typeof import('./../components/molian/components/designer/globalTool/index.vue')['default']
+    HorizontalContainer: typeof import('./../components/molian/components/MolianLayoutContainer/horizontalContainer.vue')['default']
     IconPicker: typeof import('./../components/molian/components/icon-picker/index.vue')['default']
     If: typeof import('./../components/molian/components/designer/optionsDesigner/tooltip/if.vue')['default']
     Javascript: typeof import('./../components/molian/components/designer/optionsDesigner/components/javascript.vue')['default']
@@ -54,6 +55,7 @@ declare module 'vue' {
     SlotTemplate: typeof import('./../components/molian/components/render/slotTemplate.vue')['default']
     StickyTool: typeof import('./../components/molian/components/sticky-tool/index.vue')['default']
     Stroke: typeof import('./../components/molian/components/designer/cssDesigner/css-tool-panel/stroke.vue')['default']
+    SubContainer: typeof import('./../components/molian/components/MolianLayoutContainer/subContainer.vue')['default']
     SubForm: typeof import('./../components/molian/components/sub-form/index.vue')['default']
     SvgIcon: typeof import('./../components/molian/components/svg-icon/index.vue')['default']
     SwitchButton: typeof import('./../components/molian/components/switch-button/index.vue')['default']
@@ -68,5 +70,6 @@ declare module 'vue' {
     TransformTop: typeof import('./../components/molian/components/designer/cssDesigner/css-tool-panel/transform/transform-top.vue')['default']
     TreeDir: typeof import('./../components/molian/components/designer/containerDesigner/treeDir/index.vue')['default']
     Variable: typeof import('./../components/molian/components/designer/optionsDesigner/tooltip/variable.vue')['default']
+    VerticalContainer: typeof import('./../components/molian/components/MolianLayoutContainer/verticalContainer.vue')['default']
   }
 }
