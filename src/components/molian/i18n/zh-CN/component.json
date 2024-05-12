@@ -13,6 +13,7 @@
   "MlVerticalContainer": "垂直布局容器",
   "MlHorizontalContainer":"水平布局容器",
   "MlSubContainer":"布局子容器",
+  "MlEcharts":"图表",
   "div":"区块",
   "span":"行内",
   "ul":"列表",

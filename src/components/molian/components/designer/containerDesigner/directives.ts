@@ -8,9 +8,7 @@ import {
 } from 'vue'
 import {
     compsRef,
-    compsEl,
     selectedComp,
-    globalAttrs,
     variableData
 } from '../designerData'
 import {
@@ -115,14 +113,25 @@ export const directives = {
             for (const key in props.comp.attrs) {
                 if (Object.hasOwnProperty.call(props.comp.attrs, key)) {
                     const element = props.comp.attrs[key];
-                    if (!!element.value) {
-                        newProps[key] = element.value
+                    const compProp = comps.value[props.comp.name].props[key]
+                    if(compProp.hidden && compProp.hidden(props.comp.attrs) === false || !compProp.hidden){
+                        if(element.type === "variable"){
+                            let newVal = null
+                            if(element.value){
+                                element.value.forEach((item:string) =>{
+                                    newVal = variableData.value[item]
+                                })
+                                newProps[key] = newVal
+                            }
+                        }else if (element.value !== undefined && element.value !== null) {
+                            newProps[key] = element.value
+                        }
                     }
+                    
                 }
             }
             return newProps
         })
-
         const computedClass = computed(() => {
             return {
                 'designer-comp': comps.value[props.comp.name] && comps.value[props.comp.name].inheritAttrs !== false,

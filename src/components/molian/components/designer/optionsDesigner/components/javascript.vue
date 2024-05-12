@@ -24,6 +24,8 @@ const currentEmits = computed(() => {
   })
 })
 
+defineExpose(currentOn)
+
 </script>
 <template>
   <div class="basic-list">

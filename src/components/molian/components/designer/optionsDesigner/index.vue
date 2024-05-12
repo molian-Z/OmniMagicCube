@@ -15,6 +15,7 @@ import vuefor from './tooltip/for.vue'
 import vueshow from './tooltip/show.vue'
 import vuetext from './tooltip/text.vue'
 const t: any = inject('mlLangs')
+const comps:any = inject('mlComps')
 const customComps: any = inject('customComps')
 const { customTooltip, customPopup } = customComps
 const menus = ref([{
@@ -68,7 +69,6 @@ const toolbarData = ref<{
 }])
 
 const varRef = ref()
-
 const directives = computed(() => {
     return selectedComp.value && selectedComp.value.directives || {}
 })
@@ -90,6 +90,17 @@ const openDialog = (type: string) => {
         varRef.value.show()
     }
 }
+
+const currentEmits = computed(() => {
+  if (!selectedComp.value) return {}
+  return selectedComp.value && comps.value[selectedComp.value.name].emits.map((item: any) => {
+    return {
+      key: item,
+      type: 'function'
+    }
+  })
+})
+
 </script>
 <template>
     <div class="options-designer">
@@ -158,11 +169,11 @@ const openDialog = (type: string) => {
                 <div class="designer-container__body-title">{{t('options.slot')}}</div>
                 <slotComp class="comp-content" />
             </div>
-            <div class="comp-content">
+            <div class="comp-content" v-if="currentEmits.length > 0">
                 <div class="designer-container__body-title">{{t('options.js')}}</div>
                 <javascriptComp class="comp-content" />
             </div>
-            <div class="comp-content">
+            <div class="comp-content" v-if="!!selectedComp">
                 <div class="designer-container__body-title">{{ t('options.nativeOn') }}</div>
                 <nativeOnComp class="comp-content" />
             </div>

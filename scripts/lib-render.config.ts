@@ -53,7 +53,7 @@ export default defineConfig({
     }, //库编译模式配置
     rollupOptions: {
       // 确保外部化处理那些你不想打包进库的依赖
-      external: ["vue", "element-plus", "naive-ui", "tdesign-vue-next", "vexip-ui", "ant-design-vue", "ace-builds",
+      external: ["vue", "element-plus", "naive-ui", "tdesign-vue-next", "vexip-ui", "ant-design-vue", "ace-builds", "echarts",
         "ace-builds/src-min-noconflict/snippets/javascript",
         "ace-builds/src-min-noconflict/ext-beautify",
         "ace-builds/src-min-noconflict/theme-dracula",
@@ -65,7 +65,8 @@ export default defineConfig({
       output: {
         // 在 UMD 构建模式下为这些外部化的依赖提供一个全局变量
         globals: {
-          vue: "Vue"
+          vue: "Vue",
+          echarts: "echarts",
         },
         assetFileNames: 'index.css',
         exports: "named"

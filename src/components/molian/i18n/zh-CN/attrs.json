@@ -1,56 +1,100 @@
 {
-  "tag": "元素标签",
-  "TCol": {
-    "flex": "布局填充",
-    "lg": "大尺寸",
-    "md": "中尺寸",
-    "sm": "小尺寸",
-    "xs": "超小尺寸",
-    "xl": "超大尺寸",
-    "xxl": "超超大尺寸",
-    "offset": "左侧间隔格数",
-    "order": "栅格顺序",
-    "pull": "向左移动格数",
-    "push": "向右移动格数",
-    "span": "栅格占位格数"
-  },
-  "TRow": {
-    "align": "纵向对齐方式",
-    "gutter": "栅格间隔",
-    "justify": "水平排列方式",
-    "type": "类型",
-    "start": "排列起始位置",
-    "end": "排列结束位置",
-    "center": "排列居中",
-    "space-around": "间隔排列",
-    "space-between": "两侧排列",
-    "space-evenly": "平均排列",
-    "top": "排列顶部",
-    "bottom": "排列底部",
-    "left": "排列左侧",
-    "right": "排列右侧",
-    "stretch": "伸展",
-    "baseline": "基线"
-  },
-  "flexWrap":"开启换行",
-  
-  "MlSubContainer":{
-    "flexBasis":"宽度或高度",
-    "flexGrow":"剩余空间占比",
-    "flexShrink": "空间不足缩比",
-    "order": "容器排序"
-  },
-  "SvgIcon":{
-    "icon":"选择图标",
-    "flip": "图标翻转",
-    "rotate":"图标旋转",
-    "color":"图标颜色",
-    "size": "图标大小",
-    "flip_optionItems":{
-        "":"无翻转",
-        "horizontal":"水平翻转",
-        "vertical": "垂直翻转",
-        "both":"镜像翻转"
+    "tag": "元素标签",
+    "TCol": {
+        "flex": "布局填充",
+        "lg": "大尺寸",
+        "md": "中尺寸",
+        "sm": "小尺寸",
+        "xs": "超小尺寸",
+        "xl": "超大尺寸",
+        "xxl": "超超大尺寸",
+        "offset": "左侧间隔格数",
+        "order": "栅格顺序",
+        "pull": "向左移动格数",
+        "push": "向右移动格数",
+        "span": "栅格占位格数"
+    },
+    "TRow": {
+        "align": "纵向对齐方式",
+        "gutter": "栅格间隔",
+        "justify": "水平排列方式",
+        "type": "类型",
+        "start": "排列起始位置",
+        "end": "排列结束位置",
+        "center": "排列居中",
+        "space-around": "间隔排列",
+        "space-between": "两侧排列",
+        "space-evenly": "平均排列",
+        "top": "排列顶部",
+        "bottom": "排列底部",
+        "left": "排列左侧",
+        "right": "排列右侧",
+        "stretch": "伸展",
+        "baseline": "基线"
+    },
+    "flexWrap": "开启换行",
+    "MlSubContainer": {
+        "flexBasis": "宽度或高度",
+        "flexGrow": "剩余空间占比",
+        "flexShrink": "空间不足缩比",
+        "order": "容器排序"
+    },
+    "SvgIcon": {
+        "icon": "选择图标",
+        "flip": "图标翻转",
+        "rotate": "图标旋转",
+        "color": "图标颜色",
+        "size": "图标大小",
+        "flip_optionItems": {
+            "": "无翻转",
+            "horizontal": "水平翻转",
+            "vertical": "垂直翻转",
+            "both": "镜像翻转"
+        }
+    },
+    "MlEcharts": {
+        "type": "类型",
+        "type_optionItems": {
+            "bar": "柱状图",
+            "line": "折线图",
+            "pie": "饼图",
+            "scatter": "散点图",
+            "gauge": "仪表盘"
+        },
+        "width": "宽度",
+        "height": "高度",
+        "modelValue": "数组数据",
+        "axisData": "分类数据",
+        "options":"配置数据",
+        "xAxisType":"X轴类型",
+        "xAxisType_optionItems":{
+            "category":"分类轴",
+            "value":"数值轴",
+            "time": "时间轴",
+            "log": "对数轴"
+        },
+        "yAxisType":"Y轴类型",
+        "yAxisType_optionItems":{
+            "category":"分类轴",
+            "value":"数值轴",
+            "time": "时间轴",
+            "log": "对数轴"
+        },
+        "showTooltip":"显示提示框",
+        "showXAxis":"显示X轴",
+        "showYAxis":"显示Y轴",
+        "showBackground":"显示背景色",
+        "barWidth":"柱图宽度",
+        "borderRadius":"柱图圆角",
+        "isCircle":"是否空心圆",
+        "isStack":"堆叠放置",
+        "selectedColor":"风格",
+        "selectedColor_optionItems":{
+            "colors1":"默认",
+            "colors2":"科技风",
+            "colors3":"朴素风",
+            "colors4":"明艳风",
+            "colors5":"马卡龙风"
+        }
     }
-  }
 }

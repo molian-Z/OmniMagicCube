@@ -9,12 +9,13 @@ import type { App } from 'vue'
 import '@imengyu/vue3-context-menu/lib/vue3-context-menu.css';
 import ContextMenu from '@imengyu/vue3-context-menu/lib/vue3-context-menu.es';
 import VConsole from 'vconsole';
-import { addAPIProvider } from '@iconify/vue'
+import { Icon, addAPIProvider } from '@iconify/vue'
 import SvgIcon from '@molianComps/svg-icon/index.vue'
 import IconPicker from '@molianComps/icon-picker/index.vue'
 import MlHorizontalContainer from '@molianComps/MolianLayoutContainer/horizontalContainer.vue'
 import MlVerticalContainer from '@molianComps/MolianLayoutContainer/verticalContainer.vue'
 import MlSubContainer from '@molianComps/MolianLayoutContainer/subContainer.vue'
+import MlEcharts from '@molianComps/echarts/index.vue'
 addAPIProvider('', {
     resources: ['http://flower.molianpro.com:33000'],
 })
@@ -31,10 +32,12 @@ export default {
         customComps: {}
     }) {
         app.component('SvgIcon', SvgIcon)
+        app.component('Icon', Icon)
         app.component('IconPicker', IconPicker)
         app.component('MlHorizontalContainer', MlHorizontalContainer)
         app.component('MlVerticalContainer', MlVerticalContainer)
         app.component('MlSubContainer', MlSubContainer)
+        app.component('MlEcharts', MlEcharts)
         useUI.value = options.useUI || useUI.value
         if (!!options.usePrefix) {
             const uiIndex = UIData.findIndex(item => item.name === useUI.value)

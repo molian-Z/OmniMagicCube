@@ -6,16 +6,19 @@ import IconPicker from '@molianComps/icon-picker/index.vue'
 import MlHorizontalContainer from '@molianComps/MolianLayoutContainer/horizontalContainer.vue'
 import MlVerticalContainer from '@molianComps/MolianLayoutContainer/verticalContainer.vue'
 import MlSubContainer from '@molianComps/MolianLayoutContainer/subContainer.vue'
+import MlEcharts from '@molianComps/echarts/index.vue'
 addAPIProvider('', {
     resources: ['http://flower.molianpro.com:33000'],
 })
 import { App } from '@vue/runtime-dom';
 const installRender = function (app: App) {
     app.component('SvgIcon', SvgIcon)
+    app.component('Icon', Icon)
     app.component('IconPicker', IconPicker)
     app.component('MlHorizontalContainer', MlHorizontalContainer)
     app.component('MlVerticalContainer', MlVerticalContainer)
     app.component('MlSubContainer', MlSubContainer)
-    app.component('OmcRender', Render);
+    app.component('MlEcharts', MlEcharts)
+    app.component('OmcRender', Render)
 }
 export default installRender
