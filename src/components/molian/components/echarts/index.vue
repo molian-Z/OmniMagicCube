@@ -2,7 +2,7 @@
 import { ref, onMounted, watch, defineExpose, defineOptions, defineProps } from 'vue'
 import * as echarts from 'echarts'
 
-const modules = import.meta.glob('./model/*.js')
+const modules = import.meta.glob('./model/*.ts')
 const typeMap = ref<any>({})
 defineOptions({
     name: "MlEcharts",
@@ -120,7 +120,7 @@ const echartDom = ref()
 let echartData:any = {}
 onMounted(async () => {
     for (const file in modules) {
-        const modulesName = file.replace('./model/', '').replace('.js', '')
+        const modulesName = file.replace('./model/', '').replace('.ts', '')
         const res: any = await modules[file]()
         if (!!res.default) {
             typeMap.value[modulesName] = res.default

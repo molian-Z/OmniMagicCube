@@ -117,7 +117,7 @@ export const generateUUID = function () {
 }
 
 
-export const computedChartData = (axisData: any, modelValue: any) => {
+export const getChartData = function(axisData: any, modelValue: any) {
     const series: { name: any; data: number[]; }[] = []
     modelValue.forEach((item: { data: any[]; name: any; }) => {
         const dataset: number[] = []
