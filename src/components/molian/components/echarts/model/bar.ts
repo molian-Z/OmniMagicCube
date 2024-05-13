@@ -1,5 +1,8 @@
 import colors from '../colors'
-export default (data) => {
+import {
+    getChartData
+} from '@molian/utils/util'
+export default (data:any) => {
     const opts = {
         color: colors[data.selectedColor],
         xAxis: {
