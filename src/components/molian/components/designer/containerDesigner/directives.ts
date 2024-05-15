@@ -114,7 +114,7 @@ export const directives = {
                 if (Object.hasOwnProperty.call(props.comp.attrs, key)) {
                     const element = props.comp.attrs[key];
                     const compProp = comps.value[props.comp.name].props[key]
-                    if(compProp.hidden && compProp.hidden(props.comp.attrs) === false || !compProp.hidden){
+                    if(compProp && compProp.hidden && compProp.hidden(props.comp.attrs) === false || compProp && !compProp.hidden){
                         if(element.type === "variable"){
                             let newVal = null
                             if(element.value){

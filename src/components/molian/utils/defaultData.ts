@@ -23,7 +23,7 @@ export const defaultCategory: IConfig.IDefaultCategory[] = [{
 }, {
     icon: 'content',
     name: 'content',
-    rule: /.*(Avatar|Badge|Bubble|Calendar|Card|Carousel|Collapse|Ellipsis|Highlight|Image|Result|Table|TabNav|Tabs|Tag|TimeAgo|Timeline|Tooltip|Tree|Viewer).*/
+    rule: /.*(Avatar|Badge|Progress|Bubble|Calendar|Card|Carousel|Collapse|Ellipsis|Highlight|Image|Result|Table|TabNav|Tabs|Tag|TimeAgo|Timeline|Tooltip|Tree|Viewer).*/
 }, {
     icon: 'modal',
     name: 'modal',

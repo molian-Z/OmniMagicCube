@@ -190,6 +190,7 @@ declare global {
   const useCssVars: typeof import('vue')['useCssVars']
   const useDirectives: typeof import('../components/molian/utils/useDirectives')['default']
   const useDraggable: typeof import('../components/molian/components/designer/draggable')['useDraggable']
+  const useKeys: typeof import('../components/molian/components/designer/designerData')['useKeys']
   const usePrefix: typeof import('../components/molian/utils/UIMap')['usePrefix']
   const useSlots: typeof import('vue')['useSlots']
   const useUI: typeof import('../components/molian/utils/UIMap')['useUI']

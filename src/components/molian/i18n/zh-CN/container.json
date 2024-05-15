@@ -27,5 +27,17 @@
     "globalSetting":"偏好设置",
     "AIInteraction":"AI交互",
     "before":"前方",
-    "after":"后方"
+    "after":"后方",
+    "copySuccess":"复制成功",
+    "pasteSuccess":"粘贴成功",
+    "copyFail":"复制失败",
+    "pasteFail":"粘贴失败",
+    "copy":"复制",
+    "paste":"粘贴",
+    "copyCode":"复制代码",
+    "pasteCode":"粘贴代码",
+    "typeStatus":{
+        "pull":"同级移动",
+        "append":"放置于插槽内部"
+    }
 }

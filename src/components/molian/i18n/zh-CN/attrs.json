@@ -83,6 +83,14 @@
         "showTooltip":"显示提示框",
         "showXAxis":"显示X轴",
         "showYAxis":"显示Y轴",
+        "showLegend":"显示图例",
+        "pieLabelType":"标签显示",
+        "pieLabelType_optionItems":{
+            "none":"不显示",
+            "inside":"内嵌",
+            "outside":"外层",
+            "center":"中心"
+        },
         "showBackground":"显示背景色",
         "barWidth":"柱图宽度",
         "borderRadius":"柱图圆角",

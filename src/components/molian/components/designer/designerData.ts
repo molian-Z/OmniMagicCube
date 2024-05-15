@@ -9,13 +9,13 @@ import {
     useStorage,
     useMagicKeys,
     whenever,
-    useActiveElement
+    useActiveElement,
+    useClipboard
 } from '@vueuse/core'
 import { logicAnd } from '@vueuse/math'
 import { hoverNodes, hoverIndex, resetDraggable } from './draggable'
 import { deviceList } from '@molian/utils/device'
 import { getVariableData } from '@molian/utils/customFunction'
-
 // 菜单交互
 export const hiddenAllPanel = ref(false)
 export const compPanel = ref<string>('')
@@ -83,46 +83,70 @@ const activeElement = useActiveElement()
 const notUsingInput = computed(() =>
     activeElement.value?.tagName !== 'INPUT'
     && activeElement.value?.tagName !== 'TEXTAREA',)
-// 魔术键（快捷键）
-const keys = useMagicKeys({
-    passive: false,
-    onEventFired(e) {
-        if (notUsingInput.value) {
-            if (e.ctrlKey && ['a', 's', 'd', 'f', 'z', 'y', 'b', 'h'].indexOf(e.key) > -1 && e.type === 'keydown') {
-                e.preventDefault();
-                e.stopPropagation();
+
+export const useKeys = (message:any, t:any) => {
+    // 魔术键（快捷键）
+    const keys = useMagicKeys({
+        passive: false,
+        onEventFired(e) {
+            if (notUsingInput.value) {
+                if (e.ctrlKey && ['a', 's', 'd', 'f', 'z', 'y', 'b', 'h'].indexOf(e.key) > -1 && e.type === 'keydown') {
+                    e.preventDefault();
+                    e.stopPropagation();
+                }
             }
         }
-    }
-})
-// 撤销
-whenever(logicAnd(keys.ctrl_z, notUsingInput), () => undo());
-// 重做
-whenever(logicAnd(keys.ctrl_y, notUsingInput), () => redo());
-// 切换面板
-whenever(logicAnd(keys.ctrl_a, notUsingInput), () => globalMenu.value = 'style');
-whenever(logicAnd(keys.ctrl_s, notUsingInput), () => globalMenu.value = 'option');
-whenever(logicAnd(keys.ctrl_d, notUsingInput), () => globalMenu.value = 'action');
-whenever(logicAnd(keys.ctrl_f, notUsingInput), () => globalMenu.value = 'global');
-// 复制
-// whenever(logicAnd(keys.ctrl_c, notUsingInput), () => console.log());
-// 粘贴
-// whenever(logicAnd(keys.ctrl_v, notUsingInput), () => console.log());
-// 显示树面板
-whenever(logicAnd(keys.ctrl_b, notUsingInput), () => {
-    treeDirRef.value.switchExpand(!treeDirRef.value.expand)
-});
-// 显示AI交互面板
-whenever(logicAnd(keys.ctrl_h, notUsingInput), () => {
-    aiImRef.value.switchExpand(!aiImRef.value.expand)
-});
+    })
+    // 撤销
+    whenever(logicAnd(keys.ctrl_z, notUsingInput), () => undo());
+    // 重做
+    whenever(logicAnd(keys.ctrl_y, notUsingInput), () => redo());
+    // 切换面板
+    whenever(logicAnd(keys.ctrl_a, notUsingInput), () => globalMenu.value = 'style');
+    whenever(logicAnd(keys.ctrl_s, notUsingInput), () => globalMenu.value = 'option');
+    whenever(logicAnd(keys.ctrl_d, notUsingInput), () => globalMenu.value = 'action');
+    whenever(logicAnd(keys.ctrl_f, notUsingInput), () => globalMenu.value = 'global');
+    // 复制
+    const { text, copy, copied, isSupported } = useClipboard({ source: selectedComp })
+    whenever(logicAnd(keys.ctrl_c, notUsingInput), () => {
+        if (!!selectedComp.value) {
+            if (!!isSupported.value && copied.value === false) {
+                copy(selectedComp.value)
+                message.success(t('container.copySuccess'))
+            }
+        }
+    });
+    // 粘贴
+    whenever(logicAnd(keys.ctrl_v, notUsingInput), () => {
+        if (!!isSupported.value) {
+            const {
+                cloned
+            } = useCloned(text.value)
+            if(!!selectedComp.value && selectedComp.value.slots && selectedComp.value.slots.default && selectedComp.value.slots.default.children){
+                selectedComp.value.slots.default.children.push(pasteData(cloned.value))
+            }else{
+                modelValue.value.push(pasteData(cloned.value))
+            }
+            message.success(t('container.pasteSuccess'))
+        }
+    });
+    // 显示树面板
+    whenever(logicAnd(keys.ctrl_b, notUsingInput), () => {
+        treeDirRef.value.switchExpand(!treeDirRef.value.expand)
+    });
+    // 显示AI交互面板
+    whenever(logicAnd(keys.ctrl_h, notUsingInput), () => {
+        aiImRef.value.switchExpand(!aiImRef.value.expand)
+    });
 
-whenever(logicAnd(keys.delete, notUsingInput), () => {
-    if (hoverNodes.value && hoverNodes.value) {
-        hoverNodes.value.splice(hoverIndex.value, 1)
-    }
-    resetDraggable()
-})
+    whenever(logicAnd(keys.delete, notUsingInput), () => {
+        if (hoverNodes.value && hoverNodes.value) {
+            hoverNodes.value.splice(hoverIndex.value, 1)
+        }
+        resetDraggable()
+    })
+}
+
 
 // 创建组件
 export const createComp = function (comp: {
@@ -207,4 +231,24 @@ export const initCompsData = function (data: any) {
 export const generateRandomString = function (length: number) {
     let str = Math.random().toString(36).substring(2, length + 2);
     return str;
+}
+
+
+const pasteData:any = function(data:any){
+    const randomStr = generateRandomString(16)
+    data.key = randomStr
+    data.id = randomStr
+    if(!!data.slots){
+        for (const key in data.slots) {
+            if (Object.prototype.hasOwnProperty.call(data.slots, key)) {
+                const element = data.slots[key];
+                if(element.children.length > 0){
+                    element.children = element.children.map((item:any)=>{
+                        return pasteData(item)
+                    })
+                }
+            }
+        }
+    }
+    return data
 }

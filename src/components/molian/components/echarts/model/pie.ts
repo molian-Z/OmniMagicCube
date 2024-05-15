@@ -5,6 +5,7 @@ export default (data) => {
     const opts = {
         color: colors[data.selectedColor],
         legend: {
+            show: data.showLegend,
             orient: 'vertical',
             left: 'left'
             // data: []
@@ -26,6 +27,10 @@ export default (data) => {
             data: item.data,
             radius: data.isCircle ? ['40%', '70%'] : '80%',
             padAngle: data.isCircle ? 5 : 0,
+            label: {
+                show: data.pieLabelType === 'none' ? false : true,
+                position: data.pieLabelType !== 'none' ? data.pieLabelType : ''
+            },
             itemStyle: {
                 borderRadius: data.isCircle ? 10 : 5
             },

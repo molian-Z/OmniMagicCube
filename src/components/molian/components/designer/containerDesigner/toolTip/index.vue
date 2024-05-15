@@ -36,7 +36,7 @@ const currentBounding = computed(() => {
       </div>
     </div>
 
-    <div class="drag-handler" draggable="true" @dragstart="startDraggable" @dragend="onDragend">
+    <div class="drag-handler" draggable="true" @dragstart="startDraggable($event, hoverComp)" @dragend="onDragend">
       <svgIcon icon="drag-move"></svgIcon>
       <!-- <span>{{ t('container.moveComp') }}</span> -->
     </div>

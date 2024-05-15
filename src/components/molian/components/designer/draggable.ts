@@ -19,12 +19,14 @@ export const dropNode = ref<any>(null)
 export const dropKey = ref<string | null>(null)
 export const dropType = ref<string | null>(null)
 export const isDraggable = ref<boolean>(false)
-export const startDraggable = function () {
+export const startDraggable = function (evt: any, item: { name: any }) {
+  evt.dataTransfer.setData('compName', item.name)
   hiddenAllPanel.value = true
   isDraggable.value = true
   dragIndex.value = hoverIndex.value
   dragComp.value = hoverComp.value
   dragNodes.value = hoverNodes.value
+
 }
 
 export const resetDraggable = function () {
@@ -105,6 +107,8 @@ export const useDraggable = (comps?: any, compData?: any, message?: any) => {
         }
       }
     } else {
+        console.log(name)
+        console.log(slotVal.allowComps, (slotVal.allowComps.length === 0 || slotVal.allowComps.indexOf(name) > -1))
       message.error('拖拽组件不在允许的组件列表中')
     }
   }

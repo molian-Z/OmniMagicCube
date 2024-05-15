@@ -18,6 +18,7 @@ export default (data) => {
             containLabel: true
         },
         legend: {
+            show:data.showLegend,
             data: []
         },
         ...data.options
