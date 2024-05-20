@@ -66,8 +66,8 @@ const variableValue = computed({
 const getOptionItemI18n = (optionItems: any[]) => {
     return optionItems.map(item => {
         let langStr = t(`attrs.${props.selectedComp.name}.${props.keyName}_optionItems.${item}`)
-        if(!langStr){
-            langStr = t('attrs.' + props.keyName + '.' + item)
+        if(!langStr || langStr === item){
+            langStr = t(`attrs.${props.keyName}_optionItems.${item}`)
         }
         return {
             label: langStr === item ? t('attrs.' + item) : langStr,

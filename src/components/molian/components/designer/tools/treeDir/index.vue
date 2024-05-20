@@ -1,22 +1,28 @@
 <script setup lang="ts">
-import { inject } from 'vue'
-import { onClickOutside } from '@vueuse/core'
-import { modelValue, treeDirRef } from '@molianComps/designer/designerData'
-import { setting } from '@molian/utils/defaultData'
-import deepTree from './deepTreeToData.vue'
-import floatBall from '@molianComps/float-ball/index.vue'
+import { inject } from "vue";
+import { onClickOutside } from "@vueuse/core";
+import { modelValue, treeDirRef } from "@molianComps/designer/designerData";
+import { setting } from "@molian/utils/defaultData";
+import deepTree from "./deepTreeToData.vue";
+import floatBall from "@molianComps/float-ball/index.vue";
 
-const t: any = inject('mlLangs')
+const t: any = inject("mlLangs");
 
-onClickOutside(treeDirRef, () => {
-  if (treeDirRef.value.expand) {
-    treeDirRef.value.switchExpand(false)
-  }
-})
+onClickOutside(treeDirRef, (evt: any) => {
+  const { classList } = evt.target;
+  if (!classList.contains("container-main") && !classList.contains("container-draggable-body")) return 
+    if (treeDirRef.value.expand) {
+      treeDirRef.value.switchExpand(false);
+    }
+});
 </script>
 
 <template>
-  <floatBall :title="t('container.treeDir')" :offsetX="!setting.immerseMode ? '330px' : '0px'" ref="treeDirRef">
+  <floatBall
+    :title="t('container.treeDir')"
+    :offsetX="!setting.immerseMode ? '330px' : '0px'"
+    ref="treeDirRef"
+  >
     <div class="tree-dir-container">
       <deepTree v-model="modelValue"></deepTree>
     </div>

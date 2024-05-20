@@ -58,6 +58,7 @@ export default defineConfig({
         rollupOptions: {
             // 确保外部化处理那些你不想打包进库的依赖
             external: ["vue", "element-plus", "naive-ui", "tdesign-vue-next", "vexip-ui", "ant-design-vue", "ace-builds", "echarts",
+                "vconsole",
                 "ace-builds/src-min-noconflict/snippets/javascript",
                 "ace-builds/src-min-noconflict/ext-beautify",
                 "ace-builds/src-min-noconflict/theme-dracula",
@@ -72,6 +73,7 @@ export default defineConfig({
                     vue: "Vue",
                     ['ace-builds']: "ace-builds",
                     echarts: "echarts",
+                    vconsole:"vconsole",
                     ['ace-builds/src-min-noconflict/snippets/javascript']: "ace-builds/src-min-noconflict/snippets/javascript",
                     // ['ace-builds/src-min-noconflict/worker-javascript']: "ace-builds/src-min-noconflict/worker-javascript",
                     ['ace-builds/src-min-noconflict/ext-beautify']: "ace-builds/src-min-noconflict/ext-beautify",

@@ -55,5 +55,6 @@
     "idKey":"Key",
     "dataKey":"值",
     "objectKey":"键",
-    "indexKey":"索引"
+    "indexKey":"索引",
+    "openUrl":"打开文档"
 }

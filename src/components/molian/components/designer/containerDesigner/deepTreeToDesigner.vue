@@ -19,6 +19,10 @@ const props = defineProps({
     type: Array,
     default: () => [],
   },
+  parentNode:{
+    type: Object,
+    default: () => {}
+  },
   treeIndex: {
     type: Number,
     default: 1,
@@ -59,7 +63,6 @@ const value = computed(() => {
   // return data2Vars(directives.value, variableData.value)
   return getValue(compData.value, variableData.value, {}, "designer");
 });
-
 const { onDrop, onDropSlot } = useDraggable(comps, compData, message);
 const setRef = async (el: any, comp: any, index: any) => {
   await nextTick();
@@ -131,6 +134,7 @@ const setRef = async (el: any, comp: any, index: any) => {
       :comp="value[index]"
       :index="index"
       :modelValue="compData"
+      :parentNode="parentNode"
     >
       <template
         v-for="(slotVal, slotKey) in comp.slots"
@@ -141,6 +145,7 @@ const setRef = async (el: any, comp: any, index: any) => {
           <template v-if="JSON.stringify(slotProps) !== '{}'">
             <deepTreeToDesigner
               v-model="slotVal.children"
+              :parentNode="comp"
               :slotProp="slotProps"
               :slotKey="slotKey"
               :slotVal="slotVal"
@@ -149,6 +154,7 @@ const setRef = async (el: any, comp: any, index: any) => {
           <deepTreeToDesigner
             v-else
             v-model="slotVal.children"
+            :parentNode="comp"
             :slotKey="slotKey"
             :slotVal="slotVal"
             :treeIndex="treeIndex + 1"
@@ -199,11 +205,11 @@ const setRef = async (el: any, comp: any, index: any) => {
 @use '../../../assets/styles/global.scss';
 
 .designer-comp {
-  min-height: 28px !important;
+  // min-height: 28px !important;
   margin: var(--ml-mg-base) 0;
   position: relative;
   transition: var(--ml-transition-base);
-  min-width: 20px;
+  // min-width: 20px;
   padding: var(--ml-pd-small);
 
   &.comp-inline {

@@ -10,6 +10,7 @@ export const UIData:IConfig.IData[] = reactive([{
   name: 'tiny-vue',
   prefix: 'Tiny',
   icon: "tinyvue",
+  docUrl:"https://opentiny.design/tiny-vue/zh-CN/os-theme/overview",
   removeAttrs: ["tiny_template", "tiny_renderless", "tiny_mode", "tiny_mode_root", "tiny_theme", "tiny_chart_theme"],
   compMapping: {
     "Button": {
@@ -159,6 +160,7 @@ export const UIData:IConfig.IData[] = reactive([{
   name: 'arco',
   prefix: 'A',
   icon: "Arco",
+  docUrl:"https://arco.design/vue/docs/pro/start",
   compMapping: {
     "Button": {
       "theme": (text: string) => {
@@ -268,6 +270,7 @@ export const UIData:IConfig.IData[] = reactive([{
   name: 'tdesign-vue-next',
   prefix: 'T',
   icon: "TDesign",
+  docUrl:"https://tdesign.tencent.com/vue-next/overview",
   compMapping: {
     "Button": {
       "theme": "theme",
@@ -328,6 +331,7 @@ export const UIData:IConfig.IData[] = reactive([{
   name: 'element-plus',
   prefix: 'El',
   icon: "ElementPlus",
+  docUrl:"https://element-plus.org/zh-CN/",
   compMapping: {
     "Button": {
       "theme": "type",
@@ -421,6 +425,7 @@ export const UIData:IConfig.IData[] = reactive([{
   name: 'ant-design-vue',
   prefix: 'A',
   icon: "Ant",
+  docUrl:"https://www.antdv.com/components/overview",
   compMapping: {
     "Button": {
       "theme": (type: string) => {
@@ -537,6 +542,7 @@ export const UIData:IConfig.IData[] = reactive([{
   name: 'naive',
   prefix: 'N',
   icon: "naive",
+  docUrl:"https://www.naiveui.com/zh-CN/os-theme",
   compMapping: {
     "Button": {
       "theme": "type",
@@ -664,6 +670,7 @@ export const UIData:IConfig.IData[] = reactive([{
   name: 'vexip',
   prefix: 'V',
   icon: "vexip",
+  docUrl:"https://www.vexipui.com/zh-CN/",
   compMapping: {
     "Button": {
       "theme": "type",

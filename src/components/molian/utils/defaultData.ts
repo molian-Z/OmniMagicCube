@@ -7,11 +7,11 @@ import { useStorage } from '@vueuse/core'
 export const defaultCategory: IConfig.IDefaultCategory[] = [{
     icon: 'basic',
     name: 'basic',
-    component: ['MlHorizontalContainer', 'MlVerticalContainer', 'MlSubContainer', 'div', 'span', 'text', 'SvgIcon', 'IconPicker', 'MlEcharts']
+    component: ['MlHorizontalContainer', 'MlVerticalContainer', 'SvgIcon', 'IconPicker', 'MlEcharts']
 }, {
     icon: 'container',
     name: 'layout',
-    component: [/.*Layout.*/, /.*Container.*/, /.*Header.*/, /.*Main.*/, /.*Footer.*/, /.*Aside.*/, /.*Grid.*/, /.*Cell.*/, /.*Split.*/, /.*List.*/,/.*Row.*/, /.*Col.*/]
+component: [/.*Tabs.*/, /.*TabPane.*/, /.*Layout.*/, /.*Container.*/, /.*Header.*/, /.*Main.*/, /.*Footer.*/, /.*Aside.*/, /.*Grid.*/, /.*Cell.*/, /.*Split.*/, /.*List.*/, /.*Row.*/, /.*Col$/, /.*Carousel.*/, /.*Collapse.*/]
 }, {
     icon: 'menu',
     name: 'menu',
@@ -23,7 +23,7 @@ export const defaultCategory: IConfig.IDefaultCategory[] = [{
 }, {
     icon: 'content',
     name: 'content',
-    rule: /.*(Avatar|Badge|Progress|Bubble|Calendar|Card|Carousel|Collapse|Ellipsis|Highlight|Image|Result|Table|TabNav|Tabs|Tag|TimeAgo|Timeline|Tooltip|Tree|Viewer).*/
+    rule: /.*(Button|Avatar|Badge|Progress|Bubble|Calendar|Card|Carousel|Collapse|Ellipsis|Highlight|Image|Result|Table|TabNav|Tag|TimeAgo|Timeline|Tooltip|Tree|Viewer).*/
 }, {
     icon: 'modal',
     name: 'modal',
@@ -161,19 +161,19 @@ export const defaultSlotsMap: IConfig.IDefaultSlotsMap = {
             allowComps: ['TinyCol']
         }
     },
-    div:{
+    div: {
         default: 'auto'
     },
-    span:{
+    span: {
         default: 'auto'
     },
-    ul:{
+    ul: {
         default: {
             auto: true,
             allowComps: ['li']
         }
     },
-    li:{
+    li: {
         default: 'auto'
     }
 }
@@ -184,5 +184,5 @@ export const cloudUrl = "https://wujie.mlyt.top/getData"
 export const AIURL = "https://wujie.mlyt.top/getAI"
 export const iconifyUrl = "http://flower.molianpro.com:33000/"
 export const setting = useStorage<Setting.Config>('setting', {
-    immerseMode:true
+    immerseMode: true
 })

@@ -19,9 +19,10 @@
   "ul":"列表",
   "li":"列表项",
   "text":"文本",
-  "Row":"行",
-  "Col":"列",
+  "Row":"行布局",
+  "Col":"列布局",
   "Button":"按钮",
+  "ButtonGroup":"按钮组",
   "Affix":"固钉",
   "Icon":"图标",
   "IconPicker":"图标选择器",
@@ -32,6 +33,7 @@
   "Layout":"布局",
   "Space":"间距",
   "Anchor":"锚点",
+  "AnchorLink":"锚点链接",
   "BackTop":"返回顶部",
   "Breadcrumb":"面包屑",
   "Dropdown":"下拉菜单",
@@ -40,6 +42,7 @@
   "Steps":"步骤条",
   "StickyTool":"侧边栏",
   "Tabs":"选项卡",
+  "TabPane":"选项卡子项",
   "AutoComplete":"自动填充",
   "Cascader":"级联选择器",
   "Checkbox":"多选框",
@@ -75,15 +78,19 @@
   "Loading":"加载中",
   "Progress":"进度条",
   "Skeleton":"骨架屏",
+  "SkeletonItem":"骨架屏子项",
   "Statistic":"统计数值",
   "Swiper":"轮播框",
   "Table":"表格",
+  "TableV2":"表格V2",
   "TableColumn":"表格列",
   "Tag":"标签",
   "Timeline":"时间轴",
   "Tooltip":"文字提示",
   "Tree":"树",
+  "TreeV2":"树V2",
   "Watermark":"水印",
+  "Result":"结果页",
   "Rate":"评分",
   "Alert":"警告",
   "Dialog":"对话框",
@@ -150,17 +157,10 @@
   "SelectGroup":"选择面板分组",
   "SelectOption":"选择面板(option)",
   "SelectOptionGroup":"选择面板(option group)",
-  "SelectOptionItem":"选择面板(option item)"
-
-
-
-
-
-  
-  
-
-
-
-
-  
+  "SelectOptionItem":"选择面板(option item)",
+  "Carousel":"轮播图(走马灯)",
+  "CarouselItem":"轮播图子项",
+  "Scollbar":"滚动条",
+  "Tour":"漫游式导航",
+  "TourStep":"漫游式导航步骤"
 }

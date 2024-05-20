@@ -472,6 +472,7 @@ declare namespace IConfig {
         name: string;
         prefix: string;
         icon?: string;
+        docUrl?: string;
         removeAttrs?: string[];
         compMapping?: ICompMapping;
     };

@@ -33,12 +33,6 @@
         "baseline": "基线"
     },
     "flexWrap": "开启换行",
-    "MlSubContainer": {
-        "flexBasis": "宽度或高度",
-        "flexGrow": "剩余空间占比",
-        "flexShrink": "空间不足缩比",
-        "order": "容器排序"
-    },
     "SvgIcon": {
         "icon": "选择图标",
         "flip": "图标翻转",
@@ -65,44 +59,56 @@
         "height": "高度",
         "modelValue": "数组数据",
         "axisData": "分类数据",
-        "options":"配置数据",
-        "xAxisType":"X轴类型",
-        "xAxisType_optionItems":{
-            "category":"分类轴",
-            "value":"数值轴",
+        "options": "配置数据",
+        "xAxisType": "X轴类型",
+        "xAxisType_optionItems": {
+            "category": "分类轴",
+            "value": "数值轴",
             "time": "时间轴",
             "log": "对数轴"
         },
-        "yAxisType":"Y轴类型",
-        "yAxisType_optionItems":{
-            "category":"分类轴",
-            "value":"数值轴",
+        "yAxisType": "Y轴类型",
+        "yAxisType_optionItems": {
+            "category": "分类轴",
+            "value": "数值轴",
             "time": "时间轴",
             "log": "对数轴"
         },
-        "showTooltip":"显示提示框",
-        "showXAxis":"显示X轴",
-        "showYAxis":"显示Y轴",
-        "showLegend":"显示图例",
-        "pieLabelType":"标签显示",
-        "pieLabelType_optionItems":{
-            "none":"不显示",
-            "inside":"内嵌",
-            "outside":"外层",
-            "center":"中心"
+        "showTooltip": "显示提示框",
+        "showXAxis": "显示X轴",
+        "showYAxis": "显示Y轴",
+        "showLegend": "显示图例",
+        "pieLabelType": "标签显示",
+        "pieLabelType_optionItems": {
+            "none": "不显示",
+            "inside": "内嵌",
+            "outside": "外层",
+            "center": "中心"
         },
-        "showBackground":"显示背景色",
-        "barWidth":"柱图宽度",
-        "borderRadius":"柱图圆角",
-        "isCircle":"是否空心圆",
-        "isStack":"堆叠放置",
-        "selectedColor":"风格",
-        "selectedColor_optionItems":{
-            "colors1":"默认",
-            "colors2":"科技风",
-            "colors3":"朴素风",
-            "colors4":"明艳风",
-            "colors5":"马卡龙风"
+        "showBackground": "显示背景色",
+        "barWidth": "柱图宽度",
+        "borderRadius": "柱图圆角",
+        "isCircle": "是否空心圆",
+        "isStack": "堆叠放置",
+        "selectedColor": "风格",
+        "selectedColor_optionItems": {
+            "colors1": "默认",
+            "colors2": "科技风",
+            "colors3": "朴素风",
+            "colors4": "明艳风",
+            "colors5": "马卡龙风"
         }
+    },
+    "flexBasis": "宽度或高度",
+    "flexGrow": "剩余空间占比",
+    "flexShrink": "空间不足缩比",
+    "order": "容器排序",
+    "overflow": "超出显示方式",
+    "overflow_optionItems": {
+        "hidden": "隐藏",
+        "scroll": "滚动",
+        "auto": "自动",
+        "visible": "可见",
+        "clip": "截断"
     }
 }

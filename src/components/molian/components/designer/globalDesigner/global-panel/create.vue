@@ -17,6 +17,7 @@ const {
   error,
 } = useBroadcastChannel({ name: 'molian_createVue' })
 const showDialog = ref(false)
+const showCreateDialog = ref(false)
 const showTemplateDialog = ref(false)
 const codeData = ref(``)
 const langMode = ref(``)
@@ -44,10 +45,31 @@ const sendChannel = function () {
   }
 }
 
+const importModelData = function(){
+    let createCode:any = {}
+    try {
+        createCode = JSON.parse(codeData.value)
+    } catch (error) {
+        message.error(t('global.dataformatError'))
+        createCode = null
+    }
+    if(!!createCode){
+      modelValue.value = createCode.modelValue
+      for (let key in createCode.globalAttrs) {
+        if (Object.prototype.hasOwnProperty.call(createCode.globalAttrs, key)) {
+            const element = createCode.globalAttrs[key];
+            globalAttrs[key] = element
+        }
+      }
+    }
+    codeData.value = ``
+    showCreateDialog.value = false
+}
+
 const exportModelData = function () {
   langMode.value = 'json'
   codeData.value = JSON.stringify({
-    designerCode:modelValue.value,
+    modelValue:modelValue.value,
     globalAttrs
   })
   showDialog.value = true
@@ -89,24 +111,40 @@ const importTemplate = function(){
       </customTooltip>
     </div>
     <div class="create-item">
+      <customButton theme="primary" size="small" @click="showCreateDialog = true">
+        {{ t('global.importData') }}
+      </customButton>
+    </div>
+    <div class="create-item">
       <customButton theme="primary" size="small" @click="exportModelData">
-        查看原始数据
+        {{ t('global.exportData') }}
       </customButton>
     </div>
     <div class="create-item">
       <customButton theme="primary" size="small" @click="importTemplate">
-        导入Template
+        {{ t('global.importTemplate') }}
       </customButton>
     </div>
   </div>
-  <customDialog appendToBody header="生成SFC" width="80%" :close-on-click-modal="false" @escKeydown="showDialog = false"
+  <customDialog appendToBody :header="t('global.createSFC')" width="80%" :close-on-click-modal="false" @escKeydown="showDialog = false"
       @closeBtnClick="showDialog = false" v-model:visible="showDialog" destroyOnClose>
     <div>
       <codeEditor v-model="codeData" :lang="langMode" />
     </div>
   </customDialog>
+
+  <customDialog appendToBody :header="t('global.createSFC')" width="80%" :close-on-click-modal="false" @escKeydown="showCreateDialog = false"
+      @closeBtnClick="showCreateDialog = false" v-model:visible="showCreateDialog" destroyOnClose>
+    <div>
+      <codeEditor v-model="codeData" lang="json" />
+    </div>
+    <template #footer>
+      <customButton theme="default" @click="showCreateDialog = false">{{ t('options.cancel') }}</customButton>
+      <customButton theme="primary" @click="importModelData">{{ t('global.importData') }}</customButton>
+    </template>
+  </customDialog>
   
-  <customDialog  appendToBody header="导入Template" width="1200px" :close-on-click-modal="false" @escKeydown="showTemplateDialog = false"
+  <customDialog  appendToBody :header="t('global.importTemplate')" width="1200px" :close-on-click-modal="false" @escKeydown="showTemplateDialog = false"
       @closeBtnClick="showTemplateDialog = false" v-model:visible="showTemplateDialog" destroyOnClose>
       <codeEditor v-model="cacheImportTemplateData"></codeEditor>
   </customDialog>

@@ -5,7 +5,7 @@ const props = defineProps({
   optionItems: {
     type: Array,
     default: () => []
-  },
+  } as any,
   modelValue: {
     type: String,
     default: ""

@@ -25,9 +25,10 @@ import {
 import vCustomDirectives from '@molian/utils/useDirectives'
 import { isIf, isFor, isShow, getForEachList, isNotSlot } from '@molian/utils/useCore'
 export const directives = {
-    props: <any>['comp', 'index', 'modelValue'],
+    props: <any>['comp', 'index', 'modelValue', 'parentNode'],
     setup(props: {
         modelValue: any;
+        parentNode: any;
         comp: {
             directives: {
                 if: {
@@ -165,6 +166,7 @@ export const directives = {
                 id: props.comp.id,
                 ['data-key']: props.comp.key,
                 isDesigner: true,
+                parentNode:props.parentNode,
                 ref: elRef
             }
             if (index >= 0) {

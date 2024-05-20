@@ -31,11 +31,15 @@ import { nextTick } from 'vue';
 
 export const customText = (el: { childNodes: any[]; appendChild: (arg0: HTMLElement) => void; }, binding: { value: { directives: { text: any; }; vars: { text: any; }; }; }) => {
     nextTick(() => {
-        const { text } = binding.value.directives
+        const { directives, vars } = binding.value
         let textTag = document.createElement('text')
         textTag.setAttribute('id', 'custom-text')
+        const { text } = directives
         if (text.type === 'variable') {
-            const newText = binding.value.vars.text;
+            let newText:any = vars;
+            text.value.forEach((item:string) =>{
+                newText = newText[item]
+            })
             let currentText = newText;
             if (typeof currentText === 'function') {
                 currentText = newText(el, binding);

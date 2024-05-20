@@ -25,9 +25,17 @@ const i18nList = computed(()=>{
         <template #toolbar>
             <svg-icon :class="['css-svg-icon', 'toolbar-icon', useUI === 'all' && 'is-actived']"
                     icon="uiLib-all" @click="useUI = 'all'" />
-            <customTooltip :content="item.name" v-for="item in UIData" :key="item.name">
+            <customTooltip v-for="item in UIData" :key="item.name">
                 <svg-icon :class="['css-svg-icon', 'toolbar-icon', useUI === item.name && 'is-actived']"
                     :icon="`uiLib-${item.icon}`" @click="useUI = item.name" />
+                <template #content>
+                <div class="link-container">
+                    <span style="user-select: none;">{{ item.name }}</span>
+                    <a class="ml-link" :href="item.docUrl" target="_blank" v-if="!!item.docUrl">
+                        <svg-icon icon="outLink"></svg-icon>
+                    </a>
+                </div>
+                </template>
             </customTooltip>
         </template>
         <template v-slot:default="{ activeData }">
@@ -56,5 +64,18 @@ const i18nList = computed(()=>{
 
 .is-actived {
     background-color: var(--ml-fill-color-4) !important;
+}
+
+.link-container{
+    display: flex;
+    align-items: center;
+
+}
+
+.ml-link{
+    padding-left: var(--ml-pd-base);
+    color: var(--ml-primary-color);
+    display: flex;
+    align-items: center;
 }
 </style>

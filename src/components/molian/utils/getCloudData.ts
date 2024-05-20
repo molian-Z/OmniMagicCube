@@ -143,11 +143,17 @@ export async function getCloudData() {
         const element = nowData[key];
         if (key === 'slots') {
           element.forEach((item: { key: string | number; value: { [key: string]: string | boolean | { allowComps?: string[] | undefined; auto?: boolean | undefined } } }) => {
-            const compEl = currentRegComps.value[item.key]
+            let compEl = currentRegComps.value[item.key]
             if (!slotsMap.value[item.key]) {
               slotsMap.value[item.key] = item.value
             }
-            compEl.slots = Object.assign({}, parseSlot(item.value), compEl.slots)
+            if(!compEl){
+                compEl = {
+                    slots: Object.assign({}, parseSlot(item.value))
+                }
+            }else{
+                compEl.slots = Object.assign({}, parseSlot(item.value), compEl.slots)
+            }
           })
         } else if (key === 'attrs') {
           element.forEach((item: { key: string | number; value: { [x: string]: any } }) => {

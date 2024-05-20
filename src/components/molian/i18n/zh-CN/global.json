@@ -24,5 +24,10 @@
   "deviceOrientationLandscape":"正常",
   "setting":{
     "immerseMode":"沉浸模式"
-  }
+  },
+  "importData":"导入模型数据",
+  "importTemplate":"导入Template",
+  "exportData":"导出模型数据",
+  "createSFC":"生成SFC",
+  "dataformatError":"数据格式错误"
 }
