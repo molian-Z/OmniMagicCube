@@ -1,7 +1,6 @@
 import {
     toKebabCase
 } from './util'
-import { useElementBounding } from '@vueuse/core'
 import { compsRef } from '@molianComps/designer/designerData'
 export interface IStyleMap {
     opacity?: IOpacity;

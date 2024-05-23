@@ -1,4 +1,4 @@
-import { getCurrentOn, getVariableData } from '@molian/utils/customFunction'
+import { getCurrentOn } from '@molian/utils/customFunction'
 
 // 循环判断
 export const isFor = (comp: any) => {
@@ -37,10 +37,6 @@ export const isShow = (comp: any) => {
 
 export const getValue = (modelValue: any, variable: any, expandAPI: any, type?: 'designer') => {
     return modelValue.map((item: { directives: { [x: string]: { [x: string]: any; type: any; value: any } }; on: { [x: string]: any }; nativeOn: { [x: string]: any } }) => {
-        // Object.keys(item.directives).forEach(key => {
-        //     if (!item.directives[key]) return false;
-        //     vars[key] = getVariableData(item.directives[key], variable)
-        // })
         return {
             vars: variable,
             cacheOn: type === 'designer' ? {} : getCurrentOn({ on: item.on, nativeOn: item.nativeOn }, variable, expandAPI),
@@ -192,4 +188,30 @@ export const data2Vars = (directive: any, vars: any) => {
         })
     }
     return newVal
+}
+
+export const parseProps = (comp: any, comps: any, variable: any) => {
+    const propsData: {
+        [key: string]: any;
+      } = {};
+      for (const key in comp.attrs) {
+        if (Object.hasOwnProperty.call(comp.attrs, key)) {
+          const element = comp.attrs[key];
+          const compProp = comps[comp.name].props[key];
+          if (compProp && compProp.hidden && compProp.hidden(comp.attrs) === false || compProp && !compProp.hidden) {
+            if (element && element.type === "variable") {
+              let newVal = variable;
+              if (element.value) {
+                element.value.forEach((item: string) => {
+                  newVal = newVal[item];
+                });
+              }
+              propsData[key] = newVal;
+            } else if (element && element.value !== undefined && element.value !== null) {
+              propsData[key] = element.value;
+            }
+          }
+        }
+      }
+      return propsData;
 }

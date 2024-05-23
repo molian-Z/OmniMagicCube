@@ -19,7 +19,7 @@ component: [/.*Tabs.*/, /.*TabPane.*/, /.*Layout.*/, /.*Container.*/, /.*Header.
 }, {
     icon: 'form',
     name: 'form',
-    rule: /.*(Input|Picker|Checkbox|Radio|Form|AutoComplete|Cascader|Select|Slider|Switch|Textarea|Transfer|Upload|Wheel).*/
+component: [/.*Form$/, /.*FormItem$/, /.*Input.*/,/.*Select.*/,/.*Option.*/, /.*Picker.*/, /.*Checkbox.*/,/.*Radio.*/,/.*Switch.*/, /.*AutoComplete.*/, /.*Cascader.*/,/.*Slider.*/, /.*Textarea.*/,/.*Transfer.*/,/.*Upload.*/,/.*Wheel.*/]
 }, {
     icon: 'content',
     name: 'content',
@@ -27,7 +27,7 @@ component: [/.*Tabs.*/, /.*TabPane.*/, /.*Layout.*/, /.*Container.*/, /.*Header.
 }, {
     icon: 'modal',
     name: 'modal',
-    rule: /.*(Alert|Confirm|Contextmenu|Drawer|Loading|Message|Modal|Notice|progress|Skeleton|spin|Toast|Tour).*/
+    rule: /.*(Alert|Confirm|Contextmenu|Drawer|Loading|Message|Modal|Dialog|Notice|progress|Skeleton|spin|Toast|Tour).*/
 }, {
     icon: 'more',
     name: 'more',

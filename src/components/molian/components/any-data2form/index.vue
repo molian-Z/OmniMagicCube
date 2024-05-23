@@ -36,8 +36,6 @@ defineOptions({
         default: true
     }
 })
-// console.log(props.propData, props.selectedComp)
-// 计算是否需要IconPicker
 const emit = defineEmits(['update:modelValue'])
 const value = computed({
     get() {
@@ -144,7 +142,7 @@ const tabType = () => {
                 <customCascader size="small" :options="variableList" :checkStrictly="true" :clearable="true"
                     v-model="variableValue" valueType="full" v-if="type === 'variable'" />
                 <customSwitch size="small" v-model="value" v-else-if="type === 'boolean'" />
-                <customSelect :options="getOptionItemI18n(propData.optionItems)" size="small" v-model="value"
+                <customSelect :options="getOptionItemI18n(propData.optionItems)" size="small" v-model="value" :clearable="true"
                     v-else-if="propData.optionItems" />
                 <customInputNumber size="small" v-model="value" v-else-if="type === 'number'">
                 </customInputNumber>

@@ -28,6 +28,7 @@ const props = defineProps({
     default: {}
   }
 })
+const message = inject('ml-message')
 const emits = defineEmits(['update:modelValue'])
 const customComps: any = inject('customComps')
 const { customButton, customDialog, customRadioGroup, customRadioButton } = customComps
@@ -74,7 +75,13 @@ const showDialog = (type: string) => {
 
 const saveCode = () => {
   if (codeMode.value === 'json') {
-    codeObj.value = JSON.parse(codeObj.value)
+    try {
+        codeObj.value = JSON.parse(codeObj.value)
+    } catch (error) {
+        message.error(t('options.jsonFormatError')+': '+error)
+        return 
+    }
+    
   }
   emits('update:modelValue', codeObj.value);
   visible.value = false;

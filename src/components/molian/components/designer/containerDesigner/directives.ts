@@ -23,7 +23,7 @@ import {
     parseStyle
 } from '@molian/utils/css-generator'
 import vCustomDirectives from '@molian/utils/useDirectives'
-import { isIf, isFor, isShow, getForEachList, isNotSlot } from '@molian/utils/useCore'
+import { isIf, isFor, isShow, getForEachList, isNotSlot, parseProps } from '@molian/utils/useCore'
 export const directives = {
     props: <any>['comp', 'index', 'modelValue', 'parentNode'],
     setup(props: {
@@ -110,28 +110,7 @@ export const directives = {
 
         // props
         const propsData: any = computed(() => {
-            let newProps: any = {}
-            for (const key in props.comp.attrs) {
-                if (Object.hasOwnProperty.call(props.comp.attrs, key)) {
-                    const element = props.comp.attrs[key];
-                    const compProp = comps.value[props.comp.name].props[key]
-                    if(compProp && compProp.hidden && compProp.hidden(props.comp.attrs) === false || compProp && !compProp.hidden){
-                        if(element.type === "variable"){
-                            let newVal = null
-                            if(element.value){
-                                element.value.forEach((item:string) =>{
-                                    newVal = variableData.value[item]
-                                })
-                                newProps[key] = newVal
-                            }
-                        }else if (element.value !== undefined && element.value !== null) {
-                            newProps[key] = element.value
-                        }
-                    }
-                    
-                }
-            }
-            return newProps
+            return parseProps(props.comp, comps.value, variableData.value)
         })
         const computedClass = computed(() => {
             return {

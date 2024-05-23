@@ -79,7 +79,6 @@ const getCoverStyle = function (cover: { left: any; width: any; top: any; height
         }
     }
 }
-
 const confirmDropContainer = async() =>{
    onDragenter(-1, modelValue, null, modelValue)
 }

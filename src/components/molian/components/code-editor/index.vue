@@ -1,30 +1,39 @@
 <template>
   <div class="ace-container">
-    <div class="ace-editor" ref="ace" @contextmenu="onContextMenu" @keydown="keyDown" @keyup="keyUp"></div>
+    <div
+      class="ace-editor"
+      ref="ace"
+      @contextmenu="onContextMenu"
+      @keydown="keyDown"
+      @keyup="keyUp"
+    ></div>
   </div>
 </template>
 
 <script lang="ts">
 // @ts-nocheck
-import ace from 'ace-builds'
-import 'ace-builds/src-min-noconflict/theme-dracula'
-import 'ace-builds/src-min-noconflict/mode-javascript'
-import 'ace-builds/src-min-noconflict/mode-html'
-import 'ace-builds/src-min-noconflict/mode-json'
-import 'ace-builds/src-min-noconflict/mode-css'
-import 'ace-builds/src-min-noconflict/ext-language_tools'
+import ace from "ace-builds";
+import "ace-builds/src-min-noconflict/theme-dracula";
+import "ace-builds/src-min-noconflict/mode-javascript";
+import "ace-builds/src-min-noconflict/mode-html";
+import "ace-builds/src-min-noconflict/mode-json";
+import "ace-builds/src-min-noconflict/mode-css";
+import "ace-builds/src-min-noconflict/ext-language_tools";
+import "ace-builds/src-min-noconflict/ext-searchbox"; // 用于搜索功能
+import "ace-builds/src-min-noconflict/ext-error_marker";
+import "ace-builds/src-min-noconflict/ext-linking";
 // import workerJavascriptUrl from "ace-builds/src-min-noconflict/worker-javascript?url";
 import snippetsUrl from "ace-builds/src-min-noconflict/snippets/javascript";
-import { beautify } from 'ace-builds/src-min-noconflict/ext-beautify';
+import { beautify } from "ace-builds/src-min-noconflict/ext-beautify";
 // import loadBeautifier, { beautifierOpts } from '@/utils/beautifierLoader'
 // import {
 //   snippetData,
 //   completions,
 //   highRules
 // } from '@/utils/ace-editor-data'
-// const ACE_BASE_PATH = 'ace'
+// const ACE_BASE_PATH = "/src-min-noconflict";
 export default {
-  name: 'CodeEditor',
+  name: "CodeEditor",
   props: {
     modelValue: {
       type: String,
@@ -32,50 +41,58 @@ export default {
     },
     readonly: {
       type: Boolean,
-      default: false
+      default: false,
     },
     mode: {
       type: String,
-      default: 'javascript'
+      default: "javascript",
     },
-    userWorker: { //是否开启语法检查，默认开启
+    userWorker: {
+      //是否开启语法检查，默认开启
       type: Boolean,
-      default: false
+      default: true,
     },
-
   },
   unmounted() {
-    this.aceEditor.destroy()
+    this.aceEditor.destroy();
   },
-  emits: ['update:modelValue'],
+  emits: ["update:modelValue"],
   mounted() {
-    // ace.config.set('basePath', ACE_BASE_PATH)
-    // ace.config.setModuleUrl('ace/mode/javascript_worker', workerJavascriptUrl);
-    ace.config.setModuleUrl('ace/mode/snippetsUrl', snippetsUrl);
+    // ace.config.set("basePath", ACE_BASE_PATH);
+    // ace.config.setModuleUrl("ace/mode/javascript_worker", workerJavascriptUrl);
+    ace.config.setModuleUrl("ace/mode/snippetsUrl", snippetsUrl);
     this.aceEditor = ace.edit(this.$refs.ace, {
       maxLines: 20, // 最大行数，超过会自动出现滚动条
       minLines: 5, // 最小行数，还未到最大行数时，编辑器会自动伸缩大小
       fontSize: 14, // 编辑器内字体大小
-      theme: 'ace/theme/dracula', // 默认设置的主题
-      mode: 'ace/mode/'+this.mode, // 默认设置的语言模式
-      useWorker: this.userWorker,
+      theme: "ace/theme/dracula", // 默认设置的主题
+      mode: "ace/mode/" + this.mode, // 默认设置的语言模式
       tabSize: 4, // 制表符设置为4个空格大小
       readOnly: this.readonly,
       highlightActiveLine: true,
       value: this.codeValue,
-      mergeUndoDeltas: 'always',
+      mergeUndoDeltas: "always",
       useSoftTabs: true,
       useWrapMode: true,
       highlightGutterLine: false,
       fadeFoldWidgets: true,
-      showPrintMargin: false
-    })
-    beautify(this.aceEditor.session)
+      showPrintMargin: false,
+    });
+    beautify(this.aceEditor.session);
     this.aceEditor.setOptions({
       enableBasicAutocompletion: true,
       enableSnippets: true, // 设置代码片段提示
       enableLiveAutocompletion: true, // 设置自动提示
-    })
+    });
+    if (!this.userWorker) {
+        this.aceEditor.getSession().setUseWorker(this.userWorker);
+        this.aceEditor.getSession().on('changeAnnotation', function() {
+        const annotations = editor.getSession().getAnnotations();
+        // annotations 是包含错误信息的数组
+        // 你可以遍历这个数组并处理错误提示
+            console.log(annotations)
+        });
+    }
     /* const innerText = this.$parent.$el.innerText
     if(innerText.indexOf('onFormCreated') > -1 || innerText.indexOf('onFormMounted') > -1 || innerText.indexOf('onFormDataChange') > -1){
       completData.push(...snippetsData.map(item =>{
@@ -86,21 +103,21 @@ export default {
       }))
     }else{} */
     //编辑时同步数据
-    this.aceEditor.getSession().on('change', (ev) => {
-      this.$emit('update:modelValue', this.aceEditor.getValue())
-    })
-    this.downArr = []
+    this.aceEditor.getSession().on("change", (ev) => {
+      this.$emit("update:modelValue", this.aceEditor.getValue());
+    });
+    this.downArr = [];
   },
   data() {
     return {
       aceEditor: null,
       codeValue: this.modelValue,
-    }
+    };
   },
   watch: {
     modelValue(newVal, oldVal) {
-      if(newVal !== oldVal){
-        this.codeValue = newVal
+      if (newVal !== oldVal) {
+        this.codeValue = newVal;
         //this.aceEditor.setValue(newVal)
       }
     },
@@ -109,23 +126,23 @@ export default {
     keyDown(e) {
       if (e.keyCode >= 16 && e.keyCode <= 18) {
         if (this.downArr.indexOf(e.keyCode) === -1) {
-          this.downArr.push(e.keyCode)
+          this.downArr.push(e.keyCode);
         }
       }
     },
     keyUp(e) {
       if (this.downArr[0] === 17 && e.keyCode === 75) {
-        this.formatCode()
+        this.formatCode();
       }
       if (e.keyCode >= 16 && e.keyCode <= 18) {
         if (this.downArr.indexOf(e.keyCode) > -1) {
-          this.downArr.splice(this.downArr.indexOf(e.keyCode), 1)
+          this.downArr.splice(this.downArr.indexOf(e.keyCode), 1);
         }
       }
     },
 
     getLowerCase(str) {
-      var arr = str.split('')
+      var arr = str.split("");
       //使用循环遍历字符串
       str = arr.map((item, index) => {
         if (item.toUpperCase() === item) {
@@ -133,14 +150,14 @@ export default {
           if (index === 0) {
             return item.toLowerCase();
           } else {
-            return '-' + item.toLowerCase();
+            return "-" + item.toLowerCase();
           }
           //大写就在前面加上-，并用toLowerCase()将当前字符转为小写
         } else {
           return item;
         }
-      })
-      return str.join('')
+      });
+      return str.join("");
     },
 
     getUpperCase(str) {
@@ -224,7 +241,6 @@ export default {
     //   session.$mode.$tokenizer = null;
     //   session.bgTokenizer.setTokenizer(session.$mode.getTokenizer());
     //   session.bgTokenizer.start(0);
-
 
     //   //设置Ref提示
     //   const refsData = []
@@ -324,30 +340,30 @@ export default {
     // },
 
     getEditorAnnotations() {
-      return this.aceEditor.getSession().getAnnotations()
+      return this.aceEditor.getSession().getAnnotations();
     },
 
     setValue(newValue) {
-      this.aceEditor.getSession().setValue(newValue)
+      this.aceEditor.getSession().setValue(newValue);
     },
 
     formatCode() {
-      let data
-      loadBeautifier(beautifier =>{
-        if (this.mode === 'json') {
-          data = JSON.parse(this.modelValue)
-        } else if (this.mode === 'css') {
-          data = beautifier.css(this.modelValue, beautifierOpts.css)
-        } else if (this.mode == 'javascript') {
-          data = beautifier.js(this.modelValue, beautifierOpts.js)
-        }else if (this.mode === 'html'){
-          data = beautifier.html(this.modelValue)
+      let data;
+      loadBeautifier((beautifier) => {
+        if (this.mode === "json") {
+          data = JSON.parse(this.modelValue);
+        } else if (this.mode === "css") {
+          data = beautifier.css(this.modelValue, beautifierOpts.css);
+        } else if (this.mode == "javascript") {
+          data = beautifier.js(this.modelValue, beautifierOpts.js);
+        } else if (this.mode === "html") {
+          data = beautifier.html(this.modelValue);
         }
-      })
-      this.setValue(data)
+      });
+      this.setValue(data);
     },
-  }
-}
+  },
+};
 </script>
 
 <style lang="scss" scoped>

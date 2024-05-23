@@ -16,7 +16,9 @@ const currentOn = computed(() => {
 
 const currentEmits = computed(() => {
   if (!selectedComp.value) return {}
-  return selectedComp.value && comps.value[selectedComp.value.name].emits.map((item: any) => {
+  return selectedComp.value && comps.value[selectedComp.value.name].emits.filter((item:any) => {
+    return item.indexOf('update:') === -1
+  }).map((item: any) => {
     return {
       key: item,
       type: 'function'

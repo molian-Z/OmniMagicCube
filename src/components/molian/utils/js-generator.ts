@@ -97,7 +97,7 @@ export const createJS = function (compObj: IComp, globalAttrs: { lifecycle: any;
 
     // 函数代码生成
     let jsCode = Object.keys(jsCodeObj).map(key => {
-      return `  const ${key} = ${jsCodeObj[key]};`
+      return `  const ${key.replace(/:/g, '__')} = ${jsCodeObj[key]};`
     }).join('\n')
     let code = `<script setup>`
     // import引入
@@ -148,7 +148,7 @@ export const createJS = function (compObj: IComp, globalAttrs: { lifecycle: any;
     })
     // jsCode 写入
     let jsCode = Object.keys(jsCodeObj).map(key => {
-      return `  ['${key}']: ${jsCodeObj[key]}`
+      return `  ['${key.replace(/:/g, '__')}']: ${jsCodeObj[key]}`
     }).join(',\n')
     return `<script>
   export default {
@@ -193,7 +193,7 @@ function parseJS(jsCodeObj: { [x: string]: string }, obj: { [x: string]: any }) 
       for (const key in item.on) {
         if (Object.hasOwnProperty.call(item.on, key)) {
           // 遍历事件对象的事件
-          const element = item.nativeOn[key];
+          const element = item.on[key];
           const {
             type,
             functionMode,

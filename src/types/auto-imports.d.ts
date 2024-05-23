@@ -145,6 +145,7 @@ declare global {
   const onUnmounted: typeof import('vue')['onUnmounted']
   const onUpdated: typeof import('vue')['onUpdated']
   const optionsPanel: typeof import('../components/molian/components/designer/designerData')['optionsPanel']
+  const parseProps: typeof import('../components/molian/utils/useCore')['parseProps']
   const parseSlot: typeof import('../components/molian/utils/compsConfig')['parseSlot']
   const parseStyle: typeof import('../components/molian/utils/css-generator')['parseStyle']
   const pie: typeof import('../components/molian/components/echarts/model/pie')['default']

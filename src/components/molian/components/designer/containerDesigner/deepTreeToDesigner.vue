@@ -60,7 +60,6 @@ const empty = computed(() => {
 });
 
 const value = computed(() => {
-  // return data2Vars(directives.value, variableData.value)
   return getValue(compData.value, variableData.value, {}, "designer");
 });
 const { onDrop, onDropSlot } = useDraggable(comps, compData, message);
@@ -166,7 +165,7 @@ const setRef = async (el: any, comp: any, index: any) => {
             ]"
             @dragover.self.prevent.stop="onDragenter(index, comp, null, compData)"
             @drop.self.stop="onDropSlot($event, slotVal)"
-            v-if="isDraggable && slotVal.children.length === 0"
+            v-if="isDraggable && dropKey === comp.key"
           >
             {{
               t("container.dropComp") +

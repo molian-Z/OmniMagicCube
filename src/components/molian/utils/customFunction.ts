@@ -105,8 +105,8 @@ export const getCurrentOn = (data: { on: any; nativeOn: any }, variable: globalT
     return mergeProps(newOn, newNativeOn)
 }
 
-export const getVariableData = (variable: { [x: string]: any; }, expandAPI: any) => {
-    const vars = reactive<any>({})
+export const getVariableData = (variable: { [x: string]: any; }, expandAPI?: any) => {
+    const vars:any = {}
     const { cloned } = useCloned(variable)
     Object.keys(cloned.value).forEach(key => {
         const { type, value } = cloned.value[key]

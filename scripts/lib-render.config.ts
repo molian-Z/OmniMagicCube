@@ -61,7 +61,10 @@ export default defineConfig({
         'ace-builds/src-min-noconflict/mode-javascript',
         'ace-builds/src-min-noconflict/mode-html',
         'ace-builds/src-min-noconflict/mode-css',
-        'ace-builds/src-min-noconflict/ext-language_tools'
+        'ace-builds/src-min-noconflict/ext-language_tools',
+        'ace-builds/src-min-noconflict/ext-searchbox',
+        'ace-builds/src-min-noconflict/ext-error_marker',
+        'ace-builds/src-min-noconflict/ext-linking'
       ],
       output: {
         // 在 UMD 构建模式下为这些外部化的依赖提供一个全局变量

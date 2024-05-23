@@ -68,7 +68,6 @@ function parseTemplate(obj: { tag: any; attrs: any; on: any; nativeOn: any; dire
         const elementType = obj.attrs[key].type;
         let element = obj.attrs[key].value;
         if (elementType === 'variable') {
-            console.log(element)
             element = element.join('.')
         }
         if(typeof element === 'object'){
@@ -91,7 +90,7 @@ function parseTemplate(obj: { tag: any; attrs: any; on: any; nativeOn: any; dire
     for(const key in obj.on){
       if(Object.hasOwnProperty.call(obj.on,key)){
         // 遍历事件对象的事件
-        const element = obj.nativeOn[key];
+        const element = obj.on[key];
         //modifiers
         templateStr += ` @${key}`
         if(element.value.modifiers && element.value.modifiers.length > 0){
@@ -102,7 +101,7 @@ function parseTemplate(obj: { tag: any; attrs: any; on: any; nativeOn: any; dire
         if(element.type === 'variable'){
           templateStr += `="${element.value.join('.')}"`
         }else{
-          templateStr += `="${obj.key}_${key}"`
+          templateStr += `="${obj.key}_${key.replace(/:/g, '__')}"`
         }
       }
     }

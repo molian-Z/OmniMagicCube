@@ -3,49 +3,19 @@ import { defineProps, inject } from "vue";
 import deepTreeToRender from "./deepTreeToRender.vue";
 import { setRenderRef } from "./renderData";
 import { toKebabCase } from "@molian/utils/util";
+import { parseProps } from '@molian/utils/useCore';
+import { variable } from './renderData';
 const comps: any = inject("mlComps");
 const props = defineProps(<
   {
     comp: any;
-    variable: any;
   }
 >{
   comp: {
     type: Object,
     default: () => {},
   },
-  variable: {
-    type: Object,
-    default: () => {},
-  },
 });
-
-// props
-const parseProps = (attrs: any) => {
-  const propsData: {
-    [key: string]: any;
-  } = {};
-  for (const key in attrs) {
-    if (Object.hasOwnProperty.call(attrs, key)) {
-      const element = attrs[key];
-      const compProp = comps.value[props.comp.name].props[key];
-      if ((compProp.hidden && compProp.hidden(attrs) === false) || !compProp.hidden) {
-        if (element.type === "variable") {
-          let newVal = null;
-          if (element.value) {
-            element.value.forEach((item: string) => {
-              newVal = props.variable[item];
-            });
-          }
-          propsData[key] = newVal;
-        } else if (element.value !== undefined && element.value !== null) {
-          propsData[key] = element.value;
-        }
-      }
-    }
-  }
-  return propsData;
-};
 const useComp = computed(() => {
   return !!comps[props.comp.name] ? comps[props.comp.name].comp : props.comp.name;
 });
@@ -55,7 +25,7 @@ const useComp = computed(() => {
     :id="comp.id"
     :is="useComp"
     :ref="(el: any) => setRenderRef(el, comp)"
-    v-bind="parseProps(comp.attrs)"
+    v-bind="parseProps(comp, comps, variable)"
     :class="toKebabCase(comp.name) + '__' + comp.key"
   >
     <template

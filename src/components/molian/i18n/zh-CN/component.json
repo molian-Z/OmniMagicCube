@@ -158,6 +158,7 @@
   "SelectOption":"选择面板(option)",
   "SelectOptionGroup":"选择面板(option group)",
   "SelectOptionItem":"选择面板(option item)",
+  "Option":"选择子项",
   "Carousel":"轮播图(走马灯)",
   "CarouselItem":"轮播图子项",
   "Scollbar":"滚动条",

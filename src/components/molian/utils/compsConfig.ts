@@ -349,15 +349,12 @@ function parseProps(obj: any, key: null | string | number, testKey?: string) {
         //         propObj.default = {}
         //     }
         // }
-        try {
-            propObj.default = obj.default && (typeof obj.default === 'function' && obj.default() || obj.default)
-        } catch (error) {
-            propObj.default = null
-        }
+        propObj.default = null
         newObj = propObj
     } else if (obj && typeof obj === 'function') {
         newObj = {
-            type: getPropType(obj)
+            type: getPropType(obj),
+            default: null
         }
     } else if (obj || !obj) {
         newObj = {
@@ -366,6 +363,7 @@ function parseProps(obj: any, key: null | string | number, testKey?: string) {
             default: null
         }
     }
+    
     return newObj
 }
 
