@@ -2,13 +2,21 @@
 import { ref, computed, inject, watch, onMounted } from 'vue'
 import { selectedComp } from '@molianComps/designer/designerData'
 import svgIcon from '@molianComps/svg-icon/index.vue'
+import SuffixUnit from '@molianComps/suffix-unit/index.vue'
 const customComps: any = inject('customComps')
 const t: any = inject('mlLangs')
 const { customInput, customTooltip } = customComps
 
 const css = computed(() => {
-    return selectedComp.value && selectedComp.value.css || {
-        borderRadius: ['0', '0', '0', '0']
+    if(selectedComp.value){
+        if(selectedComp.value.css && !selectedComp.value.css.units){
+            selectedComp.value.css.units = {}
+        }
+        return selectedComp.value && selectedComp.value.css
+    }
+    return {
+        borderRadius: ['0', '0', '0', '0'],
+        units:{}
     }
 })
 
@@ -94,7 +102,7 @@ const updateModelValue = function (prop: string, val: any) {
                         </customTooltip>
                     </template>
                     <template #suffix>
-                        <span class="suffix-tag">px</span>
+                        <suffix-unit v-model="css.units.moveX" />
                     </template>
                 </customInput>
             </div>
@@ -107,7 +115,7 @@ const updateModelValue = function (prop: string, val: any) {
                         </customTooltip>
                     </template>
                     <template #suffix>
-                        <span class="suffix-tag">px</span>
+                        <suffix-unit v-model="css.units.moveY" />
                     </template>
                 </customInput>
             </div>
@@ -122,7 +130,7 @@ const updateModelValue = function (prop: string, val: any) {
                         </customTooltip>
                     </template>
                     <template #suffix>
-                        <span class="suffix-tag">px</span>
+                        <suffix-unit  v-model="css.units.width" />
                     </template>
                 </customInput>
             </div>
@@ -135,7 +143,7 @@ const updateModelValue = function (prop: string, val: any) {
                         </customTooltip>
                     </template>
                     <template #suffix>
-                        <span class="suffix-tag">px</span>
+                        <suffix-unit  v-model="css.units.height" />
                     </template>
                 </customInput>
             </div>

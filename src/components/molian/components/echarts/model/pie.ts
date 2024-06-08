@@ -1,7 +1,7 @@
 import * as echarts from 'echarts'
 import colors from '../colors'
 
-export default (data) => {
+export default (data:any) => {
     const opts = {
         color: colors[data.selectedColor],
         legend: {
@@ -12,12 +12,12 @@ export default (data) => {
         },
         ...data.options
     }
-
     // 设置tooltip
     opts.tooltip = {
         show: data.showTooltip,
         trigger: 'item',
-        formatter: '{a} <br/>{b} : {c} ({d}%)'
+        formatter: '{a} <br/>{b} : {c} ({d}%)',
+        appendTo:document.body
     }
 
     // 设置内容

@@ -31,37 +31,46 @@ import { nextTick } from 'vue';
 
 export const customText = (el: { childNodes: any[]; appendChild: (arg0: HTMLElement) => void; }, binding: { value: { directives: { text: any; }; vars: { text: any; }; }; }) => {
     nextTick(() => {
-        const { directives, vars } = binding.value
-        let textTag = document.createElement('text')
-        textTag.setAttribute('id', 'custom-text')
+        const { directives, vars }: any = binding.value
         const { text } = directives
         if (text.type === 'variable') {
-            let newText:any = vars;
-            text.value.forEach((item:string) =>{
-                newText = newText[item]
-            })
-            let currentText = newText;
-            if (typeof currentText === 'function') {
-                currentText = newText(el, binding);
-            }
-            if (typeof newText === 'object') {
-                currentText = JSON.stringify(currentText);
-            }
-            el.childNodes.forEach((item: { id: string; remove: () => void; }) => {
-                if(item.id === 'custom-text'){
-                    item.remove()
+            watch(() => vars[text.value[0]], (newVal) => {
+                let newText: any = vars;
+                text.value.forEach((item: string) => {
+                    newText = newText[item]
+                })
+                let currentText = newText;
+                if (typeof currentText === 'function') {
+                    currentText = newText(el, binding);
                 }
+                if (typeof newText === 'object') {
+                    currentText = JSON.stringify(currentText);
+                }
+                for (let index = 0; index < el.childNodes.length; index++) {
+                    const item = el.childNodes[index];
+                    if (item.id === 'custom-text') {
+                        item.remove()
+                    }
+                }
+                const textTag = document.createElement('text')
+                textTag.setAttribute('id', 'custom-text')
+                let tag = document.createTextNode(currentText)
+                textTag.appendChild(tag)
+                el.appendChild(textTag)
+
+            }, {
+                immediate: true,
+                deep: true
             })
-            let tag = document.createTextNode(currentText)
-            textTag.appendChild(tag)
-            el.appendChild(textTag)
         } else if (text.type === 'string') {
             el.childNodes.forEach((item: { id: string; remove: () => void; }) => {
-                if(item.id === 'custom-text'){
+                if (item.id === 'custom-text') {
                     item.remove()
                 }
             })
             let tag = document.createTextNode(text.value)
+            const textTag = document.createElement('text')
+            textTag.setAttribute('id', 'custom-text')
             textTag.appendChild(tag)
             el.appendChild(textTag)
             //el.innerText = text.value;

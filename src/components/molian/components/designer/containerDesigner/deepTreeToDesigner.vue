@@ -19,9 +19,9 @@ const props = defineProps({
     type: Array,
     default: () => [],
   },
-  parentNode:{
+  parentNode: {
     type: Object,
-    default: () => {}
+    default: () => {},
   },
   treeIndex: {
     type: Number,
@@ -159,21 +159,22 @@ const setRef = async (el: any, comp: any, index: any) => {
             :treeIndex="treeIndex + 1"
           />
           <div
-            :class="[
-              'designer-comp__empty',
-              dropKey === comp.key && !dropType && 'dropping-comp',
-            ]"
-            @dragover.self.prevent.stop="onDragenter(index, comp, null, compData)"
-            @drop.self.stop="onDropSlot($event, slotVal)"
+            class="designer-comp__empty"
             v-if="isDraggable && dropKey === comp.key"
           >
-            {{
-              t("container.dropComp") +
-              t("component." + comps[comp.name].title) +
-              t("container.component") +
-              t("slot." + slotKey) +
-              t("container.slot")
-            }}
+            <div
+              :class="['designer-comp__empty-content', dropKey === comp.key && !dropType && 'dropping-comp']"
+              @dragover.self.prevent.stop="onDragenter(index, comp, null, compData)"
+              @drop.self.stop="onDropSlot($event, slotVal)"
+            >
+              {{
+                t("container.dropComp") +
+                t("component." + comps[comp.name].title) +
+                t("container.component") +
+                t("slot." + slotKey) +
+                t("container.slot")
+              }}
+            </div>
           </div>
         </template>
       </template>
@@ -257,8 +258,8 @@ const setRef = async (el: any, comp: any, index: any) => {
   align-items: center;
 }
 
-.drop__empty{
-    position: relative;
+.drop__empty {
+  position: relative;
 }
 
 .prefix-drop-slot,
@@ -278,27 +279,30 @@ const setRef = async (el: any, comp: any, index: any) => {
   z-index: v-bind(treeIndexDrop);
 }
 
-.prefix-drop-slot{
-    top: -20px;
-    left: 0;
+.prefix-drop-slot {
+  top: -20px;
+  left: 0;
 }
-.suffix-drop-slot{
-    bottom: -20px;
-    right: 0;
+.suffix-drop-slot {
+  bottom: -20px;
+  right: 0;
 }
 
 .designer-comp__empty {
-  border: 2px dashed var(--ml-info-color-1);
-  padding: 0 var(--ml-pd-small);
-  text-align: center;
-  font-weight: bold;
-  color: var(--ml-info-color-1);
-  user-select: none;
-  line-height: 24px;
-  transition: var(--ml-transition-base);
   flex: 1;
   position: relative;
   z-index: v-bind(treeIndexNext);
+  &-content {
+    position: absolute;
+    border: 2px dashed var(--ml-info-color-1);
+    padding: 0 var(--ml-pd-small);
+    text-align: center;
+    font-weight: bold;
+    color: var(--ml-info-color-1);
+    user-select: none;
+    line-height: 24px;
+    transition: var(--ml-transition-base);
+  }
 }
 
 .dropping-comp {

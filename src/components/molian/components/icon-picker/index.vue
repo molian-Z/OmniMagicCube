@@ -122,7 +122,7 @@ onMounted(async () => {
         :style="{ width: Number(size - 12) + 'px', height: Number(size - 12) + 'px' }" icon="ep:plus"></icon>
     </div>
     <custom-dialog appendToBody header="选择图标" width="750px" :close-on-click-modal="false" @escKeydown="visible = false"
-      @closeBtnClick="visible = false" v-model:visible="visible" destroyOnClose>
+      @closeBtnClick="visible = false" v-model:visible="visible" destroyOnClose v-if="visible">
       <div class="icon-picker-dialog">
         <div class="icon-picker-dialog__left">
           <div class="icon-picker-dialog__search">

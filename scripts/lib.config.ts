@@ -7,11 +7,13 @@ import components from 'unplugin-vue-components/vite'
 import visualizer from 'rollup-plugin-visualizer'
 import commonjs from '@rollup/plugin-commonjs';
 import dts from 'vite-plugin-dts'
+import loadVersion from 'vite-plugin-package-version';
 
 // https://vitejs.dev/config/
 export default defineConfig({
     base: './', // 这里更改打包相对绝对路径
     plugins: [
+        loadVersion(),
         vue(),
         createSvgIconsPlugin({
             // Specify the icon folder to be cached

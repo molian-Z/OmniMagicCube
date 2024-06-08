@@ -123,6 +123,9 @@ export default {
     },
   },
   methods: {
+    getValue(){
+        return this.aceEditor.getValue()
+    },
     keyDown(e) {
       if (e.keyCode >= 16 && e.keyCode <= 18) {
         if (this.downArr.indexOf(e.keyCode) === -1) {

@@ -127,14 +127,14 @@ const importTemplate = function(){
     </div>
   </div>
   <customDialog appendToBody :header="t('global.createSFC')" width="80%" :close-on-click-modal="false" @escKeydown="showDialog = false"
-      @closeBtnClick="showDialog = false" v-model:visible="showDialog" destroyOnClose>
+      @closeBtnClick="showDialog = false" v-model:visible="showDialog" destroyOnClose v-if="showDialog">
     <div>
       <codeEditor v-model="codeData" :lang="langMode" />
     </div>
   </customDialog>
 
   <customDialog appendToBody :header="t('global.createSFC')" width="80%" :close-on-click-modal="false" @escKeydown="showCreateDialog = false"
-      @closeBtnClick="showCreateDialog = false" v-model:visible="showCreateDialog" destroyOnClose>
+      @closeBtnClick="showCreateDialog = false" v-model:visible="showCreateDialog" destroyOnClose v-if="showDialog">
     <div>
       <codeEditor v-model="codeData" lang="json" />
     </div>
@@ -145,7 +145,7 @@ const importTemplate = function(){
   </customDialog>
   
   <customDialog  appendToBody :header="t('global.importTemplate')" width="1200px" :close-on-click-modal="false" @escKeydown="showTemplateDialog = false"
-      @closeBtnClick="showTemplateDialog = false" v-model:visible="showTemplateDialog" destroyOnClose>
+      @closeBtnClick="showTemplateDialog = false" v-model:visible="showTemplateDialog" destroyOnClose v-if="showDialog">
       <codeEditor v-model="cacheImportTemplateData"></codeEditor>
   </customDialog>
 </template>

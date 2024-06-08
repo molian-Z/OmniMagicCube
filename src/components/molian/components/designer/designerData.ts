@@ -198,6 +198,7 @@ export const createComp = function (comp: {
             padding: ['0', '0', '0', '0'],
             constX: 'left',
             constY: 'top',
+            position:'relative',
             color: {
                 isShow: true,
                 modelValue: ''
@@ -216,6 +217,7 @@ export const createComp = function (comp: {
                 modelValue: '',
                 field: ''
             },
+            units:{},
             boxShadow: []
         },
         key: randomStr,

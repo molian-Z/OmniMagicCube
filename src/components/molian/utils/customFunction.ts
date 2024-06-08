@@ -113,8 +113,10 @@ export const getVariableData = (variable: { [x: string]: any; }, expandAPI?: any
         if (type === 'function') {
             if (!!value.functionMode && ['asyncFunction', 'function'].indexOf(value.functionMode) > -1) {
                 vars[key] = createFunc(value.functionMode, value.codeVar, value.code).bind({ app: Vue, vars: variable, ...expandAPI })
-            } else if (!!value.functionMode && value.functionMode === 'computed') {
-                console.log(cloned.value)
+            }
+        }else if(type === 'computed'){
+            if (!!value.functionMode && ['asyncFunction', 'function'].indexOf(value.functionMode) > -1) {
+                vars[key] = computed(createFunc(value.functionMode, value.codeVar, value.code).bind({ app: Vue, vars: variable, ...expandAPI }))
             }
         }else{
             vars[key] = value

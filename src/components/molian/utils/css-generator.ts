@@ -52,6 +52,9 @@ const styleMap: IStyleMap = {
     moveY: {
         value: () => ''
     },
+    units: {
+        value: () => ''
+    },
     opacity: {
         prop: 'opacity',
         value: function (val: string) {
@@ -68,99 +71,91 @@ const styleMap: IStyleMap = {
     borderRadius: {
         isGlobal: true,
         prop: 'border-radius',
-        value: function (val: any[]) {
+        value: function (val: any[], obj:{ units: any; }) {
             const index = val.findIndex((item: string) => {
                 return item !== '0' || !item
             })
-            return index > -1 ? val && val.map((item: string) => {
-                return item + 'px'
+            return index > -1 ? val && val.map((item: string, index) => {
+                return createSuffix(item, obj.units.borderRadius && obj.units.borderRadius[index])
             }).join(' ') : ''
         }
     },
     margin: {
         isGlobal: true,
         prop: 'margin',
-        value: function (val: any[]) {
+        value: function (val: any[], obj:{ units: any; }) {
             const index = val.findIndex((item: string) => {
                 return item !== '0' || !item
             })
             return index > -1 ? val && val.map((item: string) => {
-                return item + 'px'
+                return createSuffix(item, obj.units.margin && obj.units.margin[index])
             }).join(' ') : ''
         }
     },
     padding: {
         isGlobal: true,
         prop: 'padding',
-        value: function (val: any[]) {
+        value: function (val: any[], obj:{ units: any; }) {
             const index = val.findIndex((item: string) => {
                 return item !== '0' || !item
             })
             return index > -1 ? val && val.map((item: string) => {
-                return item + 'px'
+                return createSuffix(item, obj.units.margin && obj.units.margin[index])
             }).join(' ') : ''
         }
     },
     // 暂不转换xy,实际使用应根据组件因素考虑是否替换为margin-left、margin-top
     constX: {
-        rawValue: function (val: string, obj: { moveX: string; width: string; }, key: any) {
+        rawValue: function (val: string, obj: { moveX: string; width: string;units: any; }, key: any) {
             if (!obj.moveX || obj.moveX == '0' && !compsRef[key]) return ''
-            // const elementBounding: {
-            //     left: any;
-            //     right: any;
-            // } = useElementBounding(compsRef[key])
-            // const { left, right } = elementBounding
+            const X = createSuffix(obj.moveX, obj.units.moveX)
             if (val === 'left') {
                 return {
-                    left: obj.moveX + 'px'
+                    left: X
                 }
             } else if (val === 'right') {
                 return {
-                    right: obj.moveX + 'px'
+                    right: X
                 }
             } else if (val === 'left2right') {
                 let spx = 0
                 if (!!Number(obj.width)) {
                     spx = Number(obj.moveX) + Number(obj.width)
                     return {
-                        left: obj.moveX + 'px',
-                        right: spx + 'px'
+                        left: X,
+                        right: createSuffix(spx, 'px')
                     }
                 } else {
                     return {
-                        left: obj.moveX + 'px'
+                        left: X
                     }
                 }
             }
         }
     },
     constY: {
-        rawValue: function (val: string, obj: { moveY: string;height: string; }, key: any) {
+        rawValue: function (val: string, obj: { moveY: string;height: string;units:any; }, key: any) {
             if (!obj.moveY || obj.moveY == '0' && !compsRef[key]) return ''
-            // const elementBounding: {
-            //     top: any;
-            //     bottom: any;
-            // } = useElementBounding(compsRef[key] && compsRef[key].$el && compsRef[key].$el.nextElementSibling)
-            // const { bottom, top } = elementBounding
+            const Y = createSuffix(obj.moveY, obj.units.moveY)
             if (val === 'top') {
                 return {
-                    top: obj.moveY + 'px'
+                    top: Y
                 }
             } else if (val === 'bottom') {
                 return {
-                    bottom: obj.moveY + 'px'
+                    bottom: Y
                 }
             } else if (val === 'top2bottom') {
                 let spx = 0
                 if (!!Number(obj.height)) {
                     spx = Number(obj.moveY) + Number(obj.height)
                     return {
-                        top: obj.moveY + 'px',
-                        bottom: spx + 'px'
+                        top: Y,
+                        bottom: createSuffix(spx, 'px')
                     }
                 } else {
                     return {
-                        top: obj.moveY + 'px'
+                        top: Y
                     }
                 }
             }
@@ -245,7 +240,11 @@ export const parseStyle = function (styleObj: { [x: string]: any; }, compKey: an
                 if (!customCss[key]) {
                     // 为0时默认不显示
                     if (val !== '0') {
-                        customCss[key] = suffix[key] ? val + suffix[key] : val
+                        if(styleObj.units[key]){
+                            customCss[key] = createSuffix(val, styleObj.units[key])
+                        }else{
+                            customCss[key] = suffix[key] ? createSuffix(val, suffix[key]) : val
+                        }
                     }
                 }
             }
@@ -329,4 +328,20 @@ function deepObjCreateCss(obj: { [x: string]: any; }, css: any[]) {
             }
         }
     }
+}
+
+
+/**
+ * 创建一个带有单位的字符串。
+ * 
+ * 此函数的目的是根据传入的值和单位，生成一个带有单位的字符串。如果单位不存在，则默认添加'px'单位。
+ * 主要用于处理与CSS相关的值和单位的组合，例如像素值。
+ * 
+ * @param value {string | number} - 需要添加单位的值，可以是字符串或数字。
+ * @param unit {string} - 单位字符串，例如'px'、'%'等。
+ * @returns {string} - 返回带有单位的字符串。
+ */
+function createSuffix(value:string|number, unit:string){
+    if(!unit) return value+'px'
+    return value+unit
 }
