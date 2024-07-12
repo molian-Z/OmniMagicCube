@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import designer from '@molianComps/designer/index.vue'
+import designer from '@molianComps/Designer/index.vue'
 </script>
 
 <template>

@@ -390,6 +390,43 @@ declare namespace CubeData {
                 value?: ValueTypes[keyof ValueTypes];
             };
         };
+
+        /**
+         * 定义了一个数组，数组中的每个元素代表了一个操作的动作配置。
+         * 每个动作配置包括了操作的关键字、索引、标题、标签、描述和相关数据等信息。
+         * 
+         * @property key 操作的关键字，用于唯一标识一个操作。
+         * @property index 操作的索引号，用于确定操作的显示顺序。
+         * @property title 操作的标题，用于用户界面显示。
+         * @property tags 操作的标签，用于对操作进行分类或筛选，可选。
+         * @property desc 操作的描述，提供关于操作的详细说明，可选。
+         * @property data 操作相关数据的集合，每个元素包含了一个操作项的标签、字段、操作符和值等信息。
+         */
+        actions: CubeData.GlobalAttrs['action'][];
+        action: {
+            key:string;
+            index:number;
+            title:string;
+            tags?:string[];
+            desc?:string;
+            on: {
+                bind:string;
+                component: string;
+                data: string;
+            }[];
+            verify:{
+                bind:string;
+                variable: string;
+                op: string;
+                data: any;
+            }[];
+            run:{
+                bind:string;
+                variagble: string;
+                op: string;
+                data: any;
+            }[];
+        };
     }
 }
 

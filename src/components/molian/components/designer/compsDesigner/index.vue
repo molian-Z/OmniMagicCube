@@ -1,16 +1,21 @@
 <script setup lang="ts">
 import { ref, inject, computed } from 'vue'
-import floatPanel from '@molianComps/float-panel/index.vue'
+import floatPanel from '@molianComps/FloatPanel/index.vue'
 import categroyPanel from './category-panel.vue'
 import { compPanel } from '../designerData'
 import { categoryList } from '@molian/utils/compsConfig'
 import { useUI, UIData } from '@molian/utils/UIMap'
-import svgIcon from '@molianComps/svg-icon/index.vue'
-
+import svgIcon from '@molianComps/SvgIcon/index.vue'
+const comps: any = inject('mlComps')
 const customComps:any = inject('customComps')
 const t:any = inject('mlLangs')
 const { customTooltip } = customComps
-
+const compList = Object.values(comps.value)
+const allUI = computed(() => {
+    return UIData.filter((item:any) => {
+        return compList.find((fitem:any) => fitem.prefix === item.prefix)
+    })
+})
 const i18nList = computed(()=>{
     return categoryList.value.map(item =>{
         return {
@@ -25,7 +30,7 @@ const i18nList = computed(()=>{
         <template #toolbar>
             <svg-icon :class="['css-svg-icon', 'toolbar-icon', useUI === 'all' && 'is-actived']"
                     icon="uiLib-all" @click="useUI = 'all'" />
-            <customTooltip v-for="item in UIData" :key="item.name">
+            <customTooltip v-for="item in allUI" :key="item.name">
                 <svg-icon :class="['css-svg-icon', 'toolbar-icon', useUI === item.name && 'is-actived']"
                     :icon="`uiLib-${item.icon}`" @click="useUI = item.name" />
                 <template #content>

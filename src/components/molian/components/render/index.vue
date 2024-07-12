@@ -1,11 +1,15 @@
 <script setup lang="ts">
-import { defineProps, watch, onUnmounted } from "vue";
+import { defineProps, watch, onUnmounted, defineOptions } from "vue";
 import { getVariableData } from "@molian/utils/customFunction";
 import { useStyleTag } from "@vueuse/core";
-import renderTree from "./deepTreeToRender.vue";
+import renderTree from "./DeepTreeToRender.vue";
 import { runLifecycle } from "@molian/utils/customFunction";
 import { createCss } from "@molian/utils/css-generator";
 import { renderRef, variable } from "./renderData";
+defineOptions({
+    name: "Render",
+})
+
 const props = defineProps(<
   {
     modelValue: any;

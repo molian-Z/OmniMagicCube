@@ -117,9 +117,9 @@ export const useDraggable = (comps?: any, compData?: any, message?: any) => {
     resetDraggable();
   }
 
-  const showToolbar = function (evt: any, comp: any, index: number | null, compData: any) {
+  const showToolbar = function (evt: any, comp: any, index: number, compData: any) {
     if (!isDraggable.value) {
-      hoverComp.value = comp
+      hoverComp.value = compData[index]
       hoverRef.value = evt.target || evt.evt && evt.evt.target || evt.e.target
       hoverNodes.value = compData
       hoverIndex.value = index

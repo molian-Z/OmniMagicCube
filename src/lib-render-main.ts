@@ -1,12 +1,12 @@
 // import 'virtual:svg-icons-register';
-import Render from '@molianComps/render/index.vue'
+import Render from '@/components/molian/components/Render/index.vue'
 import { Icon, addAPIProvider } from '@iconify/vue'
-import SvgIcon from '@molianComps/svg-icon/index.vue'
-import IconPicker from '@molianComps/icon-picker/index.vue'
+import SvgIcon from '@molianComps/SvgIcon/index.vue'
+import IconPicker from '@molianComps/IconPicker/index.vue'
 import MlHorizontalContainer from '@molianComps/MolianLayoutContainer/horizontalContainer.vue'
 import MlVerticalContainer from '@molianComps/MolianLayoutContainer/verticalContainer.vue'
 import MlSubContainer from '@molianComps/MolianLayoutContainer/subContainer.vue'
-import MlEcharts from '@molianComps/echarts/index.vue'
+import MlEcharts from '@molianComps/Echarts/index.vue'
 addAPIProvider('', {
     resources: ['http://flower.molianpro.com:33000'],
 })

@@ -3,7 +3,7 @@ import { computed } from 'vue'
 import { hoverComp, hoverNodes, hoverIndex, resetDraggable } from '../../draggable'
 import { useCloned } from '@vueuse/core'
 import { selectedComp } from '../../designerData'
-import svgIcon from '@molianComps/svg-icon/index.vue'
+import svgIcon from '@molianComps/SvgIcon/index.vue'
 import { slotsMap } from '@molian/utils/compsConfig'
 const slotsData = computed(() => {
   if (selectedComp.value && selectedComp.value.slots) {

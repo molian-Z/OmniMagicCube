@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { inject, ref, computed } from 'vue'
-import { selectedComp } from '@molianComps/designer/designerData'
-import colorPicker from '@molianComps/color-picker/index.vue'
-import svgIcon from '@molianComps/svg-icon/index.vue'
+import { selectedComp } from '@molianComps/Designer/designerData'
+import colorPicker from '@molianComps/ColorPicker/index.vue'
+import svgIcon from '@molianComps/SvgIcon/index.vue'
 const customComps:any = inject('customComps')
 const t:any = inject('mlLangs')
 const { customInput, customSelect, customRadioButton, customRadioGroup } = customComps

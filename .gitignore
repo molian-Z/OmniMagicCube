@@ -39,6 +39,7 @@ build/Release
 
 # Dependency directories
 libDist/
+libRenderDist/
 node_modules/
 jspm_packages/
 

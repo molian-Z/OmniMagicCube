@@ -2,6 +2,9 @@
 import { ref, computed, inject, defineProps } from 'vue';
 import { useVModel } from '@vueuse/core'
 import codeInput from '@molianComps/code-input/index.vue'
+defineOptions({
+    name: "Data2Input"
+})
 const customComps:any = inject('customComps')
 const { customInputNumber, customInput, customSwitch, customSelect } = customComps
 const props = defineProps({

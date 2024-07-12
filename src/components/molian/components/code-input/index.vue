@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, inject, defineProps, defineEmits } from "vue";
-import codeEditor from "@molianComps/code-editor/index.vue";
-import tagInput from "@molianComps/tag-input/index.vue";
+import codeEditor from "@molianComps/CodeEditor/index.vue";
+import tagInput from "@molianComps/TagInput/index.vue";
 const props = defineProps({
   modelValue: {
     type: [Object, Array],

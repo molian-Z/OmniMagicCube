@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { defineProps, computed } from "vue";
-import slotTemplate from "./slotTemplate.vue";
+import slotTemplate from "./SlotTemplate.vue";
 import vCustomDirectives from "@molian/utils/useDirectives";
 import { isIf, isFor, isShow, data2Vars, getValue } from "@molian/utils/useCore";
 import { variable } from './renderData'

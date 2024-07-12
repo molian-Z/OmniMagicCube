@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, inject } from 'vue'
 import { globalPanel, globalMenu } from '../designerData'
-import floatPanel from '@molianComps/float-panel/index.vue'
+import floatPanel from '@molianComps/FloatPanel/index.vue'
 import create from './global-panel/create.vue'
 import device from './global-panel/device.vue'
 const t: any = inject('mlLangs')

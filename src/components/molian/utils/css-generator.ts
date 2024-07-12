@@ -1,7 +1,7 @@
 import {
     toKebabCase
 } from './util'
-import { compsRef } from '@molianComps/designer/designerData'
+import { compsRef } from '@molianComps/Designer/designerData'
 export interface IStyleMap {
     opacity?: IOpacity;
     rotate?: IOpacity;
@@ -76,7 +76,7 @@ const styleMap: IStyleMap = {
                 return item !== '0' || !item
             })
             return index > -1 ? val && val.map((item: string, index) => {
-                return createSuffix(item, obj.units.borderRadius && obj.units.borderRadius[index])
+                return createSuffix(item, obj.units && obj.units.borderRadius && obj.units.borderRadius[index])
             }).join(' ') : ''
         }
     },
@@ -88,7 +88,7 @@ const styleMap: IStyleMap = {
                 return item !== '0' || !item
             })
             return index > -1 ? val && val.map((item: string) => {
-                return createSuffix(item, obj.units.margin && obj.units.margin[index])
+                return createSuffix(item, obj.units && obj.units.margin && obj.units.margin[index])
             }).join(' ') : ''
         }
     },
@@ -100,7 +100,7 @@ const styleMap: IStyleMap = {
                 return item !== '0' || !item
             })
             return index > -1 ? val && val.map((item: string) => {
-                return createSuffix(item, obj.units.margin && obj.units.margin[index])
+                return createSuffix(item, obj.units && obj.units.margin && obj.units.margin[index])
             }).join(' ') : ''
         }
     },
@@ -108,7 +108,7 @@ const styleMap: IStyleMap = {
     constX: {
         rawValue: function (val: string, obj: { moveX: string; width: string;units: any; }, key: any) {
             if (!obj.moveX || obj.moveX == '0' && !compsRef[key]) return ''
-            const X = createSuffix(obj.moveX, obj.units.moveX)
+            const X = createSuffix(obj.moveX, obj.units && obj.units.moveX)
             if (val === 'left') {
                 return {
                     left: X
@@ -136,7 +136,7 @@ const styleMap: IStyleMap = {
     constY: {
         rawValue: function (val: string, obj: { moveY: string;height: string;units:any; }, key: any) {
             if (!obj.moveY || obj.moveY == '0' && !compsRef[key]) return ''
-            const Y = createSuffix(obj.moveY, obj.units.moveY)
+            const Y = createSuffix(obj.moveY, obj.units && obj.units.moveY)
             if (val === 'top') {
                 return {
                     top: Y
@@ -240,6 +240,11 @@ export const parseStyle = function (styleObj: { [x: string]: any; }, compKey: an
                 if (!customCss[key]) {
                     // 为0时默认不显示
                     if (val !== '0') {
+                        if(!styleObj.units){
+                            styleObj.units = {
+                                [key] : 'px'
+                            } 
+                        }
                         if(styleObj.units[key]){
                             customCss[key] = createSuffix(val, styleObj.units[key])
                         }else{

@@ -16,6 +16,7 @@ import { logicAnd } from '@vueuse/math'
 import { hoverNodes, hoverIndex, resetDraggable } from './draggable'
 import { deviceList } from '@molian/utils/device'
 import { getVariableData } from '@molian/utils/customFunction'
+import { defaultNativeEventMap, defaultLifecycleMap } from '@molian/utils/defaultData'
 // 菜单交互
 export const hiddenAllPanel = ref(false)
 export const compPanel = ref<string>('')
@@ -35,7 +36,8 @@ const store = useStorage('history', {
         import: {},
         export: {},
         lifecycle: {},
-        variable: {}
+        variable: {},
+        actions: []
     }
 })
 // 数据
@@ -51,6 +53,7 @@ export const clearCanvas = () => {
     globalAttrs.export = {}
     globalAttrs.lifecycle = {}
     globalAttrs.variable = {}
+    globalAttrs.actions = []
 }
 // 历史记录
 export const {
@@ -84,7 +87,7 @@ const notUsingInput = computed(() =>
     activeElement.value?.tagName !== 'INPUT'
     && activeElement.value?.tagName !== 'TEXTAREA',)
 
-export const useKeys = (message:any, t:any) => {
+export const useKeys = (message: any, t: any) => {
     // 魔术键（快捷键）
     const keys = useMagicKeys({
         passive: false,
@@ -107,11 +110,11 @@ export const useKeys = (message:any, t:any) => {
     whenever(logicAnd(keys.ctrl_d, notUsingInput), () => globalMenu.value = 'action');
     whenever(logicAnd(keys.ctrl_f, notUsingInput), () => globalMenu.value = 'global');
     // 复制
-    const { text, copy, copied, isSupported } = useClipboard({ source: selectedComp })
+    const { text, copy, copied, isSupported } = useClipboard({ source: JSON.stringify(selectedComp.value) })
     whenever(logicAnd(keys.ctrl_c, notUsingInput), () => {
         if (!!selectedComp.value) {
             if (!!isSupported.value && copied.value === false) {
-                copy(selectedComp.value)
+                copy(JSON.stringify(selectedComp.value))
                 message.success(t('container.copySuccess'))
             }
         }
@@ -119,13 +122,12 @@ export const useKeys = (message:any, t:any) => {
     // 粘贴
     whenever(logicAnd(keys.ctrl_v, notUsingInput), () => {
         if (!!isSupported.value) {
-            const {
-                cloned
-            } = useCloned(text.value)
-            if(!!selectedComp.value && selectedComp.value.slots && selectedComp.value.slots.default && selectedComp.value.slots.default.children){
-                selectedComp.value.slots.default.children.push(pasteData(cloned.value))
-            }else{
-                modelValue.value.push(pasteData(cloned.value))
+            if(!text.value) return false
+            const compData = JSON.parse(text.value)
+            if (!!selectedComp.value && selectedComp.value.slots && selectedComp.value.slots.default && selectedComp.value.slots.default.children) {
+                selectedComp.value.slots.default.children.push(pasteData(compData))
+            } else {
+                modelValue.value.push(pasteData(compData))
             }
             message.success(t('container.pasteSuccess'))
         }
@@ -198,7 +200,7 @@ export const createComp = function (comp: {
             padding: ['0', '0', '0', '0'],
             constX: 'left',
             constY: 'top',
-            position:'relative',
+            position: 'relative',
             color: {
                 isShow: true,
                 modelValue: ''
@@ -217,7 +219,7 @@ export const createComp = function (comp: {
                 modelValue: '',
                 field: ''
             },
-            units:{},
+            units: {},
             boxShadow: []
         },
         key: randomStr,
@@ -236,16 +238,91 @@ export const generateRandomString = function (length: number) {
 }
 
 
-const pasteData:any = function(data:any){
+/** 
+ * 获取当前组件可以使用的原生事件
+ */
+export const selectedNativeOn: any = computed(() => {
+    if (!selectedComp.value) return {}
+    return selectedComp.value && selectedComp.value.nativeOn
+})
+
+/** 
+ * 格式化所有可以使用的原生事件
+ */
+export const getNativeOn: any = () => {
+    return computed(() => {
+        if (!selectedComp.value) return {}
+        const newNativeOn = Array.from(new Set(Object.keys(defaultNativeEventMap).concat(selectedNativeOn.value ? Object.keys(selectedNativeOn.value) : [])))
+        return selectedComp.value && newNativeOn.map(item => {
+            return {
+                key: item,
+                type: 'function',
+                codeVar: defaultNativeEventMap[item]
+            }
+        })
+    })
+}
+
+/** 
+ * 添加原生事件
+ */
+export const appendNativeOn = function (keyName: string) {
+    if (!keyName || selectedNativeOn.value[keyName]) {
+        return false
+    }
+    selectedNativeOn.value[keyName] = { code: "", codeVar: [] }
+}
+
+/** 
+ * 获取当前组件可以使用的自定义事件
+ */
+export const selectedOn: any = computed(() => {
+    if (!selectedComp.value) return {}
+    return selectedComp.value && selectedComp.value.on
+})
+/** 
+* 获取所有自定义事件
+*/
+export const getEmits = (comps: any) => {
+    return computed(() => {
+        if (!selectedComp.value) return {}
+        return selectedComp.value && comps.value[selectedComp.value.name].emits.filter((item: any) => {
+            return item.indexOf('update:') === -1
+        }).map((item: any) => {
+            return {
+                key: item,
+                type: 'function'
+            }
+        })
+    })
+}
+
+/** 
+ * 获取生命周期事件
+ */
+export const getLifecycle = () => {
+    const lifecycleOn = Array.from(new Set(Object.keys(defaultLifecycleMap).concat(globalAttrs.lifecycle ? Object.keys(globalAttrs.lifecycle) : [])))
+    return computed(() => {
+        return lifecycleOn.map(item => {
+            return {
+                key: item,
+                type: 'function',
+                codeVar: defaultLifecycleMap[item].codeVar
+            }
+        })
+    })
+}
+
+const pasteData: any = function (data: any) {
     const randomStr = generateRandomString(16)
     data.key = randomStr
     data.id = randomStr
-    if(!!data.slots){
+    if (!!data.slots) {
         for (const key in data.slots) {
             if (Object.prototype.hasOwnProperty.call(data.slots, key)) {
                 const element = data.slots[key];
-                if(element.children.length > 0){
-                    element.children = element.children.map((item:any)=>{
+                if (element.children.length > 0) {
+                    element.children = element.children.map((item: any) => {
                         return pasteData(item)
                     })
                 }

@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { ref, inject, nextTick, watch } from 'vue'
 import { onClickOutside } from '@vueuse/core'
-import { modelValue, aiImRef, fullLoading, compsRef } from '@molianComps/designer/designerData'
+import { modelValue, aiImRef, fullLoading, compsRef } from '@molianComps/Designer/designerData'
 import { AIURL } from '@molian/utils/defaultData'
-import svgIcon from '@molianComps/svg-icon/index.vue'
-import floatBall from '@molianComps/float-ball/index.vue'
-import loadComp from '@molianComps/loading/loading-1.vue'
+import svgIcon from '@molianComps/SvgIcon/index.vue'
+import floatBall from '@molianComps/FloatBall/index.vue'
+import loadComp from '@molianComps/Loading/loading-1.vue'
 import { generateUUID } from '@molian/utils/util'
 import { useUI } from '@molian/utils/UIMap'
 const t: any = inject('mlLangs')

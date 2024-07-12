@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, defineOptions, inject } from "vue";
 import { useCloned } from "@vueuse/core";
-import anyData2Form from "@molianComps/any-data2form/index.vue";
+import anyData2Form from "@molianComps/AnyData2Form/index.vue";
 import { selectedComp } from "../../designerData";
 
 defineOptions({

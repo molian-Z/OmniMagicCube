@@ -3,9 +3,9 @@ import { ref, computed, defineOptions, inject } from 'vue';
 import { useCloned } from '@vueuse/core'
 import { selectedComp } from '../../designerData'
 import { slotsMap } from '@molian/utils/compsConfig'
-import svgIcon from '@molianComps/svg-icon/index.vue'
+import svgIcon from '@molianComps/SvgIcon/index.vue'
 defineOptions({
-    name: 'slotComp'
+    name: 'SlotComp'
 })
 
 const customComps:any = inject('customComps')

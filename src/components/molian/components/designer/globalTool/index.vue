@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, inject } from 'vue'
-import stickyTool from '@molianComps/sticky-tool/index.vue'
-import switchButton from '@molianComps/switch-button/index.vue'
+import stickyTool from '@molianComps/StickyTool/index.vue'
+import switchButton from '@molianComps/SwitchButton/index.vue'
 import { setting } from '@molian/utils/defaultData'
 import { globalMenu } from '../designerData'
 const t:any = inject('mlLangs')

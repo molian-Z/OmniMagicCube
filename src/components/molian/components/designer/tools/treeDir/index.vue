@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { inject } from "vue";
 import { onClickOutside } from "@vueuse/core";
-import { modelValue, treeDirRef } from "@molianComps/designer/designerData";
+import { modelValue, treeDirRef } from "@molianComps/Designer/designerData";
 import { setting } from "@molian/utils/defaultData";
 import deepTree from "./deepTreeToData.vue";
-import floatBall from "@molianComps/float-ball/index.vue";
+import floatBall from "@molianComps/FloatBall/index.vue";
 
 const t: any = inject("mlLangs");
 

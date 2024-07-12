@@ -78,7 +78,7 @@ app.use(plug, {
 ### 4.最后在需要使用我们的组件的地方引入即可
 ```
 <script setup>
-import designer from '@molianComps/designer/index.vue'
+import designer from '@molianComps/Designer/index.vue'
 </script>
 
 <template>

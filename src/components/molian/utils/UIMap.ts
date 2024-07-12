@@ -370,6 +370,12 @@ export const UIData:IConfig.IData[] = reactive([{
         "width": "auto"
       }
     },
+    "Popconfirm":{
+      "default": "reference",
+      "content": "title",
+      "confirmBtn":"confirmButtonText",
+      "cancelBtn": "cancelButtonText"
+    },
     "RadioGroup": {},
     "RadioButton": {
       "value": "label"

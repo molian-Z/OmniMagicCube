@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { defineProps, inject } from 'vue'
-import fullLoadingComps from '@molianComps/loading/full-loading-1.vue'
+import fullLoadingComps from '@molianComps/Loading/full-loading-1.vue'
 import { hiddenAllPanel, selectedComp, modelValue, globalAttrs, useKeys } from './designerData'
 import globalTool from './globalTool/index.vue'
 import cssDesigner from './cssDesigner/index.vue'

@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { useOffsetPagination } from '@vueuse/core'
-import { defineProps, defineEmits } from 'vue'
+import { defineProps, defineEmits, defineOptions } from 'vue'
+defineOptions({
+  name: 'Pagination'
+})
 const props = defineProps({
   total: {
     type: Number,

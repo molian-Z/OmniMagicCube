@@ -1,9 +1,20 @@
 <script lang="ts" setup>
 import { ref, inject } from 'vue'
 import { setting } from '@molian/utils/defaultData'
+import { deleteAll } from '@/components/molian/utils/indexedDB';
+import { getCloudData } from '@molian/utils/getCloudData'
 const customComps: any = inject('customComps')
-const { customSwitch } = customComps
+const { customSwitch, customButton } = customComps
 const t: any = inject('mlLangs')
+
+const syncCloudData = async () => {
+    await deleteAll()
+    getCloudData()
+        .catch((err: any) => {
+            console.log('cloudData is error', err)
+        })
+        .finally()
+}
 </script>
 
 <template>
@@ -11,6 +22,10 @@ const t: any = inject('mlLangs')
     <div class="setting-item">
       <div>{{ t('global.setting.immerseMode') }}</div>
       <customSwitch v-model="setting.immerseMode"></customSwitch>
+    </div>
+    <div class="setting-item">
+        <div>{{ t('global.setting.syncComponentData') }}</div>
+      <customButton theme="primary" size="small" @click="syncCloudData">{{t('global.setting.sync')}}</customButton>
     </div>
   </div>
 </template>

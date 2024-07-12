@@ -61,17 +61,11 @@ export const directives = {
             }
         })
         const {
-            onDragStart,
-            onDrop,
-            onDragend,
             showToolbar
         } = useDraggable(comps, compData, message)
         const elRef = ref()
-        // const onMouseEnter = function (evt, comp, index) {
-        //   showToolbar(evt, comp, index, props.modelValue.value)
-        // }
 
-        const onClick = function (evt: any, comp: null, index: null) {
+        const onClick = function (evt: any, comp: any, index: number) {
             // 常规组件存在多次点击
             try {
                 if (evt.e) {
@@ -82,11 +76,11 @@ export const directives = {
             } catch (e) {
                 console.log(e)
             }
-            selectedComp.value = props.comp
+            selectedComp.value = comp
             showToolbar(evt, comp, index, props.modelValue)
         }
 
-        const onContextmenu = function (evt: any, comp: null, index: null) {
+        const onContextmenu = function (evt: any, comp: any, index: number) {
             evt.preventDefault();
             try {
                 if (evt.e) {
@@ -97,7 +91,7 @@ export const directives = {
             } catch (e) {
                 console.log(e)
             }
-            selectedComp.value = props.comp
+            selectedComp.value = comp
             showMenu({
                 zIndex: 1200,
                 x: evt.x,
@@ -106,6 +100,7 @@ export const directives = {
                 customClass: "context-menu__list",
                 items: menuData.value
             });
+            showToolbar(evt, comp, index, props.modelValue)
         }
 
         // props

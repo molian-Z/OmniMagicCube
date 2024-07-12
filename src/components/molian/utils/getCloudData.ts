@@ -162,8 +162,8 @@ export async function getCloudData() {
               if (Object.hasOwnProperty.call(item.value, key)) {
                 const prop = item.value[key];
                 compEl.props[key] = {
-                  ...prop,
-                  ...compEl.props[key]
+                  ...compEl.props[key],
+                  ...prop
                 }
               }
             }

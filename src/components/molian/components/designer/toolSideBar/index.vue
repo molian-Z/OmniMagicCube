@@ -1,15 +1,18 @@
 <script setup lang="ts">
-import globalTool from '@molianComps/designer/globalTool/index.vue'
-import cssDesigner from '@molianComps/designer/cssDesigner/index.vue'
-import optionsDesigner from '@molianComps/designer/optionsDesigner/index.vue'
+import globalTool from '@molianComps/Designer/globalTool/index.vue'
+import cssDesigner from '@molianComps/Designer/cssDesigner/index.vue'
+import optionsDesigner from '@molianComps/Designer/optionsDesigner/index.vue'
+import actionDesigner from '@molianComps/Designer/actionDesigner/index.vue'
 import AIContent from './AIContent.vue'
-import { globalMenu } from '@molianComps/designer/designerData'
+import { globalMenu } from '@molianComps/Designer/designerData'
 
 const currentComponent = computed(() => {
     if (globalMenu.value === 'style') {
         return cssDesigner
     } else if (globalMenu.value === 'option') {
         return optionsDesigner
+    }else if (globalMenu.value === 'action'){
+        return actionDesigner
     }
     return ''
 })
@@ -29,9 +32,9 @@ const currentComponent = computed(() => {
                     </keep-alive>
                 </transition>
             </div>
-            <div class="toolSideBar__body-footer">
+            <!-- <div class="toolSideBar__body-footer">
                 <AIContent></AIContent>
-            </div>
+            </div> -->
         </div>
     </div>
 </template>

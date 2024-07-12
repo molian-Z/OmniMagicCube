@@ -1,39 +1,23 @@
 <script setup lang="ts">
 import { computed, defineOptions, inject } from 'vue';
-import anyData2Form from '@molianComps/any-data2form/index.vue'
-import { selectedComp } from '../../designerData'
+import anyData2Form from '@molianComps/AnyData2Form/index.vue'
+import { selectedComp, selectedOn, getEmits } from '@molianComps/Designer/designerData'
 
 defineOptions({
-  name: 'basicComp'
+  name: 'Javascript'
 })
 const comps:any = inject('mlComps')
 
+const currentEmits = getEmits(comps)
 
-const currentOn = computed(() => {
-  if (!selectedComp.value) return {}
-  return selectedComp.value && selectedComp.value.on
-})
-
-const currentEmits = computed(() => {
-  if (!selectedComp.value) return {}
-  return selectedComp.value && comps.value[selectedComp.value.name].emits.filter((item:any) => {
-    return item.indexOf('update:') === -1
-  }).map((item: any) => {
-    return {
-      key: item,
-      type: 'function'
-    }
-  })
-})
-
-defineExpose(currentOn)
+defineExpose(selectedOn)
 
 </script>
 <template>
   <div class="basic-list">
     <template v-if="selectedComp">
       <template v-for="(item) in currentEmits" :key="item.key">
-        <anyData2Form :selectedComp="selectedComp" v-model="currentOn[item.key]" :propData="item" :keyName="item.key">
+        <anyData2Form :selectedComp="selectedComp" v-model="selectedOn[item.key]" :propData="item" :keyName="item.key">
         </anyData2Form>
       </template>
     </template>

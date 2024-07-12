@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { fullLoading } from '@molianComps/designer/designerData'
+import { fullLoading } from '@molianComps/Designer/designerData'
 </script>
 <template>
   <transition name="fade1">

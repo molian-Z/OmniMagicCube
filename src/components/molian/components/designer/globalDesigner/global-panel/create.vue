@@ -4,7 +4,7 @@ import { createCss } from '@molian/utils/css-generator'
 import { createTemplate } from '@molian/utils/template-generator'
 import { createJS } from '@molian/utils/js-generator'
 import { modelValue,globalAttrs } from '../../designerData'
-import codeEditor from '@molianComps/code-editor/index.vue';
+import codeEditor from '@molianComps/CodeEditor/index.vue';
 import { useBroadcastChannel } from '@vueuse/core'
 
 const customComps:any = inject('customComps')
@@ -133,8 +133,8 @@ const importTemplate = function(){
     </div>
   </customDialog>
 
-  <customDialog appendToBody :header="t('global.createSFC')" width="80%" :close-on-click-modal="false" @escKeydown="showCreateDialog = false"
-      @closeBtnClick="showCreateDialog = false" v-model:visible="showCreateDialog" destroyOnClose v-if="showDialog">
+  <customDialog appendToBody :header="t('global.importData')" width="80%" :close-on-click-modal="false" @escKeydown="showCreateDialog = false"
+      @closeBtnClick="showCreateDialog = false" v-model:visible="showCreateDialog" destroyOnClose v-if="showCreateDialog">
     <div>
       <codeEditor v-model="codeData" lang="json" />
     </div>

@@ -1,11 +1,11 @@
 <script lang="ts" setup>
 import { ref, inject } from 'vue'
-import { clearCanvas, modelValue, globalAttrs } from '@molianComps/designer/designerData'
-import svgIcon from '@molianComps/svg-icon/index.vue'
-import create from '@molianComps/designer/globalDesigner/global-panel/create.vue'
-import device from '@molianComps/designer/globalDesigner/global-panel/device.vue'
-import setting from '@molianComps/designer/globalDesigner/global-panel/setting.vue'
-import render from '@molianComps/render/index.vue'
+import { clearCanvas, modelValue, globalAttrs } from '@molianComps/Designer/designerData'
+import svgIcon from '@molianComps/SvgIcon/index.vue'
+import create from '@molianComps/Designer/globalDesigner/global-panel/create.vue'
+import device from '@molianComps/Designer/globalDesigner/global-panel/device.vue'
+import setting from '@molianComps/Designer/globalDesigner/global-panel/setting.vue'
+import render from '@/components/molian/components/Render/index.vue'
 const customComps: any = inject('customComps')
 const { customPopup, customDialog } = customComps
 const t: any = inject('mlLangs')

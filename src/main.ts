@@ -27,7 +27,7 @@ import '@molian/assets/styles/global.scss';
 const app = createApp(App);
 app.use(TDesign);
 app.use(install, { prefix: 'V' });
-app.use(naive);
+// app.use(naive);
 app.use(Antd);
 app.use(ElementPlus);
 app.use(ArcoVue, {

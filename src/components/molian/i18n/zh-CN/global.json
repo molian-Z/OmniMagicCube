@@ -23,7 +23,9 @@
   "deviceOrientationPortrait":"旋转",
   "deviceOrientationLandscape":"正常",
   "setting":{
-    "immerseMode":"沉浸模式"
+    "immerseMode":"沉浸模式",
+    "syncComponentData":"同步组件数据",
+    "sync":"同步"
   },
   "importData":"导入模型数据",
   "importTemplate":"导入Template",

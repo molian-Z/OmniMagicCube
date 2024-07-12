@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import svgIcon from '@molianComps/svg-icon/index.vue'
+import svgIcon from '@molianComps/SvgIcon/index.vue'
 import toolBarRight from './right.vue'
-import { undo, redo, canRedo, canUndo } from '@molian/components/designer/designerData'
+import { undo, redo, canRedo, canUndo } from '@molianComps/Designer/designerData'
 
 const runUndo = () => {
   if (!!canUndo.value) undo()

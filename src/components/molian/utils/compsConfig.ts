@@ -57,9 +57,17 @@ export const customComps: { [key: string]: any } = markRaw({})
 
 const registerCategory = function (data: any[]) {
     if (data && data.length > 0) {
-        categoryList.value = data
+        categoryList.value = [{
+            icon: 'all',
+            name: 'all',
+            isAll: true
+        },...data]
     } else {
-        categoryList.value = defaultCategory
+        categoryList.value = [{
+            icon: 'all',
+            name: 'all',
+            isAll: true
+        },...defaultCategory]
     }
 }
 

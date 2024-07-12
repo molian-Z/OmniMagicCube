@@ -2,8 +2,8 @@ import 'virtual:svg-icons-register';
 import type { App } from 'vue'
 
 import Plug from '@molian/utils/plug';
-import Designer from '@molianComps/designer/index.vue';
-import Render from '@molianComps/render/index.vue';
+import Designer from '@molianComps/Designer/index.vue';
+import Render from '@/components/molian/components/Render/index.vue';
 export const installDesigner = function (app: App, options: any) {
   app.use(Plug, options);
   app.component('OmcDesigner', Designer);

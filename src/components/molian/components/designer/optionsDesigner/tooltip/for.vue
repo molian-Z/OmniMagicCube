@@ -2,7 +2,7 @@
 import { inject, computed, defineEmits, defineProps } from 'vue'
 import { deepObjToArray } from '@molian/utils/util'
 import { selectedComp, globalAttrs, variableData } from '../../designerData'
-import svgIcon from '@molianComps/svg-icon/index.vue'
+import svgIcon from '@molianComps/SvgIcon/index.vue'
 import { data2Vars } from '@molian/utils/useCore'
 defineProps({
   title:{

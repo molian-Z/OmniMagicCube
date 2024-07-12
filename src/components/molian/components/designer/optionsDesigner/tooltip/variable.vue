@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref, inject, defineExpose } from 'vue'
 import { globalAttrs } from '../../designerData'
-import subForm from '@molianComps/sub-form/index.vue'
-import data2input from '@molianComps/data2input/index.vue'
+import subForm from '@molianComps/SubForm/index.vue'
+import data2input from '@molianComps/Data2Input/index.vue'
 const t:any = inject('mlLangs')
 const customComps:any = inject('customComps')
 const message:any = inject('ml-message')
@@ -104,7 +104,7 @@ const newProp = function (column: { prop: string; }, item: { type: any; }) {
 <template>
   <customDialog appendToBody :header="t('options.variable')" width="80%" :close-on-click-modal="false" @escKeydown="visible = false"
     @closeBtnClick="visible = false" v-model:visible="visible">
-    <subForm ref="subFormRef" :columns="subFormColumns" v-model="modelValue">
+    <subForm ref="subFormRef" :columns="subFormColumns" v-model="modelValue" height="500px">
       <template #item="{ column, item }">
         <data2input v-model="item[column.prop]" :propData="newProp(column, item)"></data2input>
       </template>

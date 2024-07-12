@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, inject, onMounted } from 'vue'
-import { selectedComp } from '@molianComps/designer/designerData'
-import svgIcon from '@molianComps/svg-icon/index.vue'
+import { selectedComp } from '@molianComps/Designer/designerData'
+import svgIcon from '@molianComps/SvgIcon/index.vue'
 const customComps:any = inject('customComps')
 const t:any = inject('mlLangs')
 const { customSelect } = customComps

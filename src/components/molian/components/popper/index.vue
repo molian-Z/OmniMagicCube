@@ -3,7 +3,7 @@ import { ref, unref, onMounted, watch, nextTick, onUnmounted } from "vue";
 import { onClickOutside } from "@vueuse/core";
 import { createPopper } from "@popperjs/core";
 defineOptions({
-  name: "popper",
+  name: "Popper",
 });
 const props = defineProps({
   visible: {

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { defineProps, inject, computed, defineEmits } from "vue";
-import svgIcon from "@molianComps/svg-icon/index.vue";
-import { selectedComp, compsRef } from "@molianComps/designer/designerData";
+import svgIcon from "@molianComps/SvgIcon/index.vue";
+import { selectedComp, compsRef } from "@molianComps/Designer/designerData";
 import {
   hoverComp,
   hoverRef,
@@ -12,7 +12,7 @@ import {
   startDraggable,
   dropKey,
   dragIndex,
-} from "@molianComps/designer/draggable";
+} from "@molianComps/Designer/draggable";
 
 const props = defineProps({
   modelValue: {
@@ -42,8 +42,11 @@ const compData: any = computed({
 const t :any = inject('mlLangs');
 const mlComps: any = inject("mlComps");
 const message: any = inject("ml-message");
+const customComps: any = inject('customComps')
+const { customInput } = customComps
 const isOpened = ref<boolean[]>([]);
 const typeStatus = ref("");
+const editSubTitle = ref(false);
 const { onDragend, onDrop, onDropSlot } = useDraggable(mlComps, compData, message);
 const showSlot = (slots: any) => {
   let btn = false;
@@ -124,7 +127,10 @@ const onActive = (comp: any, index: number) => {
         @dragend="onDragend"
         @drop.stop="onDrop($event, index, slotData)"
       >
-        {{ mlComps[comp.name].title }}
+        <div v-if="!editSubTitle">{{ comp.subTitle || mlComps[comp.name].title }}</div>
+        <customInput style="width:100px;" size="small" v-model="comp.subTitle" @blur="editSubTitle = false" v-else></customInput>
+        <svg-icon class="tree-node-header__title-icon" icon="ep:edit" @click="editSubTitle = true" v-if="!editSubTitle"></svg-icon>
+        <svg-icon class="tree-node-header__title-icon" icon="ep:select" v-else @click="editSubTitle = false"></svg-icon>
       </div>
     </div>
     <el-collapse-transition>
@@ -134,7 +140,7 @@ const onActive = (comp: any, index: number) => {
             <template v-if="slotVal">
               <div
                 class="slotTitle"
-                :style="{ paddingLeft: Number(16 + 12 * (props.level + 1)) + 'px' }"
+                :style="{ paddingLeft: Number(8 + 12 * (props.level + 1)) + 'px' }"
                 @click.stop
                 @dragover.prevent.stop="mouseEnter(index, comp, compData, 'append')"
                 @drop.stop="onDropSlot($event, slotVal)"
@@ -202,6 +208,16 @@ const onActive = (comp: any, index: number) => {
       color: var(--ml-text-color-2);
       font-weight: bold;
       font-size: 12px;
+      display: flex;
+      align-items: center;
+      &-icon{
+        margin-left: var(--ml-mg-small);
+        transition: var(--ml-transition-base);
+        color: var(--ml-primary-color);
+        &:hover{
+          color: var(--ml-primary-color-light-hover);
+        }
+      }
     }
   }
 

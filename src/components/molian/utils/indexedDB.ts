@@ -1,13 +1,13 @@
 // db.ts
 import Dexie from 'dexie';
 import {
-  dbName
+    dbName
 } from './defaultData'
 const db: any = new Dexie(dbName);
 db.version(2).stores({
-  i18n: '++id, key, UIName, value',
-  attrs: '++id, key, UIName, value',
-  slots: '++id, key, UIName, value'
+    i18n: '++id, key, UIName, value',
+    attrs: '++id, key, UIName, value',
+    slots: '++id, key, UIName, value'
 });
 /**
  * 获取指定表名对应的数据表中指定UI的记录
@@ -16,26 +16,37 @@ db.version(2).stores({
  * @returns {Promise<Array>} - 返回数据记录的数组
  */
 export async function get(tableName: string, currentUI: string): Promise<Array<any>> {
-  return await db[tableName].where("UIName").eq(currentUI).toArray()
+    return await db[tableName].where("UIName").eq(currentUI).toArray()
 }
 
 export async function getAll(currentUI: string) {
-  const tables = []
-  for (let i = 0; i < db.tables.length; i++) {
-    tables.push({
-      type: db.tables[i].name,
-      data: await db[db.tables[i].name].where("UIName").equals(currentUI).toArray()
-    })
-  }
-  return tables
+    const tables = []
+    for (let i = 0; i < db.tables.length; i++) {
+        tables.push({
+            type: db.tables[i].name,
+            data: await db[db.tables[i].name].where("UIName").equals(currentUI).toArray()
+        })
+    }
+    return tables
 }
 
 export async function add(tableName: string, data: any) {
-  return db[tableName].add(data)
+    return db[tableName].add(data)
 }
 export async function deleteById(tableName: string, id: string | number) {
-  return db[tableName].delete(id)
+    return db[tableName].delete(id)
 }
+
+export async function deleteAll() {
+    for (let index = 0; index < db.tables.length; index++) {
+        const item = db.tables[index];
+        await item.clear()
+    }
+    return {
+        success: true
+    }
+}
+
 export async function update(tableName: string, query: any, data: any) {
-  return db[tableName].update(query, data)
+    return db[tableName].update(query, data)
 }

@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref, computed, inject } from 'vue'
 import { cssPanel, selectedComp, globalMenu } from '../designerData'
-import svgIcon from '@molianComps/svg-icon/index.vue'
-import floatPanel from '@molianComps/float-panel/index.vue'
+import svgIcon from '@molianComps/SvgIcon/index.vue'
+import floatPanel from '@molianComps/FloatPanel/index.vue'
 import { setting } from '@molian/utils/defaultData'
 import effect from './css-tool-panel/effect.vue'
 import fill from './css-tool-panel/fill.vue'

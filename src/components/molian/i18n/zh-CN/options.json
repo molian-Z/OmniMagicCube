@@ -58,5 +58,6 @@
     "objectKey":"键",
     "indexKey":"索引",
     "openUrl":"打开文档",
-    "jsonFormatError":"数据格式错误"
+    "jsonFormatError":"数据格式错误",
+    "empty":"空数据"
 }

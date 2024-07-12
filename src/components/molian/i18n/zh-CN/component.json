@@ -1,5 +1,6 @@
 {
   "category":{
+    "all":"全部",
     "basic":"基础",
     "layout":"布局",
     "menu":"导航",
@@ -42,7 +43,8 @@
   "Steps":"步骤条",
   "StickyTool":"侧边栏",
   "Tabs":"选项卡",
-  "TabPane":"选项卡子项",
+  "TabPane":"选项卡面板",
+  "TabPanel":"选项卡面板",
   "AutoComplete":"自动填充",
   "Cascader":"级联选择器",
   "Checkbox":"多选框",
@@ -163,5 +165,6 @@
   "CarouselItem":"轮播图子项",
   "Scollbar":"滚动条",
   "Tour":"漫游式导航",
-  "TourStep":"漫游式导航步骤"
+  "TourStep":"漫游式导航步骤",
+  "search":"搜索组件"
 }

@@ -3,7 +3,8 @@ import { computed, defineProps, inject } from 'vue'
 import { hiddenAllPanel } from '../designerData'
 import { isDraggable, resetDraggable } from '../draggable'
 import { UIData } from '@molian/utils/UIMap'
-import svgIcon from '@molianComps/svg-icon/index.vue'
+import svgIcon from '@molianComps/SvgIcon/index.vue'
+import { createFuse } from '@molian/utils/fuse'
 const props = defineProps({
     currentData: {
         type: Object,
@@ -14,7 +15,10 @@ const props = defineProps({
         default: 'tdesign-vue-next'
     }
 })
+const customComps:any = inject('customComps')
+const { customInput } = customComps
 
+const t:any = inject('mlLangs')
 const comps: any = inject('mlComps')
 
 const getCurrentUI = computed(() => {
@@ -23,11 +27,29 @@ const getCurrentUI = computed(() => {
 
 const compList: any = computed(() => {
     return Object.values(comps.value).filter((item: any) => {
-        return item.category === props.currentData.name && (getCurrentUI.value === 'all' || item.prefix === getCurrentUI.value.prefix || item.category === 'basic')
+        if(props.currentData.name === 'all'){
+            return getCurrentUI.value === 'all' || item.prefix === getCurrentUI.value.prefix || item.category === 'basic'
+        }else if(item.category === props.currentData.name){
+            return getCurrentUI.value === 'all' || item.prefix === getCurrentUI.value.prefix || item.category === 'basic'
+        }
     }).sort((a:any,b:any) => {
         return a.orderIndex - b.orderIndex
     })
+    
 })
+const filterCompList: any = computed(() => {
+    if(!search.value) return compList.value
+    const fuseInfo = createFuse(compList.value, {
+        keys: [
+            "name",
+            "title"
+        ]
+    })
+    const filterComps: any = fuseInfo.search(search.value)
+    return filterComps.map((item:any) => item.item)
+})
+
+const search = ref('')
 const onDragStart = function (evt: any, item: { name: any }) {
     evt.dataTransfer.setData('compName', item.name)
     evt.dataTransfer.setData('isCreate', true)
@@ -45,9 +67,16 @@ const onDragend = function () {
 </script>
 <template>
     <div class="comps-panel" @dragleave="onDragleave">
+        <div class="comps-panel-search">
+            <customInput :placeholder="t('component.search')" v-model="search" clearable>
+                <template #prefixIcon>
+                    <svg-icon icon="ep:search"></svg-icon>
+                </template>
+            </customInput>
+        </div>
         <div class="comps-panel-list">
             <transition-group name="list2top">
-                <div v-for="item in compList" :key="item.name" class="comps-panel-list-item" draggable="true"
+                <div v-for="item in filterCompList" :key="item.name" class="comps-panel-list-item" draggable="true"
                     @dragstart="onDragStart($event, item)" @dragend="onDragend">
                     <svg-icon class="comps-panel-list-item__icon" icon="comps-default"></svg-icon>
                     <span class="comps-panel-list-item__text">
@@ -69,13 +98,20 @@ const onDragend = function () {
     height: 100%;
     position: relative;
 
-    .comps-panel-list {
+    &-search{
+        padding: var(--ml-pd-base);
+        background-color: var(--ml-bg-color);
+        margin-bottom: var(--ml-mg-base);
+        border-radius: var(--ml-radius-lg);
+    }
+
+    &-list {
         display: flex;
         align-items: center;
         align-content: flex-start;
         flex-wrap: wrap;
         overflow: auto;
-        height: 495px;
+        height: 510px;
         background-color: var(--ml-bg-color);
         border-radius: var(--ml-radius-lg);
         padding: var(--ml-pd-base);

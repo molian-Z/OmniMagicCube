@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { ref, inject, computed } from 'vue'
-import { optionsPanel, globalMenu, selectedComp } from '../designerData'
+import { optionsPanel, globalMenu, selectedComp, getEmits } from '../designerData'
 import { setting } from '@molian/utils/defaultData'
-import svgIcon from '@molianComps/svg-icon/index.vue'
-import floatPanel from '@molianComps/float-panel/index.vue'
+import svgIcon from '@molianComps/SvgIcon/index.vue'
+import floatPanel from '@molianComps/FloatPanel/index.vue'
 import basicComp from './components/basic.vue'
 import slotComp from './components/slot.vue'
 import nativeOnComp from './components/nativeOn.vue'
@@ -91,15 +91,7 @@ const openDialog = (type: string) => {
     }
 }
 
-const currentEmits = computed(() => {
-  if (!selectedComp.value) return {}
-  return selectedComp.value && comps.value[selectedComp.value.name].emits.map((item: any) => {
-    return {
-      key: item,
-      type: 'function'
-    }
-  })
-})
+const currentEmits = getEmits(comps)
 
 </script>
 <template>

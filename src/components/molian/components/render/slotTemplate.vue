@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { defineProps, inject } from "vue";
-import deepTreeToRender from "./deepTreeToRender.vue";
+import deepTreeToRender from "./DeepTreeToRender.vue";
 import { setRenderRef } from "./renderData";
 import { toKebabCase } from "@molian/utils/util";
 import { parseProps } from '@molian/utils/useCore';

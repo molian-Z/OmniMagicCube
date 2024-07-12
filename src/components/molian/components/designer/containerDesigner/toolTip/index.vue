@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { computed, inject } from 'vue'
 import { hoverComp, hoverBounding, startDraggable, useDraggable } from '../../draggable'
-import svgIcon from '@molianComps/svg-icon/index.vue'
-
+import svgIcon from '@molianComps/SvgIcon/index.vue'
+const customComps: any = inject('customComps')
+const { customInput } = customComps
 const t: any = inject('mlLangs')
 const { onDragend } = useDraggable(null, null, null)
 const { top, left, width, height } = hoverBounding
@@ -24,14 +25,19 @@ const currentBounding = computed(() => {
     return obj
   }
 })
+const editSubTitle = ref(false)
 </script>
 
 <template>
-  <div class="drag-shadow" :style="currentBounding" v-if="hoverComp">
+  <div class="drag-shadow"  @click.stop :style="currentBounding" v-if="hoverComp">
     <div class="drag-tips">
       <svg-icon size="22" class="drag-icon" :icon="hoverComp.icon || 'comps-default'" />
       <div class="drag-title">
-        <div class="drag-title-text">{{ t('component.' + comps[hoverComp.name].title) }}</div>
+        <div class="drag-title-text">
+        <div v-if="!editSubTitle">{{ hoverComp.subTitle || t('component.' + comps[hoverComp.name].title) }}</div>
+        <customInput size="small" v-model="hoverComp.subTitle" @blur="editSubTitle = false" v-else></customInput>
+        <svg-icon class="drag-title-text__icon" icon="ep:edit" @click="editSubTitle = true"></svg-icon>
+        </div>
         <div class="drag-title__desc">{{ hoverComp.name }}</div>
       </div>
     </div>
@@ -75,12 +81,26 @@ const currentBounding = computed(() => {
       flex-direction: column;
       justify-content: space-between;
       align-items: flex-start;
-      padding-left: var(--ml-pd-small);
+      padding: 0 var(--ml-pd-small);
 
       .drag-title-text {
         font-weight: bold;
         padding-bottom: var(--ml-pd-small);
         color:var(--ml-text-color-1);
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        &__icon{
+            color: var(--ml-primary-color-4);
+            cursor: pointer;
+            transition: var(--ml-transition-base);
+
+            &:hover{
+                color: var(--ml-primary-color-light-hover);
+            }
+        }
       }
 
       .drag-title__desc {
