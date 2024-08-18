@@ -1,3 +1,5 @@
+import { useCloned } from '@vueuse/core'
+import { currentRegComps } from './compsConfig'
 export interface IComp {
   name?: string;
   category?: string;
@@ -166,18 +168,63 @@ export const createJS = function (compObj: IComp, globalAttrs: { lifecycle: any;
 </script>`
   }
 }
+// 将 modelValue 参数简化，移除不必要的属性和插槽
+// 参数 modelValue: 任意类型，通常是一个对象，包含名称、属性和插槽等信息
+// 返回值: 简化后的 modelValue 对象
+// 定义一个函数，用于简化 JavaScript 对象的表示
+export const conciseJs = function(modelValue: any){
+    // 使用 useCloned 函数克隆 modelValue，避免修改原始数据
+    const { cloned } = useCloned(modelValue)
+    // 遍历克隆后的对象，处理每个项
+    cloned.value.forEach((item: any) => {
+        // 获取当前组件的属性定义
+        const attrs = currentRegComps.value[item.name].props
+        // 遍历当前项的属性，进行简化
+        Object.keys(item.attrs).forEach(key => {
+            // 如果属性值为 null，则删除该属性
+            if(item.attrs[key].value === null){
+                delete item.attrs[key]
+            }
+            // 如果属性有默认值，且当前属性值与默认值相同，则删除该属性
+            if(attrs[key] && !!attrs[key].default){
+                if(item.attrs[key].value === attrs[key].default){
+                    delete item.attrs[key]
+                }
+            }
+        })
+        // 如果当前项包含插槽，则递归简化插槽内容
+        if(!!item.slots){
+            Object.keys(item.slots).forEach(key => {
+                item.slots[key].children = conciseJs(item.slots[key].children)
+            })
+        }
+    })
+    // 返回简化后的对象
+    return cloned.value
+}
 
 
+/**
+ * 通过深度遍历对象，将组件对象转换为JavaScript代码对象
+ * @param jsCodeObj - 用于存储生成的JavaScript代码的对象
+ * @param obj - 需要转换为JavaScript代码的组件对象
+ * @param globalAttrs - 全局属性对象，可能用于扩展或修改生成的JavaScript代码
+ */
 function deepObjCreateJs(jsCodeObj: { [x: string]: string }, obj: { [x: string]: any }, globalAttrs: any) {
+  // 遍历组件对象的每个属性
   for (const key in obj) {
     if (Object.hasOwnProperty.call(obj, key)) {
       const element = obj[key];
+      // 解析当前元素的JavaScript代码并添加到jsCodeObj中
       parseJS(jsCodeObj, obj)
+      // 检查当前元素是否有子元素（slots属性）
       const slots = element.slots
       if (slots) {
+        // 遍历子元素
         for (const sKey in slots) {
           if (Object.hasOwnProperty.call(slots, sKey)) {
             const childComp = slots[sKey].children;
+            // 递归调用deepObjCreateJs，将子元素转换为JavaScript代码
             deepObjCreateJs(jsCodeObj, childComp, globalAttrs)
           }
         }
@@ -186,22 +233,31 @@ function deepObjCreateJs(jsCodeObj: { [x: string]: string }, obj: { [x: string]:
   }
 }
 
+/**
+ * 解析JavaScript代码
+ * @param jsCodeObj 一个对象，用于存储解析后的JavaScript代码
+ * @param obj 包含待解析事件的对象
+ * 
+ * 此函数的目的是遍历给定的对象，寻找并解析其中的事件处理函数，
+ * 并将解析后的代码存储到jsCodeObj中
+ */
 function parseJS(jsCodeObj: { [x: string]: string }, obj: { [x: string]: any }) {
+  // 遍历obj中的每个属性，这些属性包含了事件处理信息
   obj.forEach((item: { on: any; nativeOn: { [x: string]: any }; key: any }) => {
+    // 检查是否存在on属性，即是否存在普通事件处理对象
     if (item.on) {
-      // 如果存在事件对象
+      // 遍历事件对象的每个事件
       for (const key in item.on) {
         if (Object.hasOwnProperty.call(item.on, key)) {
-          // 遍历事件对象的事件
+          // 获取当前事件的详细信息
           const element = item.on[key];
-          const {
-            type,
-            functionMode,
-            code,
-            codeVar
-          } = element
+          // 解构出事件的各个属性，包括类型、作用模式、代码和变量
+          const { type, functionMode, code, codeVar } = element;
+          // 检查事件类型是否不是变量类型
           if (type !== 'variable') {
-            if(element.value && element.value.code){
+            // 如果事件值存在，并且有代码需要解析
+            if (element.value && element.value.code) {
+              // 解析事件处理代码，并将其存储到jsCodeObj中
               jsCodeObj[`${item.key}_${key}`] = parseJSCode(element.value)
             }
           }
@@ -209,14 +265,18 @@ function parseJS(jsCodeObj: { [x: string]: string }, obj: { [x: string]: any }) 
       }
     }
 
+    // 检查是否存在nativeOn属性，即是否存在原生事件处理对象
     if (item.nativeOn) {
-      // 如果存在事件对象
+      // 遍历原生事件对象的每个事件
       for (const key in item.nativeOn) {
         if (Object.hasOwnProperty.call(item.nativeOn, key)) {
-          // 遍历事件对象的事件
+          // 获取当前原生事件的详细信息
           const element = item.nativeOn[key];
+          // 检查事件类型是否不是变量类型
           if (element.type !== 'variable') {
-            if(element.value && element.value.code){
+            // 如果事件值存在，并且有代码需要解析
+            if (element.value && element.value.code) {
+              // 解析原生事件处理代码，并将其存储到jsCodeObj中
               jsCodeObj[`${item.key}_${key}`] = parseJSCode(element.value)
             }
           }
@@ -226,6 +286,16 @@ function parseJS(jsCodeObj: { [x: string]: string }, obj: { [x: string]: any }) 
   })
 }
 
+/**
+ * 将JavaScript代码片段解析为指定类型的函数表达式
+ * 
+ * @param {Object} params - 包含解析参数的对象
+ * @param {string} params.functionMode - 函数模式，如'asyncFunction'
+ * @param {string[]} params.codeVar - 函数参数列表
+ * @param {string} params.code - 需要解析的代码字符串
+ * @param {string} type - 函数类型，可以是'arrowFunction'、'function'或'lifecycle'
+ * @returns {string} 解析后的函数表达式字符串
+ */
 const parseJSCode = ({
   functionMode,
   codeVar,
@@ -236,8 +306,10 @@ const parseJSCode = ({
   code: string
 }, type = "arrowFunction") => {
   if(type === 'lifecycle'){
+    // 当类型为生命周期方法时，返回特定格式的函数表达式
     return `(${codeVar && codeVar.join(', ') || ''}){\n${code}\n}`
   }else{
+    // 当类型非生命周期方法时，根据参数生成相应类型的函数表达式
     return `${functionMode === 'asyncFunction' ? 'async ' : ''}${type === 'function' ? 'function' : ''}(${codeVar && codeVar.join(', ') || ''})${type === 'arrowFunction' ? '=>' : ''}{\n${code}\n}`
   }
 }

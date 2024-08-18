@@ -1,73 +1,51 @@
 /**
-* 定义基本的数据类型别名。
-* 每个键都映射到一个相应的类型。
-*/
+ * 定义了不同类型的值的接口。
+ * 这些类型包括基本类型（字符串、数字、布尔值）以及复杂类型（对象、数组、函数和计算属性）。
+ * 使用这个接口可以帮助强制类型检查，确保代码的健壮性和可维护性。
+ */
 type ValueTypes = {
-    /**
-     * 字符串类型。
-     */
     string: string;
-    /**
-     * 数字类型。
-     */
     number: number;
-    /**
-     * 布尔类型。
-     */
     boolean: boolean;
-    /**
-     * 对象类型，使用 Record 泛型来表示任意对象。
-     */
     object: Record<string, any>;
-    /**
-     * 数组类型，元素可以是任意类型。
-     */
     array: any[];
-    /**
-     * 函数类型。
-     */
     function: Function;
-    /**
-     * 计算类型，通常用于表示计算结果，这里使用了 any 类型。
-     */
     computed: any;
 };
 
 /**
-* 定义函数相关的元数据类型。
-* 包含函数代码、变量、修饰符、模式等信息。
-*/
+ * 定义了一个类型，用于描述函数的定义集合。
+ * 这个集合通过字符串键值对来索引，每个键对应的值描述了一个函数的特定属性。
+ */
 type FunctionDefinition = {
-    /**
-     * 函数的键，可以是任意字符串。
-     */
     [key: string]: {
         /**
-         * 表示这是一个函数类型。
+         * 可选字段，用于标记这个属性的值是一个函数。
          */
         type?: 'function';
         /**
-         * 函数相关的值。
+         * 可选字段，用于包含函数的具体定义信息。
          */
         value?: {
             /**
-             * 函数的代码字符串。
+             * 可选字段，包含函数的源代码。
              */
             code?: string;
             /**
-             * 函数的变量数组或对象。
+             * 可选字段，用于存储代码变量的定义。
+             * 这可以是一个字符串数组，或者是一个包含变量名和值的对象数组。
              */
             codeVar?: string[] | { name: string; value: any }[];
             /**
-             * 函数的修饰符数组。
+             * 可选字段，包含函数使用的修饰器。
              */
             modifiers?: string[];
             /**
-             * 函数的模式，可以是普通函数或异步函数。
+             * 必选字段，指定函数的模式是普通函数还是异步函数。
              */
             functionMode: 'function' | 'asyncFunction';
             /**
-             * 表示这是一个箭头函数。
+             * 可选字段，用于标记这个函数是一个箭头函数。
              */
             isArrow?: true;
         };
@@ -341,6 +319,10 @@ declare namespace CubeData {
          * 组件标签。
          */
         tag: string;
+        /**
+         * 子标题。
+         */
+        subTitle: string;
     };
     /**
     * 全局属性接口。
@@ -410,9 +392,13 @@ declare namespace CubeData {
             tags?:string[];
             desc?:string;
             on: {
-                bind:string;
-                component: string;
-                data: string;
+                bind: 'event' | 'variable';
+                compData?: {
+                    key: string;
+                    type: string;
+                    name: string;
+                    subTitle: string;
+                };
             }[];
             verify:{
                 bind:string;
@@ -431,31 +417,104 @@ declare namespace CubeData {
 }
 
 /**
- * AI 命名空间生命类型和接口。
+ * AI 命名空间，用于定义与人工智能相关的接口和类型。
  */
 declare namespace AI {
+    /**
+     * 创建数据的接口，用于指定生成人工智能数据的配置。
+     */
     interface CreateData {
+        /**
+         * 是否自动生成描述。
+         */
         autoDesc?: string;
+        /**
+         * 消息文本，具体结构未定义。
+         */
         messageText?: messageText;
+        /**
+         * 是否使用用户界面。
+         */
         useUI?: string;
+        /**
+         * 是否丢弃引用。
+         */
         dropRef?: string;
-        contextCode?:string;
+        /**
+         * 上下文代码，用于标识特定的上下文环境。
+         */
+        contextCode?: string;
     }
 
-    interface message{
+    /**
+     * 消息接口，用于定义用户和助手之间的消息交互。
+     */
+    interface message {
+        /**
+         * 消息内容。
+         */
         content?: string;
+        /**
+         * 消息发送者的角色，可以是用户或助手。
+         */
         role: 'user' | 'assistant';
     }
 }
 
+/**
+ * 设备配置接口
+ * 
+ * 该接口定义了配置设备的各种属性，用于描述设备的特征和布局设置。
+ */
 declare namespace Device {
+    /**
+     * 设备配置接口
+     * 
+     * 该接口详细定义了设备的属性，包括名称、尺寸、类型、分辨率比例等。
+     * 它还提供了一个可选的属性，用于自定义背景覆盖的布局。
+     */
     interface Config {
+        /**
+         * 设备名称
+         * 
+         * 用于唯一标识设备。
+         */
         name: string;
+        /**
+         * 设备宽度
+         * 
+         * 以像素为单位描述设备的宽度。
+         */
         width: number;
+        /**
+         * 设备高度
+         * 
+         * 以像素为单位描述设备的高度。
+         */
         height: number;
+        /**
+         * 设备型号
+         * 
+         * 用于更详细地描述设备的具体型号。
+         */
         device: string;
+        /**
+         * 设备类型
+         * 
+         * 设备的分类，可以是手机、电脑、平板等预定义类型，也可以是自定义类型。
+         */
         deviceType: "Phone" | "PC" | "Pad" | "iPad" | "custom";
+        /**
+         * 分辨率比例
+         * 
+         * 用于描述设备的分辨率与实际尺寸的比例。
+         */
         resolutionRatio: string;
+        /**
+         * 背景覆盖区域
+         * 
+         * 可选属性，用于定义背景覆盖的布局，包括左上角坐标、宽度、高度和圆角大小。
+         */
         coverBackground?: {
             left: number;
             width: number;
@@ -467,21 +526,41 @@ declare namespace Device {
 }
 
 
+/**
+ * IConfig 命名空间声明了各种配置接口。
+ * 这些接口用于定义组件的默认属性、事件、生命周期等。
+ */
 declare namespace IConfig {
+    /**
+     * IDefaultCategory 类型定义了组件的默认分类配置。
+     * 包括分类的图标、名称、组件路径、规则等信息。
+     */
     type IDefaultCategory = {
         icon?: string;
         name?: string;
         component?: string[] | RegExp[];
         rule?: RegExp;
     };
+    /**
+     * IDefaultAttrsMap 接口定义了组件的默认属性映射。
+     * 允许通过键值对方式定义任意属性。
+     */
     interface IDefaultAttrsMap {
         [key: string]: any;
     }
     
+    /**
+     * IEventMap 接口定义了组件的事件映射。
+     * 通过键值对方式定义组件支持的事件及其类型。
+     */
     interface IEventMap {
         [key: string]: (string)[] | string;
     }
     
+    /**
+     * ILifecycleMap 接口定义了组件的生命周期映射。
+     * 包含了组件生命周期中的代码变量、代码片段和可选的函数。
+     */
     interface ILifecycleMap {
         [key: string]: {
             codeVar: string[];
@@ -490,6 +569,10 @@ declare namespace IConfig {
         };
     }
     
+    /**
+     * IDefaultSlotsMap 接口定义了组件的默认插槽映射。
+     * 描述了插槽的名称和配置，包括允许的组件类型和自动插槽等。
+     */
     interface IDefaultSlotsMap {
         [key: string]: {
             [key: string]: {
@@ -498,13 +581,10 @@ declare namespace IConfig {
             } | string | boolean;
         };
     }
-    
-    // interface IUIMap {
-    //     useUI: string;
-    //     debug?: boolean;
-    //     usePrefix?: string;
-    //     data: Array<IData>;
-    // }
+    /**
+     * IData 接口定义了组件的基本数据配置。
+     * 包括组件名称、前缀、图标、文档链接等信息。
+     */
     interface IData {
         name: string;
         prefix: string;
@@ -513,6 +593,10 @@ declare namespace IConfig {
         removeAttrs?: string[];
         compMapping?: ICompMapping;
     };
+    /**
+     * ICompMapping 接口定义了组件映射。
+     * 用于映射组件名称到其特定配置，支持多种组件类型。
+     */
     interface ICompMapping {
         Button?: IButton;
         Tag?: Record<string, unknown>;
@@ -530,6 +614,10 @@ declare namespace IConfig {
         Dialog?: IDialog;
     }
     
+    /**
+     * IDialog 接口定义了对话框的配置。
+     * 包括附加到身体、可见性、关闭时销毁等选项。
+     */
     interface IDialog {
         appendToBody?: IAppendToBody | string;
         visible?: boolean | string;
@@ -538,16 +626,28 @@ declare namespace IConfig {
         component?: string;
         [key: string]: any;
     }
+    /**
+     * IAppendToBody 接口定义了附加到身体的配置。
+     * 包括附加的目标和组件配置。
+     */
     interface IAppendToBody {
         attach?: string;
         component?: string;
         [key: string]: any;
     }
+    /**
+     * IDropdown 接口定义了下拉菜单的配置。
+     * 包括选项和组件配置。
+     */
     interface IDropdown {
         optionItems?: unknown;
         component?: string;
         [key: string]: any;
     }
+    /**
+     * ICascader 接口定义了级联选择器的配置。
+     * 包括选项、严格检查、组件类型和值类型等。
+     */
     interface ICascader {
         optionItems?: string;
         checkStrictly?: any;
@@ -555,11 +655,19 @@ declare namespace IConfig {
         valueType?: string | any;
         [key: string]: any;
     }
+    /**
+     * IRadioButton 接口定义了单选按钮的配置。
+     * 包括值和组件配置。
+     */
     interface IRadioButton {
         value?: string;
         component?: string;
         [key: string]: any;
     }
+    /**
+     * IPopup 接口定义了弹出窗口的配置。
+     * 包括组件配置、默认值、内容和触发方式等。
+     */
     export interface IPopup {
         component?: string;
         default?: string;
@@ -568,17 +676,29 @@ declare namespace IConfig {
         visible?: any;
         [key: string]: any;
     }
+    /**
+     * ITooltip 接口定义了提示框的配置。
+     * 包括内容、组件配置等。
+     */
     interface ITooltip {
         content?: IContent | string;
         component?: string;
         [key: string]: any;
     }
+    /**
+     * IContent 接口定义了提示框内容的配置。
+     * 包括内容、关闭时销毁和组件配置等。
+     */
     interface IContent {
         content?: string;
         destroyOnClose?: any;
         component?: string;
         [key: string]: any;
     }
+    /**
+     * IInput 接口定义了输入框的配置。
+     * 包括前缀图标、键盘事件、模型值和组件配置等。
+     */
     interface IInput {
         prefixIcon?: string;
         onKeyup?: Record<string, unknown>;
@@ -588,12 +708,20 @@ declare namespace IConfig {
         component?: string;
         [key: string]: any;
     }
+    /**
+     * IButton 接口定义了按钮的配置。
+     * 包括主题、文本和组件配置等。
+     */
     interface IButton {
         theme?: string | any;
         text?: IText | string;
         component?: string;
         [key: string]: any;
     }
+    /**
+     * IText 接口定义了按钮文本的配置。
+     * 包括变体、类型和组件配置等。
+     */
     interface IText {
         variant?: string;
         type?: string;
@@ -603,10 +731,22 @@ declare namespace IConfig {
 }
 
 /**
-* 为 Setting 命名空间声明类型和接口。
-*/
+ * 定义了设置的命名空间。
+ * 
+ * 该命名空间包含了一组配置接口，用于描述应用程序的设置选项。
+ */
 declare namespace Setting {
+    /**
+     * 配置接口，用于定义应用程序的沉浸模式设置。
+     * 
+     * 沉浸模式是指应用程序在运行时尽可能减少干扰，提供更专注的用户体验的模式。
+     */
     interface Config {
+        /**
+         * 指示是否启用沉浸模式的布尔值。
+         * 
+         * 当设置为`true`时，应用程序将进入沉浸模式，隐藏或最小化其他界面元素，以提供更专注的操作体验。
+         */
         immerseMode:boolean;
     }
 }

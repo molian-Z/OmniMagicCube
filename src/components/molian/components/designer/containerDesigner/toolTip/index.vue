@@ -36,7 +36,8 @@ const editSubTitle = ref(false)
         <div class="drag-title-text">
         <div v-if="!editSubTitle">{{ hoverComp.subTitle || t('component.' + comps[hoverComp.name].title) }}</div>
         <customInput size="small" v-model="hoverComp.subTitle" @blur="editSubTitle = false" v-else></customInput>
-        <svg-icon class="drag-title-text__icon" icon="ep:edit" @click="editSubTitle = true"></svg-icon>
+        <svg-icon class="drag-title-text__icon" icon="ep:edit" @click="editSubTitle = true" v-if="!editSubTitle"></svg-icon>
+        <svg-icon class="drag-title-text__icon" icon="ep:select" v-else @click="editSubTitle = false"></svg-icon>
         </div>
         <div class="drag-title__desc">{{ hoverComp.name }}</div>
       </div>
@@ -93,6 +94,7 @@ const editSubTitle = ref(false)
         justify-content: space-between;
 
         &__icon{
+            padding-left: var(--ml-pd-small);
             color: var(--ml-primary-color-4);
             cursor: pointer;
             transition: var(--ml-transition-base);

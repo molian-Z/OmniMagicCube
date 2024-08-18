@@ -2,26 +2,34 @@
 defineOptions({
     name:"SidebarList"
 })
+
+defineProps({
+    title:{
+        type:String,
+        default: ''
+    }
+})
+
 </script>
 
 <template>
     <div class="sidebar-list">
-        <div class="sidebar-list-item" v-for="(item,index) in 10">
-            {{ index }}
-        </div>
+        <div class="sidebar-list-title" v-if="!!title">{{ title }}</div>
+        <slot></slot>
     </div>
 </template>
 
 <style lang="scss" scoped>
 .sidebar-list{
-    width: 60px;
     display: flex;
     align-items: center;
     justify-content: flex-start;
     flex-direction: column;
 
-    &-item{
-        padding: var(--ml-pd-base);
+    &-title{
+        font-size: 14px;
+        font-weight: 600;
+        margin-bottom: var(--ml-mg-base);
     }
 }
 </style>

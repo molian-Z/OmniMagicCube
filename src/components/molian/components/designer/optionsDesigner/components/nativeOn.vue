@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { defineOptions, inject, ref } from 'vue';
 import anyData2Form from '@molianComps/AnyData2Form/index.vue'
-import { selectedComp, selectedNativeOn, getNativeOn, appendNativeOn } from "@molianComps/Designer/designerData";
+import { selectedComp, selectedNativeOn, currentNativeOn, appendNativeOn } from "@molianComps/Designer/designerData";
 defineOptions({
     name: 'NativeOn'
 })
@@ -13,7 +13,6 @@ const appendOn = () => {
     appendNativeOn(appendOnInput.value)
     appendOnInput.value = ''
 }
-const currentNativeOn = getNativeOn()
 defineExpose({
     on:currentNativeOn
 })

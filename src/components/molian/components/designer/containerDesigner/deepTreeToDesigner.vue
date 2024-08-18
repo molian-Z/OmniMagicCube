@@ -38,7 +38,7 @@ const props = defineProps({
 });
 const emit = defineEmits(["update:modelValue"]);
 const comps: any = inject("mlComps");
-const message: any = inject("ml-message");
+const message: any = inject("mlMessage");
 const t: any = inject("mlLangs");
 const treeIndexNext = computed(() => {
   return props.treeIndex + 1;
@@ -83,8 +83,12 @@ const setRef = async (el: any, comp: any, index: any) => {
   if (width.value < 10) {
     pd[1] = "10px";
   }
-  if (pd[0] !== "0" || pd[1] !== "0") {
-    compsRef[comp.id].style.padding = `${pd[0]} ${pd[1]}`;
+  if (pd[0] !== "0" || pd[1] !== "0" && !!compsRef[comp.id] && !!compsRef[comp.id].style) {
+    try {
+        compsRef[comp.id].style.padding = `${pd[0]} ${pd[1]}`;
+    } catch (error) {
+        // 未缓存
+    }
   }
   // 出现极端情况解决方案。如元素不存在以及无法对元素进行修改的情况
   // 索引不会被更新实时获取索引
@@ -202,111 +206,20 @@ const setRef = async (el: any, comp: any, index: any) => {
 </template>
 
 <style lang="scss">
-@use '../../../assets/styles/global.scss';
-
-.designer-comp {
-  // min-height: 28px !important;
-  margin: var(--ml-mg-base) 0;
-  position: relative;
-  transition: var(--ml-transition-base);
-  // min-width: 20px;
-  padding: var(--ml-pd-small);
-
-  &.comp-inline {
-    display: inline-flex;
-
-    &::after {
-      z-index: 1000;
-    }
-  }
-
-  &.hiddenComps {
-    opacity: 0.7;
-  }
-
-  &::after {
-    border: 2px solid var(--ml-info-color-1);
-    border-radius: var(--ml-radius-base);
-    content: "";
-    position: absolute;
-    top: -2px;
-    left: -2px;
-    right: -2px;
-    bottom: -2px;
-    transition: var(--ml-transition-base);
+.designer-comp::after{
     z-index: v-bind(treeIndex);
-  }
-
-  &.is-margin {
-    margin: 8px;
-  }
-
-  &.selectedComp {
-    &::after {
-      border: 2px solid var(--ml-primary-color);
-      display: block;
-    }
-  }
-}
-
-.designer-comp-is-empty::after {
-  content: "空内容" !important;
-  font-size: 12px;
-  color: var(--ml-info-color-1);
-  display: flex !important;
-  justify-content: center;
-  align-items: center;
-}
-
-.drop__empty {
-  position: relative;
 }
 
 .prefix-drop-slot,
 .suffix-drop-slot {
-  position: absolute !important;
-  padding: var(--ml-pd-small);
-  border: 2px dashed var(--ml-warning-color-1);
-  padding: 0 var(--ml-pd-small);
-  width: 100%;
-  min-width: 200px;
-  text-align: center;
-  font-weight: bold;
-  color: var(--ml-warning-color-6);
-  user-select: none;
-  line-height: 24px;
-  transition: var(--ml-transition-base);
   z-index: v-bind(treeIndexDrop);
 }
 
-.prefix-drop-slot {
-  top: -20px;
-  left: 0;
-}
-.suffix-drop-slot {
-  bottom: -20px;
-  right: 0;
+.designer-comp{
+    --el-index-normal: v-bind(treeIndex);
 }
 
 .designer-comp__empty {
-  flex: 1;
-  position: relative;
   z-index: v-bind(treeIndexNext);
-  &-content {
-    position: absolute;
-    border: 2px dashed var(--ml-info-color-1);
-    padding: 0 var(--ml-pd-small);
-    text-align: center;
-    font-weight: bold;
-    color: var(--ml-info-color-1);
-    user-select: none;
-    line-height: 24px;
-    transition: var(--ml-transition-base);
-  }
-}
-
-.dropping-comp {
-  border-color: var(--ml-primary-color) !important;
-  color: var(--ml-primary-color) !important;
 }
 </style>

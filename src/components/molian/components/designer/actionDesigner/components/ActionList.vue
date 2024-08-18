@@ -1,15 +1,11 @@
 <script lang="ts" setup>
 import { defineOptions, inject } from "vue";
-import { getEmits, getNativeOn, getLifecycle, globalAttrs, generateRandomString } from "@molianComps/Designer/designerData";
+import { currentEmits, currentNativeOn, currentLifecycle, globalAttrs, generateRandomString } from "@molianComps/Designer/designerData";
 import ActionDetail from "./ActionDetail.vue";
 defineOptions({
   name: "ActionList",
 });
 const t: any = inject("mlLangs");
-const comps: any = inject("mlComps");
-const currentLifecycle = getLifecycle();
-const currentEmits = getEmits(comps);  
-const currentNativeOn = getNativeOn();
 const actionFlowData = computed(() => {
   return {
     lifecycle: currentLifecycle,
@@ -43,6 +39,9 @@ const deleteItem = ({item, index}:any) => {
 
 const buttonClick = ({item, index} : any) => {
     if(item.value === 'add'){
+        if(!globalAttrs.actions){
+            globalAttrs.actions = []
+        }
         globalAttrs.actions.push({
             key:generateRandomString(8),
             index:globalAttrs.actions.length,

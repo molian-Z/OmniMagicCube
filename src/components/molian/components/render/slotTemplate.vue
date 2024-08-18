@@ -8,10 +8,15 @@ import { variable } from './renderData';
 const comps: any = inject("mlComps");
 const props = defineProps(<
   {
-    comp: any;
+    comp: object | any;
+    expandAPI: object | any;
   }
 >{
   comp: {
+    type: Object,
+    default: () => {},
+  },
+  expandAPI: {
     type: Object,
     default: () => {},
   },
@@ -25,7 +30,7 @@ const useComp = computed(() => {
     :id="comp.id"
     :is="useComp"
     :ref="(el: any) => setRenderRef(el, comp)"
-    v-bind="parseProps(comp, comps, variable)"
+    v-bind="parseProps(comp, comps, variable, expandAPI)"
     :class="toKebabCase(comp.name) + '__' + comp.key"
   >
     <template
@@ -34,10 +39,7 @@ const useComp = computed(() => {
       #[slotKey]="slotProps"
     >
       <template v-if="slotVal && slotVal.children">
-        <template v-if="JSON.stringify(slotProps) !== '{}'">
-          <deepTreeToRender v-model="slotVal.children" :slotProps="slotProps" />
-        </template>
-        <deepTreeToRender v-else v-model="slotVal.children" />
+          <deepTreeToRender :expandAPI="expandAPI" v-model="slotVal.children" :slotProps="slotProps" />
       </template>
     </template>
   </component>

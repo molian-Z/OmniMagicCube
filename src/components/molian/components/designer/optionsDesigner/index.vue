@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, inject, computed } from 'vue'
-import { optionsPanel, globalMenu, selectedComp, getEmits } from '../designerData'
+import { optionsPanel, globalMenu, selectedComp, currentEmits } from '../designerData'
 import { setting } from '@molian/utils/defaultData'
 import svgIcon from '@molianComps/SvgIcon/index.vue'
 import floatPanel from '@molianComps/FloatPanel/index.vue'
@@ -90,8 +90,6 @@ const openDialog = (type: string) => {
         varRef.value.show()
     }
 }
-
-const currentEmits = getEmits(comps)
 
 </script>
 <template>

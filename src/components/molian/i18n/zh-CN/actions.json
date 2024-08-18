@@ -21,5 +21,13 @@
     "variable/attr":"变量/属性",
     "data":"数据",
     "op":"运算符",
-    "change":"变更"
+    "change":"变更",
+    "bindEvent": "绑定事件",
+    "bindAction":"绑定交互",
+    "openSlot":"开启插槽",
+    "deleteComp":"移除组件",
+    "onEvent":"事件监听",
+    "contentDesc":"内容描述",
+    "saveSuccess":"保存成功",
+    "tempDelete":"暂时删除,请点击保存确认删除!"
 }

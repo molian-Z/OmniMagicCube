@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { defineOptions, defineProps, inject, defineModel, watch } from "vue";
+import { watchDebounced } from '@vueuse/core'
 defineOptions({
   name: "ActionDetail",
 });
@@ -31,25 +32,37 @@ const {
   customRadioGroup,
 } = customComps;
 const showInputTitle = ref(false);
-const VModel: any = defineModel();
-watch(
+const VModel: any = defineModel({
+    type:Object,
+    default: () => {}
+});
+const Message:any = inject("mlMessage")
+watchDebounced(
   () => props.modelValue,
   (newVal) => {
-    const dataObj = JSON.parse(JSON.stringify(newVal));
-    cacheModelValue.value = Object.assign(cacheModelValue.value, dataObj);
+    const dataObj = {
+        ...cacheModelValue.value,
+        ...newVal
+    };
+    cacheModelValue.value = JSON.parse(JSON.stringify(dataObj));
   },
   {
     immediate: true,
+    deep:true,
+    debounce: 500,
+    maxWait: 1000
   }
 );
 
 const saveTitle = () => {
   VModel.value.title = cacheModelValue.value.title;
+  Message.success(t("actions.saveSuccess"))
   showInputTitle.value = false;
 };
 
 const saveAction = () => {
   VModel.value = cacheModelValue.value;
+  Message.success(t("actions.saveSuccess"))
 };
 
 // 监听开始事件列内容
@@ -121,6 +134,11 @@ const runColumns = ref([
     required: true,
   },
 ]);
+
+const deleteEvent = (item: any, index: number) => {
+    cacheModelValue.value.on.splice(index, 1)
+    Message.warning(t("actions.tempDelete"))
+};
 </script>
 
 <template>
@@ -141,18 +159,26 @@ const runColumns = ref([
       </div>
     </div>
     <div class="action-detail__container-desc">
-      <div class="form-item-title">内容描述</div>
+      <div class="form-item-title">{{ t("actions.contentDesc") }}</div>
       <customInput v-model="cacheModelValue.desc" />
     </div>
     <div class="action-detail__container">
       <div class="action-detail__container-left">
-        <sidebar-list></sidebar-list>
+        <sidebar-list :title="t('actions.onEvent')">
+          <sidebar-list-item v-for="(item, index) in cacheModelValue.on" :key="item.key">
+            <div>{{ (item.compData && item.compData.subTitle) || item.key }}</div>
+            <div @click="deleteEvent(item, index)">delete</div>
+            <!-- <template #tag v-if="item.compData">
+                    {{ item.compData.name }}  
+                </template> -->
+          </sidebar-list-item>
+        </sidebar-list>
       </div>
       <div class="action-detail__container-content">
         <div class="action-detail__container-subTitle" v-if="false">
           注：当其中一项变动时都会激活验证流程
         </div>
-        <sub-form :modelValue="modelValue.on" :columns="onColumns" v-if="false">
+        <subForm :modelValue="modelValue.on" :columns="onColumns" v-if="false">
           <template #item="{ column, item }">
             <customRadioGroup
               size="small"
@@ -177,12 +203,16 @@ const runColumns = ref([
             </template>
             <div v-else>{{ column }}</div>
           </template>
-        </sub-form>
+        </subForm>
 
         <div class="action-detail__container-subTitle">
           注：当所有条件被满足时会通过验证
         </div>
-        <sub-form :modelValue="cacheModelValue.verify" :columns="verifyColumns" height="220px">
+        <subForm
+          :modelValue="cacheModelValue.verify"
+          :columns="verifyColumns"
+          height="220px"
+        >
           <template #item="{ column, item }">
             <customRadioGroup
               v-model="item[column.prop]"
@@ -206,12 +236,12 @@ const runColumns = ref([
             </template>
             <div v-else>{{ item }}</div>
           </template>
-        </sub-form>
+        </subForm>
 
         <div class="action-detail__container-subTitle">
           注：当验证流程通过时执行以下变更
         </div>
-        <sub-form :modelValue="cacheModelValue.run" :columns="runColumns" height="220px">
+        <subForm :modelValue="cacheModelValue.run" :columns="runColumns" height="220px">
           <template #item="{ column, item }">
             <customRadioGroup
               v-model="item[column.prop]"
@@ -235,7 +265,7 @@ const runColumns = ref([
             </template>
             <div v-else>{{ column }}</div>
           </template>
-        </sub-form>
+        </subForm>
       </div>
       <div class="action-detail__container-right">
         <sidebar-list></sidebar-list>
@@ -266,7 +296,7 @@ const runColumns = ref([
       }
     }
   }
-  
+
   &__container {
     width: 800px;
     // padding: var(--ml-pd-lg);
@@ -280,9 +310,9 @@ const runColumns = ref([
       color: var(--ml-fill-color);
     }
 
-    &-desc{
-        display: flex;
-        align-items: center;
+    &-desc {
+      display: flex;
+      align-items: center;
     }
 
     &-flex {
@@ -293,20 +323,21 @@ const runColumns = ref([
       }
     }
 
-    &-left, &-right{
-        margin-top: calc(var(--ml-mg-lg) + var(--ml-mg-lg) + var(--ml-mg-12));
+    &-left,
+    &-right {
+      margin-top: calc(var(--ml-mg-lg) + var(--ml-mg-lg) + var(--ml-mg-12));
     }
 
     &-content {
       overflow: auto;
-      flex:1;
+      flex: 1;
     }
   }
   .form-item-title {
-      width: 70px;
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--ml-fill-color);
-    }
+    width: 70px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ml-fill-color);
+  }
 }
 </style>

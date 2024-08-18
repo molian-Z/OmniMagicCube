@@ -35,7 +35,7 @@ const itemClick = (item: any, index: number) => {
       @click="itemClick(item, index)"
     >
       <svg-icon :icon="item.icon" v-if="item.icon" />
-      <span>{{ item.label }}</span>
+      <div>{{ item.label }}</div>
     </div>
   </div>
 </template>

@@ -9,6 +9,7 @@ import {
 import {
     compsRef,
     selectedComp,
+    setSelectedComp,
     variableData
 } from '../designerData'
 import {
@@ -50,8 +51,8 @@ export const directives = {
     }, context: any) {
         let { slots, emits, expose }: any = context
         const comps: any = inject('mlComps')
-        const message: any = inject('ml-message')
-        const { showMenu, isOpenedMenu } = <any>inject('cmdMenu');
+        const message: any = inject("mlMessage")
+        const { showMenu, hideMenu, ContextMenu } = <any>inject('cmdMenu');
         const compData: any = computed({
             get() {
                 return props.modelValue
@@ -76,7 +77,7 @@ export const directives = {
             } catch (e) {
                 console.log(e)
             }
-            selectedComp.value = comp
+            setSelectedComp(comp)
             showToolbar(evt, comp, index, props.modelValue)
         }
 
@@ -91,16 +92,23 @@ export const directives = {
             } catch (e) {
                 console.log(e)
             }
-            selectedComp.value = comp
-            showMenu({
-                zIndex: 1200,
-                x: evt.x,
-                y: evt.y,
-                minWidth: 130,
-                customClass: "context-menu__list",
-                items: menuData.value
-            });
+            setSelectedComp(comp)
             showToolbar(evt, comp, index, props.modelValue)
+            nextTick(() => {
+                showMenu({
+                    zIndex: 1200,
+                    x: evt.x,
+                    y: evt.y,
+                    minWidth: 130,
+                    // xOffset: 10,
+                    // menuTransitionProps:{
+                    //     name:'fade',
+                    //     mode:'out-in'
+                    // },
+                    customClass: "context-menu__list",
+                    items: menuData.value
+                });
+            })
         }
 
         // props
@@ -241,7 +249,7 @@ export const directives = {
         //}
         expose(elRef)
         return () => [
-            isFor(props.comp) && newForEachList.value.data.map((row: any, index: any) => {
+            !!isFor(props.comp) && newForEachList.value && newForEachList.value.data.map((row: any, index: any) => {
                 return renderDom({
                     row,
                     index,

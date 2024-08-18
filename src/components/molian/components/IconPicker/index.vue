@@ -1,39 +1,47 @@
 <script setup lang="ts">
-import { ref, defineModel, onMounted, computed, defineProps, inject, defineOptions } from 'vue'
-import { getIcon, Icon } from '@iconify/vue'
-import Pagination from '@molianComps/Pagination/index.vue'
-import { iconifyUrl } from '@molian/utils/defaultData'
+import {
+  ref,
+  defineModel,
+  onMounted,
+  computed,
+  defineProps,
+  inject,
+  defineOptions,
+} from "vue";
+import { getIcon, Icon } from "@iconify/vue";
+import Pagination from "@molianComps/Pagination/index.vue";
+import { iconifyUrl } from "@molian/utils/defaultData";
 defineOptions({
-  name: 'IconPicker'
-})
+  name: "IconPicker",
+});
 defineProps({
   size: {
     type: Number,
-    default: 24
-  }
-})
-const customComps: any = inject('customComps')
-const { customDialog, customInput, customTag } = customComps
-const iconSets = ref<any[]>([])
-const iconList = ref<any[]>([])
-const currentIconSet = ref('')
-const iconListTotal = ref<number>(0)
-const modelValue = defineModel({ type: String })
-const searchIconSetText = ref('')
-const searchIconListText = ref('')
-const currentPage = ref(1)
-const currentPageSize = ref(49)
+    default: 24,
+  },
+});
+const customComps: any = inject("customComps");
+const { customDialog, customInput, customTag } = customComps;
+const iconSets = ref<any[]>([]);
+const iconList = ref<any[]>([]);
+const currentIconSet = ref("");
+const iconListTotal = ref<number>(0);
+const modelValue = defineModel({ type: String });
+const searchIconSetText = ref("");
+const searchIconListText = ref("");
+const currentPage = ref(1);
+const currentPageSize = ref(49);
 
-const visible = ref(false)
+const visible = ref(false);
 const filterIconSet = computed(() => {
   if (!!searchIconSetText.value) {
-    return iconSets.value.filter(item => {
-      return item.name.toLowerCase().includes(searchIconSetText.value.toLowerCase())
-    })
+    return iconSets.value.filter((item) => {
+      return item.name.toLowerCase().includes(searchIconSetText.value.toLowerCase());
+    });
   } else {
-    return iconSets.value
+    return iconSets.value;
   }
-})
+});
 
 // const filterIconList = computed(() => {
 //   if (!!searchIconListText.value) {
@@ -50,79 +58,115 @@ const filterIconSet = computed(() => {
 // })
 
 const filterIconList = computed(() => {
-  let icons: any[] = []
+  let icons: any[] = [];
   if (!!searchIconListText.value) {
-    iconList.value.forEach(item => {
-      icons.push(...item.data.filter((item: string) => {
-        return item.toLowerCase().includes(searchIconListText.value.toLowerCase())
-      }))
-    })
+    iconList.value.forEach((item) => {
+      icons.push(
+        ...item.data.filter((item: string) => {
+          return item.toLowerCase().includes(searchIconListText.value.toLowerCase());
+        })
+      );
+    });
   } else {
-    iconList.value.forEach(item => {
-      icons.push(...item.data)
-    })
+    iconList.value.forEach((item) => {
+      icons.push(...item.data);
+    });
   }
-  return icons.slice((currentPage.value - 1) * currentPageSize.value, (currentPage.value - 1) * currentPageSize.value + currentPageSize.value)
-})
+  return icons.slice(
+    (currentPage.value - 1) * currentPageSize.value,
+    (currentPage.value - 1) * currentPageSize.value + currentPageSize.value
+  );
+});
 
-const loadIcons = async (item: {
-  total: number; prefix: string; name: string;
-}) => {
-  const res = await fetch(iconifyUrl + 'collection?prefix=' + item.prefix, {
-    method: 'get',
-  })
+const getFilterIconTotal = computed(() => {
+  let iconTotal = 0;
+  if (!!searchIconListText.value) {
+    iconList.value.forEach((item) => {
+        iconTotal += item.data.filter((fitem: string) => {
+        return fitem.toLowerCase().includes(searchIconListText.value.toLowerCase());
+      }).length;
+    });
+    console.log(iconTotal)
+    return iconTotal
+  } else {
+    return iconListTotal.value;
+  }
+});
+
+const loadIcons = async (item: { total: number; prefix: string; name: string }) => {
+  const res = await fetch(iconifyUrl + "collection?prefix=" + item.prefix, {
+    method: "get",
+  });
   // 将云端数据写入本地数据中
-  iconList.value = []
-  const icons = await res.json()
+  iconList.value = [];
+  const icons = await res.json();
   if (!!icons.uncategorized) {
-    iconList.value = [{
-      name: '未分类',
-      data: icons.uncategorized
-    }]
+    iconList.value = [
+      {
+        name: "未分类",
+        data: icons.uncategorized,
+      },
+    ];
   } else if (!!icons.categories) {
-    iconList.value = Object.keys(icons.categories).map(key => {
+    iconList.value = Object.keys(icons.categories).map((key) => {
       return {
         name: key,
-        data: icons.categories[key]
-      }
-    })
+        data: icons.categories[key],
+      };
+    });
   }
-  currentIconSet.value = item.prefix
-  iconListTotal.value = item.total
-}
+  currentIconSet.value = item.prefix;
+  iconListTotal.value = item.total;
+};
 
 const onChange = (iconName: string) => {
-  modelValue.value = currentIconSet.value + ':' + iconName
-}
+  modelValue.value = currentIconSet.value + ":" + iconName;
+};
 
-const pageChange = (page: { currentPage: number; currentPageSize: number; }) => {
-  currentPage.value = page.currentPage
-  currentPageSize.value = page.currentPageSize
-}
+const pageChange = (page: { currentPage: number; currentPageSize: number }) => {
+  currentPage.value = page.currentPage;
+  currentPageSize.value = page.currentPageSize;
+};
 
 onMounted(async () => {
-  const res = await fetch(iconifyUrl + 'collections', {
-    method: 'get',
-  })
+  const res = await fetch(iconifyUrl + "collections", {
+    method: "get",
+  });
   // 将云端数据写入本地数据中
-  const icons = await res.json()
+  const icons = await res.json();
   // 动态引入所有图标集
   Object.keys(icons).forEach((key: any) => {
-    iconSets.value.push({ ...icons[key], prefix: key })
-  })
-})
-
+    iconSets.value.push({ ...icons[key], prefix: key });
+  });
+});
 </script>
 <template>
   <div class="icon-picker" :style="{ width: size + 'px', height: size + 'px' }">
-    <icon class="icon-picker__inner" :style="{ width: Number(size - 12) + 'px', height: Number(size - 12) + 'px' }"
-      :icon="modelValue" v-if="getIcon(modelValue)" @click="visible = true" />
+    <icon
+      class="icon-picker__inner"
+      :style="{ width: Number(size - 12) + 'px', height: Number(size - 12) + 'px' }"
+      :icon="modelValue"
+      v-if="getIcon(modelValue)"
+      @click="visible = true"
+    />
     <div class="icon-picker__inner" @click="visible = true" v-else>
-      <icon class="icon-picker__inner__plus"
-        :style="{ width: Number(size - 12) + 'px', height: Number(size - 12) + 'px' }" icon="ep:plus"></icon>
+      <icon
+        class="icon-picker__inner__plus"
+        :style="{ width: Number(size - 12) + 'px', height: Number(size - 12) + 'px' }"
+        icon="ep:plus"
+      ></icon>
     </div>
-    <custom-dialog appendToBody header="选择图标" width="750px" :close-on-click-modal="false" @escKeydown="visible = false"
-      @closeBtnClick="visible = false" v-model:visible="visible" destroyOnClose v-if="visible">
+    <custom-dialog
+      appendToBody
+      header="选择图标"
+      width="760px"
+      :close-on-click-modal="false"
+      @escKeydown="visible = false"
+      @closeBtnClick="visible = false"
+      v-model:visible="visible"
+      destroyOnClose
+      v-if="visible"
+    >
       <div class="icon-picker-dialog">
         <div class="icon-picker-dialog__left">
           <div class="icon-picker-dialog__search">
@@ -133,8 +177,12 @@ onMounted(async () => {
             </customInput>
           </div>
           <div class="icon-sets">
-            <div :class="['icon-sets__item', currentIconSet === item.prefix && 'active']" v-for="item in filterIconSet"
-              :key="item.name" @click="loadIcons(item)">
+            <div
+              :class="['icon-sets__item', currentIconSet === item.prefix && 'active']"
+              v-for="item in filterIconSet"
+              :key="item.name"
+              @click="loadIcons(item)"
+            >
               <div class="icon-sets__item__title">{{ item.name }}</div>
               <!-- <div class="icon-sets__item__tags">
               <customTag style="margin:0 3px;" v-for="tagName in item.samples" :key="tagName">{{tagName}}</customTag>
@@ -148,30 +196,40 @@ onMounted(async () => {
         </div>
         <div class="icon-picker-dialog__container">
           <div class="icon-picker-dialog__search">
-            <customInput v-model="searchIconListText" placeholder="查询图标" :disabled="!currentIconSet">
+            <customInput
+              v-model="searchIconListText"
+              placeholder="查询图标"
+              :disabled="!currentIconSet"
+            >
               <template #prefix>
                 <icon icon="mdi:magnify" />
               </template>
             </customInput>
           </div>
           <div class="icon-picker-grid">
-            <!-- <div class="icon-picker-grid__group" v-for="item in filterIconList" :key="item.name">
-              <div class="icon-picker-grid__group__title">{{ item.name }}</div>
-              <div class="icon-picker-grid__group__list">
-                <div :class="['icon-picker-grid__item', (currentIconSet + ':' + iconName) == modelValue && 'active']"
-                  v-for="iconName in item.data" :key="iconName" @click="onChange(iconName)">
-                  <icon class="icon-picker-grid__item__icon" :icon="currentIconSet + ':' + iconName"></icon>
-                </div>
-              </div>
-            </div> -->
-            <div class="icon-picker-grid__group__list">
-              <div :class="['icon-picker-grid__item', (currentIconSet + ':' + iconName) == modelValue && 'active']"
-                v-for="iconName in filterIconList" :key="iconName" @click="onChange(iconName)">
-                <icon class="icon-picker-grid__item__icon" :icon="currentIconSet + ':' + iconName"></icon>
+                <div class="icon-picker-grid__group__list">
+              <div
+                :class="[
+                  'icon-picker-grid__item',
+                  currentIconSet + ':' + iconName == modelValue && 'active',
+                ]"
+                v-for="iconName in filterIconList"
+                :key="iconName"
+                @click="onChange(iconName)"
+              >
+                <icon
+                  class="icon-picker-grid__item__icon"
+                  :icon="currentIconSet + ':' + iconName"
+                ></icon>
               </div>
             </div>
           </div>
-          <Pagination :total="iconListTotal" :page-size="currentPageSize" :current="currentPage" @change="pageChange">
+          <Pagination
+            :total="getFilterIconTotal"
+            :page-size="currentPageSize"
+            :current="currentPage"
+            @change="pageChange"
+          >
           </Pagination>
         </div>
       </div>
@@ -221,7 +279,8 @@ onMounted(async () => {
   display: flex;
 
   .icon-picker-dialog__left {
-    .icon-picker-dialog__search {}
+    .icon-picker-dialog__search {
+    }
 
     .icon-sets {
       width: 220px;
@@ -253,7 +312,8 @@ onMounted(async () => {
             font-weight: bold;
           }
 
-          .icon-sets__item__desc__total {}
+          .icon-sets__item__desc__total {
+          }
         }
 
         &:hover {
@@ -278,7 +338,7 @@ onMounted(async () => {
       height: 450px;
       margin: var(--ml-mg-base);
       overflow: auto;
-
+      display: flex;
       .icon-picker-grid__group__title {
         padding: var(--ml-pd-base);
         font-weight: bold;
@@ -288,6 +348,7 @@ onMounted(async () => {
       .icon-picker-grid__group__list {
         display: flex;
         flex-wrap: wrap;
+        align-content: flex-start;
 
         .icon-picker-grid__item {
           margin: var(--ml-mg-base);
@@ -315,7 +376,6 @@ onMounted(async () => {
           }
         }
       }
-
     }
   }
 }

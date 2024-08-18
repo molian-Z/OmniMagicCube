@@ -293,7 +293,7 @@ const registerGlobalComps = function (app: { provide: (arg0: string, arg1: any) 
     for (const key in globalObj) {
         if (Object.hasOwnProperty.call(globalObj, key)) {
             const element = globalObj[key]
-            app.provide(`ml-${key}`, element)
+            app.provide(`ml${key}`, element)
             globalComps.value[key] = element
         }
     }

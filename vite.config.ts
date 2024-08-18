@@ -55,6 +55,7 @@ export default defineConfig({
             iconDirs: [resolve(process.cwd(), 'src/components/molian/assets/icons')],
             // Specify symbolId format
             symbolId: 'icon-[dir]-[name]',
+            customDomId: '__molian_icons__dom__'
         }),
         autoImport({
             imports: [

@@ -15,7 +15,7 @@ document.fonts.forEach(item => {
 const fontWeight = ref(['100', '200', '300', '400', '500', '600', '700', '800', '900', 'bold', 'bolder', 'lighter', 'normal'])
 const fontSize = ref(['10', '12', '14', '16', '20', '22', '28', '36', '48', '60', '72'])
 
-const css = computed(() => {
+const css:any = computed(() => {
     return selectedComp.value && selectedComp.value.css || {color:{}}
 })
 

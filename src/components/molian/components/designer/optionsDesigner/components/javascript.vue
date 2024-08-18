@@ -1,14 +1,12 @@
 <script setup lang="ts">
 import { computed, defineOptions, inject } from 'vue';
 import anyData2Form from '@molianComps/AnyData2Form/index.vue'
-import { selectedComp, selectedOn, getEmits } from '@molianComps/Designer/designerData'
+import { selectedComp, selectedOn, currentEmits } from '@molianComps/Designer/designerData'
 
 defineOptions({
   name: 'Javascript'
 })
 const comps:any = inject('mlComps')
-
-const currentEmits = getEmits(comps)
 
 defineExpose(selectedOn)
 

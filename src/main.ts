@@ -22,12 +22,11 @@ import 'element-plus/dist/index.css';
 import 'vexip-ui/css/index.css';
 import 'ant-design-vue/dist/reset.css';
 import '@arco-design/web-vue/dist/arco.css';
-import '@molian/assets/styles/global.scss';
 
 const app = createApp(App);
 app.use(TDesign);
 app.use(install, { prefix: 'V' });
-// app.use(naive);
+app.use(naive);
 app.use(Antd);
 app.use(ElementPlus);
 app.use(ArcoVue, {
@@ -40,8 +39,8 @@ app.use(plug, {
     useUI: "element-plus",
     compsConfig: {
         globalComps: {
-            message: MessagePlugin,
-            notify: NotifyPlugin
+            Message: MessagePlugin,
+            Notify: NotifyPlugin
         }
     },
 });

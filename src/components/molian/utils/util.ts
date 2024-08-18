@@ -37,7 +37,7 @@ export const toKebabCase = function (str: string): string {
     // if (ret.startsWith('-')) {
     //   return ret.slice(1);
     // }
-    const changeCase = useChangeCase(str, 'paramCase')
+    const changeCase = useChangeCase(str, 'kebabCase')
     return changeCase.value;
 }
 

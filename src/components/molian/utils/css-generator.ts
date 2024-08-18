@@ -1,3 +1,4 @@
+import { useCloned } from '@vueuse/core'
 import {
     toKebabCase
 } from './util'
@@ -36,7 +37,7 @@ export interface IOpacity {
     value?: unknown;
 }
 const suffix: {
-    [key: string]: 'px' | '%' | 'rpx' | 'em' | 'vh' | 'vw';
+    [key: string]: 'px' | '%' | 'rpx' | 'em' | 'vh' | 'vw' | 'calc';
 } = {
     'width': 'px',
     'height': 'px',
@@ -209,7 +210,46 @@ const styleMap: IStyleMap = {
     }
 }
 
+export const initCss :any = {
+    "borderRadius": ["0", "0", "0", "0"],
+    "margin": ["0", "0", "0", "0"],
+    "padding": ["0", "0", "0", "0"],
+    "constX": "left",
+    "constY": "top",
+    "moveX":"",
+    "moveY":"",
+    "width":"",
+    "height":"",
+    "position": "relative",
+    "color": {
+        "isShow": true,
+        "modelValue": ""
+    },
+    "background": {
+        "isShow": true,
+        "modelValue": ""
+    },
+    "border": [],
+    "mixBlendMode": {
+        "isShow": true,
+        "modelValue": "normal"
+    },
+    "blur": {
+        "isShow": true,
+        "modelValue": "",
+        "field": ""
+    },
+    "units": {},
+    "boxShadow": []
+}
 
+
+/**
+ * 解析样式对象，生成自定义的CSS属性
+ * @param styleObj 样式对象，包含了各种样式属性和值
+ * @param compKey 组件键，用于标识组件
+ * @returns 返回一个包含了自定义CSS属性的对象
+ */
 export const parseStyle = function (styleObj: { [x: string]: any; }, compKey: any) {
     // 定义一个用于存储自定义CSS的对象
     const customCss: { [x: string]: any; } = {}
@@ -277,7 +317,51 @@ export const createCss = function (compObj: any) {
     return allCssStr
 }
 
+/**
+ * 将模型值转换为简洁的CSS对象
+ * 
+ * 此函数通过移除与初始CSS对象相同的属性来简化CSS对象结构，
+ * 从而优化存储和传输效率。它递归处理，如果模型值中包含slots，
+ * 也会对其子元素应用相同的简化逻辑。
+ * 
+ * @param modelValue 模型值，可以是任何结构，但通常是一个包含CSS信息的对象
+ * @returns 返回简化后的模型值
+ */
+export const conciseCss = function(modelValue: any){
+    // 使用useCloned钩子克隆模型值，避免修改原始数据
+    const { cloned } = useCloned(modelValue)
+    // 遍历克隆后的模型值数组
+    cloned.value.forEach((item: any) => {
+        // 找出当前项CSS与初始CSS的差异
+        const diffArr = shallowDiff(item.css, initCss)
+        // 移除与初始CSS相同的属性
+        diffArr.forEach((diffItem:string) => {
+            delete item.css[diffItem]
+        })
+        // 如果当前项包含slots，则对其子元素递归应用简化逻辑
+        if(!!item.slots){
+            Object.keys(item.slots).forEach(key => {
+                item.slots[key].children = conciseCss(item.slots[key].children)
+            })
+        }
+    })
+    // 返回简化后的模型值
+    return cloned.value
+}
 
+
+/**
+ * 根据属性值和预定义的样式映射，更新自定义CSS对象
+ * 
+ * 此函数的作用是根据给定的属性值、预定义的样式映射以及组件的键值，
+ * 计算出新的样式属性和值，并更新到自定义CSS对象中
+ * 
+ * @param attr 属性值对象，包含组件的各种属性值
+ * @param customCss 自定义CSS对象，用于存储计算后的样式属性和值
+ * @param key 样式映射中的键，用于获取特定的样式属性和值
+ * @param styleObj 样式对象，包含组件的样式信息
+ * @param compKey 组件的键值，用于样式值函数的计算
+ */
 function getAttrs(attr: any, customCss: { [x: string]: any; }, key: string, styleObj: { [x: string]: any; }, compKey: any) {
     // 获取属性值和属性对应的样式属性和样式值
     const {
@@ -290,6 +374,7 @@ function getAttrs(attr: any, customCss: { [x: string]: any; }, key: string, styl
     // 如果新的属性值存在
     if (newVal) {
         if (!!rawValue) {
+            // 如果使用原始值函数计算属性值
             for (const rawKey in newVal) {
                 if (Object.hasOwnProperty.call(newVal, rawKey)) {
                     customCss[rawKey] = newVal[rawKey]
@@ -346,7 +431,65 @@ function deepObjCreateCss(obj: { [x: string]: any; }, css: any[]) {
  * @param unit {string} - 单位字符串，例如'px'、'%'等。
  * @returns {string} - 返回带有单位的字符串。
  */
-function createSuffix(value:string|number, unit:string){
+function createSuffix(value:string, unit:string){
     if(!unit) return value+'px'
-    return value+unit
+    if(unit === 'calc'){
+        return `${unit}(${addSpacesToOperators(value)})`
+    }else{
+        return value+unit
+    }
+}
+
+/**
+ * 给算术运算符周围添加空格
+ * 
+ * 该函数接收一个字符串参数，移除字符串中的所有空格，并在算术运算符（加、减、乘、除）周围添加空格
+ * 这样做是为了提高代码的可读性，使得在解析字符串时能够更容易区分不同的运算符和操作数
+ * 
+ * @param str 待处理的字符串，可能包含算术表达式
+ * @returns 返回处理后的字符串，其中算术运算符周围被空格包围
+ */
+function addSpacesToOperators(str: string) {
+    // 移除字符串中的所有空格
+    str = str.replace(/ /g, '');
+    // 在算术运算符周围添加空格
+    str = str.replace(/([+\-*/])/g,' $1 ');
+    return str;
+}
+
+/**
+ * 计算两个对象的浅层相同属性
+ * 此函数用于找出两个对象之间在第一层深度上具有相同值的属性
+ * @param obj1 第一个对象
+ * @param obj2 第二个对象
+ * @returns 一个数组，包含两个对象在浅层相同属性的名称
+ */
+function shallowDiff(obj1:any, obj2:any) {
+    // 初始化一个数组来存储相同属性的名称
+    const sameKeys = [];
+
+    // 遍历第一个对象的所有属性
+    for (const key in obj1) {
+        // 确保当前属性同时存在于两个对象中，以避免比较原型链上的属性
+        if (obj1.hasOwnProperty(key) && obj2.hasOwnProperty(key)) {
+            // 获取两个对象中当前属性的值
+            const value1 = obj1[key];
+            const value2 = obj2[key];
+
+            // 如果值是原始类型（非对象）且相等，则将属性名称添加到数组中
+            if (typeof value1 !== 'object' && value1 === value2) {
+                sameKeys.push(key);
+            } else if (typeof value1 === 'object' && typeof value2 === 'object') {
+                // 如果值是对象，递归比较这些对象的属性
+                const innerSameKeys = shallowDiff(value1, value2);
+                // 如果两个对象的属性数量相同，并且所有比较的属性值都相同，则将当前属性名称添加到数组中
+                if (Object.keys(value1).length === Object.keys(value2).length && innerSameKeys.length === Object.keys(value1).length) {
+                    sameKeys.push(key);
+                }
+            }
+        }
+    }
+
+    // 返回包含所有相同属性名称的数组
+    return sameKeys;
 }

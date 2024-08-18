@@ -9,7 +9,7 @@ defineOptions({
 });
 const comps: any = inject("mlComps");
 
-const currentAttrs = computed(() => {
+const currentAttrs:any = computed(() => {
   if (!selectedComp.value) return {};
   return selectedComp.value.attrs;
 });
@@ -34,28 +34,36 @@ const currentEmits = computed(() => {
 const currentProps = computed(() => {
   if (!selectedComp.value) return {};
   const { cloned } = useCloned(comps.value[selectedComp.value.name].props);
-  currentEmits.value.forEach((item) => {
+  currentEmits.value.forEach((item: any) => {
     delete cloned.value[item.prop];
   });
   return cloned.value;
 });
 
 const updateAttrs = (item: any, value: any) => {
-  if (value.value == undefined) {
-    currentAttrs.value[item.prop] = undefined;
-    selectedComp.value.on["update:modelValue"] = undefined;
-  } else {
-    currentAttrs.value[item.prop] = value;
-    selectedComp.value.on["update:modelValue"] = {
-      type: "function",
-      value: {
-        code: `this.vars.${value.value.join('.')} = value;`,
-        codeVar: ["value"],
-        functionMode: "function",
-        modifiers: [],
-      }
+  if (value.type === "variable") {
+    if (value.value == undefined) {
+      currentAttrs.value[item.prop] = undefined;
+      selectedComp.value.on["update:modelValue"] = undefined;
+    } else {
+      currentAttrs.value[item.prop] = value;
+      selectedComp.value.on["update:modelValue"] = {
+        type: "function",
+        value: {
+          code: `this.vars.${value.value.join(".")} = value;`,
+          codeVar: ["value"],
+          functionMode: "function",
+          modifiers: [],
+        },
+      };
     }
+  }else{
+    currentAttrs.value[item.prop] = value;
   }
+};
+
+const getProp = (keyName: string) => {
+  return comps.value[selectedComp.value.name].props[keyName];
 };
 </script>
 <template>
@@ -66,7 +74,7 @@ const updateAttrs = (item: any, value: any) => {
           :selectedComp="selectedComp"
           :modelValue="currentAttrs[item.prop]"
           @update:modelValue="(value) => updateAttrs(item, value)"
-          :propData="{ type: [] }"
+          :propData="getProp(item.prop)"
           :keyName="item.prop"
         />
       </template>

@@ -60,7 +60,7 @@ onMounted(() => {
 })
 
 const switchRadius = function () {
-    if (Array.isArray(css.value.borderRadius)) {
+    if (css.value && Array.isArray(css.value.borderRadius)) {
         let val: any = css.value.borderRadius[0]
         css.value.borderRadius = [val, val, val, val]
         activeRadius.value = !activeRadius.value
@@ -68,6 +68,17 @@ const switchRadius = function () {
 }
 
 const updateModelValue = function (prop: string, val: any) {
+    if(css.value && css.value.units && css.value.units[prop] && css.value.units[prop] === 'calc'){
+        if (activeLink.value && ['width', 'height'].indexOf(prop) > -1) {
+            css.value.width = val
+            css.value.height = val
+        } else if (prop === 'borderRadius'){
+
+        } else {
+            css.value[prop] = val
+        }
+        return false
+    }
     if (css.value && !isNaN(Number(val)) && Number(val) >= 0) {
         let newVal = val === '' ? '' : Number(val).toString()
         if (activeLink.value && ['width', 'height'].indexOf(prop) > -1) {

@@ -1,16 +1,16 @@
 <script setup lang="ts">
 import { ref, inject } from 'vue'
-import { createCss } from '@molian/utils/css-generator'
+import { createCss, conciseCss } from '@molian/utils/css-generator'
 import { createTemplate } from '@molian/utils/template-generator'
-import { createJS } from '@molian/utils/js-generator'
+import { createJS, conciseJs } from '@molian/utils/js-generator'
 import { modelValue,globalAttrs } from '../../designerData'
-import codeEditor from '@molianComps/CodeEditor/index.vue';
+import CodeEditor from '@molianComps/MlCodeEditor/index.vue'
 import { useBroadcastChannel } from '@vueuse/core'
 
 const customComps:any = inject('customComps')
 const t:any = inject('mlLangs')
 const { customButton, customTooltip, customDialog } = customComps
-const message:any = inject('ml-message')
+const message:any = inject("mlMessage")
 const {
   isSupported,
   post,
@@ -69,7 +69,7 @@ const importModelData = function(){
 const exportModelData = function () {
   langMode.value = 'json'
   codeData.value = JSON.stringify({
-    modelValue:modelValue.value,
+    modelValue:conciseJs(conciseCss(modelValue)),
     globalAttrs
   })
   showDialog.value = true

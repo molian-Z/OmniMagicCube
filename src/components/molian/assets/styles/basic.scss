@@ -1,128 +1,130 @@
 .sub-title {
-  font-size: 12px;
-  font-weight: bold;
-  user-select: none;
-  color: var(--ml-text-color-1);
+    font-size: 12px;
+    font-weight: bold;
+    user-select: none;
+    color: var(--ml-text-color-1);
 }
+
 .designer-container__body-title {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 12px;
-  font-weight: bold;
-  padding: var(--ml-pd-lg);
-  user-select: none;
-  background-color: var(--ml-bg-color);
-  border-radius: var(--ml-radius-small);
-  border-bottom-left-radius: 0;
-  color: var(--ml-text-color-1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    font-weight: bold;
+    padding: var(--ml-pd-lg);
+    user-select: none;
+    background-color: var(--ml-bg-color);
+    border-radius: var(--ml-radius-small);
+    border-bottom-left-radius: 0;
+    color: var(--ml-text-color-1);
 }
 
 .designer-container {
-  height: 420px;
-  overflow-y: auto;
+    height: 420px;
+    overflow-y: auto;
 
-  .designer-container__body {
-    background-color: var(--ml-bg-color);
-    border-radius: var(--ml-radius-small);
-    border-top-left-radius: 0;
-    padding: 0 var(--ml-pd-lg);
-
-    &:nth-child(2) {
-      padding-bottom: var(--ml-pd-base);
-    }
-
-    &:not(:nth-child(2)) {
-      padding-bottom: var(--ml-pd-base);
-      padding-top: var(--ml-pd-base);
-    }
-
-    .designer-top-tool {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-
-      .arco-radio-button-content {
-        padding: 0 6px;
-      }
-    }
-
-    .designer-list-item {
-      display: flex;
-      padding-top: var(--ml-pd-base);
-
-      &.between {
-        justify-content: space-between;
-        align-items: center;
-      }
-    }
-
-    .designer-input {
-      width: 180px;
-      margin-right: var(--ml-mg-base);
-    }
-
-    .designer-input-lg {
-      width: 130px;
-    }
-
-    .designer-input-base {
-      width: calc(50% - 25px);
-    }
-
-    .designer-input-small {
-      width: 90px;
-    }
-
-    .designer-input-mini {
-      width: 65px;
-    }
-
-    .designer-input-base+.designer-input-base,
-    .designer-input-base+.designer-input-small,
-    .mg-left-base {
-      margin-left: var(--ml-mg-base);
-    }
-  }
-
-  .css-svg-icon {
-    min-width: 20px;
-    width: 20px;
-    height: 20px;
-    padding: 2px;
-    transition: var(--ml-transition-base);
-    border-radius: var(--ml-radius-small);
-    cursor: pointer;
-
-    &:hover {
-      background: var(--ml-fill-color-4);
-    }
-  }
-
-  &.disabled {
-    .css-svg-icon {
-      cursor: auto;
-
-      &:hover {
+    .designer-container__body {
         background-color: var(--ml-bg-color);
-      }
+        border-radius: var(--ml-radius-small);
+        border-top-left-radius: 0;
+        padding: 0 var(--ml-pd-lg);
+
+        &:nth-child(2) {
+            padding-bottom: var(--ml-pd-base);
+        }
+
+        &:not(:nth-child(2)) {
+            padding-bottom: var(--ml-pd-base);
+            padding-top: var(--ml-pd-base);
+        }
+
+        .designer-top-tool {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            .arco-radio-button-content {
+                padding: 0 6px;
+            }
+        }
+
+        .designer-list-item {
+            display: flex;
+            padding-top: var(--ml-pd-base);
+
+            &.between {
+                justify-content: space-between;
+                align-items: center;
+            }
+        }
+
+        .designer-input {
+            width: 180px;
+            margin-right: var(--ml-mg-base);
+        }
+
+        .designer-input-lg {
+            width: 130px;
+        }
+
+        .designer-input-base {
+            width: calc(50% - 25px);
+        }
+
+        .designer-input-small {
+            width: 90px;
+        }
+
+        .designer-input-mini {
+            width: 65px;
+        }
+
+        .designer-input-base+.designer-input-base,
+        .designer-input-base+.designer-input-small,
+        .mg-left-base {
+            margin-left: var(--ml-mg-base);
+        }
     }
-  }
 
-  .designer-mg-top {
-    margin-top: var(--ml-mg-base);
-  }
+    .css-svg-icon {
+        min-width: 20px;
+        width: 20px;
+        height: 20px;
+        padding: 2px;
+        transition: var(--ml-transition-base);
+        border-radius: var(--ml-radius-small);
+        cursor: pointer;
+
+        &:hover {
+            background: var(--ml-fill-color-4);
+        }
+    }
+
+    &.disabled {
+        .css-svg-icon {
+            cursor: auto;
+
+            &:hover {
+                background-color: var(--ml-bg-color);
+            }
+        }
+    }
+
+    .designer-mg-top {
+        margin-top: var(--ml-mg-base);
+    }
 }
 
-.is-side-bar{
-  .designer-container{
-    height: auto;
-  }
+.is-side-bar {
+    .designer-container {
+        height: auto;
+    }
 }
 
-.suffix-tag, .suffix-unit {
-  color: var(--ml-icon-color);
-  font-size: 10px;
+.suffix-tag,
+.suffix-unit {
+    color: var(--ml-icon-color);
+    font-size: 10px;
 }
 
 
@@ -130,40 +132,40 @@
 .fade-move,
 .fade-enter-active,
 .fade-leave-active {
-  transition: all 0.5s cubic-bezier(0.55, 0, 0.1, 1);
+    transition: all 0.5s cubic-bezier(0.55, 0, 0.1, 1);
 }
 
 /* 2. 声明进入和离开的状态 */
 .fade-enter-from,
 .fade-leave-to {
-  opacity: 0;
-  transform: scaleY(0.01) translate(30px, 0);
+    opacity: 0;
+    transform: scaleY(0.01) translate(30px, 0);
 }
 
 /* 3. 确保离开的项目被移除出了布局流
       以便正确地计算移动时的动画效果。 */
 .fade-leave-active {
-  position: absolute;
+    position: absolute;
 }
 
 /* 1. 声明过渡效果 */
 .fade1-move,
 .fade1-enter-active,
 .fade1-leave-active {
-  opacity: 1;
-  transition: all 0.5s cubic-bezier(0.55, 0, 0.1, 1);
+    opacity: 1;
+    transition: all 0.5s cubic-bezier(0.55, 0, 0.1, 1);
 }
 
 /* 2. 声明进入和离开的状态 */
 .fade1-enter-from,
 .fade1-leave-to {
-  opacity: 0;
+    opacity: 0;
 }
 
 /* 3. 确保离开的项目被移除出了布局流
       以便正确地计算移动时的动画效果。 */
 .fade1-leave-active {
-  position: absolute;
+    position: absolute;
 }
 
 
@@ -172,200 +174,242 @@
 /* 对移动中的元素应用的过渡 */
 .list-enter-active,
 .list-leave-active {
-  transition: all 0.5s ease;
+    transition: all 0.5s ease;
 }
 
 .list-enter-from,
 .list-leave-to {
-  opacity: 0;
-  transform: translateY(30px);
+    opacity: 0;
+    transform: translateY(30px);
 }
 
 /* 确保将离开的元素从布局流中删除
   以便能够正确地计算移动的动画。 */
 .list-leave-active {
-  position: absolute;
+    position: absolute;
 }
 
 .list2top-move,
 /* 对移动中的元素应用的过渡 */
 .list2top-enter-active,
 .list2top-leave-active {
-  transition: all 0.5s ease;
+    transition: all 0.5s ease;
 }
 
 .list2top-enter-from,
 .list2top-leave-to {
-  opacity: 0;
-  transform: translateY(30px);
+    opacity: 0;
+    transform: translateY(30px);
 }
 
 /* 确保将离开的元素从布局流中删除
   以便能够正确地计算移动的动画。 */
 .list2top-leave-active {
-  position: absolute;
-  top: 0;
+    position: absolute;
+    top: 0;
 }
 
 
 /* 定义过渡效果 */
 .slide2Width-enter-active,
 .slide2Width-leave-active {
-  transition: 0.5s ease;
-  overflow: hidden;
-  position: relative;
-  /* 防止内容在过渡期间溢出 */
+    transition: 0.5s ease;
+    overflow: hidden;
+    position: relative;
+    /* 防止内容在过渡期间溢出 */
 }
 
 /* 定义进入时的关键帧 */
 @keyframes slide2WidthIn {
-  from {
-    width: 0;
-  }
+    from {
+        width: 0;
+    }
 
-  to {
-    width: 300px;
-  }
+    to {
+        width: 300px;
+    }
 }
 
 /* 定义离开时的关键帧 */
 @keyframes slide2WidthOut {
-  from {
-    width: 300px;
-  }
+    from {
+        width: 300px;
+    }
 
-  to {
-    width: 0;
-  }
+    to {
+        width: 0;
+    }
 }
 
 /* 应用进入时的动画 */
 .slide2Width-enter-to {
-  animation: slide2WidthIn 0.5s forwards;
+    animation: slide2WidthIn 0.5s forwards;
 }
 
 /* 应用离开时的动画 */
 .slide2Width-leave-to {
-  animation: slide2WidthOut 0.5s forwards;
+    animation: slide2WidthOut 0.5s forwards;
 }
 
 
 .function-top {
-  background-color: #282a36;
-  color: #FFF;
-  font-weight: bold;
-  padding: 6px 10px;
+    background-color: #282a36;
+    color: #FFF;
+    font-weight: bold;
+    padding: 6px 10px;
 }
 
 .function-bottom {
-  background-color: #282a36;
-  color: #FFF;
-  font-weight: bold;
-  padding: 6px 10px;
+    background-color: #282a36;
+    color: #FFF;
+    font-weight: bold;
+    padding: 6px 10px;
 }
 
 .css-svg-icon {
-  // fill: var(--ml-primary-color);
-  margin: 0 !important;
-  cursor: pointer;
-  transition: var(--ml-transition-base);
-  border-radius: var(--ml-radius-small);
+    // fill: var(--ml-primary-color);
+    margin: 0 !important;
+    cursor: pointer;
+    transition: var(--ml-transition-base);
+    border-radius: var(--ml-radius-small);
 
-  &:hover {
-    background-color: var(--ml-fill-color-4);
-  }
+    &:hover {
+        background-color: var(--ml-fill-color-4);
+    }
 
-  &.is-active {
-    background-color: var(--ml-fill-color-3);
-  }
+    &.is-active {
+        background-color: var(--ml-fill-color-3);
+    }
 
-  &.disabled {
-    background-color: var(--ml-bg-color);
-    cursor: auto;
-  }
+    &.disabled {
+        background-color: var(--ml-bg-color);
+        cursor: auto;
+    }
 }
 
 .link-icon {
-  margin-left: var(--ml-mg-small) !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  width: 28px !important;
-  height: 28px !important;
+    margin-left: var(--ml-mg-small) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 28px !important;
+    height: 28px !important;
 }
 
 .toolbar-icon {
-  font-size: 22px;
-  width: 28px !important;
-  height: 28px !important;
+    font-size: 22px;
+    width: 28px !important;
+    height: 28px !important;
 }
 
-.designer-toolbar{
-  background-color: var(--ml-bg-color);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: var(--ml-pd-base) 0;
-  border-bottom: 1px solid var(--ml-border-color);
+.designer-toolbar {
+    background-color: var(--ml-bg-color);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--ml-pd-base) 0;
+    border-bottom: 1px solid var(--ml-border-color);
 }
 
 .basic-list {
-  display: flex;
-  width: 100%;
-  height: 510px;
-  overflow-y: auto;
-  overflow-x: hidden;
-  background-color: var(--ml-bg-color);
-  border-radius: var(--ml-radius-base);
-  flex-direction: column;
+    display: flex;
+    width: 100%;
+    height: 510px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    background-color: var(--ml-bg-color);
+    border-radius: var(--ml-radius-base);
+    flex-direction: column;
 }
 
-.is-side-bar{
-  .basic-list{
-    height: auto;
-  }
+.is-side-bar {
+    .basic-list {
+        height: auto;
+    }
 }
 
 ::-webkit-scrollbar {
-  width: 0px;
-  height: 2px;
-  border-radius: 10px;
-  background-color: #F5F5F5;
+    width: 0px;
+    height: 2px;
+    border-radius: 10px;
+    background-color: #F5F5F5;
 }
 
 
 .context-menu__list {
-  .mx-context-menu-item {
-    padding: var(--ml-pd-base) var(--ml-pd-lg);
+    .mx-context-menu-item {
+        padding: var(--ml-pd-base) var(--ml-pd-lg);
 
-    .mx-item-row {
-      .label {
-        font-size: 16px;
-      }
-    }
+        .mx-item-row {
+            .label {
+                font-size: 12px;
+                font-weight: 500;
+                letter-spacing: .5px;
+            }
+        }
 
-    &.menu-danger {
-      color: var(--ml-danger-color);
-    }
+        &.menu-danger {
+            color: var(--ml-danger-color);
+        }
 
-    &.menu-success {
-      color: var(--ml-success-color);
-    }
+        &.menu-success {
+            color: var(--ml-success-color);
+        }
 
-    &.menu-info {
-      color: var(--ml-info-color);
-    }
+        &.menu-info {
+            color: var(--ml-info-color);
+        }
 
-    &.menu-warning {
-      color: var(--ml-warning-color);
-    }
+        &.menu-warning {
+            color: var(--ml-warning-color);
+        }
 
-    &.menu-primary {
-      color: var(--ml-primary-color);
-    }
+        &.menu-primary {
+            color: var(--ml-primary-color);
+        }
 
-    &.disabled {
-      color: var(--mx-menu-disabled-text);
+        &.disabled {
+            color: var(--mx-menu-disabled-text);
+        }
     }
-  }
+}
+
+:root {
+    //Backgroud
+    --mx-menu-backgroud: var(--ml-bg-color); //菜单背景颜色
+    --mx-menu-hover-backgroud: var(--ml-fill-color-4); //菜单条目鼠标悬浮时的背景颜色
+    --mx-menu-active-backgroud: var(--ml-fill-color-3); //菜单条目鼠标按下时的背景颜色
+    --mx-menu-open-backgroud: var(--ml-fill-color-4); //菜单条目子菜单打开时的背景颜色
+    --mx-menu-open-hover-background: var(--ml-fill-color-4); //菜单条目子菜单打开时悬浮的背景颜色
+    --mx-menu-divider: var(--ml-fill-color-5); //菜单分割线条目颜色
+
+    //Text
+    --mx-menu-text: var(--ml-primary-color); //菜单文字颜色
+    --mx-menu-hover-text: var(--ml-primary-color-hover); //菜单条目鼠标悬浮时的文字颜色
+    --mx-menu-active-text: var(--ml-primary-color-active); //菜单条目鼠标按下时的文字颜色
+    --mx-menu-open-text: var(--ml-primary-color); //菜单条目子菜单打开时的文字颜色
+    --mx-menu-open-hover-text: var(--ml-primary-color-hover); //菜单条目子菜单打开时悬浮的文字颜色
+    --mx-menu-disabled-text: var(--ml-primary-color-disabled); //菜单条目禁用的文字颜色
+
+    //Shadow
+    --mx-menu-shadow-color: rgba(0, 0, 0, .05); //菜单背景阴影颜色
+    --mx-menu-backgroud-radius: var(--ml-radius-small); //菜单背景圆角大小
+
+    //Shortcut badge
+    --mx-menu-shortcut-backgroud: #ebebeb; //菜单快捷键标记的背景颜色，下方是它的四个状态
+    --mx-menu-shortcut-backgroud-hover: #ebebeb;
+    --mx-menu-shortcut-backgroud-active: #ebebeb;
+    --mx-menu-shortcut-backgroud-open: #ebebeb;
+    --mx-menu-shortcut-backgroud-disabled: #fdfdfd;
+    --mx-menu-shortcut-text: #424242; //菜单快捷键标记的文字颜色，下方是它的四个状态
+    --mx-menu-shortcut-text-hover: #424242;
+    --mx-menu-shortcut-text-active: #424242;
+    --mx-menu-shortcut-text-open: #424242;
+    --mx-menu-shortcut-text-disabled: #a5a5a5;
+
+    //Focus border color
+    --mx-menu-focus-color: #0085f1; //菜单项键盘激活时的外框颜色
+
+    //Icon placeholder width
+    --mx-menu-placeholder-width: 24px; //图标占位区域的宽度
 }

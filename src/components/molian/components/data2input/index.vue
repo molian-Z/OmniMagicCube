@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, inject, defineProps } from 'vue';
 import { useVModel } from '@vueuse/core'
-import codeInput from '@molianComps/code-input/index.vue'
+import codeInput from '@molianComps/MlCodeInput/index.vue'
 defineOptions({
     name: "Data2Input"
 })
@@ -28,7 +28,6 @@ const type = computed(() => {
   }
 })
 // 指令支持
-
 </script>
 
 <template>

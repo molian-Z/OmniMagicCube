@@ -354,7 +354,8 @@ export const UIData:IConfig.IData[] = reactive([{
         "size": "small",
         "props": {
           options: 'children'
-        }
+        },
+        "clearable": true
       }
     },
     "Switch": {},

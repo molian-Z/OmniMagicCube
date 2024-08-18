@@ -12,7 +12,7 @@ defineProps({
   },
   unitList: {
     type: Array,
-    default: () => ["px", "%", "vw", "vh", "rem", "rpx"],
+    default: () => ["px", "%", "vw", "vh", "rem", "rpx", 'calc'],
   },
 } as any);
 const emit = defineEmits(['update:modelValue'])
@@ -48,6 +48,8 @@ const change = (value:string) => {
       cursor: pointer;
       user-select: none;
       text-align: center;
+      font-size: 12px;
+      margin: var(--ml-mg-small) 0;
       &:hover {
         background-color: var(--ml-fill-color-4);
         color: var(--ml-primary-color-4);

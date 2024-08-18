@@ -1,4 +1,4 @@
-import { getCurrentOn } from '@molian/utils/customFunction'
+import { getCurrentOn, runOn } from '@molian/utils/customFunction'
 
 // 循环判断
 export const isFor = (comp: any) => {
@@ -38,9 +38,9 @@ export const isShow = (comp: any) => {
 export const getValue = (modelValue: any, variable: any, expandAPI: any, type?: 'designer') => {
     return modelValue.map((item: { directives: { [x: string]: { [x: string]: any; type: any; value: any } }; on: { [x: string]: any }; nativeOn: { [x: string]: any } }) => {
         return {
+            ...item,
             vars: variable,
             cacheOn: type === 'designer' ? {} : getCurrentOn({ on: item.on, nativeOn: item.nativeOn }, variable, expandAPI),
-            ...item
         }
     })
 }
@@ -190,7 +190,7 @@ export const data2Vars = (directive: any, vars: any) => {
     return newVal
 }
 
-export const parseProps = (comp: any, comps: any, variable: any) => {
+export const parseProps = (comp: any, comps: any, variable: any, expandAPI:any) => {
     const propsData: {
         [key: string]: any;
       } = {};
@@ -208,7 +208,13 @@ export const parseProps = (comp: any, comps: any, variable: any) => {
               }
               propsData[key] = newVal;
             } else if (element && element.value !== undefined && element.value !== null) {
-              propsData[key] = element.value;
+                if(element.type === 'function'){
+                    if(element.value.code !== ""){
+                        propsData[key] = runOn(element, variable, expandAPI)
+                    }
+                }else{
+                    propsData[key] = element.value;
+                }
             }
           }
         }

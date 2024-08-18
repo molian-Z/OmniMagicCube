@@ -1,4 +1,5 @@
 <script setup lang="ts">
+// import '@molian/assets/styles/global.scss';
 import { defineProps, watch, onUnmounted, defineOptions } from "vue";
 import { getVariableData } from "@molian/utils/customFunction";
 import { useStyleTag } from "@vueuse/core";
@@ -41,12 +42,12 @@ const { id, css, load, unload, isLoaded } = useStyleTag("");
 watch(
   () => props.globalAttrs,
   (newVal) => {
-    variable.value = getVariableData(newVal.variable, props.expandAPI);
+    variable.value = getVariableData(newVal.variable, props.expandAPI, true);
     lifecycle.value = newVal.lifecycle;
     // 执行生命周期
     runLifecycle(lifecycle, variable.value, props.expandAPI);
   },
-  {
+  { 
     immediate: true,
   }
 );

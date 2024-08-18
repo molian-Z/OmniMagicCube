@@ -1,7 +1,6 @@
 import { withModifiers, mergeProps } from 'vue'
 import * as Vue from 'vue'
 import { defaultLifecycleMap } from '@molian/utils/defaultData'
-import { useCloned } from '@vueuse/core'
 const asyncFunction = Object.getPrototypeOf(async function () { }).constructor
 const syncFunction = Object.getPrototypeOf(function () { }).constructor
 
@@ -105,18 +104,17 @@ export const getCurrentOn = (data: { on: any; nativeOn: any }, variable: globalT
     return mergeProps(newOn, newNativeOn)
 }
 
-export const getVariableData = (variable: { [x: string]: any; }, expandAPI?: any) => {
+export const getVariableData = (variable: { [x: string]: any; }, expandAPI?: any, isRoot?:boolean) => {
     const vars:any = {}
-    const { cloned } = useCloned(variable)
-    Object.keys(cloned.value).forEach(key => {
-        const { type, value } = cloned.value[key]
+    Object.keys(variable).forEach(key => {
+        const { type, value } = variable[key]
         if (type === 'function') {
             if (!!value.functionMode && ['asyncFunction', 'function'].indexOf(value.functionMode) > -1) {
-                vars[key] = createFunc(value.functionMode, value.codeVar, value.code).bind({ app: Vue, vars: variable, ...expandAPI })
+                vars[key] = createFunc(value.functionMode, value.codeVar, value.code).bind({ app: Vue, vars: reactive(vars), ...expandAPI })
             }
         }else if(type === 'computed'){
             if (!!value.functionMode && ['asyncFunction', 'function'].indexOf(value.functionMode) > -1) {
-                vars[key] = computed(createFunc(value.functionMode, value.codeVar, value.code).bind({ app: Vue, vars: variable, ...expandAPI }))
+                vars[key] = computed(createFunc(value.functionMode, value.codeVar, value.code).bind({ app: Vue, vars: reactive(vars), ...expandAPI }))
             }
         }else{
             vars[key] = value

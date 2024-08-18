@@ -12,7 +12,7 @@ defineProps({
 const emit = defineEmits(['close'])
 const customComps:any = inject('customComps')
 const { customCascaderPanel } = customComps
-const message:any = inject('ml-message')
+const message:any = inject("mlMessage")
 const t:any = inject('mlLangs')
 const variableList = computed(() => {
   return Object.keys(globalAttrs.variable).map(key => {

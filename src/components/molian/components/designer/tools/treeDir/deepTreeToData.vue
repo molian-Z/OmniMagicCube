@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { defineProps, inject, computed, defineEmits } from "vue";
 import svgIcon from "@molianComps/SvgIcon/index.vue";
-import { selectedComp, compsRef } from "@molianComps/Designer/designerData";
+import { selectedComp, compsRef, setSelectedComp } from "@molianComps/Designer/designerData";
 import {
   hoverComp,
   hoverRef,
@@ -41,12 +41,12 @@ const compData: any = computed({
 });
 const t :any = inject('mlLangs');
 const mlComps: any = inject("mlComps");
-const message: any = inject("ml-message");
+const message: any = inject("mlMessage");
 const customComps: any = inject('customComps')
 const { customInput } = customComps
 const isOpened = ref<boolean[]>([]);
 const typeStatus = ref("");
-const editSubTitle = ref(false);
+const editCompIndex = ref(-1);
 const { onDragend, onDrop, onDropSlot } = useDraggable(mlComps, compData, message);
 const showSlot = (slots: any) => {
   let btn = false;
@@ -90,7 +90,7 @@ const onActive = (comp: any, index: number) => {
   //有错误暂未修复，先允许删除
   hoverComp.value = comp;
   hoverRef.value = compsRef[comp.key];
-  selectedComp.value = comp;
+  setSelectedComp(comp)
 };
 </script>
 
@@ -127,10 +127,10 @@ const onActive = (comp: any, index: number) => {
         @dragend="onDragend"
         @drop.stop="onDrop($event, index, slotData)"
       >
-        <div v-if="!editSubTitle">{{ comp.subTitle || mlComps[comp.name].title }}</div>
-        <customInput style="width:100px;" size="small" v-model="comp.subTitle" @blur="editSubTitle = false" v-else></customInput>
-        <svg-icon class="tree-node-header__title-icon" icon="ep:edit" @click="editSubTitle = true" v-if="!editSubTitle"></svg-icon>
-        <svg-icon class="tree-node-header__title-icon" icon="ep:select" v-else @click="editSubTitle = false"></svg-icon>
+        <div v-if="editCompIndex !== index">{{ comp.subTitle || mlComps[comp.name].title }}</div>
+        <customInput style="width:100px;" size="small" v-model="comp.subTitle" @blur="editCompIndex = -1" v-else></customInput>
+        <svg-icon class="tree-node-header__title-icon" icon="ep:edit" @click="editCompIndex = index" v-if="editCompIndex !== index"></svg-icon>
+        <svg-icon class="tree-node-header__title-icon" icon="ep:select" v-else @click="editCompIndex = -1"></svg-icon>
       </div>
     </div>
     <el-collapse-transition>

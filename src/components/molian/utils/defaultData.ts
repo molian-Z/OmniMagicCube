@@ -7,7 +7,7 @@ import { useStorage } from '@vueuse/core'
 export const defaultCategory: IConfig.IDefaultCategory[] = [{
     icon: 'basic',
     name: 'basic',
-    component: ['MlHorizontalContainer', 'MlVerticalContainer', 'SvgIcon', 'IconPicker', 'MlEcharts']
+    component: ['MlHorizontalContainer', 'MlVerticalContainer', 'SvgIcon', 'IconPicker', 'MlEcharts', 'MlSubForm']
 }, {
     icon: 'container',
     name: 'layout',

@@ -1,15 +1,13 @@
 <script setup lang="ts">
 import { defineOptions } from 'vue';
 import anyData2Form from '@molianComps/AnyData2Form/index.vue'
-import { globalAttrs, getLifecycle } from '@molianComps/Designer/designerData'
+import { globalAttrs, currentLifecycle } from '@molianComps/Designer/designerData'
 
 defineOptions({
   name: 'Lifecycle'
 })
 
 const { lifecycle } = globalAttrs
-
-const currentLifecycle = getLifecycle()
 </script>
 <template>
   <div class="basic-list">

@@ -26,7 +26,7 @@ const props = defineProps(<
 });
 
 const renderData = computed(() =>{
-    return getValue(props.modelValue, variable.value, props.expandAPI)
+    return getValue(props.modelValue, variable.value, {...props.expandAPI, $slot:props.slotProps})
 })
 
 const newForEach = (comp: any) => {
@@ -38,6 +38,7 @@ const newForEach = (comp: any) => {
   <template v-for="comp in renderData" :key="comp.key">
     <slotTemplate
       :comp="comp"
+      :expandAPI="expandAPI"
       v-if="isFor(comp)"
       :key="forItem[comp.directives.for.idKey] || forIndex"
       v-for="(forItem, forIndex) in newForEach(comp)"
@@ -47,6 +48,7 @@ const newForEach = (comp: any) => {
     />
     <slotTemplate
       :comp="comp"
+      :expandAPI="expandAPI"
       v-else-if="isIf(comp)"
       v-show="isShow(comp)"
       v-on="comp.cacheOn"

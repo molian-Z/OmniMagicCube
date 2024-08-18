@@ -121,11 +121,10 @@ defineExpose({
 
         &:hover {
             border-color: var(--ml-primary-color-2);
-
+            color: var(--ml-primary-color);
             .sticky-tool-content-svg-icon {
                 fill: var(--ml-primary-color);
             }
-            color: var(--ml-primary-color);
         }
 
         &.active {

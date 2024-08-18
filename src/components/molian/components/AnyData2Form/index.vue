@@ -4,10 +4,10 @@ import { deepObjToArray } from '@molian/utils/util'
 import svgIcon from '@molianComps/SvgIcon/index.vue'
 import IconPicker from '@molianComps/IconPicker/index.vue'
 import colorPicker from '@molianComps/ColorPicker/index.vue'
-import codeInput from '@molianComps/code-input/index.vue'
+import codeInput from '@molianComps/MlCodeInput/index.vue'
 import { globalAttrs } from '@molianComps/Designer/designerData'
 const t: any = inject('mlLangs')
-const message: any = inject('ml-message')
+const message: any = inject("mlMessage")
 const customComps: any = inject('customComps')
 const { customInputNumber, customInput, customSwitch, customSelect, customCascader } = customComps
 const props = withDefaults(defineProps<{
@@ -87,7 +87,6 @@ const currentTypeIndex = ref(props.modelValue && types.value.indexOf(props.model
 const type = computed(() => {
     return types.value[currentTypeIndex.value]
 })
-
 const variableList = computed(() => {
     return globalAttrs.variable && Object.keys(globalAttrs.variable).map(key => {
         if (globalAttrs.variable) {

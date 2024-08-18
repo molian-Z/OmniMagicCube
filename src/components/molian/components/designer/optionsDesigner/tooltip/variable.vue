@@ -5,7 +5,7 @@ import subForm from '@molianComps/SubForm/index.vue'
 import data2input from '@molianComps/Data2Input/index.vue'
 const t:any = inject('mlLangs')
 const customComps:any = inject('customComps')
-const message:any = inject('ml-message')
+const message:any = inject("mlMessage")
 const { customDialog, customButton } = customComps
 const subFormColumns = ref([{
   prop: "name",
@@ -100,13 +100,30 @@ const newProp = function (column: { prop: string; }, item: { type: any; }) {
   }
 }
 
+const updateValue = (value:any, item:any, column:any) => {
+    if(column.prop === 'type'){
+        if(value === 'boolean'){
+            item.value = false
+        }else if(value === 'array'){
+            item.value = []
+        }else if(value === 'object'){
+            item.value = {}
+        }else if(value === 'function'){
+            item.value = null
+        }else if(value === 'computed'){
+            item.value = null
+        }
+    }
+    item[column.prop] = value
+}
+
 </script>
 <template>
   <customDialog appendToBody :header="t('options.variable')" width="80%" :close-on-click-modal="false" @escKeydown="visible = false"
     @closeBtnClick="visible = false" v-model:visible="visible">
     <subForm ref="subFormRef" :columns="subFormColumns" v-model="modelValue" height="500px">
       <template #item="{ column, item }">
-        <data2input v-model="item[column.prop]" :propData="newProp(column, item)"></data2input>
+        <data2input :modelValue="item[column.prop]" @update:modelValue="updateValue($event, item, column)" :propData="newProp(column, item)"></data2input>
       </template>
     </subForm>
     <template #footer>

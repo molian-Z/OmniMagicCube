@@ -60,7 +60,7 @@ const showRenderDialog = ref(false)
     <customDialog appendToBody header="效果预览" width="1200px" :close-on-click-modal="false"
       @escKeydown="showRenderDialog = false" @closeBtnClick="showRenderDialog = false"
       v-model:visible="showRenderDialog" destroyOnClose>
-      <render :modelValue="modelValue" :globalAttrs="globalAttrs" />
+      <render :modelValue="modelValue" :expandAPI="{test:()=>{}}" :globalAttrs="globalAttrs" />
     </customDialog>
   </div>
 </template>

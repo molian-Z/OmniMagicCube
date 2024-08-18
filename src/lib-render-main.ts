@@ -7,6 +7,8 @@ import MlHorizontalContainer from '@molianComps/MolianLayoutContainer/horizontal
 import MlVerticalContainer from '@molianComps/MolianLayoutContainer/verticalContainer.vue'
 import MlSubContainer from '@molianComps/MolianLayoutContainer/subContainer.vue'
 import MlEcharts from '@molianComps/Echarts/index.vue'
+import MlSubForm from '@molianComps/MlSubForm/index.vue'
+// import MlCodeEditor from '@molianComps/MlCodeEditor/index.vue'
 addAPIProvider('', {
     resources: ['http://flower.molianpro.com:33000'],
 })
@@ -19,6 +21,8 @@ const installRender = function (app: App) {
     app.component('MlVerticalContainer', MlVerticalContainer)
     app.component('MlSubContainer', MlSubContainer)
     app.component('MlEcharts', MlEcharts)
+    app.component('MlSubForm', MlSubForm)
+    // app.component('MlCodeEditor', MlCodeEditor)
     app.component('OmcRender', Render)
 }
 export default installRender

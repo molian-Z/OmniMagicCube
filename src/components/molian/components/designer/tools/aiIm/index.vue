@@ -11,7 +11,7 @@ import { useUI } from '@molian/utils/UIMap'
 const t: any = inject('mlLangs')
 const customComps: any = inject('customComps')
 const { customInput, customButton } = customComps
-const message: any = inject('ml-message')
+const message: any = inject("mlMessage")
 const { showMenu, isOpenedMenu } = <any>inject('cmdMenu');
 onClickOutside(aiImRef, (event) => {
   if (aiImRef.value.expand && !isOpenedMenu()) {

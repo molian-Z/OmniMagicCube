@@ -3,13 +3,14 @@ import {
   inject,
   defineProps,
   defineExpose,
-  withDefaults,
   defineOptions,
-  defineModel,
+  defineEmits,
+  useSlots,
   watch,
 } from "vue";
 import gsap from "gsap";
 import { generateRandomString } from "@molianComps/Designer/designerData";
+import Data2Input from "@molianComps/Data2Input/index.vue";
 const t: any = inject("mlLangs");
 const customComps: any = inject("customComps");
 const { customButton } = customComps;
@@ -17,40 +18,116 @@ defineOptions({
   name: "MlSubForm",
   slotsOption: {
     row: true,
-    item: {
-        auto: true
-    }
+    // default: true
   },
 });
-const props = withDefaults(
-  defineProps<{
-    columns: Array<any>;
-    isAdd: boolean;
-    isAppend: boolean;
-    isDelete: boolean;
-    maxHeight: number | string;
-    height: number | string;
-  }>(),
-  {
-    columns: [],
-    isAdd: true,
-    isAppend: true,
-    isDelete: true,
-    maxHeight: "auto",
-    height: "auto",
-  }
-);
+const props = defineProps({
+  modelValue: {
+    type: Array as () => any[],
+    default: () => [],
+  },
+  columns: {
+    type: Array as () => any[],
+    default: () => {
+      return [
+        {
+          prop: "name",
+          label: "变量名",
+          type: "string",
+          required: true,
+        },
+        {
+          prop: "label",
+          label: "文本名",
+          type: "string",
+          default: null,
+        },
+        {
+          prop: "type",
+          label: "数据格式",
+          type: "string",
+          default: "string",
+          required: true,
+          optionItems: [
+            {
+              label: "string",
+              value: "string",
+            },
+            {
+              label: "number",
+              value: "number",
+            },
+            {
+              label: "boolean",
+              value: "boolean",
+            },
+            {
+              label: "array",
+              value: "array",
+            },
+            {
+              label: "object",
+              value: "object",
+            },
+            {
+              label: "function",
+              value: "function",
+            },
+            {
+              label: "computed",
+              value: "computed",
+            },
+          ],
+        },
+        {
+          prop: "value",
+          label: "数据值",
+          default: null,
+        },
+      ];
+    },
+  },
+  isAdd: {
+    type: Boolean,
+    default: true,
+  },
+  isAppend: {
+    type: Boolean,
+    default: true,
+  },
+  isDelete: {
+    type: Boolean,
+    default: true,
+  },
+  maxHeight: {
+    type: [Number, String],
+  },
+  height: {
+    type: [Number, String],
+  },
+  formatColumns: {
+    type: Function,
+    default: (column: any, item: any) => {
+      if (column.prop === "value") {
+        return { ...column, type: item.type };
+      } else {
+        return column;
+      }
+    },
+  },
+});
+const slots = useSlots()
+const emit = defineEmits(['update:modelValue'])
 const formContent = ref();
 const formItem = ref();
-const data: any = defineModel({
-  type: Array,
-  default: () => [],
-});
+const data: any = ref<any[]>([])
+
 watch(
-  () => data.value,
+  () => props.modelValue,
   (newVal) => {
-    newVal &&
-      newVal.forEach((item: any) => {
+    data.value = newVal
+    data.value &&
+    data.value.forEach((item: any) => {
         if (!item.$key) {
           item.$key = generateRandomString(8);
         }
@@ -61,6 +138,10 @@ watch(
     deep: true,
   }
 );
+
+const updateValue = (value: any, item: any, column: any) => {
+    item[column.prop] = value
+};
 const setData = async () => {
   const defaultcolumns = props.columns.filter((fitem: any) => {
     return fitem.default;
@@ -150,6 +231,7 @@ function onLeave(el: any, done: any) {
     onComplete: done,
   });
 }
+
 defineExpose({
   addNew,
   appendRow,
@@ -199,15 +281,12 @@ defineExpose({
                 v-for="column in columns"
                 :key="item.$key + '_' + column.prop"
               >
-                <slot
-                  name="item"
-                  :column="column"
-                  :item="item"
-                  :columns="columns"
-                  :index="index"
-                >
-                  {{ item[column.prop] }}
-                </slot>
+                <slot name="default" :row="item" :column="column"></slot>
+                <Data2Input v-if="!slots.default"
+                  :modelValue="item[column.prop]"
+                  @update:modelValue="updateValue($event, item, column)"
+                  :propData="formatColumns(column, item)"
+                ></Data2Input>
               </div>
             </slot>
             <div class="ml-sub-form-list__item-label">
