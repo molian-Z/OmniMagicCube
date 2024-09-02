@@ -14,6 +14,7 @@
     "add":"添加",
     "remove":"删除",
     "basic":"基础",
+    "properties":"特性",
     "slot":"插槽",
     "js":"事件",
     "funciton":"函数",
@@ -59,5 +60,13 @@
     "indexKey":"索引",
     "openUrl":"打开文档",
     "jsonFormatError":"数据格式错误",
-    "empty":"空数据"
+    "empty":"空数据",
+    "sortable":"排序",
+    "index":"索引",
+    "placeholder":"占位符",
+    "pleaseSelectVariable":"请选择变量",
+    "id":"唯一值(id)",
+    "key":"唯一键(key)",
+    "subTitle":"自定义标题",
+    "currentComponent":"当前组件"
 }

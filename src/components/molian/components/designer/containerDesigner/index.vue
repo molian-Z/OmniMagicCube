@@ -258,7 +258,6 @@ const confirmDropContainer = async() =>{
   user-select: none;
   line-height: 24px;
   transition: var(--ml-transition-base);
-  z-index: v-bind(treeIndexDrop);
 }
 
 .prefix-drop-slot {
@@ -273,7 +272,6 @@ const confirmDropContainer = async() =>{
 .designer-comp__empty {
   flex: 1;
   position: relative;
-  z-index: v-bind(treeIndexNext);
   &-content {
     position: absolute;
     border: 2px dashed var(--ml-info-color-1);

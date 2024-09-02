@@ -12,7 +12,7 @@ import {
 import globalTool from "./globalTool/index.vue";
 import cssDesigner from "./cssDesigner/index.vue";
 import containerDesigner from "./containerDesigner/index.vue";
-import toolSideBar from "./toolSideBar/index.vue";
+import toolRightSideBar from "./toolSideBar/index.vue";
 import compsDesigner from "./compsDesigner/index.vue";
 import optionsDesigner from "./optionsDesigner/index.vue";
 import actionDesigner from "./actionDesigner/index.vue";
@@ -21,7 +21,7 @@ import treeDir from "./tools/treeDir/index.vue";
 import aiIm from "./tools/aiIm/index.vue";
 import { setting } from "@molian/utils/defaultData";
 import { conciseJs } from "@molian/utils/js-generator";
-import { conciseCss } from "@molian/utils/css-generator";
+import { conciseCss, restoreCss } from "@molian/utils/css-generator";
 defineProps({
   width: {
     type: String,
@@ -37,7 +37,7 @@ const message = inject("mlMessage");
 useKeys(message, t);
 
 const setData = (data: any) => {
-  modelValue.value = data.modelValue;
+  modelValue.value = restoreCss(data.modelValue);
   Object.keys(data.globalAttrs).forEach((key: string) => {
     globalAttrs[key] = Object.assign({}, data.globalAttrs[key]);
   });
@@ -65,16 +65,19 @@ defineExpose({
 <template>
   <div class="designer-page" :style="{ width, height }">
     <div :style="`display:${hiddenAllPanel ? 'none' : 'block'};`">
-      <template v-if="!!setting.immerseMode">
+      <template v-if="!!setting.immerseRightMode">
         <globalTool></globalTool>
         <css-designer></css-designer>
         <options-designer></options-designer>
         <action-designer></action-designer>
         <global-designer></global-designer>
       </template>
-      <comps-designer
-        :style="`display:${selectedComp ? 'none' : 'block'}`"
-      ></comps-designer>
+      <comps-designer :style="`display:${selectedComp ? 'none' : 'block'}`"  v-if="!!setting.immerseLeftMode" />
+      <template v-else="!setting.immerseLeftMode">
+        <transition name="slide2Width">
+            <comps-designer />
+        </transition>
+      </template>
     </div>
     <container-designer>
       <template v-slot:toolbarLeft>
@@ -88,7 +91,7 @@ defineExpose({
       </template>
     </container-designer>
     <transition name="slide2Width">
-      <toolSideBar v-if="!setting.immerseMode" />
+      <toolRightSideBar v-if="!setting.immerseRightMode" />
     </transition>
     <treeDir></treeDir>
     <!-- <ai-im></ai-im> -->

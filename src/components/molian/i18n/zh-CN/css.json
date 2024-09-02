@@ -132,5 +132,8 @@
         "null":"无",
         "outset":"外阴影",
         "inset":"内阴影"
+    },
+    "customCssObj":{
+        "title":"自定义CSS"
     }
 }

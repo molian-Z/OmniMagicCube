@@ -3,6 +3,7 @@ import {
     ref,
     watch
 } from 'vue'
+import uniqueId from 'lodash-es/uniqueId'
 import {
     useCloned,
     useDebouncedRefHistory,
@@ -90,13 +91,6 @@ export const selectedComp = ref<CubeData.ModelValue | null>(null)
  * 即使该组件的css对象中缺少某些初始化Css中包含的键
  */
 export const setSelectedComp = (comp: any) => {
-    // 遍历初始化CSS对象的键
-    Object.keys(initCss).forEach(key => {
-        // 如果选中组件的CSS对象中不存在当前键，则使用初始化CSS的值
-        if (!comp.css[key]) {
-            comp.css[key] = initCss[key]
-        }
-    })
     // 将选中的组件设置为全局选中的组件
     selectedComp.value = comp
 }
@@ -188,7 +182,7 @@ export const createComp = function (comp: {
     name: string;
 }) {
     // 生成一个随机字符串作为组件的唯一标识
-    const randomStr = generateRandomString(16)
+    const randomStr = generateRandomString(5, 'comp_')
     // 克隆插槽内容
     const {
         cloned
@@ -227,7 +221,7 @@ export const createComp = function (comp: {
         nativeOn: {},
         directives: {},
         slots: cloned.value,
-        css: {},
+        css: initCss(),
         key: randomStr,
         id: randomStr
     }
@@ -240,9 +234,13 @@ export const initCompsData = function (data: any) {
 
 
 // 生成指定长度的随机字符串
-export const generateRandomString = function (length: number) {
-    let str = Math.random().toString(36).substring(2, length + 2);
-    return str;
+const randomPrefix = Math.random().toString(36).substring(2, 7);
+export const generateRandomString = function (length: number, prefix:string) {
+    if(!!prefix){
+        return uniqueId(`${prefix}_${randomPrefix}_`);
+    }else {
+        return Math.random().toString(36).substring(2, length + 2)
+    }
 }
 
 
@@ -318,7 +316,7 @@ export const currentLifecycle = computed(() => {
 // 处理粘贴数据的函数
 const pasteData: any = function (data: any) {
     // 生成一个随机字符串作为组件的键和ID
-    const randomStr = generateRandomString(16)
+    const randomStr = generateRandomString(5, 'comp_')
     data.key = randomStr
     data.id = randomStr
     // 如果数据包含插槽，则遍历每个插槽

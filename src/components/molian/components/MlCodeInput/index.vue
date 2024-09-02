@@ -7,7 +7,7 @@ defineOptions({
 })
 const props = defineProps({
   modelValue: {
-    type: [Object, Array],
+    type: [Object, Array, String],
     default: {},
   },
   keyName: {
@@ -53,6 +53,13 @@ const showDialog = (type: string) => {
     } catch (error) {
       codeObj.value = props.modelValue || type === "object" ? "{}" : "[]";
     }
+  } else if(type === 'css') {
+    codeMode.value = "css";
+    try {
+      codeObj.value = props.modelValue;
+    } catch (error) {
+      codeObj.value = ``;
+    }
   } else {
     codeMode.value = "javascript";
     if (typeof props.modelValue !== "object" || !props.modelValue) {
@@ -82,6 +89,8 @@ const saveCode = () => {
     codeObj.value = codeRef.value.getValue();
   } else if (codeMode.value === "javascript") {
     codeObj.value.code = codeRef.value.getValue();
+  }else if(codeMode.value === 'css'){
+    codeObj.value = codeRef.value.getValue();
   }
   if (codeMode.value === "json") {
     try {

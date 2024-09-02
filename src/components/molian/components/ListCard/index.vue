@@ -49,6 +49,7 @@ const emit = defineEmits(["expand", "delete"]);
               :cancelBtn="t('actions.cancelText')"
               :content="t('actions.deleteAction')"
               @confirm="emit('delete', { item, index })"
+              :persistent="false"
             >
               <template #reference>
                 <div class="card-icon-bg">

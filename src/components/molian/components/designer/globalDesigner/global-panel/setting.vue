@@ -20,8 +20,12 @@ const syncCloudData = async () => {
 <template>
   <div class="setting-container">
     <div class="setting-item">
-      <div>{{ t('global.setting.immerseMode') }}</div>
-      <customSwitch v-model="setting.immerseMode"></customSwitch>
+      <div>{{ t('global.setting.immerseLeftMode') }}</div>
+      <customSwitch v-model="setting.immerseLeftMode"></customSwitch>
+    </div>
+    <div class="setting-item">
+      <div>{{ t('global.setting.immerseRightMode') }}</div>
+      <customSwitch v-model="setting.immerseRightMode"></customSwitch>
     </div>
     <div class="setting-item">
         <div>{{ t('global.setting.syncComponentData') }}</div>

@@ -5,9 +5,9 @@ import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
 import autoImport from 'unplugin-auto-import/vite'
 import components from 'unplugin-vue-components/vite'
 import visualizer from 'rollup-plugin-visualizer'
-import commonjs from '@rollup/plugin-commonjs';
+import commonjs from '@rollup/plugin-commonjs'
 import dts from 'vite-plugin-dts'
-import loadVersion from 'vite-plugin-package-version';
+import loadVersion from 'vite-plugin-package-version'
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -68,7 +68,23 @@ export default defineConfig({
                 'ace-builds/src-min-noconflict/mode-javascript',
                 'ace-builds/src-min-noconflict/mode-html',
                 'ace-builds/src-min-noconflict/mode-css',
-                'ace-builds/src-min-noconflict/ext-language_tools'
+                'ace-builds/src-min-noconflict/ext-language_tools',
+                "ace-builds/src-min-noconflict/mode-json",
+                "ace-builds/src-min-noconflict/ext-searchbox",
+                "ace-builds/src-min-noconflict/ext-error_marker",
+                "ace-builds/src-min-noconflict/ext-linking",
+                "ace-builds/src-min-noconflict/ext-emmet",
+                "ace-builds/src-min-noconflict/ext-elastic_tabstops_lite",
+                "ace-builds/src-min-noconflict/ext-command_bar",
+                "ace-builds/src-min-noconflict/ext-beautify",
+                "ace-builds/src-min-noconflict/ext-linking",
+                "ace-builds/src-min-noconflict/ext-options",
+                "ace-builds/src-min-noconflict/ext-prompt",
+                "ace-builds/src-min-noconflict/worker-json.js?url",
+                "ace-builds/src-min-noconflict/worker-javascript.js?url",
+                "ace-builds/src-min-noconflict/worker-css.js?url",
+                "ace-builds/src-min-noconflict/snippets/css",
+                "ace-builds/src-min-noconflict/snippets/javascript",
             ],
             output: {
                 // 在 UMD 构建模式下为这些外部化的依赖提供一个全局变量
@@ -76,8 +92,10 @@ export default defineConfig({
                     vue: "Vue",
                     ['ace-builds']: "ace-builds",
                     echarts: "echarts",
-                    vconsole:"vconsole",
+                    vconsole: "vconsole",
                     ['ace-builds/src-min-noconflict/snippets/javascript']: "ace-builds/src-min-noconflict/snippets/javascript",
+                    ["ace-builds/src-min-noconflict/snippets/css"]: "ace-builds/src-min-noconflict/snippets/css",
+                    // ['ace-builds/src-min-noconflict/worker-css']: "ace-builds/src-min-noconflict/worker-css",
                     // ['ace-builds/src-min-noconflict/worker-javascript']: "ace-builds/src-min-noconflict/worker-javascript",
                     ['ace-builds/src-min-noconflict/ext-beautify']: "ace-builds/src-min-noconflict/ext-beautify",
                     ['ace-builds/esm-resolver']: "ace-builds/esm-resolver"

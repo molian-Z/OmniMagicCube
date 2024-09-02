@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, inject, defineExpose } from 'vue'
 import { globalAttrs } from '../../designerData'
-import subForm from '@molianComps/SubForm/index.vue'
+import MlSubForm from '@molianComps/MlSubForm/index.vue'
 import data2input from '@molianComps/Data2Input/index.vue'
 const t:any = inject('mlLangs')
 const customComps:any = inject('customComps')
@@ -23,6 +23,10 @@ const subFormColumns = ref([{
   type: "string",
   default:"string",
   required: true,
+  customOptinos:{
+    filterable: false,
+    clearable: true
+  },
   optionItems: [{
     label: t("options.string"),
     value: "string"
@@ -121,11 +125,11 @@ const updateValue = (value:any, item:any, column:any) => {
 <template>
   <customDialog appendToBody :header="t('options.variable')" width="80%" :close-on-click-modal="false" @escKeydown="visible = false"
     @closeBtnClick="visible = false" v-model:visible="visible">
-    <subForm ref="subFormRef" :columns="subFormColumns" v-model="modelValue" height="500px">
-      <template #item="{ column, item }">
-        <data2input :modelValue="item[column.prop]" @update:modelValue="updateValue($event, item, column)" :propData="newProp(column, item)"></data2input>
+    <MlSubForm ref="subFormRef" :columns="subFormColumns" v-model="modelValue" height="500px">
+      <template #default="{ column, row }">
+        <data2input :modelValue="row[column.prop]" @update:modelValue="updateValue($event, row, column)" :propData="newProp(column, row)"></data2input>
       </template>
-    </subForm>
+    </MlSubForm>
     <template #footer>
       <customButton theme="default" @click="visible = false">{{ t('options.cancel') }}</customButton>
       <customButton theme="primary" @click="createVariable">{{ t('options.confirm') }}</customButton>

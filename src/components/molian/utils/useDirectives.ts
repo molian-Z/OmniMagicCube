@@ -29,9 +29,9 @@ import { nextTick } from 'vue';
 //   },
 // }
 
-export const customText = (el: { childNodes: any[]; appendChild: (arg0: HTMLElement) => void; }, binding: { value: { directives: { text: any; }; vars: { text: any; }; }; }) => {
+export const customText = (el:any, binding: any) => {
     nextTick(() => {
-        const { directives, vars }: any = binding.value
+        const { directives, vars }: any = binding.value.comp
         const { text } = directives
         if (text.type === 'variable') {
             watch(() => vars[text.value[0]], (newVal) => {
@@ -41,7 +41,11 @@ export const customText = (el: { childNodes: any[]; appendChild: (arg0: HTMLElem
                 })
                 let currentText = newText;
                 if (typeof currentText === 'function') {
-                    currentText = newText(el, binding);
+                    currentText = newText({
+                        el,
+                        comp:binding.value.comp,
+                        $slot: binding.value.$slot
+                    });
                 }
                 if (typeof newText === 'object') {
                     currentText = JSON.stringify(currentText);
@@ -79,36 +83,36 @@ export const customText = (el: { childNodes: any[]; appendChild: (arg0: HTMLElem
 }
 
 export const customOnce = {
-    mounted: (el: { _once: boolean; textContent: any; innerHTML: any; }, binding: { value: any; }) => {
+    mounted: (el: any, binding: any) => {
         el._once = true;
-        if (binding.value) {
-            el.textContent = binding.value;
+        if (binding.value.comp) {
+            el.textContent = binding.value.comp;
         } else {
             el.textContent = el.innerHTML;
         }
     },
-    updated: (el: { _once: any; textContent: any; }, binding: { value: any; }) => {
-        if (!el._once && binding.value) {
-            el.textContent = binding.value;
+    updated: (el: any, binding: any) => {
+        if (!el._once && binding.value && binding.value.comp) {
+            el.textContent = binding.value.comp;
         }
     }
 }
 export default {
     mounted(el: any, binding: any) {
         if (el) {
-            if (!!binding.value.directives.text) {
+            if (!!binding.value.comp.directives.text) {
                 customText(el, binding)
             }
-            if (!!binding.value.directives.once) {
+            if (!!binding.value.comp.directives.once) {
                 customOnce.mounted(el, binding)
             }
         }
     },
     updated(el: any, binding: any) {
-        if (!!binding.value.directives.text) {
+        if (!!binding.value.comp.directives.text) {
             customText(el, binding)
         }
-        if (!!binding.value.directives.once) {
+        if (!!binding.value.comp.directives.once) {
             customOnce.updated(el, binding)
         }
     },

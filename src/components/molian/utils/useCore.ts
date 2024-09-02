@@ -1,5 +1,7 @@
 import { getCurrentOn, runOn } from '@molian/utils/customFunction'
-
+import { globalComps } from '@molian/utils/compsConfig'
+import { cp } from 'fs'
+const {Message} = globalComps.value
 // 循环判断
 export const isFor = (comp: any) => {
     let isFor = true
@@ -35,12 +37,12 @@ export const isShow = (comp: any) => {
     return !!isShow
 }
 
-export const getValue = (modelValue: any, variable: any, expandAPI: any, type?: 'designer') => {
+export const getValue = (modelValue: any, variable: any, expandAPI: any, slotData:any, originVariable:any,  type?: 'designer') => {
     return modelValue.map((item: { directives: { [x: string]: { [x: string]: any; type: any; value: any } }; on: { [x: string]: any }; nativeOn: { [x: string]: any } }) => {
         return {
             ...item,
             vars: variable,
-            cacheOn: type === 'designer' ? {} : getCurrentOn({ on: item.on, nativeOn: item.nativeOn }, variable, expandAPI),
+            cacheOn: type === 'designer' ? {} : getCurrentOn({ on: item.on, nativeOn: item.nativeOn }, variable, originVariable, slotData, expandAPI),
         }
     })
 }
@@ -190,34 +192,84 @@ export const data2Vars = (directive: any, vars: any) => {
     return newVal
 }
 
-export const parseProps = (comp: any, comps: any, variable: any, expandAPI:any) => {
+/**
+ * 解析组件的属性
+ * 
+ * 此函数用于从组件实例和组件定义中解析出组件的属性数据它遍历组件的属性，
+ * 检查是否应该包含该属性基于属性的类型和配置，将其添加到返回的属性对象中
+ * 
+ * @param comp 当前组件的实例，包含组件的属性和其他信息
+ * @param comps 所有组件的定义，映射组件名为组件定义对象
+ * @param variable 变量对象，用于解析属性值中引用的变量
+ * @param expandAPI 扩展API函数，用于在解析属性时调用扩展功能
+ * @returns 返回一个对象，包含从组件实例和定义中解析出的属性键值对
+ */
+export const parseProps = (comp: any, comps: any, variable: any, expandAPI:any, slotData?:any) => {
+    // 初始化一个空对象，用于存储解析后的属性数据
     const propsData: {
         [key: string]: any;
       } = {};
+      // 遍历组件实例的属性
       for (const key in comp.attrs) {
+        // 确保遍历的属性是组件实例自己的，而不是原型链上的
         if (Object.hasOwnProperty.call(comp.attrs, key)) {
           const element = comp.attrs[key];
+          if(!comps[comp.name]){
+            try {
+                Message.error(`${comp.name} 组件不存在`)
+            } catch (error) {
+                console.log(`${comp.name} 组件不存在`)
+            }
+            continue;
+          }
           const compProp = comps[comp.name].props[key];
+          // 检查组件属性是否应该被解析和包含在结果中
           if (compProp && compProp.hidden && compProp.hidden(comp.attrs) === false || compProp && !compProp.hidden) {
+            // 如果属性类型是变量，则从变量对象中解析其值
             if (element && element.type === "variable") {
               let newVal = variable;
+              // 如果属性值是一个数组，逐级访问变量对象来获取最终值
               if (element.value) {
                 element.value.forEach((item: string) => {
                   newVal = newVal[item];
                 });
               }
+              if(typeof newVal === 'function'){
+                if(Array.isArray(compProp.type) && compProp.type.indexOf('function') > -1 || compProp.type !== 'function'){
+                    newVal = newVal.call(null, {$slot:slotData})
+                }else{
+                    if(!!slotData){
+                        let func = function(){
+                            return newVal(...arguments, {$slot:slotData})
+                        }
+                        propsData[key] = func
+                        continue;
+                    }
+                }
+              }
+              // 将解析后的属性值存储到结果对象中
               propsData[key] = newVal;
             } else if (element && element.value !== undefined && element.value !== null) {
+                // 如果属性值是函数，且代码不为空，则调用扩展API来执行该函数
                 if(element.type === 'function'){
                     if(element.value.code !== ""){
-                        propsData[key] = runOn(element, variable, expandAPI)
+                        if(!!slotData){
+                            let func = function(){
+                                return runOn(element, variable, expandAPI)(...arguments, {$slot:slotData})
+                            }
+                            propsData[key] = func
+                        } else {
+                            propsData[key] = runOn(element, variable, expandAPI)
+                        }
                     }
                 }else{
+                    // 否则直接将属性值存储到结果对象中
                     propsData[key] = element.value;
                 }
             }
           }
         }
       }
+      // 返回包含所有解析后属性的对象
       return propsData;
 }

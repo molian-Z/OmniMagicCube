@@ -10,6 +10,7 @@ import font from './css-tool-panel/font.vue'
 import stroke from './css-tool-panel/stroke.vue'
 import transform from './css-tool-panel/transform.vue'
 import margin from './css-tool-panel/margin.vue'
+import customCss from './css-tool-panel/customCss.vue'
 const customComps: any = inject('customComps')
 const t: any = inject('mlLangs')
 const { customTooltip } = customComps
@@ -147,7 +148,7 @@ const actived = function (item: { type: string; value: any }) {
 <template>
     <div class="css-designer">
         <float-panel float="right" :list="menus" v-model="cssPanel" @clickClose="closeFloatPanel"
-            :title="t('css.styleEdit')" :foldWidth="400" :isShow="globalMenu === 'style'" v-if="!!setting.immerseMode">
+            :title="t('css.styleEdit')" :foldWidth="400" :isShow="globalMenu === 'style'" v-if="!!setting.immerseRightMode">
             <template #toolbar>
                 <customTooltip :content="item.label" v-for="item in toolbarData" :key="item.value">
                     <svg-icon
@@ -182,6 +183,7 @@ const actived = function (item: { type: string; value: any }) {
             <fill style="margin-top: var(--ml-mg-base);" />
             <stroke style="margin-top: var(--ml-mg-base);" />
             <effect style="margin-top: var(--ml-mg-base);" />
+            <customCss style="margin-top: var(--ml-mg-base);" />
         </div>
     </div>
 </template>

@@ -15,14 +15,14 @@ const props = defineProps({
     default: false,
   },
 });
-const emit = defineEmits(["update:visible", "hide", "show"]);
+const emit = defineEmits(["update:visible", "beforeLeave", "hide", "show"]);
 const referenceRef = ref<HTMLElement | any>(null);
 const popperRef = ref<HTMLElement | any>(null);
 const isShow = ref<boolean>(false)
-let popperInstance: any = null;
+const popperInstance: any = ref(null);
 // 创建 popper 实例
 const createPopperInstance = () => {
-  popperInstance = createPopper(unref(referenceRef), unref(popperRef), {
+  popperInstance.value = createPopper(unref(referenceRef), unref(popperRef), {
     strategy: "fixed",
     modifiers: [
       {
@@ -44,14 +44,14 @@ const createPopperInstance = () => {
   });
   nextTick(() => {
     // 异步更新
-    popperInstance.update();
+    popperInstance.value.update();
   });
 };
 
 // 销毁 popper 实例
 const destroyPopperInstance = () => {
-  popperInstance?.destroy?.();
-  popperInstance = null;
+  popperInstance.value?.destroy?.();
+  popperInstance.value = null;
 };
 
 // 监听 visible 属性
@@ -86,6 +86,7 @@ defineExpose({
   referenceRef,
   popperRef,
   togglePopperShow,
+  popperInstance,
 });
 
 onClickOutside(popperRef, () => isShow.value = false);
@@ -93,6 +94,11 @@ const transitionEnd = () => {
   emit("update:visible", false)
   destroyPopperInstance();
 };
+
+const transitionBeforeEnd = () => {
+    emit("beforeLeave")
+}
+
 </script>
 
 <template>
@@ -104,7 +110,7 @@ const transitionEnd = () => {
     <slot></slot>
   </div>
   <teleport to="body" v-if="!!visible">
-    <transition @after-leave="transitionEnd">
+    <transition @before-leave="transitionBeforeEnd" @after-leave="transitionEnd">
       <div ref="popperRef" class="popper-container" v-show="!!isShow">
         <slot name="content"></slot>
       </div>
@@ -122,9 +128,8 @@ const transitionEnd = () => {
   cursor: not-allowed !important;
 }
 .popper-container {
-  background-color: var(--ml-bg-color);
   border-radius: var(--ml-radius-base);
-  box-shadow: var(--ml-shadow-small);
+  z-index: 1000;
 }
 .v-enter-active,
 .v-leave-active {

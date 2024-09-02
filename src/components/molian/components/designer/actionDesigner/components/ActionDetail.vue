@@ -89,7 +89,7 @@ const onColumns = ref([
 const verifyColumns = ref([
   {
     prop: "verify",
-    label: t("actions.verifyVariable"),
+    label: t("actions.change"),
     required: true,
     default: "variable",
   },
@@ -178,11 +178,11 @@ const deleteEvent = (item: any, index: number) => {
         <div class="action-detail__container-subTitle" v-if="false">
           注：当其中一项变动时都会激活验证流程
         </div>
-        <subForm :modelValue="modelValue.on" :columns="onColumns" v-if="false">
-          <template #item="{ column, item }">
+        <MlSubForm :modelValue="modelValue.on" :columns="onColumns" v-if="false">
+          <template #default="{ column, row }">
             <customRadioGroup
               size="small"
-              v-model="item[column.prop]"
+              v-model="row[column.prop]"
               variant="primary-filled"
               v-if="column.prop === 'bind'"
             >
@@ -195,27 +195,28 @@ const deleteEvent = (item: any, index: number) => {
             </customRadioGroup>
             <customSelect :options="[]" v-else-if="column.prop === 'component'" />
             <template v-else-if="column.prop === 'use'">
-              <customSelect v-if="item.bind === 'variable'" :options="[]"></customSelect>
+              <customSelect v-if="row.bind === 'variable'" :options="[]"></customSelect>
               <customSelect
-                v-else-if="item.bind === 'event'"
+                v-else-if="row.bind === 'event'"
                 :options="[{ label: 123, value: 456 }]"
               ></customSelect>
             </template>
             <div v-else>{{ column }}</div>
           </template>
-        </subForm>
+        </MlSubForm>
 
         <div class="action-detail__container-subTitle">
           注：当所有条件被满足时会通过验证
         </div>
-        <subForm
+        <MlSubForm
           :modelValue="cacheModelValue.verify"
           :columns="verifyColumns"
           height="220px"
         >
-          <template #item="{ column, item }">
+          <template #default="{ column, row }">
             <customRadioGroup
-              v-model="item[column.prop]"
+              size="small"
+              v-model="row[column.prop]"
               variant="primary-filled"
               v-if="column.prop === 'verify'"
             >
@@ -228,23 +229,23 @@ const deleteEvent = (item: any, index: number) => {
             </customRadioGroup>
             <customSelect :options="[]" v-else-if="column.prop === 'component'" />
             <template v-else-if="column.prop === 'use'">
-              <customSelect v-if="item.bind === 'variable'" :options="[]"></customSelect>
+              <customSelect v-if="row.bind === 'variable'" :options="[]"></customSelect>
               <customSelect
-                v-else-if="item.bind === 'event'"
+                v-else-if="row.bind === 'event'"
                 :options="[{ label: 123, value: 456 }]"
               ></customSelect>
             </template>
-            <div v-else>{{ item }}</div>
+            <div v-else>{{ row }}</div>
           </template>
-        </subForm>
+        </MlSubForm>
 
         <div class="action-detail__container-subTitle">
           注：当验证流程通过时执行以下变更
         </div>
-        <subForm :modelValue="cacheModelValue.run" :columns="runColumns" height="220px">
-          <template #item="{ column, item }">
+        <MlSubForm :modelValue="cacheModelValue.run" :columns="runColumns" height="220px">
+          <template #default="{ column, row }">
             <customRadioGroup
-              v-model="item[column.prop]"
+              v-model="row[column.prop]"
               variant="primary-filled"
               v-if="column.prop === 'change'"
             >
@@ -257,15 +258,15 @@ const deleteEvent = (item: any, index: number) => {
             </customRadioGroup>
             <customSelect :options="[]" v-else-if="column.prop === 'component'" />
             <template v-else-if="column.prop === 'use'">
-              <customSelect v-if="item.bind === 'variable'" :options="[]"></customSelect>
+              <customSelect v-if="row.bind === 'variable'" :options="[]"></customSelect>
               <customSelect
-                v-else-if="item.bind === 'event'"
+                v-else-if="row.bind === 'event'"
                 :options="[{ label: 123, value: 456 }]"
               ></customSelect>
             </template>
             <div v-else>{{ column }}</div>
           </template>
-        </subForm>
+        </MlSubForm>
       </div>
       <div class="action-detail__container-right">
         <sidebar-list></sidebar-list>

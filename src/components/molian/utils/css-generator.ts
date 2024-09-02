@@ -3,6 +3,7 @@ import {
     toKebabCase
 } from './util'
 import { compsRef } from '@molianComps/Designer/designerData'
+import { el } from 'element-plus/es/locale';
 export interface IStyleMap {
     opacity?: IOpacity;
     rotate?: IOpacity;
@@ -210,37 +211,40 @@ const styleMap: IStyleMap = {
     }
 }
 
-export const initCss :any = {
-    "borderRadius": ["0", "0", "0", "0"],
-    "margin": ["0", "0", "0", "0"],
-    "padding": ["0", "0", "0", "0"],
-    "constX": "left",
-    "constY": "top",
-    "moveX":"",
-    "moveY":"",
-    "width":"",
-    "height":"",
-    "position": "relative",
-    "color": {
-        "isShow": true,
-        "modelValue": ""
-    },
-    "background": {
-        "isShow": true,
-        "modelValue": ""
-    },
-    "border": [],
-    "mixBlendMode": {
-        "isShow": true,
-        "modelValue": "normal"
-    },
-    "blur": {
-        "isShow": true,
-        "modelValue": "",
-        "field": ""
-    },
-    "units": {},
-    "boxShadow": []
+export const initCss :any = function(){
+    return {
+        "borderRadius": ["0", "0", "0", "0"],
+        "margin": ["0", "0", "0", "0"],
+        "padding": ["0", "0", "0", "0"],
+        "constX": "left",
+        "constY": "top",
+        "moveX":"",
+        "moveY":"",
+        "width":"",
+        "height":"",
+        "position": "relative",
+        "color": {
+            "isShow": true,
+            "modelValue": ""
+        },
+        "background": {
+            "isShow": true,
+            "modelValue": ""
+        },
+        "border": [],
+        "mixBlendMode": {
+            "isShow": true,
+            "modelValue": "normal"
+        },
+        "blur": {
+            "isShow": true,
+            "modelValue": "",
+            "field": ""
+        },
+        "units": {},
+        "boxShadow": [],
+        "customCss": {}
+    }
 }
 
 
@@ -309,7 +313,16 @@ export const createCss = function (compObj: any) {
         for (const key in item.value) {
             if (Object.hasOwnProperty.call(item.value, key)) { // 筛选出item.value对象自身的属性
                 const element = item.value[key]; // 获取属性值
-                cssStr += `\n${toKebabCase(key)}:${element};` // 拼接CSS样式字符串
+                if(key === 'customCss'){
+                    for (const customKey in element) {
+                        if (Object.prototype.hasOwnProperty.call(element, customKey)) {
+                            const customVal = element[customKey];
+                            cssStr += `\n${toKebabCase(customKey)}:${customVal};`
+                        }
+                    }
+                } else {
+                    cssStr += `\n${toKebabCase(key)}:${element};` // 拼接CSS样式字符串
+                }
             }
         }
         return !cssStr ? '' : `.${toKebabCase(item.name)}__${item.key}{  ${cssStr}\n}` // 返回CSS规则字符串
@@ -333,7 +346,7 @@ export const conciseCss = function(modelValue: any){
     // 遍历克隆后的模型值数组
     cloned.value.forEach((item: any) => {
         // 找出当前项CSS与初始CSS的差异
-        const diffArr = shallowDiff(item.css, initCss)
+        const diffArr = shallowDiff(item.css, initCss())
         // 移除与初始CSS相同的属性
         diffArr.forEach((diffItem:string) => {
             delete item.css[diffItem]
@@ -342,6 +355,24 @@ export const conciseCss = function(modelValue: any){
         if(!!item.slots){
             Object.keys(item.slots).forEach(key => {
                 item.slots[key].children = conciseCss(item.slots[key].children)
+            })
+        }
+    })
+    // 返回简化后的模型值
+    return cloned.value
+}
+
+export const restoreCss = function(modelValue: any){
+    // 使用useCloned钩子克隆模型值，避免修改原始数据
+    const { cloned } = useCloned(modelValue)
+    // 遍历克隆后的模型值数组
+    cloned.value.forEach((item: any) => {
+        // 找出当前项CSS与初始CSS的差异
+        item.css = Object.assign({}, initCss(), item.css)
+        // 如果当前项包含slots，则对其子元素递归应用简化逻辑
+        if(!!item.slots){
+            Object.keys(item.slots).forEach(key => {
+                item.slots[key].children = restoreCss(item.slots[key].children)
             })
         }
     })

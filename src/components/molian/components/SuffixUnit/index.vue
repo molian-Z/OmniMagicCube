@@ -42,6 +42,10 @@ const change = (value:string) => {
 <style lang="scss" scoped>
 .suffix-unit {
   &-list {
+    background-color: var(--ml-bg-color);
+    box-shadow: var(--ml-shadow-small-inset);
+    border-radius: var(--ml-radius-base);
+    overflow: hidden;
     &__item {
       padding: var(--ml-pd-small) var(--ml-pd-lg);
       transition: var(--ml-transition-base);

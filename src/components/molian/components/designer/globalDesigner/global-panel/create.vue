@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, inject } from 'vue'
-import { createCss, conciseCss } from '@molian/utils/css-generator'
+import { createCss, conciseCss, restoreCss } from '@molian/utils/css-generator'
 import { createTemplate } from '@molian/utils/template-generator'
 import { createJS, conciseJs } from '@molian/utils/js-generator'
 import { modelValue,globalAttrs } from '../../designerData'
@@ -54,13 +54,14 @@ const importModelData = function(){
         createCode = null
     }
     if(!!createCode){
-      modelValue.value = createCode.modelValue
-      for (let key in createCode.globalAttrs) {
+        for (let key in createCode.globalAttrs) {
         if (Object.prototype.hasOwnProperty.call(createCode.globalAttrs, key)) {
             const element = createCode.globalAttrs[key];
             globalAttrs[key] = element
         }
       }
+      modelValue.value = restoreCss(createCode.modelValue)
+      
     }
     codeData.value = ``
     showCreateDialog.value = false
@@ -69,7 +70,7 @@ const importModelData = function(){
 const exportModelData = function () {
   langMode.value = 'json'
   codeData.value = JSON.stringify({
-    modelValue:conciseJs(conciseCss(modelValue)),
+    modelValue:conciseJs(conciseCss(modelValue.value)),
     globalAttrs
   })
   showDialog.value = true
@@ -126,17 +127,17 @@ const importTemplate = function(){
       </customButton>
     </div>
   </div>
-  <customDialog appendToBody :header="t('global.createSFC')" width="80%" :close-on-click-modal="false" @escKeydown="showDialog = false"
+  <customDialog appendToBody :header="t('global.createSFC')" width="80%" top="5vh" :close-on-click-modal="false" @escKeydown="showDialog = false"
       @closeBtnClick="showDialog = false" v-model:visible="showDialog" destroyOnClose v-if="showDialog">
     <div>
-      <codeEditor v-model="codeData" :lang="langMode" />
+      <codeEditor :maxLines="50" v-model="codeData" :lang="langMode" />
     </div>
   </customDialog>
 
-  <customDialog appendToBody :header="t('global.importData')" width="80%" :close-on-click-modal="false" @escKeydown="showCreateDialog = false"
+  <customDialog appendToBody :header="t('global.importData')" width="80%" top="5vh" :close-on-click-modal="false" @escKeydown="showCreateDialog = false"
       @closeBtnClick="showCreateDialog = false" v-model:visible="showCreateDialog" destroyOnClose v-if="showCreateDialog">
     <div>
-      <codeEditor v-model="codeData" lang="json" />
+      <codeEditor :maxLines="50" v-model="codeData" lang="json" />
     </div>
     <template #footer>
       <customButton theme="default" @click="showCreateDialog = false">{{ t('options.cancel') }}</customButton>
@@ -144,9 +145,9 @@ const importTemplate = function(){
     </template>
   </customDialog>
   
-  <customDialog  appendToBody :header="t('global.importTemplate')" width="1200px" :close-on-click-modal="false" @escKeydown="showTemplateDialog = false"
+  <customDialog  appendToBody :header="t('global.importTemplate')" width="1200px" top="5vh" :close-on-click-modal="false" @escKeydown="showTemplateDialog = false"
       @closeBtnClick="showTemplateDialog = false" v-model:visible="showTemplateDialog" destroyOnClose v-if="showDialog">
-      <codeEditor v-model="cacheImportTemplateData"></codeEditor>
+      <codeEditor :maxLines="50" v-model="cacheImportTemplateData"></codeEditor>
   </customDialog>
 </template>
 

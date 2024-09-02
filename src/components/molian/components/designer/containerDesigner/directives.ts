@@ -6,6 +6,7 @@ import {
     markRaw,
     withDirectives
 } from 'vue'
+import { watchDebounced } from '@vueuse/core'
 import {
     compsRef,
     selectedComp,
@@ -26,7 +27,7 @@ import {
 import vCustomDirectives from '@molian/utils/useDirectives'
 import { isIf, isFor, isShow, getForEachList, isNotSlot, parseProps } from '@molian/utils/useCore'
 export const directives = {
-    props: <any>['comp', 'index', 'modelValue', 'parentNode'],
+    props: <any>['comp', 'index', 'modelValue', 'parentNode', 'slots'],
     setup(props: {
         modelValue: any;
         parentNode: any;
@@ -47,7 +48,8 @@ export const directives = {
             attrs: { [x: string]: any };
             id: any; css: { [x: string]: any }
         } | any;
-        index: number | any
+        index: number | any;
+        slots: any;
     }, context: any) {
         let { slots, emits, expose }: any = context
         const comps: any = inject('mlComps')
@@ -113,7 +115,7 @@ export const directives = {
 
         // props
         const propsData: any = computed(() => {
-            return parseProps(props.comp, comps.value, variableData.value)
+            return parseProps(props.comp, comps.value, variableData.value, {})
         })
         const computedClass = computed(() => {
             return {
@@ -127,9 +129,9 @@ export const directives = {
 
         // 自定义指令支持
         let currentTag = ""
-        if(!comps.value[props.comp.name]){
+        if (!comps.value[props.comp.name]) {
             currentTag = 'div'
-        }else{
+        } else {
             currentTag = comps.value[props.comp.name].comp ? markRaw(comps.value[props.comp.name].comp) : comps.value[props.comp.name].name
         }
         const renderDom: any = (domForAttr: { row?: any; index?: any; keyProps?: any; type?: any }) => {
@@ -148,7 +150,7 @@ export const directives = {
                 id: props.comp.id,
                 ['data-key']: props.comp.key,
                 isDesigner: true,
-                parentNode:props.parentNode,
+                // parentNode: props.parentNode,
                 ref: elRef
             }
             if (index >= 0) {
@@ -177,17 +179,21 @@ export const directives = {
                         }
                         nowSlots[key] = value(obj)
                     } else {
-                        nowSlots[key] = value({
-                            row,
-                            index
-                        })
+                        if (!row && !index) {
+                            nowSlots[key] = () => value()
+                        } else {
+                            nowSlots[key] = () => value({
+                                row,
+                                index
+                            })
+                        }
                     }
                 }
             }
             if (typeof currentTag === 'string') {
-                return withDirectives(h(currentTag, attrObj, nowSlots.default), [[vCustomDirectives, props.comp]])
+                return withDirectives(h(currentTag, attrObj, nowSlots.default), [[vCustomDirectives, {comp: props.comp, $slot: props.slots}]])
             } else {
-                return withDirectives(h(currentTag, attrObj, nowSlots), [[vCustomDirectives, props.comp]])
+                return withDirectives(h(currentTag, attrObj, nowSlots), [[vCustomDirectives, {comp: props.comp, $slot: props.slots}]])
             }
         }
         let newForEachList = computed(() => {
@@ -196,58 +202,69 @@ export const directives = {
         // 出现极端情况解决方案。如元素不存在以及无法对元素进行修改的情况
         // 监听inheritAttrs未false的组件
         //if (comps.value[props.comp.name].inheritAttrs === false) {
-        watch(() => compsRef[props.comp.id], async (resetDom) => {
+        watchDebounced(() => compsRef[props.comp.id], (resetDom) => {
             //if(!resetDom?.forceWatch) return 
-            await nextTick()
-            resetDom.id = props.comp.id
-            resetDom.dataset.key = props.comp.key
-            //...propsData,
-            resetDom.onclick = ($event: any) => onClick($event, props.comp, props.index)
-            resetDom.oncontextmenu = ($event: any) => onContextmenu($event, props.comp, props.index)
-            // resetDom.ondragstart = (evt: any) => onDragStart(evt, props.comp)
-            // resetDom.ondragend = onDragend
-            // 不可使用
-            resetDom.ondragover = (evt: any) => {
-                // console.log(evt.target)
-                onDragenter(props.index, props.comp, null, compData)
-            }
-            // resetDom.ondrop = ($event: any) => onDrop($event, null, null)
-            const styleData: any = computed(() => {
-                return { ...parseStyle(props.comp.css, props.comp.key), ...!isShow(props.comp) && { display: 'none' } || {} }
-            })
-            // 监听并修改样式数据及更新视图组件
-            watch(styleData, (newAttrs) => {
-                Object.keys(newAttrs).forEach(item => {
-                    resetDom.style[item] = newAttrs[item]
+            // await nextTick()
+            nextTick(() => {
+                resetDom.id = props.comp.id
+                resetDom.dataset.key = props.comp.key
+                //...propsData,
+                resetDom.onclick = ($event: any) => onClick($event, props.comp, props.index)
+                resetDom.oncontextmenu = ($event: any) => onContextmenu($event, props.comp, props.index)
+                // resetDom.ondragstart = (evt: any) => onDragStart(evt, props.comp)
+                // resetDom.ondragend = onDragend
+                // 不可使用
+                resetDom.ondragover = (evt: any) => {
+                    // console.log(evt.target)
+                    onDragenter(props.index, props.comp, null, compData)
+                }
+                // resetDom.ondrop = ($event: any) => onDrop($event, null, null)
+                const styleData: any = computed(() => {
+                    return { ...parseStyle(props.comp.css, props.comp.key), ...!isShow(props.comp) && { display: 'none' } || {} }
                 })
-            }, {
-                immediate: true
-            })
+                // 监听并修改样式数据及更新视图组件
+                watchDebounced(styleData, (newAttrs) => {
+                    Object.keys(newAttrs).forEach(item => {
+                        resetDom.style[item] = newAttrs[item]
+                    })
+                }, {
+                    immediate: true,
+                    debounce: 300,
+                    maxWait: 1000,
+                });
 
-            // 监听并修改属性数据及更新视图组件
-            watch(propsData, (newProps) => {
-                Object.keys(newProps).forEach(item => {
-                    resetDom[item] = newProps[item]
-                })
-            }, {
-                immediate: true
-            })
+                // 监听并修改属性数据及更新视图组件
+                watchDebounced(propsData, (newProps) => {
+                    Object.keys(newProps).forEach(item => {
+                        resetDom[item] = newProps[item]
+                    })
+                }, {
+                    immediate: true,
+                    debounce: 300,
+                    maxWait: 1000,
+                });
 
-            // 监听并修改class数据及更新视图组件
-            watch(computedClass, (newClass: any) => {
-                Object.keys(newClass).forEach(item => {
-                    if (!!newClass[item]) {
-                        resetDom.classList.add(item)
-                    } else {
-                        resetDom.classList.remove(item)
-                    }
-                })
-            }, {
-                immediate: true
+                // 监听并修改class数据及更新视图组件
+                watchDebounced(computedClass, (newClass: any) => {
+                    Object.keys(newClass).forEach(item => {
+                        if (!!newClass[item]) {
+                            resetDom.classList.add(item)
+                        } else {
+                            resetDom.classList.remove(item)
+                        }
+                    })
+                }, {
+                    immediate: true,
+                    debounce: 300,
+                    maxWait: 1000,
+                });
             })
+        }, {
+            debounce: 300,
+            maxWait: 1000,
         })
         //}
-        expose(elRef)
+        expose(elRef.value)
         return () => [
             !!isFor(props.comp) && newForEachList.value && newForEachList.value.data.map((row: any, index: any) => {
                 return renderDom({

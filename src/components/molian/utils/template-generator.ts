@@ -95,7 +95,7 @@ function parseTemplate(obj: { tag: any; attrs: any; on: any; nativeOn: any; dire
         const element = obj.on[key];
         //modifiers
         templateStr += ` @${key}`
-        if(element.value.modifiers && element.value.modifiers.length > 0){
+        if(element.value && element.value.modifiers && element.value.modifiers.length > 0){
           element.value.modifiers.forEach((item: any) =>{
             templateStr += `.${item}`
           })
@@ -117,7 +117,7 @@ function parseTemplate(obj: { tag: any; attrs: any; on: any; nativeOn: any; dire
         const element = obj.nativeOn[key];
         //modifiers
         templateStr += ` @${key}`
-        if(element.value.modifiers && element.value.modifiers.length > 0){
+        if(element.value && element.value.modifiers && element.value.modifiers.length > 0){
           element.value.modifiers.forEach((item: any) =>{
             templateStr += `.${item}`
           })

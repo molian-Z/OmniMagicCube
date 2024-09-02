@@ -27,6 +27,6 @@ const menus = ref([{
 ])
 </script>
 <template>
-    <sticky-tool :optionItems="menus" v-model="globalMenu"  v-if="!!setting.immerseMode"></sticky-tool>
+    <sticky-tool :optionItems="menus" v-model="globalMenu"  v-if="!!setting.immerseRightMode"></sticky-tool>
     <switchButton :optionItems="menus" v-model="globalMenu" v-else></switchButton>
 </template>

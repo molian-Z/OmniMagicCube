@@ -22,8 +22,18 @@ import "ace-builds/src-min-noconflict/ext-language_tools";
 import "ace-builds/src-min-noconflict/ext-searchbox"; // 用于搜索功能
 import "ace-builds/src-min-noconflict/ext-error_marker";
 import "ace-builds/src-min-noconflict/ext-linking";
-// import workerJavascriptUrl from "ace-builds/src-min-noconflict/worker-javascript?url";
-import snippetsUrl from "ace-builds/src-min-noconflict/snippets/javascript";
+import "ace-builds/src-min-noconflict/ext-emmet";
+import "ace-builds/src-min-noconflict/ext-elastic_tabstops_lite";
+import "ace-builds/src-min-noconflict/ext-command_bar";
+import "ace-builds/src-min-noconflict/ext-beautify";
+import "ace-builds/src-min-noconflict/ext-linking";
+import "ace-builds/src-min-noconflict/ext-options";
+import "ace-builds/src-min-noconflict/ext-prompt";
+import workerJsonUrl from "ace-builds/src-min-noconflict/worker-json.js?url";
+import workerJavascriptUrl from "ace-builds/src-min-noconflict/worker-javascript.js?url";
+import snippetsJS from "ace-builds/src-min-noconflict/snippets/javascript";
+import workerCssUrl from "ace-builds/src-min-noconflict/worker-css.js?url";
+import snippetsCss from "ace-builds/src-min-noconflict/snippets/css";
 import { beautify } from "ace-builds/src-min-noconflict/ext-beautify";
 // import loadBeautifier, { beautifierOpts } from '@/utils/beautifierLoader'
 // import {
@@ -46,12 +56,16 @@ export default {
     mode: {
       type: String,
       default: "javascript",
-      optionItems:["javascript", "html", "json", "css"]
+      optionItems: ["javascript", "html", "json", "css"],
     },
     userWorker: {
       //是否开启语法检查，默认开启
       type: Boolean,
       default: true,
+    },
+    maxLines: {
+      type: Number,
+      default: 20,
     },
   },
   unmounted() {
@@ -59,11 +73,20 @@ export default {
   },
   emits: ["update:modelValue"],
   mounted() {
-    // ace.config.set("basePath", ACE_BASE_PATH);
-    // ace.config.setModuleUrl("ace/mode/javascript_worker", workerJavascriptUrl);
-    ace.config.setModuleUrl("ace/mode/snippetsUrl", snippetsUrl);
+    if (this.mode === "javascript") {
+      ace.config.setModuleUrl(`ace/mode/snippetsUrl`, snippetsJS);
+      ace.config.setModuleUrl("ace/mode/javascript_worker", workerJavascriptUrl);
+    } else if (this.mode === "css") {
+      ace.config.setModuleUrl(`ace/mode/snippetsUrl`, snippetsCss);
+      ace.config.setModuleUrl("ace/mode/css_worker", workerCssUrl);
+    }else if(this.mode === 'json') {
+        ace.config.setModuleUrl("ace/mode/json_worker", workerJsonUrl);
+    }
+    ace.config.loadModule('ace/ext/beautify', function(module) {
+     // 扩展加载后的处理逻辑
+   });
     this.aceEditor = ace.edit(this.$refs.ace, {
-      maxLines: 20, // 最大行数，超过会自动出现滚动条
+      maxLines: this.maxLines, // 最大行数，超过会自动出现滚动条
       minLines: 5, // 最小行数，还未到最大行数时，编辑器会自动伸缩大小
       fontSize: 14, // 编辑器内字体大小
       theme: "ace/theme/dracula", // 默认设置的主题
@@ -86,13 +109,13 @@ export default {
       enableLiveAutocompletion: true, // 设置自动提示
     });
     if (!this.userWorker) {
-        this.aceEditor.getSession().setUseWorker(this.userWorker);
-        this.aceEditor.getSession().on('changeAnnotation', function() {
+      this.aceEditor.getSession().setUseWorker(this.userWorker);
+      this.aceEditor.getSession().on("changeAnnotation", function () {
         const annotations = editor.getSession().getAnnotations();
         // annotations 是包含错误信息的数组
         // 你可以遍历这个数组并处理错误提示
-            console.log(annotations)
-        });
+        console.log(annotations);
+      });
     }
     /* const innerText = this.$parent.$el.innerText
     if(innerText.indexOf('onFormCreated') > -1 || innerText.indexOf('onFormMounted') > -1 || innerText.indexOf('onFormDataChange') > -1){
@@ -124,8 +147,8 @@ export default {
     },
   },
   methods: {
-    getValue(){
-        return this.aceEditor.getValue()
+    getValue() {
+      return this.aceEditor.getValue();
     },
     keyDown(e) {
       if (e.keyCode >= 16 && e.keyCode <= 18) {
@@ -136,7 +159,7 @@ export default {
     },
     keyUp(e) {
       if (this.downArr[0] === 17 && e.keyCode === 75) {
-        this.formatCode();
+        this.setValue(this.modelValue);
       }
       if (e.keyCode >= 16 && e.keyCode <= 18) {
         if (this.downArr.indexOf(e.keyCode) > -1) {
@@ -348,23 +371,8 @@ export default {
     },
 
     setValue(newValue) {
-      this.aceEditor.getSession().setValue(newValue);
-    },
-
-    formatCode() {
-      let data;
-      loadBeautifier((beautifier) => {
-        if (this.mode === "json") {
-          data = JSON.parse(this.modelValue);
-        } else if (this.mode === "css") {
-          data = beautifier.css(this.modelValue, beautifierOpts.css);
-        } else if (this.mode == "javascript") {
-          data = beautifier.js(this.modelValue, beautifierOpts.js);
-        } else if (this.mode === "html") {
-          data = beautifier.html(this.modelValue);
-        }
-      });
-      this.setValue(data);
+        this.aceEditor.getSession().setValue(newValue)
+        beautify(this.aceEditor.session)
     },
   },
 };

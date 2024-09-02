@@ -32,13 +32,12 @@ const type = computed(() => {
 
 <template>
   <div class="data2input-item">
-      <customSwitch v-model="value" v-if="type === 'boolean'" />
-      <customSelect :options="propData.optionItems" v-model="value"
-        v-else-if="propData.optionItems" />
-      <customInputNumber v-model="value" v-else-if="type === 'number'" />
+      <customSwitch v-model="value" v-bind="propData.customOptinos" v-if="type === 'boolean'" />
+      <customSelect :options="propData.optionItems" v-model="value" v-bind="propData.customOptinos" v-else-if="propData.optionItems" />
+      <customInputNumber v-model="value" v-bind="propData.customOptinos" v-else-if="type === 'number'" />
       <codeInput :isVariable="propData.type !== 'computed'" :isModifiers="false" :mode="type" :keyName="propData.label || propData.prop" v-model="value"
         v-else-if="['promise', 'function', 'object', 'array', 'computed'].indexOf(type) > -1" />
-      <customInput v-model="value" v-else></customInput>
+      <customInput v-model="value" v-bind="propData.customOptinos" v-else></customInput>
   </div>
 </template>
 

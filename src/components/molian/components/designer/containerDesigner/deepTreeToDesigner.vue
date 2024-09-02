@@ -1,16 +1,10 @@
 <script setup lang="ts">
 import { computed, inject, defineOptions, defineProps, defineEmits, nextTick } from "vue";
 import { directives } from "./directives";
-import {
-  compsRef,
-  globalAttrs,
-  selectedComp,
-  compsEl,
-  variableData,
-} from "../designerData";
+import { compsRef, compsEl, variableData, globalAttrs } from "../designerData";
 import { isDraggable, dropKey, useDraggable, dropType, onDragenter } from "../draggable";
-import { data2Vars, getValue } from "@molian/utils/useCore";
-import { useElementBounding } from "@vueuse/core";
+import { getValue } from "@molian/utils/useCore";
+import { useElementBounding, watchDebounced } from "@vueuse/core";
 defineOptions({
   name: "deepTree",
 });
@@ -54,60 +48,66 @@ const compData: any = computed({
     emit("update:modelValue", val);
   },
 });
-
-const empty = computed(() => {
-  return t("container.empty");
-});
-
+const slots:any = ref({})
+if(!!props.slotKey){
+    slots.value[props.slotKey] = props.slotVal
+}
 const value = computed(() => {
-  return getValue(compData.value, variableData.value, {}, "designer");
+  return getValue(compData.value, variableData.value, {}, null, globalAttrs.variable, "designer");
 });
 const { onDrop, onDropSlot } = useDraggable(comps, compData, message);
-const setRef = async (el: any, comp: any, index: any) => {
-  await nextTick();
-  compsEl[comp.id] = el;
-  let elDom: any = document.getElementById(comp.id);
-  let elNextDom: any = el?.$el?.nextElementSibling;
-  if (elDom?.classList?.contains("designer-comp")) {
-    compsRef[comp.id] = elDom;
-  } else if (elNextDom?.classList?.contains("designer-comp")) {
-    compsRef[comp.id] = elNextDom;
-  } else {
-    compsRef[comp.id] = elDom || elNextDom || compsRef[comp.id];
-  }
-  const { width, height } = useElementBounding(compsRef[comp.id]);
-  let pd = ["0", "0"];
-  if (height.value < 10) {
-    pd[0] = "10px";
-  }
-  if (width.value < 10) {
-    pd[1] = "10px";
-  }
-  if (pd[0] !== "0" || pd[1] !== "0" && !!compsRef[comp.id] && !!compsRef[comp.id].style) {
-    try {
+const setRef = (el: any, comp: any, index: number) => {
+  // await nextTick();
+  nextTick(() => {
+    compsEl[comp.id] = el;
+    let elDom: any = document.getElementById(comp.id);
+    let elNextDom: any = el?.$el?.nextElementSibling;
+    if (elDom?.classList?.contains("designer-comp")) {
+      compsRef[comp.id] = elDom;
+    } else if (elNextDom?.classList?.contains("designer-comp")) {
+      compsRef[comp.id] = elNextDom;
+    } else {
+      compsRef[comp.id] = elDom || elNextDom || compsRef[comp.id];
+    }
+    const { width, height } = useElementBounding(compsRef[comp.id]);
+    let pd = ["0", "0"];
+    if (height.value < 10) {
+      pd[0] = "10px";
+    }
+    if (width.value < 10) {
+      pd[1] = "10px";
+    }
+    if (
+      pd[0] !== "0" ||
+      (pd[1] !== "0" && !!compsRef[comp.id] && !!compsRef[comp.id].style)
+    ) {
+      try {
         compsRef[comp.id].style.padding = `${pd[0]} ${pd[1]}`;
-    } catch (error) {
+      } catch (error) {
         // 未缓存
-    }
-  }
-  // 出现极端情况解决方案。如元素不存在以及无法对元素进行修改的情况
-  // 索引不会被更新实时获取索引
-  // 如果inhertAttrs未被引入将导致无法获取到元素
-  const errorComp = computed(() => {
-    return width.value === 0 && height.value === 0;
-  });
-  watch(
-    () => errorComp.value,
-    (newVal) => {
-      if (newVal && (!elDom || (elDom && !elDom.nextElementSibling)) && !!elNextDom) {
-        elNextDom.forceWatch = true;
-        compsRef[comp.id] = elNextDom;
       }
-    },
-    {
-      immediate: true,
     }
-  );
+    // 出现极端情况解决方案。如元素不存在以及无法对元素进行修改的情况
+    // 索引不会被更新实时获取索引
+    // 如果inhertAttrs未被引入将导致无法获取到元素
+    const errorComp = computed(() => {
+      return width.value === 0 && height.value === 0;
+    });
+    watchDebounced(
+      () => errorComp.value,
+      (newVal) => {
+        if (newVal && (!elDom || (elDom && !elDom.nextElementSibling)) && !!elNextDom) {
+          elNextDom.forceWatch = true;
+          compsRef[comp.id] = elNextDom;
+        }
+      },
+      {
+        immediate: true,
+        debounce: 300,
+        maxWait: 1000,
+      }
+    );
+  });
 };
 </script>
 
@@ -138,6 +138,7 @@ const setRef = async (el: any, comp: any, index: any) => {
       :index="index"
       :modelValue="compData"
       :parentNode="parentNode"
+      :slots="slots"
     >
       <template
         v-for="(slotVal, slotKey) in comp.slots"
@@ -152,6 +153,7 @@ const setRef = async (el: any, comp: any, index: any) => {
               :slotProp="slotProps"
               :slotKey="slotKey"
               :slotVal="slotVal"
+              :treeIndex="treeIndexNext"
             />
           </template>
           <deepTreeToDesigner
@@ -160,14 +162,14 @@ const setRef = async (el: any, comp: any, index: any) => {
             :parentNode="comp"
             :slotKey="slotKey"
             :slotVal="slotVal"
-            :treeIndex="treeIndex + 1"
+            :treeIndex="treeIndexNext"
           />
-          <div
-            class="designer-comp__empty"
-            v-if="isDraggable && dropKey === comp.key"
-          >
+          <div class="designer-comp__empty" v-if="isDraggable && dropKey === comp.key">
             <div
-              :class="['designer-comp__empty-content', dropKey === comp.key && !dropType && 'dropping-comp']"
+              :class="[
+                'designer-comp__empty-content',
+                dropKey === comp.key && !dropType && 'dropping-comp',
+              ]"
               @dragover.self.prevent.stop="onDragenter(index, comp, null, compData)"
               @drop.self.stop="onDropSlot($event, slotVal)"
             >
@@ -206,8 +208,8 @@ const setRef = async (el: any, comp: any, index: any) => {
 </template>
 
 <style lang="scss">
-.designer-comp::after{
-    z-index: v-bind(treeIndex);
+.designer-comp::after {
+  z-index: v-bind(treeIndex);
 }
 
 .prefix-drop-slot,
@@ -215,8 +217,8 @@ const setRef = async (el: any, comp: any, index: any) => {
   z-index: v-bind(treeIndexDrop);
 }
 
-.designer-comp{
-    --el-index-normal: v-bind(treeIndex);
+.designer-comp {
+  --el-index-normal: v-bind(treeIndex);
 }
 
 .designer-comp__empty {

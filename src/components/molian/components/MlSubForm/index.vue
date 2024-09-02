@@ -5,9 +5,9 @@ import {
   defineExpose,
   defineOptions,
   defineEmits,
-  useSlots,
   watch,
 } from "vue";
+import { useSortable, moveArrayElement } from "@vueuse/integrations/useSortable";
 import gsap from "gsap";
 import { generateRandomString } from "@molianComps/Designer/designerData";
 import Data2Input from "@molianComps/Data2Input/index.vue";
@@ -99,6 +99,10 @@ const props = defineProps({
     type: Boolean,
     default: true,
   },
+  isSortable: {
+    type: Boolean,
+    default: true,
+  },
   maxHeight: {
     type: [Number, String],
   },
@@ -116,20 +120,19 @@ const props = defineProps({
     },
   },
 });
-const slots = useSlots()
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits(["update:modelValue"]);
 const formContent = ref();
 const formItem = ref();
-const data: any = ref<any[]>([])
+const data: any = ref<any[]>([]);
 
 watch(
   () => props.modelValue,
   (newVal) => {
-    data.value = newVal
+    data.value = newVal;
     data.value &&
-    data.value.forEach((item: any) => {
+      data.value.forEach((item: any) => {
         if (!item.$key) {
-          item.$key = generateRandomString(8);
+          item.$key = generateRandomString(3, 'index_');
         }
       });
   },
@@ -140,7 +143,7 @@ watch(
 );
 
 const updateValue = (value: any, item: any, column: any) => {
-    item[column.prop] = value
+  item[column.prop] = value;
 };
 const setData = async () => {
   const defaultcolumns = props.columns.filter((fitem: any) => {
@@ -216,7 +219,7 @@ function onEnter(el: any, done: any) {
     delay: el.dataset.index * 0.45,
   });
   gsap.to(el, {
-    padding: "8px",
+    padding: "0px",
     onComplete: done,
   });
 }
@@ -232,6 +235,14 @@ function onLeave(el: any, done: any) {
   });
 }
 
+useSortable(formContent, data, {
+  handle: ".handle",
+  animation: 300,
+  onUpdate: (e: any) => {
+    moveArrayElement(data.value, e.oldIndex, e.newIndex);
+  },
+});
+
 defineExpose({
   addNew,
   appendRow,
@@ -243,6 +254,16 @@ defineExpose({
 <template>
   <div class="ml-sub-form-list">
     <div class="ml-sub-form-list__header">
+      <div class="ml-sub-form-list__item index">
+        <div class="ml-sub-form-list__item-label">
+          {{ t("options.index") }}
+        </div>
+      </div>
+      <div class="ml-sub-form-list__item sort">
+        <div class="ml-sub-form-list__item-label">
+          {{ t("options.sortable") }}
+        </div>
+      </div>
       <div class="ml-sub-form-list__item" v-for="column in columns" :key="column.prop">
         <div class="ml-sub-form-list__item-label">
           <span v-if="column.required" class="ml-sub-form-list__item-required"></span
@@ -269,43 +290,53 @@ defineExpose({
         @enter="onEnter"
         @leave="onLeave"
       >
-        <template
-          v-for="(item, index) in data"
-          :key="item.$key"
-          v-if="data && data.length > 0"
-        >
-          <div class="ml-sub-form-list__item" ref="formItem">
+        <template v-if="data && data.length > 0">
+          <div
+            class="ml-sub-form-list__item"
+            ref="formItem"
+            v-for="(item, index) in data"
+            :key="item.$key"
+          >
+            <div class="ml-sub-form-list__item-label index">
+              {{ index + 1 }}
+            </div>
+            <div class="ml-sub-form-list__item-label sort">
+              <SvgIcon class="css-svg-icon handle" size="24" icon="drag"></SvgIcon>
+            </div>
             <slot name="row" :row="item" :rowIndex="index">
               <div
                 class="ml-sub-form-list__item-label"
                 v-for="column in columns"
                 :key="item.$key + '_' + column.prop"
               >
-                <slot name="default" :row="item" :column="column"></slot>
-                <Data2Input v-if="!slots.default"
-                  :modelValue="item[column.prop]"
-                  @update:modelValue="updateValue($event, item, column)"
-                  :propData="formatColumns(column, item)"
-                ></Data2Input>
+                <slot name="default" :row="item" :column="column">
+                  <Data2Input
+                    :modelValue="item[column.prop]"
+                    @update:modelValue="updateValue($event, item, column)"
+                    :propData="formatColumns(column, item)"
+                  ></Data2Input>
+                </slot>
               </div>
             </slot>
             <div class="ml-sub-form-list__item-label">
-              <customButton
-                theme="primary"
-                :text="true"
-                size="small"
-                @click="appendRow(index)"
-                v-if="isAdd"
-                >{{ t("options.append") }}</customButton
-              >
-              <customButton
-                theme="primary"
-                :text="true"
-                size="small"
-                @click="deleteRow(index)"
-                v-if="isDelete"
-                >{{ t("options.remove") }}</customButton
-              >
+              <slot name="toolbar" :row="item" :rowIndex="index">
+                <customButton
+                  theme="primary"
+                  :text="true"
+                  size="small"
+                  @click="appendRow(index)"
+                  v-if="isAdd"
+                  >{{ t("options.append") }}</customButton
+                >
+                <customButton
+                  theme="primary"
+                  :text="true"
+                  size="small"
+                  @click="deleteRow(index)"
+                  v-if="isDelete"
+                  >{{ t("options.remove") }}</customButton
+                >
+              </slot>
             </div>
           </div>
         </template>
@@ -354,7 +385,7 @@ defineExpose({
     justify-content: space-between;
     align-items: center;
     width: 100%;
-    padding: var(--ml-mg-base);
+    padding: var(--ml-mg-base) 0;
     border-radius: var(--ml-radius-base);
 
     &-label {
@@ -373,6 +404,31 @@ defineExpose({
         color: var(--ml-color-danger);
         margin-right: 4px;
       }
+
+      &.index {
+        min-width: 68px;
+        max-width: 68px;
+        user-select: none;
+      }
+
+      &.sort {
+        min-width: 68px;
+        max-width: 68px;
+      }
+    }
+
+    &.index {
+      min-width: 68px;
+      max-width: 68px;
+    }
+
+    &.sort {
+      min-width: 68px;
+      max-width: 68px;
+    }
+
+    &.content {
+      padding: 0;
     }
   }
 
@@ -396,5 +452,10 @@ defineExpose({
   padding-top: var(--ml-pd-small);
   border-top: 1px solid var(--ml-fill-color-4);
   text-align: center;
+}
+
+.css-svg-icon:hover {
+  color: var(--ml-primary-color);
+  cursor: all-scroll;
 }
 </style>

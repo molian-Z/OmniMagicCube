@@ -127,12 +127,11 @@
     font-size: 10px;
 }
 
-
 /* 1. 声明过渡效果 */
 .fade-move,
 .fade-enter-active,
 .fade-leave-active {
-    transition: all 0.5s cubic-bezier(0.55, 0, 0.1, 1);
+    transition: all 0.2s cubic-bezier(0.55, 0, 0.1, 1);
 }
 
 /* 2. 声明进入和离开的状态 */
@@ -413,3 +412,65 @@
     //Icon placeholder width
     --mx-menu-placeholder-width: 24px; //图标占位区域的宽度
 }
+
+
+.fullscreen{
+    background-color: transparent !important;
+}
+
+.data2form-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: var(--ml-bg-color);
+    padding: var(--ml-pd-base);
+    border-radius: var(--ml-radius-base);
+  
+    .data2form-item__label {
+      width: 100px;
+      font-size: 14px;
+      font-weight: bold;
+      padding-right: var(--ml-pd-base);
+      overflow: hidden;
+    }
+  
+    .data2form-item__input {
+      width: 120px;
+      position: relative;
+    }
+  
+    .data2form-item__input > * {
+      width: 100%;
+    }
+  
+    .data2form-item__icon {
+      width: 24px;
+      padding: 3px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: var(--ml-radius-base);
+      user-select: none;
+  
+      &:not(&.disabled) {
+        background-color: var(--ml-bg-page-color);
+        transition: var(--ml-transition-base);
+        cursor: pointer;
+  
+        &:hover {
+          background-color: var(--ml-fill-color-3);
+        }
+      }
+  
+      .data2form-item__svg-icon {
+        margin: 0;
+        width: 12px;
+      }
+  
+      &.disabled {
+        .data2form-item__svg-icon {
+          color: var(--ml-fill-color-2);
+        }
+      }
+    }
+  }

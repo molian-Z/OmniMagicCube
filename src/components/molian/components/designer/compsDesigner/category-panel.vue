@@ -3,6 +3,7 @@ import { computed, defineProps, inject } from 'vue'
 import { hiddenAllPanel } from '../designerData'
 import { isDraggable, resetDraggable } from '../draggable'
 import { UIData } from '@molian/utils/UIMap'
+import { setting } from "@molian/utils/defaultData";
 import svgIcon from '@molianComps/SvgIcon/index.vue'
 import { createFuse } from '@molian/utils/fuse'
 const props = defineProps({
@@ -67,14 +68,14 @@ const onDragend = function () {
 </script>
 <template>
     <div class="comps-panel" @dragleave="onDragleave">
-        <div class="comps-panel-search">
+        <div class="comps-panel-search" :class="[!setting.immerseLeftMode && 'no-border-radius']">
             <customInput :placeholder="t('component.search')" v-model="search" clearable>
                 <template #prefixIcon>
                     <svg-icon icon="ep:search"></svg-icon>
                 </template>
             </customInput>
         </div>
-        <div class="comps-panel-list">
+        <div class="comps-panel-list" :class="[!setting.immerseLeftMode && 'full-height']">
             <transition-group name="list2top">
                 <div v-for="item in filterCompList" :key="item.name" class="comps-panel-list-item" draggable="true"
                     @dragstart="onDragStart($event, item)" @dragend="onDragend">
@@ -103,6 +104,11 @@ const onDragend = function () {
         background-color: var(--ml-bg-color);
         margin-bottom: var(--ml-mg-base);
         border-radius: var(--ml-radius-lg);
+
+        &.no-border-radius{
+            border-radius: 0;
+            margin-bottom: 0;
+        }
     }
 
     &-list {
@@ -156,6 +162,11 @@ const onDragend = function () {
                 overflow: hidden;
                 font-size: 10px;
             }
+        }
+
+        &.full-height{
+            height: calc(100% - 44px - 48px);
+            padding: var(--ml-pd-base) 0;
         }
     }
 

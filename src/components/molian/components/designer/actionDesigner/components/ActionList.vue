@@ -39,11 +39,11 @@ const deleteItem = ({item, index}:any) => {
 
 const buttonClick = ({item, index} : any) => {
     if(item.value === 'add'){
-        if(!globalAttrs.actions){
+        if(!globalAttrs.actions || !Array.isArray(globalAttrs.actions)){
             globalAttrs.actions = []
         }
         globalAttrs.actions.push({
-            key:generateRandomString(8),
+            key:generateRandomString(3, 'index_'),
             index:globalAttrs.actions.length,
             title:'NewAction_'+index,
             tags:[],

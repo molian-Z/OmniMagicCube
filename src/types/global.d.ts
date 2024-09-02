@@ -743,10 +743,16 @@ declare namespace Setting {
      */
     interface Config {
         /**
-         * 指示是否启用沉浸模式的布尔值。
+         * 指示是否启用左侧沉浸模式的布尔值。
          * 
          * 当设置为`true`时，应用程序将进入沉浸模式，隐藏或最小化其他界面元素，以提供更专注的操作体验。
          */
-        immerseMode:boolean;
+        immerseLeftMode:boolean;
+        /**
+         * 指示是否启用右侧沉浸模式的布尔值。
+         * 
+         * 当设置为`true`时，应用程序将进入沉浸模式，隐藏或最小化其他界面元素，以提供更专注的操作体验。
+         */
+        immerseRightMode:boolean;
     }
 }

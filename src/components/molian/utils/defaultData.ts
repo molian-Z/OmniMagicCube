@@ -184,5 +184,6 @@ export const cloudUrl = "https://wujie.mlyt.top/getData"
 export const AIURL = "https://wujie.mlyt.top/getAI"
 export const iconifyUrl = "http://flower.molianpro.com:33000/"
 export const setting = useStorage<Setting.Config>('setting', {
-    immerseMode: true
+    immerseLeftMode: true,
+    immerseRightMode: true
 })

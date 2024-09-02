@@ -23,7 +23,8 @@
   "deviceOrientationPortrait":"旋转",
   "deviceOrientationLandscape":"正常",
   "setting":{
-    "immerseMode":"沉浸模式",
+    "immerseLeftMode":"左侧沉浸模式",
+    "immerseRightMode":"右侧沉浸模式",
     "syncComponentData":"同步组件数据",
     "sync":"同步"
   },

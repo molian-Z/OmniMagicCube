@@ -4,24 +4,28 @@ import { optionsPanel, globalMenu, selectedComp, currentEmits } from '../designe
 import { setting } from '@molian/utils/defaultData'
 import svgIcon from '@molianComps/SvgIcon/index.vue'
 import floatPanel from '@molianComps/FloatPanel/index.vue'
-import basicComp from './components/basic.vue'
-import slotComp from './components/slot.vue'
-import nativeOnComp from './components/nativeOn.vue'
-import javascriptComp from './components/javascript.vue'
-import lifecycleComp from './components/lifecycle.vue'
+import basicComp from './pages/basic.vue'
+import propComp from './pages/prop.vue'
+import slotComp from './pages/slot.vue'
+import nativeOnComp from './pages/nativeOn.vue'
+import javascriptComp from './pages/javascript.vue'
+import lifecycleComp from './pages/lifecycle.vue'
 import variable from './tooltip/variable.vue'
 import vueif from './tooltip/if.vue'
 import vuefor from './tooltip/for.vue'
 import vueshow from './tooltip/show.vue'
 import vuetext from './tooltip/text.vue'
 const t: any = inject('mlLangs')
-const comps:any = inject('mlComps')
 const customComps: any = inject('customComps')
 const { customTooltip, customPopup } = customComps
 const menus = ref([{
     icon: 'basic',
     text: t('options.basic'),
     name: 'basic'
+}, {
+    icon: 'properties',
+    text: t('options.properties'),
+    name: 'prop'
 }, {
     icon: 'insert',
     text: t('options.slot'),
@@ -95,7 +99,7 @@ const openDialog = (type: string) => {
 <template>
     <div class="options-designer">
         <float-panel class="float-panel" float="right" :list="menus" v-model="optionsPanel" @clickClose="closeFloatPanel"
-            :foldWidth="365" :foldHeight="600" :isShow="globalMenu === 'option'" v-if="!!setting.immerseMode">
+            :foldWidth="365" :foldHeight="600" :isShow="globalMenu === 'option'" v-if="!!setting.immerseRightMode">
             <template #toolbar>
                 <div>
                     <template v-for="item in toolbarData" :key="item.value">
@@ -121,6 +125,7 @@ const openDialog = (type: string) => {
             </template>
             <template v-slot:default="{ activeData }">
                 <basicComp v-if="activeData.name === 'basic'" />
+                <propComp v-else-if="activeData.name === 'prop'" />
                 <slotComp v-else-if="activeData.name === 'slot'" />
                 <javascriptComp v-else-if="activeData.name === 'javascript'" />
                 <nativeOnComp v-else-if="activeData.name === 'nativeOn'" />
@@ -154,6 +159,10 @@ const openDialog = (type: string) => {
             <div class="comp-content">
                 <div class="designer-container__body-title">{{t('options.basic')}}</div>
                 <basicComp class="comp-content" />
+            </div>
+            <div class="comp-content">
+                <div class="designer-container__body-title">{{t('options.properties')}}</div>
+                <propComp class="comp-content" />
             </div>
             <div class="comp-content">
                 <div class="designer-container__body-title">{{t('options.slot')}}</div>

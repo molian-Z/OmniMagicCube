@@ -60,7 +60,7 @@ const marginTreePx = computed(() =>{
     if(typeStatus.value === 'append'){
         return Number(20 + 12 * props.level) + 'px'
     }else{
-        return Number(8 + 12 * props.level) + 'px'
+        return Number(12 + 12 * props.level) + 'px'
     }
 })
 
@@ -102,7 +102,7 @@ const onActive = (comp: any, index: number) => {
     @click.stop="onActive(comp, index)"
   >
     <div
-      :style="{ marginLeft: Number(8 + 12 * props.level) + 'px' }"
+      :style="{ marginLeft: Number(12 + 12 * props.level) + 'px' }"
       class="append-line"
       v-if="dropKey === comp.key && dragIndex > index && typeStatus !== 'append'"
     >
@@ -110,7 +110,7 @@ const onActive = (comp: any, index: number) => {
     </div>
     <div
       class="tree-node-header"
-      :style="{ paddingLeft: Number(8 + 12 * props.level) + 'px' }"
+      :style="{ paddingLeft: Number(12 + 12 * props.level) + 'px' }"
       :class="[selectedComp && selectedComp.key === comp.key && 'is-active']"
     >
       <svg-icon
@@ -127,7 +127,7 @@ const onActive = (comp: any, index: number) => {
         @dragend="onDragend"
         @drop.stop="onDrop($event, index, slotData)"
       >
-        <div v-if="editCompIndex !== index">{{ comp.subTitle || mlComps[comp.name].title }}</div>
+        <div v-if="editCompIndex !== index">{{ comp.subTitle || mlComps[comp.name] && mlComps[comp.name].title || comp.name }}</div>
         <customInput style="width:100px;" size="small" v-model="comp.subTitle" @blur="editCompIndex = -1" v-else></customInput>
         <svg-icon class="tree-node-header__title-icon" icon="ep:edit" @click="editCompIndex = index" v-if="editCompIndex !== index"></svg-icon>
         <svg-icon class="tree-node-header__title-icon" icon="ep:select" v-else @click="editCompIndex = -1"></svg-icon>
@@ -140,7 +140,7 @@ const onActive = (comp: any, index: number) => {
             <template v-if="slotVal">
               <div
                 class="slotTitle"
-                :style="{ paddingLeft: Number(8 + 12 * (props.level + 1)) + 'px' }"
+                :style="{ paddingLeft: Number(12 + 12 * (props.level + 1)) + 'px' }"
                 @click.stop
                 @dragover.prevent.stop="mouseEnter(index, comp, compData, 'append')"
                 @drop.stop="onDropSlot($event, slotVal)"

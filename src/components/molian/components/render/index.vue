@@ -6,7 +6,7 @@ import { useStyleTag } from "@vueuse/core";
 import renderTree from "./DeepTreeToRender.vue";
 import { runLifecycle } from "@molian/utils/customFunction";
 import { createCss } from "@molian/utils/css-generator";
-import { renderRef, variable } from "./renderData";
+import { renderRef, variable, originVariable } from "./renderData";
 defineOptions({
     name: "Render",
 })
@@ -42,6 +42,7 @@ const { id, css, load, unload, isLoaded } = useStyleTag("");
 watch(
   () => props.globalAttrs,
   (newVal) => {
+    originVariable.value = newVal.variable
     variable.value = getVariableData(newVal.variable, props.expandAPI, true);
     lifecycle.value = newVal.lifecycle;
     // 执行生命周期
@@ -55,7 +56,7 @@ watch(
 watch(
   () => props.modelValue,
   (newVal) => {
-    css.value = createCss(props.modelValue);
+    css.value = createCss(newVal);
   },
   {
     immediate: true,

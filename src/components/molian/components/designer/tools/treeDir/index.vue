@@ -20,7 +20,7 @@ onClickOutside(treeDirRef, (evt: any) => {
 <template>
   <floatBall
     :title="t('container.treeDir')"
-    :offsetX="!setting.immerseMode ? '330px' : '0px'"
+    :offsetX="!setting.immerseRightMode ? '330px' : '0px'"
     ref="treeDirRef"
   >
     <div class="tree-dir-container">

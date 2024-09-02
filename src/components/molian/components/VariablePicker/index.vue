@@ -2,7 +2,7 @@
 import { defineOptions, defineProps, defineEmits, inject, useAttrs } from "vue";
 import Popper from "@molianComps/Popper/index.vue";
 defineOptions({
-  name: "MlCascader",
+  name: "VariablePicker",
   inheritAttrs: false,
 });
 const props = defineProps({
@@ -18,6 +18,10 @@ const props = defineProps({
     type: String,
     default: "",
   },
+  clearable:{
+    type: Boolean,
+    default: false
+  }
 });
 const emit = defineEmits(["update:modelValue"]);
 const isClearable = ref(false);
@@ -47,7 +51,7 @@ const setValue = (value: any) => {
 };
 
 const enter = () => {
-  if (!!props.modelValue && !!attrs.clearable) {
+  if (!!props.modelValue && !!props.clearable) {
     if (
       (typeof props.modelValue === "string" && !!props.modelValue) ||
       (Array.isArray(props.modelValue) && props.modelValue.length > 0)
@@ -58,7 +62,7 @@ const enter = () => {
 };
 
 const leave = () => {
-  if (!!attrs.clearable) {
+  if (!!props.clearable) {
     isClearable.value = false;
   }
 };
@@ -68,6 +72,10 @@ const selected = () => {
     popper.value.popperInstance.update();
   }
 };
+
+const clearValue = () => {
+    emit("update:modelValue", []);
+}
 </script>
 
 <template>
@@ -93,17 +101,21 @@ const selected = () => {
               isClearable && 'is-selected',
               !!openedShow && 'is-opened',
             ]"
+            @click.stop="clearValue"
           ></svg-icon>
         </template>
       </customInput>
     </div>
     <template #content>
+      <div class="shadow">
+        <div class="ml-cascader-panel__header">全局变量</div>
         <MlCascaderPanel
           :modelValue="modelValue"
           :options="options"
           @update:modelValue="setValue"
           @selected="selected"
         />
+      </div>
     </template>
   </popper>
 </template>
@@ -112,7 +124,6 @@ const selected = () => {
 .ml-cascader * {
   cursor: pointer;
 }
-
 .arrow-selected {
   transition: var(--ml-transition-base);
 }
@@ -126,5 +137,17 @@ const selected = () => {
 
 .is-opened {
   transform: rotate(180deg);
+}
+
+.ml-cascader-panel__header {
+  padding: var(--ml-pd-lg) var(--ml-pd-lg) var(--ml-pd-base) var(--ml-pd-lg);
+  font-weight: bold;
+  border-bottom: 1px solid var(--ml-border-color);
+  background-color: var(--ml-bg-color);
+}
+.shadow {
+  box-shadow: var(--ml-shadow-small-inset);
+  border-radius: var(--ml-radius-base);
+  overflow: hidden;
 }
 </style>
