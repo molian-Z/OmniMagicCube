@@ -21,18 +21,16 @@ import "ace-builds/src-min-noconflict/mode-css";
 import "ace-builds/src-min-noconflict/ext-language_tools";
 import "ace-builds/src-min-noconflict/ext-searchbox"; // 用于搜索功能
 import "ace-builds/src-min-noconflict/ext-error_marker";
-import "ace-builds/src-min-noconflict/ext-linking";
 import "ace-builds/src-min-noconflict/ext-emmet";
 import "ace-builds/src-min-noconflict/ext-elastic_tabstops_lite";
 import "ace-builds/src-min-noconflict/ext-command_bar";
 import "ace-builds/src-min-noconflict/ext-beautify";
-import "ace-builds/src-min-noconflict/ext-linking";
 import "ace-builds/src-min-noconflict/ext-options";
 import "ace-builds/src-min-noconflict/ext-prompt";
-import workerJsonUrl from "ace-builds/src-min-noconflict/worker-json.js?url";
-import workerJavascriptUrl from "ace-builds/src-min-noconflict/worker-javascript.js?url";
+// import workerJsonUrl from "ace-builds/src-min-noconflict/worker-json.js?url";
+// import workerJavascriptUrl from "ace-builds/src-min-noconflict/worker-javascript.js?url";
+// import workerCssUrl from "ace-builds/src-min-noconflict/worker-css.js?url";
 import snippetsJS from "ace-builds/src-min-noconflict/snippets/javascript";
-import workerCssUrl from "ace-builds/src-min-noconflict/worker-css.js?url";
 import snippetsCss from "ace-builds/src-min-noconflict/snippets/css";
 import { beautify } from "ace-builds/src-min-noconflict/ext-beautify";
 // import loadBeautifier, { beautifierOpts } from '@/utils/beautifierLoader'
@@ -42,6 +40,10 @@ import { beautify } from "ace-builds/src-min-noconflict/ext-beautify";
 //   highRules
 // } from '@/utils/ace-editor-data'
 // const ACE_BASE_PATH = "/src-min-noconflict";
+const getUrl = (assetPath) => {
+  // 使用 new URL 构造函数和 import.meta.url 确保资源被当作静态模块引入
+  return new URL(assetPath, import.meta.url).href;
+};
 export default {
   name: "MlCodeEditor",
   props: {
@@ -74,17 +76,29 @@ export default {
   emits: ["update:modelValue"],
   mounted() {
     if (this.mode === "javascript") {
+    //   const workerUrl = new URL(
+    //     `ace-builds/src-min-noconflict/worker-javascript.js`,
+    //     import.meta.url
+    //   );
+      // ace.config.setModuleUrl(`ace/mode/javascript_worker`, workerUrl.pathname);
       ace.config.setModuleUrl(`ace/mode/snippetsUrl`, snippetsJS);
-      ace.config.setModuleUrl("ace/mode/javascript_worker", workerJavascriptUrl);
     } else if (this.mode === "css") {
+    //   const workerUrl = new URL(
+    //     `ace-builds/src-min-noconflict/worker-css.js`,
+    //     import.meta.url
+    //   );
+      // ace.config.setModuleUrl(`ace/mode/css_worker`, workerUrl.pathname);
       ace.config.setModuleUrl(`ace/mode/snippetsUrl`, snippetsCss);
-      ace.config.setModuleUrl("ace/mode/css_worker", workerCssUrl);
-    }else if(this.mode === 'json') {
-        ace.config.setModuleUrl("ace/mode/json_worker", workerJsonUrl);
+    } else if (this.mode === "json") {
+    //   const workerUrl = new URL(
+    //     `ace-builds/src-min-noconflict/worker-json.js`,
+    //     import.meta.url
+    //   );
+      // ace.config.setModuleUrl(`ace/mode/json_worker`, '/node_modules/ace-builds/src-min-noconflict/worker-json.js');
     }
-    ace.config.loadModule('ace/ext/beautify', function(module) {
-     // 扩展加载后的处理逻辑
-   });
+    ace.config.loadModule("ace/ext/beautify", function (module) {
+      // 扩展加载后的处理逻辑
+    });
     this.aceEditor = ace.edit(this.$refs.ace, {
       maxLines: this.maxLines, // 最大行数，超过会自动出现滚动条
       minLines: 5, // 最小行数，还未到最大行数时，编辑器会自动伸缩大小
@@ -98,15 +112,20 @@ export default {
       mergeUndoDeltas: "always",
       useSoftTabs: true,
       useWrapMode: true,
-      highlightGutterLine: false,
+      useElasticTabstops: true,
+      highlightGutterLine: true,
       fadeFoldWidgets: true,
       showPrintMargin: false,
+      enableLinking: true,
+      spellcheck: true,
     });
     beautify(this.aceEditor.session);
     this.aceEditor.setOptions({
       enableBasicAutocompletion: true,
       enableSnippets: true, // 设置代码片段提示
       enableLiveAutocompletion: true, // 设置自动提示
+      enableChromevoxEnhancements: true,
+      enableLinking: true,
     });
     if (!this.userWorker) {
       this.aceEditor.getSession().setUseWorker(this.userWorker);
@@ -371,8 +390,8 @@ export default {
     },
 
     setValue(newValue) {
-        this.aceEditor.getSession().setValue(newValue)
-        beautify(this.aceEditor.session)
+      this.aceEditor.getSession().setValue(newValue);
+      beautify(this.aceEditor.session);
     },
   },
 };

@@ -120,7 +120,7 @@ const styleMap: IStyleMap = {
                     right: X
                 }
             } else if (val === 'left2right') {
-                let spx = 0
+                let spx:number = 0
                 if (!!Number(obj.width)) {
                     spx = Number(obj.moveX) + Number(obj.width)
                     return {
@@ -317,7 +317,7 @@ export const createCss = function (compObj: any) {
                     for (const customKey in element) {
                         if (Object.prototype.hasOwnProperty.call(element, customKey)) {
                             const customVal = element[customKey];
-                            cssStr += `\n${toKebabCase(customKey)}:${customVal};`
+                            cssStr += `\n${customKey}:${customVal};`
                         }
                     }
                 } else {
@@ -462,7 +462,7 @@ function deepObjCreateCss(obj: { [x: string]: any; }, css: any[]) {
  * @param unit {string} - 单位字符串，例如'px'、'%'等。
  * @returns {string} - 返回带有单位的字符串。
  */
-function createSuffix(value:string, unit:string){
+function createSuffix(value:string | any, unit:string){
     if(!unit) return value+'px'
     if(unit === 'calc'){
         return `${unit}(${addSpacesToOperators(value)})`
