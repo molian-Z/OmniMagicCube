@@ -107,8 +107,6 @@ export const useDraggable = (comps?: any, compData?: any, message?: any) => {
         }
       }
     } else {
-        console.log(name)
-        console.log(slotVal.allowComps, (slotVal.allowComps.length === 0 || slotVal.allowComps.indexOf(name) > -1))
       message.error('拖拽组件不在允许的组件列表中')
     }
   }

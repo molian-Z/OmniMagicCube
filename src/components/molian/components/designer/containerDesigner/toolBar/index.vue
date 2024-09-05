@@ -106,10 +106,10 @@ const runRedo = () => {
 .css-svg-icon {
   width: 18px;
   height: 18px;
-  fill: var(--ml-text-color-1);
+  color: var(--ml-text-color-1);
 
   &:hover {
-    fill: var(--ml-primary-color);
+    color: var(--ml-primary-color);
     background-color: transparent;
   }
 }
@@ -117,10 +117,10 @@ const runRedo = () => {
 
 
 .disabled {
-  fill: var(--ml-text-color-5);
+  color: var(--ml-text-color-5);
   background-color: transparent !important;
   &:hover{
-    fill: var(--ml-text-color-5);
+    color: var(--ml-text-color-5);
   }
 }
 </style>

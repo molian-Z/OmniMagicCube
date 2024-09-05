@@ -86,7 +86,6 @@ const getFilterIconTotal = computed(() => {
         return fitem.toLowerCase().includes(searchIconListText.value.toLowerCase());
       }).length;
     });
-    console.log(iconTotal)
     return iconTotal
   } else {
     return iconListTotal.value;

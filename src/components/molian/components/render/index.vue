@@ -33,7 +33,7 @@ const props = defineProps(<
 });
 
 // 渲染数据
-const renderData = ref<Ref[]>([]);
+// const renderData = ref<Ref[]>([]);
 // 生命周期
 const lifecycle = ref<{ [key: string]: any }>({});
 // 注册css

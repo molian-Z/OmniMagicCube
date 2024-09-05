@@ -68,7 +68,6 @@ const switchRadius = function () {
 }
 
 const updateModelValue = function (prop: string, val: any) {
-    console.log(selectedComp.value)
     if(css.value && css.value.units && css.value.units[prop] && css.value.units[prop] === 'calc'){
         if (activeLink.value && ['width', 'height'].indexOf(prop) > -1) {
             css.value.width = val

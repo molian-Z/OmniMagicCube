@@ -34,7 +34,7 @@ export const fullLoading = ref<boolean>(false)
 // 页面数据
 // 缓存数据
 const store = useStorage('history', {
-    modelValue: <any[]>[],
+    modelValue: <any>[],
     globalAttrs: <CubeData.GlobalAttrs | any>{
         import: {},
         export: {},
@@ -44,7 +44,7 @@ const store = useStorage('history', {
     }
 })
 // 数据
-export const modelValue = ref<CubeData.ModelValue[]>(store.value.modelValue && store.value.modelValue.length > 0 ? store.value.modelValue[0].snapshot : [])
+export const modelValue = ref<CubeData.ModelValue[]>(store.value.modelValue ? store.value.modelValue : [])
 export const globalAttrs = reactive<CubeData.GlobalAttrs>(store.value.globalAttrs)
 export const variableData = computed(() => {
     return getVariableData(globalAttrs.variable)
@@ -68,14 +68,15 @@ export const {
     canUndo,
 } = useDebouncedRefHistory(modelValue, {
     deep: true,
-    debounce: 500,
-    capacity: 20
+    debounce: 3000,
+    capacity: 5,
+    clone: true
 })
 
 export const screenRatioInfo: any = useStorage('screenRatio', { ...deviceList.value[0], rotate: false })
-watch(history as any, (val: CubeData.ModelValue[]) => {
+watch(history as any, (val: any[]) => {
     store.value = {
-        modelValue: val,
+        modelValue: val[0].snapshot,
         globalAttrs
     }
 })

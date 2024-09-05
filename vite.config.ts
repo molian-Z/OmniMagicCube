@@ -6,7 +6,6 @@ import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
 import autoImport from 'unplugin-auto-import/vite'
 import components from 'unplugin-vue-components/vite'
 import loadVersion from 'vite-plugin-package-version';
-
 // https://vitejs.dev/config/
 export default defineConfig({
     base: './', // 这里更改打包相对绝对路径

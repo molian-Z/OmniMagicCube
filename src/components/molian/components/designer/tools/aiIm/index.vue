@@ -89,7 +89,6 @@ const getCloudData = async (messageText: string) => {
       })
     })
     const data = await res.json()
-    console.log(data)
     if (!data.success) {
       message.error(t('container.getDataError'))
     } else {
