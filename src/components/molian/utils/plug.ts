@@ -17,6 +17,7 @@ import MlVerticalContainer from '@molianComps/MolianLayoutContainer/verticalCont
 import MlSubContainer from '@molianComps/MolianLayoutContainer/subContainer.vue'
 import MlSubForm from '@molianComps/MlSubForm/index.vue'
 import MlEcharts from '@molianComps/Echarts/index.vue'
+import MlTagInput from '@molianComps/TagInput/index.vue'
 // import MlCodeEditor from '@molianComps/MlCodeEditor/index.vue'
 let APIProviderArr = ['http://flower.molianpro.com:33000']
 console.log(`%c无界魔方%cOmni Magic Cube V${import.meta.env.PACKAGE_VERSION}%c
@@ -39,6 +40,7 @@ export default {
         app.component('MlSubContainer', MlSubContainer)
         app.component('MlEcharts', MlEcharts)
         app.component('MlSubForm', MlSubForm)
+        app.component('MlTagInput',MlTagInput)
         // app.component('MlCodeEditor', MlCodeEditor)
         if(!!options.iconUrl){
             if(Array.isArray(options.iconUrl)){
@@ -76,7 +78,7 @@ export default {
             isOpenedMenu: isAnyContextMenuOpen
         })
         if(!!debug.value){
-            const vConsole = new VConsole();
+            new VConsole();
         }
     }
 }

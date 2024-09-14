@@ -412,6 +412,7 @@ declare namespace CubeData {
                 op: string;
                 data: any;
             }[];
+        extend:any;
         };
     }
 }

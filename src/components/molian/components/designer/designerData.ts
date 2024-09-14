@@ -33,14 +33,15 @@ export const aiImRef = ref()
 export const fullLoading = ref<boolean>(false)
 // 页面数据
 // 缓存数据
-const store = useStorage('history', {
+const store = useStorage('omc_history', {
     modelValue: <any>[],
     globalAttrs: <CubeData.GlobalAttrs | any>{
         import: {},
         export: {},
         lifecycle: {},
         variable: {},
-        actions: []
+        actions: [],
+        extend: {}
     }
 })
 // 数据
@@ -68,12 +69,12 @@ export const {
     canUndo,
 } = useDebouncedRefHistory(modelValue, {
     deep: true,
-    debounce: 3000,
+    debounce: 500,
     capacity: 5,
     clone: true
 })
 
-export const screenRatioInfo: any = useStorage('screenRatio', { ...deviceList.value[0], rotate: false })
+export const screenRatioInfo: any = useStorage('omc_screenRatio', { ...deviceList.value[0], rotate: false })
 watch(history as any, (val: any[]) => {
     store.value = {
         modelValue: val[0].snapshot,
@@ -130,27 +131,23 @@ export const useKeys = (message: any, t: any) => {
     whenever(logicAnd(keys.ctrl_d, notUsingInput), () => globalMenu.value = 'action');
     whenever(logicAnd(keys.ctrl_f, notUsingInput), () => globalMenu.value = 'global');
     // 处理复制操作
-    const { text, copy, copied, isSupported } = useClipboard({ source: JSON.stringify(selectedComp.value) })
     whenever(logicAnd(keys.ctrl_c, notUsingInput), () => {
         if (!!selectedComp.value) {
-            if (!!isSupported.value && copied.value === false) {
-                copy(JSON.stringify(selectedComp.value))
-                message.success(t('container.copySuccess'))
-            }
+            sessionStorage.setItem('omc_copyedCache', JSON.stringify(selectedComp.value));
+            message.success(t('container.copySuccess'))
         }
     });
     // 处理粘贴操作
     whenever(logicAnd(keys.ctrl_v, notUsingInput), () => {
-        if (!!isSupported.value) {
-            if (!text.value) return false
-            const compData = JSON.parse(text.value)
-            if (!!selectedComp.value && selectedComp.value.slots && selectedComp.value.slots.default && selectedComp.value.slots.default.children) {
-                selectedComp.value.slots.default.children.push(pasteData(compData))
-            } else {
-                modelValue.value.push(pasteData(compData))
-            }
-            message.success(t('container.pasteSuccess'))
+        const copedCache = sessionStorage.getItem('omc_copyedCache');
+        if (!copedCache) return false
+        const compData = JSON.parse(copedCache)
+        if (!!selectedComp.value && selectedComp.value.slots && selectedComp.value.slots.default && selectedComp.value.slots.default.children) {
+            selectedComp.value.slots.default.children.push(pasteData(compData))
+        } else {
+            modelValue.value.push(pasteData(compData))
         }
+        message.success(t('container.pasteSuccess'))
     });
     // 切换树面板的展开状态
     whenever(logicAnd(keys.ctrl_b, notUsingInput), () => {
@@ -236,10 +233,10 @@ export const initCompsData = function (data: any) {
 
 // 生成指定长度的随机字符串
 const randomPrefix = Math.random().toString(36).substring(2, 7);
-export const generateRandomString = function (length: number, prefix:string) {
-    if(!!prefix){
+export const generateRandomString = function (length: number, prefix: string) {
+    if (!!prefix) {
         return uniqueId(`${prefix}_${randomPrefix}_`);
-    }else {
+    } else {
         return Math.random().toString(36).substring(2, length + 2)
     }
 }

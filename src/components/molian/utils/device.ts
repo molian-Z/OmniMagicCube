@@ -1,6 +1,6 @@
 import { useStorage } from '@vueuse/core'
 
-export const deviceList = useStorage('deviceList', [{
+export const deviceList = useStorage('omc_deviceList', [{
   name: "PC(720P)",
   width: 1280,
   height: 720,

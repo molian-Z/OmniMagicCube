@@ -15,18 +15,25 @@ defineOptions({
   name: "IconPicker",
 });
 defineProps({
+  modelValue: {
+    type: String,
+    default: "",
+    required: true,
+    expandType: "Icon",
+  },
   size: {
     type: Number,
     default: 24,
   },
 });
+const emit = defineEmits(['update:modelValue'])
+
 const customComps: any = inject("customComps");
-const { customDialog, customInput, customTag } = customComps;
+const { customDialog, customInput } = customComps;
 const iconSets = ref<any[]>([]);
 const iconList = ref<any[]>([]);
 const currentIconSet = ref("");
 const iconListTotal = ref<number>(0);
-const modelValue = defineModel({ type: String });
 const searchIconSetText = ref("");
 const searchIconListText = ref("");
 const currentPage = ref(1);
@@ -82,11 +89,11 @@ const getFilterIconTotal = computed(() => {
   let iconTotal = 0;
   if (!!searchIconListText.value) {
     iconList.value.forEach((item) => {
-        iconTotal += item.data.filter((fitem: string) => {
+      iconTotal += item.data.filter((fitem: string) => {
         return fitem.toLowerCase().includes(searchIconListText.value.toLowerCase());
       }).length;
     });
-    return iconTotal
+    return iconTotal;
   } else {
     return iconListTotal.value;
   }
@@ -119,7 +126,7 @@ const loadIcons = async (item: { total: number; prefix: string; name: string }) 
 };
 
 const onChange = (iconName: string) => {
-  modelValue.value = currentIconSet.value + ":" + iconName;
+    emit('update:modelValue', currentIconSet.value + ":" + iconName)
 };
 
 const pageChange = (page: { currentPage: number; currentPageSize: number }) => {
@@ -140,13 +147,12 @@ onMounted(async () => {
 });
 </script>
 <template>
-  <div class="icon-picker" :style="{ width: size + 'px', height: size + 'px' }">
+  <div class="icon-picker" :style="{ width: size + 'px', height: size + 'px' }" @click="visible = true">
     <icon
       class="icon-picker__inner"
       :style="{ width: Number(size - 12) + 'px', height: Number(size - 12) + 'px' }"
       :icon="modelValue"
       v-if="getIcon(modelValue)"
-      @click="visible = true"
     />
     <div class="icon-picker__inner" @click="visible = true" v-else>
       <icon
@@ -206,7 +212,7 @@ onMounted(async () => {
             </customInput>
           </div>
           <div class="icon-picker-grid">
-                <div class="icon-picker-grid__group__list">
+            <div class="icon-picker-grid__group__list">
               <div
                 :class="[
                   'icon-picker-grid__item',
@@ -244,6 +250,22 @@ onMounted(async () => {
   border: 1px solid var(--ml-border-color);
   border-radius: var(--ml-radius-base);
   transition: var(--ml-transition-base);
+  cursor: pointer;
+
+  .icon-picker__inner {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    fill: currentColor;
+    color: var(--ml-fill-color);
+
+    .icon-picker__inner__plus {
+      fill: currentColor;
+      transition: var(--ml-transition-base);
+    }
+  }
 
   &:hover {
     border-color: var(--ml-primary-color-hover);
@@ -252,25 +274,9 @@ onMounted(async () => {
       fill: var(--ml-primary-color-hover);
       color: var(--ml-primary-color-hover);
     }
-  }
-
-  .icon-picker__inner {
-    width: 100%;
-    height: 100%;
-    cursor: pointer;
-    transition: var(--ml-transition-base);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    .icon-picker__inner__plus {
-      color: var(--ml-border-color);
-      transition: var(--ml-transition-base);
-
-      &:hover {
+    .icon-picker__inner__plus{
         color: var(--ml-primary-color);
       }
-    }
   }
 }
 

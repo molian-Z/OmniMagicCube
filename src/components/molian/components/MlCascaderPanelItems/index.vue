@@ -86,6 +86,8 @@ const zIndex = computed(() => {
   position: relative;
   z-index: v-bind(zIndex);
   min-width: 130px;
+  max-height: 320px;
+  overflow: auto;
   &:last-child {
     border-right: none;
   }

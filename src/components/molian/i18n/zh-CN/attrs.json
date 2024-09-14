@@ -110,5 +110,11 @@
         "auto": "自动",
         "visible": "可见",
         "clip": "截断"
+    },
+    "size_optionItems":{
+        "mini":"迷你尺寸",
+        "small":"小尺寸",
+        "default":"默认尺寸",
+        "large":"大尺寸"
     }
 }

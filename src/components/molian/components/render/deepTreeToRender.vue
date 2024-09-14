@@ -27,10 +27,23 @@ const props = defineProps(<
   },
 });
 const renderData = computed(() => {
-  return getValue(props.modelValue, variable.value, props.expandAPI, props.slotData, originVariable.value);
+  return getValue(
+    props.modelValue,
+    variable.value,
+    props.expandAPI,
+    props.slotData,
+    originVariable.value
+  );
 });
-const newForEach = (comp: any) => {
-  return data2Vars(comp.directives.for, variable.value);
+const newForEach = ({ comp, $slot }: any) => {
+  if (!!comp.directives.for) {
+    const forData = data2Vars(comp.directives.for, variable.value);
+    if (typeof forData === "function") {
+      return forData($slot);
+    } else {
+      return forData;
+    }
+  }
 };
 </script>
 <template>
@@ -39,10 +52,10 @@ const newForEach = (comp: any) => {
       :comp="comp"
       :expandAPI="expandAPI"
       :slotData="slotData"
-      v-if="isFor(comp)"
+      v-if="isFor({ comp, $slot: slotData })"
       :key="forItem[comp.directives.for.idKey] || forIndex"
-      v-for="(forItem, forIndex) in newForEach(comp)"
-      v-show="isShow(comp)"
+      v-for="(forItem, forIndex) in newForEach({ comp, $slot: slotData })"
+      v-show="isShow({ comp, $slot: slotData })"
       v-on="comp.cacheOn"
       v-customDirectives="{ comp, $slot: slotData }"
     />
@@ -50,8 +63,8 @@ const newForEach = (comp: any) => {
       :comp="comp"
       :expandAPI="expandAPI"
       :slotData="slotData"
-      v-else-if="isIf(comp)"
-      v-show="isShow(comp)"
+      v-else-if="isIf({ comp, $slot: slotData })"
+      v-show="isShow({ comp, $slot: slotData })"
       v-on="comp.cacheOn"
       v-customDirectives="{ comp, $slot: slotData }"
     />

@@ -1,38 +1,48 @@
 import { getCurrentOn, runOn } from '@molian/utils/customFunction'
 import { globalComps } from '@molian/utils/compsConfig'
-import { cp } from 'fs'
 const {Message} = globalComps.value
 // 循环判断
-export const isFor = (comp: any) => {
-    let isFor = true
-    if (isIf(comp)) {
+export const isFor = ({comp, $slot}: any) => {
+    let isFor:any = true
+    if (isIf({comp, $slot})) {
         const { directives, vars } = comp
         if (!directives.for) {
             isFor = false
         }else{
             isFor = data2Vars(directives.for, vars)
+            if(typeof isFor === 'function') {
+                isFor = isFor({$slot})
+            }
         }
+    } else {
+        isFor = false
     }
     return !!isFor
 }
 
 // 渲染判断
-export const isIf = (comp: any) => {
+export const isIf = ({comp, $slot}: any) => {
     const { directives, vars } = comp
-    let isIf = true
+    let isIf:any = true
     if(!!directives.if){
         isIf = data2Vars(directives.if, vars)
+        if(typeof isIf === 'function') {
+            isIf = isIf({$slot})
+        }
     }
     return !!isIf
 }
 
 // 显示判断
-export const isShow = (comp: any) => {
+export const isShow = ({comp, $slot}: any) => {
     const { directives, vars } = comp
     const { show } = directives || null
-    let isShow = true
+    let isShow:any = true
     if(!!show){
         isShow = data2Vars(show, vars)
+        if(typeof isShow === 'function') {
+            isShow = isShow({$slot})
+        }
     }
     return !!isShow
 }
@@ -264,7 +274,10 @@ export const parseProps = (comp: any, comps: any, variable: any, expandAPI:any, 
                     }
                 }else{
                     // 否则直接将属性值存储到结果对象中
-                    propsData[key] = element.value;
+                    if(compProp.type === 'boolean' && element.value === false && compProp.default === null){
+                    } else if (element.value === compProp.default) {}else{
+                        propsData[key] = element.value;
+                    }
                 }
             }
           }

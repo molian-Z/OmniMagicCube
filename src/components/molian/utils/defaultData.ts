@@ -7,7 +7,7 @@ import { useStorage } from '@vueuse/core'
 export const defaultCategory: IConfig.IDefaultCategory[] = [{
     icon: 'basic',
     name: 'basic',
-    component: ['MlHorizontalContainer', 'MlVerticalContainer', 'SvgIcon', 'IconPicker', 'MlEcharts', 'MlSubForm']
+    component: ['MlHorizontalContainer', 'MlVerticalContainer', 'SvgIcon', 'IconPicker', 'MlEcharts', 'MlSubForm', 'MlTagInput']
 }, {
     icon: 'container',
     name: 'layout',
@@ -183,7 +183,7 @@ export const contextLevel = 3
 export const cloudUrl = "https://wujie.mlyt.top/getData"
 export const AIURL = "https://wujie.mlyt.top/getAI"
 export const iconifyUrl = "http://flower.molianpro.com:33000/"
-export const setting = useStorage<Setting.Config>('setting', {
+export const setting = useStorage<Setting.Config>('omc_setting', {
     immerseLeftMode: true,
     immerseRightMode: true
 })

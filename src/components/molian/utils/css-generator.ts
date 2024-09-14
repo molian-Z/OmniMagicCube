@@ -283,7 +283,7 @@ export const parseStyle = function (styleObj: { [x: string]: any; }, compKey: an
                 // 将属性及其对应的值存储在customCss对象中，如果存在后缀，则加上后缀
                 if (!customCss[key]) {
                     // 为0时默认不显示
-                    if (val !== '0') {
+                    if (typeof Number(val) && !Number.isNaN(Number(val)) && val != 0 || styleObj.units && !!styleObj.units[key] || !!suffix[key]) {
                         if(!styleObj.units){
                             styleObj.units = {
                                 [key] : 'px'
@@ -294,6 +294,8 @@ export const parseStyle = function (styleObj: { [x: string]: any; }, compKey: an
                         }else{
                             customCss[key] = suffix[key] ? createSuffix(val, suffix[key]) : val
                         }
+                    }else {
+                        customCss[key] = val
                     }
                 }
             }
