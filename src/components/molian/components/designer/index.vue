@@ -9,6 +9,7 @@ import {
   globalAttrs,
   useKeys,
 } from "./designerData";
+import { updatedLang } from '@molian/utils/lang'
 import globalTool from "./globalTool/index.vue";
 import cssDesigner from "./cssDesigner/index.vue";
 import containerDesigner from "./containerDesigner/index.vue";
@@ -18,7 +19,7 @@ import optionsDesigner from "./optionsDesigner/index.vue";
 import actionDesigner from "./actionDesigner/index.vue";
 import globalDesigner from "./globalDesigner/index.vue";
 import treeDir from "./tools/treeDir/index.vue";
-import aiIm from "./tools/aiIm/index.vue";
+// import aiIm from "./tools/aiIm/index.vue";
 import { setting } from "@molian/utils/defaultData";
 import { conciseJs } from "@molian/utils/js-generator";
 import { conciseCss, restoreCss } from "@molian/utils/css-generator";
@@ -35,7 +36,6 @@ defineProps({
 const t: any = inject("mlLangs");
 const message = inject("mlMessage");
 useKeys(message, t);
-
 const setData = (data: any) => {
   modelValue.value = restoreCss(data.modelValue);
   Object.keys(data.globalAttrs).forEach((key: string) => {
@@ -60,6 +60,7 @@ const getData = (concise = true) => {
 defineExpose({
   setData,
   getData,
+  updatedLang,
 });
 </script>
 <template>

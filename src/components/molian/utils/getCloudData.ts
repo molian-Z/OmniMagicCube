@@ -106,7 +106,7 @@ export async function getCloudData() {
     })
     // 请求云端数据
     if (pendingData.length > 0) {
-      const res = await fetch(cloudUrl, {
+      const res = await fetch(cloudUrl.value, {
         method: 'post',
         body: JSON.stringify({
           UIName: useUI.value,

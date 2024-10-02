@@ -18,7 +18,7 @@ defineOptions({
   name: "MlSubForm",
   slotsOption: {
     row: true,
-    // default: true
+    default: true
   },
 });
 const props = defineProps({

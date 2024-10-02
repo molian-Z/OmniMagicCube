@@ -35,14 +35,126 @@ app.use(ArcoVue, {
 });
 
 app.use(TinyVue);
-app.use(plug, {
-    useUI: "element-plus",
+const options:plug.designerInstall = {
+    useUI: "element-plus", 
     compsConfig: {
         globalComps: {
             Message: MessagePlugin,
             Notify: NotifyPlugin
+        },
+        allowDiffCateReg: false, // 允许不同分类重复注册同一组件
+        hiddenComps: [], //隐藏组件
+        allowRegPropsAndEmit: false, // 允许同一属性同时注册props以及emit 通常在v-model:xxx分离时使用
+        categoryList: [], // 注册分类
+        customComps: {}, // 自定义组件注册
+        cateRules: [], //暂不支持
+        clearDefaultCategory: false, // 移除已经定义的分类列表
+        clearDefaultComps: false, // 移除全局默认注册的组件
+        registerCloud: true, // 是否允许从远端获取组件数据
+        registerCloudUrl: '', // 注册组件数据的链接
+        // 插槽地图映射
+        slotsMap: {
+            TinyRow: {
+                default: {
+                    auto: true, //自动添加插槽
+                    allowComps: ['TinyCol'] // 该组件的该插槽只能放置这些组件
+                }
+            },
+            span: {
+                default: 'auto' //自动添加插槽
+            },
+            ElRow: {
+                default: {
+                    auto: true,
+                    allowComps: [{
+                        name:'ElCol',
+                    }],
+                    appendComps: [{
+                        name:'ElCol',
+                        attrs:{
+                            span: 12
+                        }
+                    }]
+                }
+            },
+            ElCol: {
+                default: {
+                    auto: true,
+                    appendComps: [{
+                        name:'ElFormItem',
+                    },{
+                        name:'ElRow',
+                    }]
+                }
+            }
+        },
+        // 生命周期映射
+        lifecycleMap: {
+            // 生命周期名称，默认值以及默认的参数名
+            custom: {
+                codeVar: [],
+                code: ''
+            },
+        },
+        // 默认原生事件映射
+        nativeEventMap: {
+            wheel: ['evt'], //滚轮滚动
+            scroll: ['evt'], //滚动
+            resize: ['evt'], //窗口大小改变
+        },
+        // 默认属性映射
+        attrsMap: {
+            TRow: {
+                align: {
+                    default: 'center',
+                    optionItems: ['top', 'center', 'end', 'stretch', 'baseline']
+                },
+                justify: {
+                    default: 'center',
+                    optionItems: ['start', 'end', 'center', 'space-around', 'space-between', 'space-evenly']
+                }
+            },
+            MlSubForm: {
+                isAdd: {
+                    default: true,
+                },
+                isAppend: {
+                    default: true,
+                },
+                isDelete: {
+                    default: true,
+                },
+                // maxHeight: {
+                //     removeAttr: true // 移除属性 // 移除后仍可使用default进行默认值赋值
+                // }
+            },
+            ElInputNumber: {
+                change: {
+                    removeAttr: true
+                }
+            }
         }
     },
-});
+    iconUrl: 'http://flower.molianpro.com:33000',
+    // i18n数据合并
+    i18nData: {
+        // "zh-cn": {
+        //     "attrs": {
+        //         MlSubForm: {
+        //             isAdd: "打开新增",
+        //             isAppend: "打开追加",
+        //             isDelete: "打开删除",
+        //             isSortable: "打开排序",
+        //             maxHeight: "最大高度",
+        //             height: "高度",
+        //             modelValue: "模型值",
+        //             columns: "列信息",
+        //             formatColumns: "格式化列",
+        //         }
+        //     }
+        // },
+    },
+}
+app.use(plug, options);
 
 app.mount('#app');

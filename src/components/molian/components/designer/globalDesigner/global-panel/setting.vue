@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ref, inject } from 'vue'
+import { inject } from 'vue'
 import { setting } from '@molian/utils/defaultData'
 import { deleteAll } from '@/components/molian/utils/indexedDB';
 import { getCloudData } from '@molian/utils/getCloudData'

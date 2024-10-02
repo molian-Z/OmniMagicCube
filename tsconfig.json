@@ -103,17 +103,21 @@
     // "allowUnreachableCode": true,                     /* Disable error reporting for unreachable code. */
     /* Completeness */
     // "skipDefaultLibCheck": true,                      /* Skip type checking .d.ts files that are included with TypeScript. */
-    "skipLibCheck": true /* Skip type checking all .d.ts files. */
+    // "skipLibCheck": true /* Skip type checking all .d.ts files. */
   },
   "include": [
     "src/**/*",
     "node_modules/@types/node/**/*",
     "node_modules/@types/vue/**/*",
     "src/**/*.ts",
-    "src/**/*.d.ts",
+    "src/types/**/*.d.ts",
     "src/**/*.tsx",
     "src/**/*.vue",
     "@molian/**/*.ts",
     "@molianComps/**/*.vue"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist"
   ]
 }

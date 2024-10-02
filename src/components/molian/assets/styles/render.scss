@@ -1,0 +1,92 @@
+$textColorObj:("text":#1D2129,
+    "text-reverse":#FFF);
+
+// 背景色
+$bgColor:#FFFFFF;
+$bgPageColor:#F9F9F9;
+$borderColor:#E5E6EB;
+
+$bgBlur:("small":blur(5px),
+    "base":blur(13.5px),
+    "lg":blur(16px));
+$transition:("base":.25s);
+
+$boxShadowObj: ( // "base": 0 4px 15px 0 #00000040,
+    "small": "0 1px 10px rgba(0, 0, 0, .05),0 4px 5px rgba(0, 0, 0, 8%),0 2px 4px -1px rgba(0, 0, 0, 12%)",
+    "base": "0 3px 14px 2px rgba(0, 0, 0, .05),0 8px 10px 1px rgba(0, 0, 0, 6%),0 5px 5px -3px rgba(0, 0, 0, 10%)",
+    "lg": "0 6px 30px 5px rgba(0, 0, 0, .05),0 16px 24px 2px rgba(0, 0, 0, 4%),0 8px 10px -5px rgba(0, 0, 0, 8%)",
+    "small-inset":"0 1px 10px rgba(0, 0, 0, .05),0 4px 5px rgba(0, 0, 0, 8%),0 2px 4px -1px rgba(0, 0, 0, 12%) inset",
+    "mini-inset":"0 1px 2px 1px #00000010 inset"
+);
+
+// 圆角变量
+$borderRadius:("base":"6px",
+    "small":"4px",
+    "lg":"8px",
+    "xlg":"16px",
+    "round":9999px,
+    "circle":"50%"
+);
+
+// 边距变量
+$marginTypeObj: ("12":"12px",
+    "base":"8px",
+    "small":"4px",
+    "lg":"16px"
+);
+
+:root {
+
+    // 文本及背景填充色
+    @each $colorType,
+    $colorValue in$textColorObj {
+        @for $i from 1 through 7 {
+            --ml-#{$colorType}-color-#{$i}: #{lighten($colorValue,$i * 8.7%)};
+        }
+    }
+
+    --ml-fill-color:#6B7280;
+    --ml-fill-color-1:#6B7280;
+    --ml-fill-color-2:#C9CDD4;
+    --ml-fill-color-3:#E5E6EB;
+    --ml-fill-color-4:#F2F4F7;
+    --ml-fill-color-5:#FAFAFB;
+    --ml-icon-color:#BDBDBD;
+
+
+    // 生成常用的外边距大小
+    @each $key,
+    $value in$marginTypeObj {
+        --ml-mg-#{$key}: #{$value};
+    }
+
+    // 生成常用的内边距大小
+    @each $key,
+    $value in$marginTypeObj {
+        --ml-pd-#{$key}: #{$value};
+    }
+
+    // 生成常用的圆角
+    @each $key,
+    $value in$borderRadius {
+        --ml-radius-#{$key}: #{$value};
+    }
+
+    // 生成阴影
+    @each $key,
+    $value in $boxShadowObj {
+        --ml-shadow-#{$key}:#{$value};
+    }
+
+    // 生成背景模糊效果
+    @each $key,
+    $value in $bgBlur {
+        --ml-bg-blur-#{$key}:#{$value};
+    }
+
+    // 生成动效时长
+    @each $key,
+    $value in $transition {
+        --ml-transition-#{$key}:#{$value};
+    }
+}

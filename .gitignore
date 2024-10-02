@@ -40,6 +40,7 @@ build/Release
 # Dependency directories
 libDist/
 libRenderDist/
+stats.html
 node_modules/
 jspm_packages/
 
@@ -117,3 +118,4 @@ dev-dist
 .yarn/unplugged
 .yarn/build-state.yml
 .pnp.*
+/stats.html

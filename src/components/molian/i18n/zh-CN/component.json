@@ -169,5 +169,19 @@
   "Scollbar":"滚动条",
   "Tour":"漫游式导航",
   "TourStep":"漫游式导航步骤",
-  "search":"搜索组件"
+  "search":"搜索组件",
+  "Autocomplete": "自动补全输入框",
+  "AutoResizer": "自动调整大小",
+  "Backtop": "回到顶部",
+  "ConfigProvider": "全局配置",
+  "Text":"文本",
+  "Descriptions":"描述",
+  "DescriptionsItem":"描述子项",
+  "Empty":"空状态",
+  "Popover":"弹出框",
+  "Popper": "",
+  "Countdown": "倒计时",
+  "Step":"步骤条详情",
+  "Segmented":"分段控制器",
+  "Mention": "提及输入框"
 }

@@ -190,6 +190,7 @@ declare global {
   const undo: typeof import('../components/molian/components/Designer/designerData')['undo']
   const unref: typeof import('vue')['unref']
   const update: typeof import('../components/molian/utils/indexedDB')['update']
+  const updatedLang: typeof import('../components/molian/utils/lang')['updatedLang']
   const useAttrs: typeof import('vue')['useAttrs']
   const useCssModule: typeof import('vue')['useCssModule']
   const useCssVars: typeof import('vue')['useCssVars']

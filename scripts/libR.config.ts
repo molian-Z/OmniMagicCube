@@ -1,27 +1,23 @@
 import { resolve } from 'node:path'
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
-import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
+// import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
 import autoImport from 'unplugin-auto-import/vite'
 import components from 'unplugin-vue-components/vite'
 import visualizer from 'rollup-plugin-visualizer'
-import commonjs from '@rollup/plugin-commonjs'
-import dts from 'vite-plugin-dts'
-import loadVersion from 'vite-plugin-package-version'
+// import dts from 'vite-plugin-dts'
 
 // https://vitejs.dev/config/
 export default defineConfig({
     base: './', // 这里更改打包相对绝对路径
     plugins: [
-        loadVersion(),
         vue(),
-        createSvgIconsPlugin({
-            // Specify the icon folder to be cached
-            iconDirs: [resolve(process.cwd(), 'src/components/molian/assets/icons')],
-            // Specify symbolId format
-            symbolId: 'icon-[dir]-[name]',
-            customDomId: '__molian_icons__dom__'
-        }),
+        // createSvgIconsPlugin({
+        //   // Specify the icon folder to be cached
+        //   iconDirs: [resolve(process.cwd(), 'src/components/molian/assets/icons')],
+        //   // Specify symbolId format
+        //   symbolId: 'icon-[dir]-[name]',
+        // }),
         autoImport({
             imports: [
                 'vue'
@@ -37,13 +33,7 @@ export default defineConfig({
             dts: './src/types/components.d.ts',
         }),
         visualizer(),
-        commonjs(),
-        // dts({
-        //     // rollupTypes: true,
-        //     outDir: 'libDist/types',
-        //     tsconfigPath: 'tsconfig.json',
-        //     cleanVueFileName: true
-        // })
+        // dts({ rollupTypes: true })
     ],
     resolve: {
         alias: {
@@ -55,12 +45,11 @@ export default defineConfig({
     build: {
         outDir: "libDist", //输出文件名称
         // sourcemap: false,
-        // minify: false,
-        // target: 'modules',
+        emptyOutDir:false,
         lib: {
-            entry: resolve(__dirname, "../src/lib-main.ts"), //指定组件编译入口文件
-            name: "omni-magic-cube",
-            fileName: (format) => `designer.${format}.js`,
+            entry: resolve(__dirname, "../src/lib-render-main.ts"), //指定组件编译入口文件
+            name: "omni-magic-cube__render",
+            fileName: (format) => `render.${format}.js`,
             formats: ["es", "cjs", 'umd'],
         }, //库编译模式配置
         rollupOptions: {
@@ -111,17 +100,9 @@ export default defineConfig({
                 // 在 UMD 构建模式下为这些外部化的依赖提供一个全局变量
                 globals: {
                     vue: "Vue",
-                    ['ace-builds']: "ace-builds",
-                    echarts: "echarts",
-                    vconsole: "vconsole",
-                    ['ace-builds/src-min-noconflict/snippets/javascript']: "ace-builds/src-min-noconflict/snippets/javascript",
-                    ["ace-builds/src-min-noconflict/snippets/css"]: "ace-builds/src-min-noconflict/snippets/css",
-                    // ['ace-builds/src-min-noconflict/worker-css']: "ace-builds/src-min-noconflict/worker-css",
-                    // ['ace-builds/src-min-noconflict/worker-javascript']: "ace-builds/src-min-noconflict/worker-javascript",
-                    ['ace-builds/src-min-noconflict/ext-beautify']: "ace-builds/src-min-noconflict/ext-beautify",
-                    ['ace-builds/esm-resolver']: "ace-builds/esm-resolver"
+                    echarts: "echarts"
                 },
-                assetFileNames: 'designer.css',
+                assetFileNames: 'render.css',
                 exports: "named"
             },
         },

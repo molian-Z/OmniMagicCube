@@ -4,12 +4,12 @@ const langs = import.meta.glob(`../i18n/*/*.json`, { eager: true })
 export const { language } = useNavigatorLanguage()
 
 export const langObj = ref<any>({})
-
-export const i18nt = function (langName: string):string {
+const newLangs = ref<any>({})
+export const i18nt = function (langName: string): string {
     return langObj.value[langName] || langName.split('.')[langName.split('.').length - 1]
 }
 
-const getLangData = function (langName: string) {
+export const updatedLang = function (langStr:string) {
     let langObjCache = {}
     for (const key in langs) {
         if (Object.hasOwnProperty.call(langs, key)) {
@@ -18,26 +18,32 @@ const getLangData = function (langName: string) {
             const langDirIndex = lang.findIndex(item => {
                 return item === 'i18n'
             })
-            if (lang[langDirIndex + 1] === langName) {
-                const obj = {
-                    [lang[lang.length - 1].split('.')[0]]: element.default
+            if (lang[langDirIndex + 1] === langStr.toLowerCase()) {
+                if (element.default) {
+                    const obj = {
+                        [lang[lang.length - 1].split('.')[0]]: JSON.parse(JSON.stringify(element.default))
+                    }
+                    if (newLangs.value && Object.keys(newLangs.value).length > 0) {
+                        langObjCache = Object.assign({}, langObjCache, flatten(obj), flatten(newLangs.value))
+                    } else {
+                        langObjCache = Object.assign({}, langObjCache, flatten(obj))
+                    }
                 }
-                langObjCache = Object.assign({}, langObjCache, flatten(obj))
             }
         }
     }
     langObj.value = langObjCache
 }
 
-export const langInstall = function (app: App<any>) {
-    watch(language, (newVal: any) => {
-        getLangData(newVal)
+export const langInstall = function (app: App<any>, appendLangData?: any) {
+    newLangs.value = appendLangData || {}
+    watch(language, (newVal :any) => {
+        updatedLang(newVal)
     }, {
         immediate: true
     })
     app.provide('mlLangs', i18nt)
 }
-
 
 const flatten = (data: any) => {
     const result: any = {};

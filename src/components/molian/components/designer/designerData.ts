@@ -11,7 +11,7 @@ import {
     useMagicKeys,
     whenever,
     useActiveElement,
-    useClipboard
+    // useClipboard
 } from '@vueuse/core'
 import { logicAnd } from '@vueuse/math'
 import { hoverNodes, hoverIndex, resetDraggable } from './draggable'
@@ -22,7 +22,7 @@ import { currentRegComps } from '@molian/utils/compsConfig'
 import { initCss } from '@molian/utils/css-generator'
 // 菜单交互
 export const hiddenAllPanel = ref(false)
-export const compPanel = ref<string>('')
+export const compPanel = ref<string>('basic')
 export const globalMenu = ref<string>('style')
 export const cssPanel = ref<string>('')
 export const optionsPanel = ref<string>('')
@@ -46,7 +46,7 @@ const store = useStorage('omc_history', {
 })
 // 数据
 export const modelValue = ref<CubeData.ModelValue[]>(store.value.modelValue ? store.value.modelValue : [])
-export const globalAttrs = reactive<CubeData.GlobalAttrs>(store.value.globalAttrs)
+export const globalAttrs = reactive<CubeData.GlobalAttrs | any>(store.value.globalAttrs)
 export const variableData = computed(() => {
     return getVariableData(globalAttrs.variable)
 })
@@ -83,7 +83,7 @@ watch(history as any, (val: any[]) => {
 })
 export const compsRef = reactive<any>({})
 export const compsEl = reactive<any>({})
-export const selectedComp = ref<CubeData.ModelValue | null>(null)
+export const selectedComp = ref<CubeData.ModelValue | null | any>(null)
 
 /**
  * 设置选中的组件，并初始化其CSS属性
@@ -178,7 +178,7 @@ export const createComp = function (comp: {
         [key: string]: any;
     };
     name: string;
-}) {
+}, appendComp?: any) {
     // 生成一个随机字符串作为组件的唯一标识
     const randomStr = generateRandomString(5, 'comp_')
     // 克隆插槽内容
@@ -207,6 +207,9 @@ export const createComp = function (comp: {
                     type: Array.isArray(element.type) ? element.type[0] : element.type,
                     value: null
                 }
+            }
+            if(appendComp && typeof appendComp.attrs === 'object' && !!appendComp.attrs[key]){
+                initAttrs[key].value = appendComp.attrs[key]
             }
         }
     }
@@ -255,12 +258,12 @@ export const selectedNativeOn: any = computed(() => {
  */
 export const currentNativeOn: any = computed(() => {
     if (!selectedComp.value) return {}
-    const newNativeOn = Array.from(new Set(Object.keys(defaultNativeEventMap).concat(selectedNativeOn.value ? Object.keys(selectedNativeOn.value) : [])))
+    const newNativeOn = Array.from(new Set(Object.keys(defaultNativeEventMap.value).concat(selectedNativeOn.value ? Object.keys(selectedNativeOn.value) : [])))
     return selectedComp.value && newNativeOn.map(item => {
         return {
             key: item,
             type: 'function',
-            codeVar: defaultNativeEventMap[item]
+            codeVar: defaultNativeEventMap.value[item]
         }
     })
 })
@@ -301,12 +304,12 @@ export const currentEmits = computed(() => {
  * 获取生命周期事件
  */
 export const currentLifecycle = computed(() => {
-    const lifecycleOn = Array.from(new Set(Object.keys(defaultLifecycleMap).concat(globalAttrs.lifecycle ? Object.keys(globalAttrs.lifecycle) : [])))
+    const lifecycleOn = Array.from(new Set(Object.keys(defaultLifecycleMap.value).concat(globalAttrs.lifecycle ? Object.keys(globalAttrs.lifecycle) : [])))
     return lifecycleOn.map(item => {
         return {
             key: item,
             type: 'function',
-            codeVar: defaultLifecycleMap[item].codeVar
+            codeVar: defaultLifecycleMap.value[item].codeVar
         }
     })
 })

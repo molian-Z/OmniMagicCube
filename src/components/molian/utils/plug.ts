@@ -5,6 +5,7 @@ import {
     compsInstall
 } from './compsConfig'
 import { useUI, UIData, usePrefix, debug } from './UIMap'
+import {iconifyUrl} from './defaultData'
 import type { App } from 'vue'
 import '@imengyu/vue3-context-menu/lib/vue3-context-menu.css'
 import ContextMenu from '@imengyu/vue3-context-menu/lib/vue3-context-menu.es'
@@ -19,7 +20,6 @@ import MlSubForm from '@molianComps/MlSubForm/index.vue'
 import MlEcharts from '@molianComps/Echarts/index.vue'
 import MlTagInput from '@molianComps/TagInput/index.vue'
 // import MlCodeEditor from '@molianComps/MlCodeEditor/index.vue'
-let APIProviderArr = ['http://flower.molianpro.com:33000']
 console.log(`%c无界魔方%cOmni Magic Cube V${import.meta.env.PACKAGE_VERSION}%c
 %cTo:墨联墨客`,
     'background: #2D74FF; color: #fff; border-radius:3px;padding:4px 8px;font-size:14px;font-weight:bold;',
@@ -29,9 +29,7 @@ console.log(`%c无界魔方%cOmni Magic Cube V${import.meta.env.PACKAGE_VERSION}
 )
 
 export default {
-    install(app: App<any>, options: any = {
-        customComps: {}
-    }) {
+    install(app: App, options: plug.designerInstall) {
         app.component('SvgIcon', SvgIcon)
         app.component('Icon', Icon)
         app.component('IconPicker', IconPicker)
@@ -43,14 +41,10 @@ export default {
         app.component('MlTagInput',MlTagInput)
         // app.component('MlCodeEditor', MlCodeEditor)
         if(!!options.iconUrl){
-            if(Array.isArray(options.iconUrl)){
-                APIProviderArr.push(...options.iconUrl)
-            }else{
-                APIProviderArr.push(options.iconUrl)
-            }
+            iconifyUrl.value = options.iconUrl
         }
         addAPIProvider('', {
-            resources: APIProviderArr,
+            resources: [iconifyUrl.value],
         })
         useUI.value = options.useUI || useUI.value
         if (!!options.usePrefix) {
@@ -65,7 +59,8 @@ export default {
             UIData.length = 0
             UIData.push(...options.useData)
         }
-        langInstall(app)
+        const { i18nData } = options
+        langInstall(app, i18nData)
         compsInstall(app, options.compsConfig)
 
         // 注册右键菜单组件

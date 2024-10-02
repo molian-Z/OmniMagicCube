@@ -566,8 +566,8 @@ declare namespace IConfig {
      */
     interface ILifecycleMap {
         [key: string]: {
-            codeVar?: string[];
-            code?: string;
+            codeVar: string[];
+            code: string;
             function?: any;
         };
     }
@@ -579,39 +579,8 @@ declare namespace IConfig {
     interface IDefaultSlotsMap {
         [key: string]: {
             [key: string]: {
-                /**
-             * 组件的名称
-             */
-            [key: string]: {
-                /**
-                 * 插槽的名称
-                 */
-                [key: string]: string | {
-                    /**
-                     * 是否自动添加该插槽
-                     */
-                    auto?: true;
-                    /**
-                     * 允许的组件列表，这些组件可以被快速插入或附加
-                     */
-                    allowComps?: string[] | {
-                        name: string,
-                    }[];
-                    /**
-                     * 可以被快速插入的组件列表
-                     * 这里可以指定组件的名称，以及可选的属性
-                     */
-                    appendComps?: string[] | {
-                        name: string,
-                        /**
-                         * 默认插入时递交的属性
-                        */
-                        attrs?: {
-                            [key: string]: any;
-                        }
-                    }[];
-                };
-            };
+                allowComps?: (string)[] | any;
+                auto?: boolean;
             } | string | boolean;
         };
     }
@@ -840,11 +809,8 @@ declare namespace plug {
                      */
                     appendComps?: string[] | {
                         name: string,
-                        /**
-                         * 默认插入时递交的属性
-                        */
                         attrs?: {
-                            [key: string]: any;
+                            [key: string]: string;
                         }
                     }[];
                 };
@@ -860,14 +826,14 @@ declare namespace plug {
          */
         lifecycleMap?: {
             [key: string]: {
-                codeVar?: string[];
-                code?: string;
-                function?: any;
+                codeVar: string[];
+                code: string;
+                function: any;
             },
         };
         /**
          * 可选的原生事件映射，用于映射事件名称到事件类型
-         */
+         */ 
         nativeEventMap?: {
             [key: string]: string[];
         };
@@ -890,7 +856,7 @@ declare namespace plug {
                     // 是否为必填属性
                     required?: boolean;
                     // 属性的扩展类型，可以是"Icon"或者字符串
-                    expandType?: "Icon" | "Color" | string;
+                    expandType?: "Icon" | string;
                     // 其他未明确列出的属性配置
                     [key: string]: any;
                 }

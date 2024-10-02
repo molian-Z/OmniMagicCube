@@ -100,7 +100,7 @@ const getFilterIconTotal = computed(() => {
 });
 
 const loadIcons = async (item: { total: number; prefix: string; name: string }) => {
-  const res = await fetch(iconifyUrl + "collection?prefix=" + item.prefix, {
+  const res = await fetch(iconifyUrl.value + "/collection?prefix=" + item.prefix, {
     method: "get",
   });
   // 将云端数据写入本地数据中
@@ -135,7 +135,7 @@ const pageChange = (page: { currentPage: number; currentPageSize: number }) => {
 };
 
 onMounted(async () => {
-  const res = await fetch(iconifyUrl + "collections", {
+  const res = await fetch(iconifyUrl.value + "/collections", {
     method: "get",
   });
   // 将云端数据写入本地数据中

@@ -474,3 +474,21 @@
       }
     }
   }
+
+
+  .designer-slot__selected-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: bold;
+    user-select: none;
+    cursor: pointer;
+    transition: var(--ml-transition-base);
+    padding: var(--ml-pd-small) var(--ml-pd-base);
+    border-radius: var(--ml-radius-small);
+  }
+  .designer-slot__selected-item:hover{
+    background-color: var(--ml-fill-color-4);
+    color: var(--ml-primary-color);
+  }

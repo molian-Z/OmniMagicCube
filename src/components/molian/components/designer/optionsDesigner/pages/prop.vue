@@ -68,6 +68,13 @@ const getProp = (keyName: string) => {
         return comps.value[selectedComp.value.name].props[keyName];
     }
 };
+
+const isRemoveAttr = (keyName: any) => {
+    if(!!selectedComp.value){
+        return !!getProp(keyName).removeAttr
+    }
+}
+
 </script>
 <template>
   <div class="basic-list">
@@ -90,6 +97,7 @@ const getProp = (keyName: string) => {
             v-model="currentAttrs[key]"
             :propData="val"
             :keyName="key"
+            v-if="!isRemoveAttr(key)"
           />
         </template>
       </template>

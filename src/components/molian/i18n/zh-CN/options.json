@@ -13,6 +13,7 @@
     "search":"搜索",
     "add":"添加",
     "remove":"删除",
+    "appendComponent":"插入组件",
     "basic":"基础",
     "properties":"特性",
     "slot":"插槽",

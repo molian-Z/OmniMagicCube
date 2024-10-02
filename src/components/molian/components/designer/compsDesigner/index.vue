@@ -21,7 +21,7 @@ const i18nList = computed(() => {
   return categoryList.value.map((item) => {
     return {
       ...item,
-      text: t("component.category." + item.name),
+      text: item.title || t("component.category." + item.name),
     };
   });
 });
@@ -76,14 +76,15 @@ const activeDivData = computed(() => {
         @click="useUI = 'all'"
       />
       <customTooltip v-for="item in allUI" :key="item.name">
-        <svg-icon size="14"
+        <svg-icon
+          size="14"
           :class="['css-svg-icon', useUI === item.name && 'is-actived']"
           :icon="`uiLib-${item.icon}`"
           @click="useUI = item.name"
         />
         <template #content>
           <div class="link-container">
-            <span style="user-select: none">{{ item.name }}</span>
+            <span style="user-select: none;">{{ item.name }}</span>
             <a class="ml-link" :href="item.docUrl" target="_blank" v-if="!!item.docUrl">
               <svg-icon icon="outLink"></svg-icon>
             </a>
@@ -92,13 +93,19 @@ const activeDivData = computed(() => {
       </customTooltip>
     </div>
     <div class="comps-designer-container">
-        <div class="comps-designer-container__category">
-            <div class="comps-designer-container__category-item" :class="[compPanel === item.name && 'category-is-actived']" v-for="item in i18nList" :key="item.name" @click="compPanel = item.name">
-                <SvgIcon size="26" :icon="item.icon"></SvgIcon>
-                <div class="comps-designer-container__category-item-text">{{ item.text }}</div>
-            </div>
+      <div class="comps-designer-container__category">
+        <div
+          class="comps-designer-container__category-item"
+          :class="[compPanel === item.name && 'category-is-actived']"
+          v-for="item in i18nList"
+          :key="item.name"
+          @click="compPanel = item.name"
+        >
+          <SvgIcon size="26" :icon="item.icon"></SvgIcon>
+          <div class="comps-designer-container__category-item-text">{{ item.text }}</div>
         </div>
-        <categroy-panel :currentData="activeDivData" :currentUI="useUI" />
+      </div>
+      <categroy-panel :currentData="activeDivData" :currentUI="useUI" />
     </div>
   </div>
 </template>
@@ -151,45 +158,45 @@ const activeDivData = computed(() => {
     height: 100%;
     display: flex;
     background-color: var(--ml-bg-color);
-    &__category{
+    &__category {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+
+      &-item {
         display: flex;
         flex-direction: column;
-        flex:1;
+        align-items: center;
+        justify-content: center;
+        transition: var(--ml-transition-base);
+        color: var(--ml-fill-color);
+        font-size: 12px;
+        cursor: pointer;
 
-        &-item{
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            transition: var(--ml-transition-base);
-            color: var(--ml-fill-color);
-            font-size: 12px;
-            cursor: pointer;
+        margin: var(--ml-mg-base);
+        // padding: 6px;
+        border-radius: var(--ml-radius-lg);
+        width: 60px;
+        height: 60px;
 
-            margin: var(--ml-mg-base);
-            // padding: 6px;
-            border-radius: var(--ml-radius-lg);
-            width: 60px;
-            height: 60px;
-
-            &-text{
-                padding-top: var(--ml-pd-small);
-            }
-
-            &:hover{
-                color:var(--ml-primary-color);
-
-                &-text{
-                    color: var(--ml-primary-color);
-                }
-            }
+        &-text {
+          padding-top: var(--ml-pd-small);
         }
+
+        &:hover {
+          color: var(--ml-primary-color);
+
+          &-text {
+            color: var(--ml-primary-color);
+          }
+        }
+      }
     }
   }
 }
 
-.category-is-actived{
-    color: var(--ml-primary-color);
-    box-shadow: var(--ml-shadow-small-inset);
+.category-is-actived {
+  color: var(--ml-primary-color);
+  box-shadow: var(--ml-shadow-small-inset);
 }
 </style>

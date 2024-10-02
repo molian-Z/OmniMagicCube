@@ -19,7 +19,7 @@ const props = withDefaults(
   defineProps<{
     modelValue: any;
     keyName: string | number | any;
-    attrs:
+    attrs?:
       | {
           [key: string]: any;
         }
@@ -34,7 +34,7 @@ const props = withDefaults(
           [key: string]: any;
         }
       | any;
-    isModifiers: boolean;
+    isModifiers?: boolean;
   }>(),
   {
     modelValue: "",
@@ -93,9 +93,17 @@ const getOptionItemI18n = (optionItems: any[]) => {
 const types = computed(() => {
   let currentType = [];
   if (Array.isArray(props.propData.type)) {
-    currentType = props.propData.type.concat(["variable"]);
+    if(props.propData.type.indexOf('function') === -1){
+        currentType = props.propData.type.concat(["function" ,"variable"]);
+    }else{
+        currentType = props.propData.type.concat(["variable"]);
+    }
   } else {
-    currentType = [props.propData.type, "variable"];
+    if(props.propData.type !== 'function') {
+        currentType = [props.propData.type, "function", "variable"];
+    }else {
+        currentType = [props.propData.type, "variable"];
+    }
   }
   return currentType;
 });
@@ -161,8 +169,6 @@ const tabType = () => {
     types.value.length - 1 === currentTypeIndex.value ? 0 : currentTypeIndex.value + 1;
     value.value = null;
 };
-
-// 指令支持
 </script>
 
 <template>
@@ -172,8 +178,6 @@ const tabType = () => {
     </div>
     <div class="data2form-item__input">
       <transition name="fade">
-        <!-- <customCascader size="small" :options="variableList" :checkStrictly="true" :clearable="true"
-                    v-model="variableValue" valueType="full" v-if="type === 'variable'" /> -->
         <VariablePicker
           size="small"
           clearable
@@ -207,6 +211,7 @@ const tabType = () => {
           v-model="value"
           v-else-if="['promise', 'function', 'object', 'array'].indexOf(type) > -1"
         />
+        <component :is="propData.customComponent" v-else-if="type === 'custom'"></component>
         <customInput size="small" v-model="value" v-else></customInput>
       </transition>
     </div>

@@ -134,7 +134,7 @@ const appendModifiers = (val: string[]) => {
     @click="showDialog(mode)"
   >
     {{ newValue.code ? t("options.modify") : t("options.edit")
-    }}{{ t(`options.${mode}`) }}
+    }}<span style="padding-left: 6px;">{{ t(`options.${mode}`) }}</span>
 
     <customDialog
       appendToBody

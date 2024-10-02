@@ -40,14 +40,14 @@ export const runLifecycle = function (lifecycle: any, variable: any, expandAPI: 
             if (value) {
                 const { code, codeVar } = value;
                 // 判断当前生命周期方法是否不在默认的生命周期映射中
-                if (!defaultLifecycleMap[key].function) {
+                if (!defaultLifecycleMap.value[key].function) {
                     // 创建执行函数
                     const runFn: any = createFunc(type, codeVar, code)
                     // 绑定上下文并执行生命周期方法
                     runFn.bind({ app: Vue, vars: variable, ...expandAPI }).call([])
                 } else {
                     // 如果默认生命周期映射中存在当前生命周期方法，则创建并执行新的函数
-                    defaultLifecycleMap[key].function(function () {
+                    defaultLifecycleMap.value[key].function(function () {
                         const _args: any[] = []
                         for (let index = 0; index < arguments.length; index++) {
                             const newVar = arguments[index];

@@ -26,8 +26,12 @@ const getCurrentUI = computed(() => {
     return props.currentUI !== 'all' ? UIData.find(item => item.name === props.currentUI) || 'all' : 'all'
 })
 
+const allCompsData:any = computed(() => {
+    return Object.values(comps.value)
+})
+
 const compList: any = computed(() => {
-    return Object.values(comps.value).filter((item: any) => {
+    return allCompsData.value.filter((item: any) => {
         if(props.currentData.name === 'all'){
             return getCurrentUI.value === 'all' || item.prefix === getCurrentUI.value.prefix || item.category === 'basic'
         }else if(item.category === props.currentData.name){

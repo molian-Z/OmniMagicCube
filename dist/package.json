@@ -1,12 +1,12 @@
 {
   "name": "omni-magic-cube",
-  "version": "0.20.7",
+  "version": "0.21.1",
   "private": false,
   "description": "",
   "author": "molian-Z",
-  "main": "./index.umd.js",
-  "module": "./index.es.js",
-  "types":"./index.d.ts",
+  "main": "./designer.umd.js",
+  "module": "./designer.es.js",
+  "types":"./global.d.ts",
   "keywords": [
     "designer",
     "vue3",
