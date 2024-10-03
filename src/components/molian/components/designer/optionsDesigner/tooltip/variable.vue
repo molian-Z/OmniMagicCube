@@ -3,7 +3,8 @@ import { ref, inject, defineExpose } from 'vue'
 import { globalAttrs } from '../../designerData'
 import MlSubForm from '@molianComps/MlSubForm/index.vue'
 import data2input from '@molianComps/Data2Input/index.vue'
-const t:any = inject('mlLangs')
+import {useI18n} from 'vue-i18n'
+const {t} = useI18n()
 const customComps:any = inject('customComps')
 const message:any = inject("mlMessage")
 const { customDialog, customButton } = customComps

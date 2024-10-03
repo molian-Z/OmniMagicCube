@@ -10,7 +10,6 @@ import { modelValue, selectedComp, createComp, screenRatioInfo } from '../design
 import { resetHover, dragNodes, dragIndex, dropIndex, resetDraggable, onDragenter } from '../draggable'
 import { calculateRatio, scaleCalculate } from '@molian/utils/util'
 const comps: any = inject('mlComps')
-const t: any = inject('mlLangs')
 const containerRef = ref()
 const onDrop = function (evt: any) {
     const name = evt.dataTransfer.getData('compName')

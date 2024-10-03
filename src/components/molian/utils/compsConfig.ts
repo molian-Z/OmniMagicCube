@@ -27,9 +27,6 @@ import {
 import {
     getCloudData
 } from './getCloudData'
-
-import { i18nt as t } from './lang'
-
 // 注册配置
 const config = {
     categoryList: [],
@@ -396,7 +393,8 @@ const registerComps = function (app: { _context: { components: any }; provide: (
     allowRegPropsAndEmit,
     registerCloud,
     registerCloudUrl
-}: plug.registerComps) {
+}: plug.registerComps, i18n:any) {
+    const {t} = i18n
     // 初始化一个新的组件对象，用于存储解析后的组件
     const newComps: { [key: string]: any } = {}
     // 根据是否存在自定义组件来确定最终要处理的组件列表
@@ -459,7 +457,17 @@ const registerComps = function (app: { _context: { components: any }; provide: (
             }
             // 设置组件的前缀和标题
             newComps[key].prefix = prefixObj && prefixObj.prefix || ''
-            newComps[key].title = newComps[key].comp.title || t('component.' + newComps[key].name.substring(newComps[key].prefix.length))
+            if(newComps[key].comp.title){
+                newComps[key].title = newComps[key].comp.title
+            }else{
+                let langKey = 'component.' + newComps[key].name.substring(newComps[key].prefix.length)
+                const tTitle = t(langKey)
+                if(tTitle === langKey) {
+                    newComps[key].title = langKey.split('.')[langKey.split('.').length - 1]
+                }else{
+                    newComps[key].title = tTitle
+                }
+            }
         }
     }
     // 将解析后的组件存储为当前注册的组件
@@ -469,7 +477,7 @@ const registerComps = function (app: { _context: { components: any }; provide: (
         if(registerCloudUrl){
             cloudUrl.value = registerCloudUrl
         }
-        getCloudData()
+        getCloudData(i18n)
         .then(() =>{
             
         })
@@ -540,7 +548,7 @@ const registerCustomComps = function (app: App<any>) {
  * @param app 应用实例
  * @param options 安装选项，包括全局组件
  */
-export const compsInstall = function (app: App<any>, options: plug.registerComps) {
+export const compsInstall = function (app: App<any>, options: plug.registerComps, i18n:any) {
     // 合并当前配置，包括默认配置和用户提供的配置
     const currentConfig: plug.registerComps = {
         ...config,
@@ -565,7 +573,7 @@ export const compsInstall = function (app: App<any>, options: plug.registerComps
     registerCategory(options.categoryList, options.clearDefaultCategory)
 
     // 注册组件到应用
-    registerComps(app, currentConfig)
+    registerComps(app, currentConfig, i18n)
 
     // 注册自定义组件
     registerCustomComps(app)

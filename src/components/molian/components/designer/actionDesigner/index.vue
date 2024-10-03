@@ -4,7 +4,8 @@ import { actionPanel, globalMenu } from '../designerData'
 import floatPanel from '@molianComps/FloatPanel/index.vue'
 import { setting } from '@molian/utils/defaultData'
 import ActionList from './components/ActionList.vue'
-const t:any = inject('mlLangs')
+import {useI18n} from 'vue-i18n'
+const {t} = useI18n()
 const menus = ref([{
     icon: 'action-run',
     text: t('actions.pageAction'),

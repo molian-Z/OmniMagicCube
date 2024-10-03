@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { defineOptions, defineProps } from "vue";
+import {useI18n} from 'vue-i18n'
+const {t} = useI18n()
 const customComps: any = inject("customComps");
 const { customPopconfirm, customPopup } = customComps;
-const t: any = inject("mlLangs");
 defineOptions({
   name: "ListCard",
 });

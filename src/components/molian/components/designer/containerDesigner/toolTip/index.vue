@@ -2,9 +2,10 @@
 import { computed, inject } from 'vue'
 import { hoverComp, hoverBounding, startDraggable, useDraggable } from '../../draggable'
 import svgIcon from '@molianComps/SvgIcon/index.vue'
+import {useI18n} from 'vue-i18n'
+const {t} = useI18n()
 const customComps: any = inject('customComps')
 const { customInput } = customComps
-const t: any = inject('mlLangs')
 const { onDragend } = useDraggable(null, null, null)
 const { top, left, width, height } = hoverBounding
 const comps: any = inject('mlComps')
@@ -34,7 +35,7 @@ const editSubTitle = ref(false)
       <svg-icon size="22" class="drag-icon" :icon="hoverComp.icon || 'comps-default'" />
       <div class="drag-title">
         <div class="drag-title-text">
-        <div v-if="!editSubTitle">{{ hoverComp.subTitle || t('component.' + comps[hoverComp.name].title) }}</div>
+        <div v-if="!editSubTitle">{{ hoverComp.subTitle || t(comps[hoverComp.name].title) }}</div>
         <customInput size="small" v-model="hoverComp.subTitle" @blur="editSubTitle = false" v-else></customInput>
         <svg-icon class="drag-title-text__icon" icon="ep:edit" @click="editSubTitle = true" v-if="!editSubTitle"></svg-icon>
         <svg-icon class="drag-title-text__icon" icon="ep:select" v-else @click="editSubTitle = false"></svg-icon>

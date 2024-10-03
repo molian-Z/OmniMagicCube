@@ -904,9 +904,7 @@ declare namespace plug {
         useData?: any;
         compsConfig: plug.registerComps;
         iconUrl?: string;
-        i18nData?: {
-            [key: string]: any;
-        };
+        i18nInstance?: any;
     }
 
     interface renderInstall {

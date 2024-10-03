@@ -1,11 +1,12 @@
 <script lang="ts" setup>
-import { defineOptions, inject } from "vue";
+import { defineOptions } from "vue";
 import { currentEmits, currentNativeOn, currentLifecycle, globalAttrs, generateRandomString } from "@molianComps/Designer/designerData";
 import ActionDetail from "./ActionDetail.vue";
+import {useI18n} from 'vue-i18n'
+const {t} = useI18n()
 defineOptions({
   name: "ActionList",
 });
-const t: any = inject("mlLangs");
 const actionFlowData = computed(() => {
   return {
     lifecycle: currentLifecycle,

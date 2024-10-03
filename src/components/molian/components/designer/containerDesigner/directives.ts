@@ -20,7 +20,7 @@ import {
     useDraggable,
     onDragenter
 } from '../draggable'
-import { menuData } from './menus'
+import { useMenus } from './menus'
 import {
     parseStyle
 } from '@molian/utils/css-generator'
@@ -82,7 +82,7 @@ export const directives = {
             setSelectedComp(comp)
             showToolbar(evt, comp, index, props.modelValue)
         }
-
+        const { menus } = useMenus()
         const onContextmenu = function (evt: any, comp: any, index: number) {
             evt.preventDefault();
             try {
@@ -108,7 +108,7 @@ export const directives = {
                     //     mode:'out-in'
                     // },
                     customClass: "context-menu__list",
-                    items: menuData.value
+                    items: menus.value
                 });
             })
         }

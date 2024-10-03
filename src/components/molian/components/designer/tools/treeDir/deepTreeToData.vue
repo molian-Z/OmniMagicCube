@@ -13,7 +13,8 @@ import {
   dropKey,
   dragIndex,
 } from "@molianComps/Designer/draggable";
-
+import {useI18n} from 'vue-i18n'
+const {t} = useI18n()
 const props = defineProps({
   modelValue: {
     type: Array,
@@ -39,7 +40,6 @@ const compData: any = computed({
     emit("update:modelValue", val);
   },
 });
-const t :any = inject('mlLangs');
 const mlComps: any = inject("mlComps");
 const message: any = inject("mlMessage");
 const customComps: any = inject('customComps')

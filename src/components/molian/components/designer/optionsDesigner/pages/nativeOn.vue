@@ -2,11 +2,12 @@
 import { defineOptions, inject, ref } from 'vue';
 import anyData2Form from '@molianComps/AnyData2Form/index.vue'
 import { selectedComp, selectedNativeOn, currentNativeOn, appendNativeOn } from "@molianComps/Designer/designerData";
+import {useI18n} from 'vue-i18n'
+const {t} = useI18n()
 defineOptions({
     name: 'NativeOn'
 })
 const customComps: any = inject('customComps')
-const t: any = inject('mlLangs')
 const { customButton, customInput } = customComps
 const appendOnInput = ref('')
 const appendOn = () => {

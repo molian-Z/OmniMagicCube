@@ -3,6 +3,8 @@ import { inject, computed, defineEmits, defineProps, watch } from 'vue'
 import { deepObjToArray } from '@molian/utils/util'
 import { selectedComp, globalAttrs } from '../../designerData'
 import svgIcon from '@molianComps/SvgIcon/index.vue'
+import {useI18n} from 'vue-i18n'
+const {t} = useI18n()
 defineProps({
   title: {
     type: String,
@@ -13,7 +15,6 @@ const emit = defineEmits(['close'])
 const customComps: any = inject('customComps')
 const { customCascaderPanel, customRadioGroup, customRadioButton, customInput } = customComps
 const message: any = inject("mlMessage")
-const t: any = inject('mlLangs')
 const variableList = computed(() => {
   return Object.keys(globalAttrs.variable).map(key => {
     const variableValue = globalAttrs.variable[key]
@@ -107,7 +108,7 @@ watch(() => directives.value, (newVal) => {
 </script>
 <template>
   <div class="flex-container">
-    <span class="sub-title">{{ t('options.' + title) }}</span>
+    <span class="sub-title">{{ title }}</span>
     <svgIcon class="svg-icon " icon="clear" @click="clearData"></svgIcon>
   </div>
   <div class="switch-tab">

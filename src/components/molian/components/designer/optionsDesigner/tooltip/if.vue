@@ -1,8 +1,10 @@
 <script setup lang="ts">
-import { ref, inject, computed, defineEmits, defineProps } from 'vue'
+import { inject, computed, defineEmits, defineProps } from 'vue'
 import { deepObjToArray } from '@molian/utils/util'
 import { selectedComp, globalAttrs } from '../../designerData'
 import svgIcon from '@molianComps/SvgIcon/index.vue'
+import {useI18n} from 'vue-i18n'
+const {t} = useI18n()
 defineProps({
     title: {
         type: String,
@@ -13,7 +15,6 @@ const emit = defineEmits(['close'])
 const customComps: any = inject('customComps')
 const { customCascaderPanel } = customComps
 const message: any = inject("mlMessage")
-const t: any = inject('mlLangs')
 const variableList = computed(() => {
     if (globalAttrs.variable) {
         return Object.keys(globalAttrs.variable).map(key => {

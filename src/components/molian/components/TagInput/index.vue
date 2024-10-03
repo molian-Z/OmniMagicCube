@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { ref, nextTick, inject, defineProps, defineEmits } from "vue";
+import {useI18n} from 'vue-i18n'
+const {t} = useI18n()
 const props = defineProps({
   inputText: { type: String },
   modelValue: {
@@ -8,7 +10,6 @@ const props = defineProps({
   },
 });
 const emit = defineEmits(["update:modelValue"]);
-const t: any = inject("mlLangs");
 const customComps: any = inject("customComps");
 const { customInput, customTag, customButton } = customComps;
 

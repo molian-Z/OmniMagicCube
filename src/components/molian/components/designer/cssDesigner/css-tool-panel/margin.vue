@@ -2,8 +2,9 @@
 import { ref, computed, inject, watch } from 'vue'
 import { selectedComp } from '@molianComps/Designer/designerData'
 import svgIcon from '@molianComps/SvgIcon/index.vue'
+import {useI18n} from 'vue-i18n'
+const {t} = useI18n()
 const customComps: any = inject('customComps')
-const t: any = inject('mlLangs')
 const { customInput, customTooltip } = customComps
 
 const css = computed(() => {

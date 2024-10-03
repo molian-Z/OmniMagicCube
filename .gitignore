@@ -118,4 +118,3 @@ dev-dist
 .yarn/unplugged
 .yarn/build-state.yml
 .pnp.*
-/stats.html

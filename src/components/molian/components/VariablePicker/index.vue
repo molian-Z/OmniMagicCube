@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { defineOptions, defineProps, defineEmits, inject, useAttrs } from "vue";
 import Popper from "@molianComps/Popper/index.vue";
+import {useI18n} from 'vue-i18n'
 defineOptions({
   name: "VariablePicker",
   inheritAttrs: false,
@@ -33,7 +34,7 @@ const cmtdAttrs = computed(() => {
   });
   return newAttrs;
 });
-const t: any = inject("mlLangs");
+const {t} = useI18n()
 const customComps: any = inject("customComps");
 const { customInput } = customComps;
 

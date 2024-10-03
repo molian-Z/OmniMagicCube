@@ -1,14 +1,15 @@
 <script setup lang="ts">
 import { ref, inject, nextTick, watch } from 'vue'
 import { onClickOutside } from '@vueuse/core'
-import { modelValue, aiImRef, fullLoading, compsRef } from '@molianComps/Designer/designerData'
+import { aiImRef, fullLoading, compsRef } from '@molianComps/Designer/designerData'
 import { AIURL } from '@molian/utils/defaultData'
 import svgIcon from '@molianComps/SvgIcon/index.vue'
 import floatBall from '@molianComps/FloatBall/index.vue'
 import loadComp from '@molianComps/Loading/loading-1.vue'
 import { generateUUID } from '@molian/utils/util'
 import { useUI } from '@molian/utils/UIMap'
-const t: any = inject('mlLangs')
+import {useI18n} from 'vue-i18n'
+const {t} = useI18n()
 const customComps: any = inject('customComps')
 const { customInput, customButton } = customComps
 const message: any = inject("mlMessage")

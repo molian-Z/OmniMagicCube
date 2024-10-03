@@ -4,12 +4,13 @@ import { useCloned } from "@vueuse/core";
 import { selectedComp, createComp } from "../../designerData";
 import { slotsMap } from "@molian/utils/compsConfig";
 import svgIcon from "@molianComps/SvgIcon/index.vue";
+import { useI18n } from "vue-i18n";
+const { t } = useI18n();
 defineOptions({
   name: "SlotComp",
 });
 const comps: any = inject("mlComps");
 const customComps: any = inject("customComps");
-const t: any = inject("mlLangs");
 const { customButton, customInput, customPopup } = customComps;
 
 const tempSlot = ref("");
@@ -51,8 +52,8 @@ const existSlot = (key: any) => {
 };
 
 const appendChildComp = (key: any, comp: any) => {
-    let obj = createComp(comps.value[comp.name], comp)
-    selectedComp.value.slots[key].children.push(obj)
+  let obj = createComp(comps.value[comp.name], comp);
+  selectedComp.value.slots[key].children.push(obj);
 };
 
 const updateModelValue = (key: any, btn: boolean) => {
@@ -62,6 +63,15 @@ const updateModelValue = (key: any, btn: boolean) => {
     showKeyName.value = key;
   }
 };
+
+const getI18n = (key: string | number) => {
+  const rootKey = `attrs.${key}`;
+  if (t(rootKey) === rootKey) {
+    return key;
+  } else {
+    return t(rootKey);
+  }
+};
 </script>
 <template>
   <div class="slots-list">
@@ -69,7 +79,7 @@ const updateModelValue = (key: any, btn: boolean) => {
       <div class="slot-item">
         <div class="slot-item__title">
           <svg-icon class="slot-item__icon" icon="appendSlot" />
-          <span class="slot-item__text">{{ t("slot." + key) }}</span>
+          <span class="slot-item__text">{{ getI18n(key) }}</span>
         </div>
         <customPopup
           trigger="click"

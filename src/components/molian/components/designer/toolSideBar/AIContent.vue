@@ -1,7 +1,8 @@
 <script lang="ts" setup>
-import { ref, inject } from 'vue'
+import { ref } from 'vue'
 import svgIcon from '@molianComps/SvgIcon/index.vue'
-const t: any = inject('mlLangs')
+import {useI18n} from 'vue-i18n'
+const {t} = useI18n()
 const foldAI = ref(true)
 const iconValue = ref('')
 </script>

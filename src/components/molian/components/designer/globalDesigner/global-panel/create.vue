@@ -6,9 +6,9 @@ import { createJS, conciseJs } from '@molian/utils/js-generator'
 import { modelValue,globalAttrs } from '../../designerData'
 import CodeEditor from '@molianComps/MlCodeEditor/index.vue'
 import { useBroadcastChannel } from '@vueuse/core'
-
+import {useI18n} from 'vue-i18n'
+const {t} = useI18n()
 const customComps:any = inject('customComps')
-const t:any = inject('mlLangs')
 const { customButton, customTooltip, customDialog } = customComps
 const message:any = inject("mlMessage")
 const {

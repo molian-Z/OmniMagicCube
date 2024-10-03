@@ -4,8 +4,9 @@ import { selectedComp } from '@molianComps/Designer/designerData'
 import colorPicker from '@molianComps/ColorPicker/index.vue'
 import svgIcon from '@molianComps/SvgIcon/index.vue'
 import textComp from '@molianComps/Designer/optionsDesigner/tooltip/text.vue'
+import {useI18n} from 'vue-i18n'
+const {t} = useI18n()
 const customComps:any = inject('customComps')
-const t:any = inject('mlLangs')
 const { customInput, customSelect, customTooltip } = customComps
 
 const fontFamily = ref(['微软雅黑', '宋体', '新宋体', '仿宋', '黑体', '楷体', '等线', 'SimSun-ExtB', 'Arial Nova', 'Arial', 'Corbel'])

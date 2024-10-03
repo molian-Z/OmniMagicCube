@@ -5,8 +5,8 @@ import { modelValue, treeDirRef } from "@molianComps/Designer/designerData";
 import { setting } from "@molian/utils/defaultData";
 import deepTree from "./deepTreeToData.vue";
 import floatBall from "@molianComps/FloatBall/index.vue";
-
-const t: any = inject("mlLangs");
+import {useI18n} from 'vue-i18n'
+const {t} = useI18n()
 
 onClickOutside(treeDirRef, (evt: any) => {
   const { classList } = evt.target;

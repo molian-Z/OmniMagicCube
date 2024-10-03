@@ -4,7 +4,8 @@ import stickyTool from '@molianComps/StickyTool/index.vue'
 import switchButton from '@molianComps/SwitchButton/index.vue'
 import { setting } from '@molian/utils/defaultData'
 import { globalMenu } from '../designerData'
-const t:any = inject('mlLangs')
+import {useI18n} from 'vue-i18n'
+const {t} = useI18n()
 const menus = ref([{
     icon: 'style',
     text: t('globalTool.style'),

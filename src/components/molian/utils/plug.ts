@@ -1,7 +1,4 @@
 import {
-    langInstall
-} from './lang'
-import {
     compsInstall
 } from './compsConfig'
 import { useUI, UIData, usePrefix, debug } from './UIMap'
@@ -20,6 +17,8 @@ import MlSubForm from '@molianComps/MlSubForm/index.vue'
 import MlEcharts from '@molianComps/Echarts/index.vue'
 import MlTagInput from '@molianComps/TagInput/index.vue'
 // import MlCodeEditor from '@molianComps/MlCodeEditor/index.vue'
+import messages from '@intlify/unplugin-vue-i18n/messages'
+import { setupI18n } from '@molian/locales'
 console.log(`%c无界魔方%cOmni Magic Cube V${import.meta.env.PACKAGE_VERSION}%c
 %cTo:墨联墨客`,
     'background: #2D74FF; color: #fff; border-radius:3px;padding:4px 8px;font-size:14px;font-weight:bold;',
@@ -30,6 +29,18 @@ console.log(`%c无界魔方%cOmni Magic Cube V${import.meta.env.PACKAGE_VERSION}
 
 export default {
     install(app: App, options: plug.designerInstall) {
+        let i18nInstance:any
+        if(!options.i18nInstance) {
+            options.i18nInstance = setupI18n()
+            app.use(options.i18nInstance)
+            i18nInstance = options.i18nInstance.global
+        } else {
+            i18nInstance = options.i18nInstance
+            const i18nObj:any = messages
+            Object.keys(i18nObj).forEach(key => {
+                i18nInstance.mergeLocaleMessage(key, i18nObj[key])
+            })
+        }
         app.component('SvgIcon', SvgIcon)
         app.component('Icon', Icon)
         app.component('IconPicker', IconPicker)
@@ -59,9 +70,7 @@ export default {
             UIData.length = 0
             UIData.push(...options.useData)
         }
-        const { i18nData } = options
-        langInstall(app, i18nData)
-        compsInstall(app, options.compsConfig)
+        compsInstall(app, options.compsConfig, i18nInstance)
 
         // 注册右键菜单组件
         app.use(ContextMenu);

@@ -136,24 +136,7 @@ const options:plug.designerInstall = {
         }
     },
     iconUrl: 'http://flower.molianpro.com:33000',
-    // i18n数据合并
-    i18nData: {
-        // "zh-cn": {
-        //     "attrs": {
-        //         MlSubForm: {
-        //             isAdd: "打开新增",
-        //             isAppend: "打开追加",
-        //             isDelete: "打开删除",
-        //             isSortable: "打开排序",
-        //             maxHeight: "最大高度",
-        //             height: "高度",
-        //             modelValue: "模型值",
-        //             columns: "列信息",
-        //             formatColumns: "格式化列",
-        //         }
-        //     }
-        // },
-    },
+    // i18nInstance: useI18n(),
 }
 app.use(plug, options);
 

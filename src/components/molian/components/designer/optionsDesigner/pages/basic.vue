@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { defineOptions, inject } from "vue";
 import { hoverComp } from '../../draggable'
-
+import {useI18n} from 'vue-i18n'
+const {t} = useI18n()
 defineOptions({
   name: "basicComp",
 });
 const customComps: any = inject("customComps");
 const { customInput } = customComps;
-const t:any = inject('mlLangs')
 
 </script>
 <template>

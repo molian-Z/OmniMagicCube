@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { defineOptions, defineProps, defineEmits, inject, useAttrs } from "vue";
 import Popper from "@molianComps/Popper/index.vue";
+import {useI18n} from 'vue-i18n'
 defineOptions({
   name: "MlCascader",
   inheritAttrs: false,
@@ -19,6 +20,7 @@ const props = defineProps({
     default: "",
   },
 });
+const {t} = useI18n()
 const emit = defineEmits(["update:modelValue"]);
 const isClearable = ref(false);
 const attrs = useAttrs();
@@ -29,7 +31,6 @@ const cmtdAttrs = computed(() => {
   });
   return newAttrs;
 });
-const t: any = inject("mlLangs");
 const customComps: any = inject("customComps");
 const { customInput } = customComps;
 

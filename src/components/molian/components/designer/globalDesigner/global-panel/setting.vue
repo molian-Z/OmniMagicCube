@@ -1,11 +1,12 @@
 <script lang="ts" setup>
 import { inject } from 'vue'
 import { setting } from '@molian/utils/defaultData'
-import { deleteAll } from '@/components/molian/utils/indexedDB';
+import { deleteAll } from '@/components/molian/utils/indexedDB'
 import { getCloudData } from '@molian/utils/getCloudData'
+import {useI18n} from 'vue-i18n'
+const {t} = useI18n()
 const customComps: any = inject('customComps')
 const { customSwitch, customButton } = customComps
-const t: any = inject('mlLangs')
 
 const syncCloudData = async () => {
     await deleteAll()

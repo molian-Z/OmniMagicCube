@@ -1,6 +1,7 @@
 import { resolve } from 'node:path'
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
+import vueI18n from '@intlify/unplugin-vue-i18n/vite'
 import { VitePWA } from 'vite-plugin-pwa';
 import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
 import autoImport from 'unplugin-auto-import/vite'
@@ -69,7 +70,11 @@ export default defineConfig({
             dirs: ['src/components'],
             include: [/\.vue$/, /\.vue\?vue/, /\.tsx$/],
             dts: './src/types/components.d.ts',
-        })
+        }),
+        vueI18n({
+            include: resolve(process.cwd(), 'src/components/molian/locales/lang/**'),
+          }),
+      
     ],
     resolve: {
         alias: {

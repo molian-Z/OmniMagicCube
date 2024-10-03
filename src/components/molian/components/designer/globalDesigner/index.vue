@@ -4,7 +4,8 @@ import { globalPanel, globalMenu } from '../designerData'
 import floatPanel from '@molianComps/FloatPanel/index.vue'
 import create from './global-panel/create.vue'
 import device from './global-panel/device.vue'
-const t: any = inject('mlLangs')
+import {useI18n} from 'vue-i18n'
+const {t} = useI18n()
 const menus = ref([{
     icon: 'device',
     text: t('global.device'),

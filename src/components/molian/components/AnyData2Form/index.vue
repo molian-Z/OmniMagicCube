@@ -6,15 +6,11 @@ import IconPicker from "@molianComps/IconPicker/index.vue";
 import colorPicker from "@molianComps/ColorPicker/index.vue";
 import codeInput from "@molianComps/MlCodeInput/index.vue";
 import { globalAttrs } from "@molianComps/Designer/designerData";
-const t: any = inject("mlLangs");
+import { useI18n } from "vue-i18n";
+const { t } = useI18n();
 const message: any = inject("mlMessage");
 const customComps: any = inject("customComps");
-const {
-  customInputNumber,
-  customInput,
-  customSwitch,
-  customSelect,
-} = customComps;
+const { customInputNumber, customInput, customSwitch, customSelect } = customComps;
 const props = withDefaults(
   defineProps<{
     modelValue: any;
@@ -76,46 +72,36 @@ const variableValue = computed({
   },
 });
 
-const getOptionItemI18n = (optionItems: any[]) => {
-  return optionItems.map((item) => {
-    let langStr = t(
-      `attrs.${props.selectedComp.name}.${props.keyName}_optionItems.${item}`
-    );
-    if (!langStr || langStr === item) {
-      langStr = t(`attrs.${props.keyName}_optionItems.${item}`);
-    }
-    return {
-      label: langStr === item ? t("attrs." + item) : langStr,
-      value: item,
-    };
-  });
-};
 const types = computed(() => {
   let currentType = [];
   if (Array.isArray(props.propData.type)) {
-    if(props.propData.type.indexOf('function') === -1){
-        currentType = props.propData.type.concat(["function" ,"variable"]);
-    }else{
-        currentType = props.propData.type.concat(["variable"]);
+    if (props.propData.type.indexOf("function") === -1) {
+      currentType = props.propData.type.concat(["function", "variable"]);
+    } else {
+      currentType = props.propData.type.concat(["variable"]);
     }
   } else {
-    if(props.propData.type !== 'function') {
-        currentType = [props.propData.type, "function", "variable"];
-    }else {
-        currentType = [props.propData.type, "variable"];
+    if (props.propData.type !== "function") {
+      currentType = [props.propData.type, "function", "variable"];
+    } else {
+      currentType = [props.propData.type, "variable"];
     }
   }
   return currentType;
 });
 const currentTypeIndex = ref(0);
 
-watch(() => props.modelValue, (newVal) => {
-    if(newVal && types.value.indexOf(props.modelValue.type) > -1){
-        currentTypeIndex.value = types.value.indexOf(props.modelValue.type)
+watch(
+  () => props.modelValue,
+  (newVal) => {
+    if (newVal && types.value.indexOf(props.modelValue.type) > -1) {
+      currentTypeIndex.value = types.value.indexOf(props.modelValue.type);
     }
-}, {
-    immediate: true
-})
+  },
+  {
+    immediate: true,
+  }
+);
 
 const type = computed(() => {
   return types.value[currentTypeIndex.value];
@@ -160,14 +146,39 @@ const variableList = computed(() => {
 });
 
 const getI18n = (key: string | number, name: string) => {
-  const langStr = t("attrs." + name + "." + key);
-  return langStr === key ? t("attrs." + key) : langStr;
+  const allKey = `attrs.${name}.${key}`;
+  let langStr: string | number = t(allKey);
+  if (langStr === allKey) {
+    const rootKey = `attrs.${key}`;
+    if (t(rootKey) === rootKey) {
+      langStr = key;
+    } else {
+      return t(rootKey);
+    }
+  }
+  return langStr;
 };
-
+const getOptionItemI18n = (optionItems: any[]) => {
+  return optionItems.map((item) => {
+    let allKey =  `attrs.${props.selectedComp.name}.${props.keyName}_optionItems.${item}`
+    let langStr = t(allKey);
+    if (!langStr || langStr === allKey) {
+        allKey = `attrs.${props.keyName}_optionItems.${item}`
+        langStr = t(allKey);
+        if(langStr === allKey){
+            langStr = item
+        }
+    }
+    return {
+      label: langStr,
+      value: item,
+    };
+  });
+};
 const tabType = () => {
   currentTypeIndex.value =
     types.value.length - 1 === currentTypeIndex.value ? 0 : currentTypeIndex.value + 1;
-    value.value = null;
+  value.value = null;
 };
 </script>
 
@@ -211,7 +222,10 @@ const tabType = () => {
           v-model="value"
           v-else-if="['promise', 'function', 'object', 'array'].indexOf(type) > -1"
         />
-        <component :is="propData.customComponent" v-else-if="type === 'custom'"></component>
+        <component
+          :is="propData.customComponent"
+          v-else-if="type === 'custom'"
+        ></component>
         <customInput size="small" v-model="value" v-else></customInput>
       </transition>
     </div>

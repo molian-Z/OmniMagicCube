@@ -79,7 +79,7 @@ export const useDraggable = (comps?: any, compData?: any, message?: any) => {
         if (slotVal && slotVal.allowComps && allowCompsBtn(slotVal, name) || slotVal && !slotVal.allowComps || !slotVal) {
             const isCreate = evt.dataTransfer.getData('isCreate')
             if (!!isCreate) {
-                const comp = slotVal.appendComps && slotVal.appendComps.find((item:any) => {
+                const comp = slotVal && slotVal.appendComps && slotVal.appendComps.find((item:any) => {
                     return item.name === name
                 })
                 const obj = createComp(comps.value[name], comp)
@@ -101,7 +101,7 @@ export const useDraggable = (comps?: any, compData?: any, message?: any) => {
         if (slotVal.allowComps && allowCompsBtn(slotVal, name) || !slotVal.allowComps) {
             const isCreate = evt.dataTransfer.getData('isCreate')
             if (!!isCreate) {
-                const comp = slotVal.appendComps && slotVal.appendComps.find((item:any) => {
+                const comp = slotVal && slotVal.appendComps && slotVal.appendComps.find((item:any) => {
                     return item.name === name
                 })
                 const obj = createComp(comps.value[name], comp)

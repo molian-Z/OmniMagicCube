@@ -11,7 +11,8 @@ import { useSortable, moveArrayElement } from "@vueuse/integrations/useSortable"
 import gsap from "gsap";
 import { generateRandomString } from "@molianComps/Designer/designerData";
 import Data2Input from "@molianComps/Data2Input/index.vue";
-const t: any = inject("mlLangs");
+import {useI18n} from 'vue-i18n'
+const {t} = useI18n()
 const customComps: any = inject("customComps");
 const { customButton } = customComps;
 defineOptions({

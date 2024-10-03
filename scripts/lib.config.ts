@@ -8,6 +8,7 @@ import visualizer from 'rollup-plugin-visualizer'
 import commonjs from '@rollup/plugin-commonjs'
 import dts from 'vite-plugin-dts'
 import loadVersion from 'vite-plugin-package-version'
+import vueI18n from '@intlify/unplugin-vue-i18n/vite'
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -35,6 +36,9 @@ export default defineConfig({
             dirs: ['src/components'],
             include: [/\.vue$/, /\.vue\?vue/, /\.tsx$/],
             dts: './src/types/components.d.ts',
+        }),
+        vueI18n({
+            include: resolve(process.cwd(), 'src/components/molian/locales/lang/**'),
         }),
         visualizer(),
         commonjs(),
@@ -114,6 +118,7 @@ export default defineConfig({
                     ['ace-builds']: "ace-builds",
                     echarts: "echarts",
                     vconsole: "vconsole",
+                    ['vue-i18n']: 'vue-i18n',
                     ['ace-builds/src-min-noconflict/snippets/javascript']: "ace-builds/src-min-noconflict/snippets/javascript",
                     ["ace-builds/src-min-noconflict/snippets/css"]: "ace-builds/src-min-noconflict/snippets/css",
                     // ['ace-builds/src-min-noconflict/worker-css']: "ace-builds/src-min-noconflict/worker-css",

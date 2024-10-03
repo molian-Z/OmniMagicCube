@@ -6,9 +6,10 @@ import create from '@molianComps/Designer/globalDesigner/global-panel/create.vue
 import device from '@molianComps/Designer/globalDesigner/global-panel/device.vue'
 import setting from '@molianComps/Designer/globalDesigner/global-panel/setting.vue'
 import render from '@/components/molian/components/Render/index.vue'
+import {useI18n} from 'vue-i18n'
+const {t} = useI18n()
 const customComps: any = inject('customComps')
 const { customPopup, customDialog } = customComps
-const t: any = inject('mlLangs')
 
 const showRenderDialog = ref(false)
 
@@ -19,18 +20,18 @@ const showRenderDialog = ref(false)
     <!-- 清空画布 -->
     <div class="toolBar-right-item" @click="clearCanvas">
       <svg-icon class="toolBar-right-icon" icon="clearCanvas"></svg-icon>
-      {{ t('container.clearCanvas') }}
+      <div class="toolBar-right-text">{{ t('container.clearCanvas') }}</div>
     </div>
     <!-- 预览功能 -->
     <div class="toolBar-right-item" @click="showRenderDialog = true">
       <svg-icon class="toolBar-right-icon" icon="preview"></svg-icon>
-      {{ t('container.preview') }}
+      <div class="toolBar-right-text">{{ t('container.preview') }}</div>
     </div>
     <!-- 设备功能 -->
     <customPopup width="360px">
       <div class="toolBar-right-item">
         <svg-icon class="toolBar-right-icon" icon="device"></svg-icon>
-        {{ t('container.device') }}
+        <div class="toolBar-right-text">{{ t('container.device') }}</div>
       </div>
       <template #content>
         <device></device>
@@ -40,7 +41,7 @@ const showRenderDialog = ref(false)
     <customPopup width="220px">
       <div class="toolBar-right-item">
         <svg-icon class="toolBar-right-icon" icon="create"></svg-icon>
-        {{ t('container.import/export') }}
+        <div class="toolBar-right-text">{{ t('container.import/export') }}</div>
       </div>
       <template #content>
         <create></create>
@@ -50,7 +51,7 @@ const showRenderDialog = ref(false)
     <customPopup width="220px">
       <div class="toolBar-right-item">
         <svg-icon class="toolBar-right-icon" icon="globalSetting"></svg-icon>
-        {{ t('container.globalSetting') }}
+        <div class="toolBar-right-text">{{ t('container.globalSetting') }}</div>
       </div>
       <template #content>
         <setting></setting>
@@ -86,6 +87,10 @@ const showRenderDialog = ref(false)
       transition: var(--ml-transition-base);
       fill: var(--ml-primary-color);
       margin: 0;
+    }
+
+    .toolBar-right-text{
+        text-wrap: nowrap;
     }
 
     &:hover {

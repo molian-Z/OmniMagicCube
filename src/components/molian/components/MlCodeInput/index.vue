@@ -2,6 +2,7 @@
 import { ref, computed, inject, defineProps, defineEmits } from "vue";
 import CodeEditor from "@molianComps/MlCodeEditor/index.vue";
 import tagInput from "@molianComps/TagInput/index.vue";
+import {useI18n} from 'vue-i18n'
 defineOptions({
   name:"MlCodeInput"
 })
@@ -37,7 +38,7 @@ const customComps: any = inject("customComps");
 const { customButton, customDialog, customRadioGroup, customRadioButton } = customComps;
 const codeMode = ref("javascript");
 const codeRef = ref();
-const t: any = inject("mlLangs");
+const {t} = useI18n()
 const visible = ref(false);
 const codeObj = ref<any>({});
 

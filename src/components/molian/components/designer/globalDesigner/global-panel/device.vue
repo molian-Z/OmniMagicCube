@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { inject, computed } from 'vue'
+import { inject } from 'vue'
 import { deviceList } from '@molian/utils/device'
 import { screenRatioInfo } from '@molianComps/Designer/designerData'
+import {useI18n} from 'vue-i18n'
+const {t} = useI18n()
 const customComps:any = inject('customComps')
-const t:any = inject('mlLangs')
 const { customInput, customRadioGroup, customRadioButton } = customComps
 
 // 增加横屏竖屏转换功能

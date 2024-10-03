@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { computed, inject } from 'vue'
+import { computed } from 'vue'
 import { selectedComp } from '@molianComps/Designer/designerData'
 import colorPicker from '@molianComps/ColorPicker/index.vue';
 import svgIcon from '@molianComps/SvgIcon/index.vue'
-
-const t:any = inject('mlLangs')
+import {useI18n} from 'vue-i18n'
+const {t} = useI18n()
 const css = computed(() => {
     return selectedComp.value && selectedComp.value.css.background || {}
 })

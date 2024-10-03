@@ -11,8 +11,9 @@ import stroke from './css-tool-panel/stroke.vue'
 import transform from './css-tool-panel/transform.vue'
 import margin from './css-tool-panel/margin.vue'
 import customCss from './css-tool-panel/customCss.vue'
+import {useI18n} from 'vue-i18n'
+const {t} = useI18n()
 const customComps: any = inject('customComps')
-const t: any = inject('mlLangs')
 const { customTooltip } = customComps
 const toolbarData = ref([{
     label: t('css.textAlign.left'),

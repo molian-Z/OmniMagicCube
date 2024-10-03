@@ -3,7 +3,8 @@ import { inject, computed } from 'vue'
 import { useDebounceFn } from '@vueuse/core'
 import { selectedComp } from '@molianComps/Designer/designerData'
 import CodeEditor from '@molianComps/MlCodeEditor/index.vue'
-const t:any = inject('mlLangs')
+import {useI18n} from 'vue-i18n'
+const {t} = useI18n()
 const codeRef = ref<any>()
 const css = ref<any>({customCss: {}})
 watch(() => selectedComp.value, (newVal:any) => {

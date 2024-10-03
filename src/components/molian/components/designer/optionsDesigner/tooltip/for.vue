@@ -4,6 +4,8 @@ import { deepObjToArray } from '@molian/utils/util'
 import { selectedComp, globalAttrs, variableData } from '../../designerData'
 import svgIcon from '@molianComps/SvgIcon/index.vue'
 import { data2Vars } from '@molian/utils/useCore'
+import {useI18n} from 'vue-i18n'
+const {t} = useI18n()
 defineProps({
   title:{
     type: String,
@@ -14,7 +16,6 @@ const emit = defineEmits(['close'])
 const customComps:any = inject('customComps')
 const { customCascader, customInput } = customComps
 const message:any = inject("mlMessage")
-const t:any = inject('mlLangs')
 const variableList = computed(() => {
   return Object.keys(globalAttrs.variable).filter(key => {
     const variableValue = globalAttrs.variable[key]

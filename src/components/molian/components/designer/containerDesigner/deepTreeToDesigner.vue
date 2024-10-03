@@ -5,6 +5,8 @@ import { compsRef, compsEl, variableData, globalAttrs } from "../designerData";
 import { isDraggable, dropKey, useDraggable, dropType, onDragenter } from "../draggable";
 import { getValue } from "@molian/utils/useCore";
 import { useElementBounding, watchDebounced } from "@vueuse/core";
+import {useI18n} from 'vue-i18n'
+const {t} = useI18n()
 defineOptions({
   name: "deepTree",
 });
@@ -33,7 +35,6 @@ const props = defineProps({
 const emit = defineEmits(["update:modelValue"]);
 const comps: any = inject("mlComps");
 const message: any = inject("mlMessage");
-const t: any = inject("mlLangs");
 const treeIndexNext = computed(() => {
   return props.treeIndex + 1;
 });

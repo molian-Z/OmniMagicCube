@@ -7,9 +7,10 @@ import { categoryList } from "@molian/utils/compsConfig";
 import { useUI, UIData } from "@molian/utils/UIMap";
 import { setting } from "@molian/utils/defaultData";
 import svgIcon from "@molianComps/SvgIcon/index.vue";
+import {useI18n} from 'vue-i18n'
+const {t} = useI18n()
 const comps: any = inject("mlComps");
 const customComps: any = inject("customComps");
-const t: any = inject("mlLangs");
 const { customTooltip } = customComps;
 const compList = Object.values(comps.value);
 const allUI = computed(() => {

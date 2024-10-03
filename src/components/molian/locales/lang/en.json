@@ -1,0 +1,15 @@
+{
+    "attrs": {
+        "MlSubForm": {
+            "isAdd": "Open Add",
+            "isAppend": "Open Append",
+            "isDelete": "Open Delete",
+            "isSortable": "Open Sortable",
+            "maxHeight": "Max Height",
+            "height": "Height",
+            "modelValue": "Model Value",
+            "columns": "Columns",
+            "formatColumns": "Format Columns"
+        }
+    }
+}

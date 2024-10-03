@@ -6,6 +6,8 @@ import { UIData } from '@molian/utils/UIMap'
 import { setting } from "@molian/utils/defaultData";
 import svgIcon from '@molianComps/SvgIcon/index.vue'
 import { createFuse } from '@molian/utils/fuse'
+import {useI18n} from 'vue-i18n'
+const {t} = useI18n()
 const props = defineProps({
     currentData: {
         type: Object,
@@ -19,7 +21,6 @@ const props = defineProps({
 const customComps:any = inject('customComps')
 const { customInput } = customComps
 
-const t:any = inject('mlLangs')
 const comps: any = inject('mlComps')
 
 const getCurrentUI = computed(() => {

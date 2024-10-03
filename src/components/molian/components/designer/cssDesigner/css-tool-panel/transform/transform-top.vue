@@ -3,8 +3,9 @@ import { ref, computed, inject, watch, onMounted } from 'vue'
 import { selectedComp } from '@molianComps/Designer/designerData'
 import svgIcon from '@molianComps/SvgIcon/index.vue'
 import SuffixUnit from '@molianComps/SuffixUnit/index.vue'
+import {useI18n} from 'vue-i18n'
+const {t} = useI18n()
 const customComps: any = inject('customComps')
-const t: any = inject('mlLangs')
 const { customInput, customTooltip } = customComps
 
 const css = computed(() => {

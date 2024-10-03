@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import {useI18n} from 'vue-i18n'
 import "@molian/assets/styles/global.scss";
 import { defineProps, inject } from "vue";
 import fullLoadingComps from "@molianComps/Loading/full-loading-1.vue";
@@ -9,7 +10,6 @@ import {
   globalAttrs,
   useKeys,
 } from "./designerData";
-import { updatedLang } from '@molian/utils/lang'
 import globalTool from "./globalTool/index.vue";
 import cssDesigner from "./cssDesigner/index.vue";
 import containerDesigner from "./containerDesigner/index.vue";
@@ -33,7 +33,7 @@ defineProps({
     default: "100vh",
   },
 });
-const t: any = inject("mlLangs");
+const { t } = useI18n()
 const message = inject("mlMessage");
 useKeys(message, t);
 const setData = (data: any) => {
@@ -60,7 +60,6 @@ const getData = (concise = true) => {
 defineExpose({
   setData,
   getData,
-  updatedLang,
 });
 </script>
 <template>

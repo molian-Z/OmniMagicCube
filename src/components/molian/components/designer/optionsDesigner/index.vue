@@ -15,7 +15,8 @@ import vueif from './tooltip/if.vue'
 import vuefor from './tooltip/for.vue'
 import vueshow from './tooltip/show.vue'
 import vuetext from './tooltip/text.vue'
-const t: any = inject('mlLangs')
+import {useI18n} from 'vue-i18n'
+const {t} = useI18n()
 const customComps: any = inject('customComps')
 const { customTooltip, customPopup } = customComps
 const menus = ref([{

@@ -3,9 +3,9 @@ import { inject, computed } from 'vue'
 import { selectedComp } from '@molianComps/Designer/designerData'
 import colorPicker from '@molianComps/ColorPicker/index.vue';
 import svgIcon from '@molianComps/SvgIcon/index.vue'
-
+import {useI18n} from 'vue-i18n'
+const {t} = useI18n()
 const customComps:any = inject('customComps')
-const t:any = inject('mlLangs')
 const { customInput, customSelect, customRadioButton, customRadioGroup } = customComps
 const css = computed(() => {
     return selectedComp.value && selectedComp.value.css || { mixBlendMode: {}, blur:{},boxShadow:[] }
