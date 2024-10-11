@@ -3,7 +3,6 @@ import {
   defineComponent,
   h,
   computed,
-  inject,
 } from 'vue'
 
 function createRender(slots: any, attrs: any, tag: string, comps: { [x: string]: { comp: string | Component<any> } }) {
@@ -19,9 +18,9 @@ function createRender(slots: any, attrs: any, tag: string, comps: { [x: string]:
   } else {
     currentSlots = () => slots
   }
-  return h(comps[tag].comp, attrs, currentSlots)
+  return h(comps[tag], attrs, currentSlots)
 }
-export const createControl = function (prefix: any, compName: any, newAttrs: { [x: string]: any }) {
+export const createControl = function (prefix: any, compName: any, newAttrs: { [x: string]: any }, app?:any) {
   return defineComponent({
     inheritAttrs:false,
     setup(props, {
@@ -30,7 +29,7 @@ export const createControl = function (prefix: any, compName: any, newAttrs: { [
       slots,
       expose
     }) {
-      const comps: any = inject('mlComps')
+      const comps: any = app._context.components
       const getSlots = () => {
         let objSlots: {
           [x: string]: any
@@ -69,7 +68,7 @@ export const createControl = function (prefix: any, compName: any, newAttrs: { [
                 if (Array.isArray(currentAttr)) {
                   currentSlots = []
                   currentAttr.forEach((item: { slots: any; attrs: any; tag: string }) => {
-                    currentSlots.push(createRender(item.slots, item.attrs, item.tag, comps.value))
+                    currentSlots.push(createRender(item.slots, item.attrs, item.tag, comps))
                   })
                 }else if (currentAttr && !currentAttr._isSlot) {
                   objAttrs = {
@@ -77,7 +76,7 @@ export const createControl = function (prefix: any, compName: any, newAttrs: { [
                     [key]: currentAttr
                   }
                 } else if (currentAttr) {
-                  currentSlots[key] = createRender(currentAttr.slots, currentAttr.attrs, currentAttr.tag, comps.value)
+                  currentSlots[key] = createRender(currentAttr.slots, currentAttr.attrs, currentAttr.tag, comps)
                 } else {
                   // console.log(currentAttr,key)
                 }
@@ -91,7 +90,7 @@ export const createControl = function (prefix: any, compName: any, newAttrs: { [
         return objAttrs
       })
       try {
-        let controlTag = comps.value[prefix + compName].comp
+        let controlTag = comps[prefix + compName]
         return () => h(controlTag, getAttrs.value, currentSlots)
       } catch (error) {
         console.log(`组件${prefix + compName}不存在:\n` + error)

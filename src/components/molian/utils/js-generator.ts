@@ -172,23 +172,27 @@ export const createJS = function (compObj: IComp, globalAttrs: { lifecycle: any;
 // 参数 modelValue: 任意类型，通常是一个对象，包含名称、属性和插槽等信息
 // 返回值: 简化后的 modelValue 对象
 // 定义一个函数，用于简化 JavaScript 对象的表示
-export const conciseJs = function (modelValue: any) {
+export const conciseJs = function (modelValue: any, comps:any) {
     // 使用 useCloned 函数克隆 modelValue，避免修改原始数据
     const { cloned } = useCloned(modelValue)
     // 遍历克隆后的对象，处理每个项
     cloned.value.forEach((item: any) => {
         // 获取当前组件的属性定义
         if (!!currentRegComps.value[item.name]) {
-            const attrs = currentRegComps.value[item.name].props
+            const attrs = currentRegComps.value[item.name].comp.props
             // 遍历当前项的属性，进行简化
             Object.keys(item.attrs).forEach(key => {
                 // 如果属性值为 null，则删除该属性
                 if (item.attrs[key].value === null) {
-                    delete item.attrs[key]
+                    if(typeof attrs[key] === 'object' && (attrs[key].default === null || attrs[key].default === undefined)) {
+                        delete item.attrs[key]
+                    } else {
+                        delete item.attrs[key]
+                    }
                 }
                 // 如果属性有默认值，且当前属性值与默认值相同，则删除该属性
-                if (attrs[key] && !!attrs[key].default) {
-                    if (item.attrs[key].value === attrs[key].default) {
+                if (typeof attrs[key] === 'object' && !!attrs[key].default) {
+                    if (item.attrs[key] && comps[item.name].comp.props[key] && comps[item.name].comp.props[key].default === item.attrs[key].value) {
                         delete item.attrs[key]
                     }
                 }
@@ -196,7 +200,7 @@ export const conciseJs = function (modelValue: any) {
             // 如果当前项包含插槽，则递归简化插槽内容
             if (!!item.slots) {
                 Object.keys(item.slots).forEach(key => {
-                    item.slots[key].children = conciseJs(item.slots[key].children)
+                    item.slots[key].children = conciseJs(item.slots[key].children, comps)
                 })
             }
         }

@@ -4,6 +4,7 @@ import { Icon, addAPIProvider } from '@iconify/vue'
 import {iconifyUrl} from '@molian/utils/defaultData'
 import SvgIcon from '@molianComps/SvgIcon/index.vue'
 import IconPicker from '@molianComps/IconPicker/index.vue'
+import { registerCustomComps } from '@molian/utils/compsConfig'
 import MlHorizontalContainer from '@molianComps/MolianLayoutContainer/horizontalContainer.vue'
 import MlVerticalContainer from '@molianComps/MolianLayoutContainer/verticalContainer.vue'
 import MlSubContainer from '@molianComps/MolianLayoutContainer/subContainer.vue'
@@ -13,6 +14,7 @@ import MlSubForm from '@molianComps/MlSubForm/index.vue'
 // import MlCodeEditor from '@molianComps/MlCodeEditor/index.vue'
 import '@molian/assets/styles/render.scss'
 const installRender = function (app: any, options: plug.renderInstall) {
+    registerCustomComps(app, options.UIName)
     app.component('SvgIcon', SvgIcon)
     app.component('Icon', Icon)
     app.component('IconPicker', IconPicker)

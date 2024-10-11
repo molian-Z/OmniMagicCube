@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import {
   ref,
-  defineModel,
   onMounted,
   computed,
   defineProps,

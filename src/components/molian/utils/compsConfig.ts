@@ -11,6 +11,7 @@ import {
 import {
     useCloned
 } from '@vueuse/core'
+import {camelCase} from 'change-case'
 import {
     defaultCategory,
     defaultSlotsMap,
@@ -188,7 +189,7 @@ const parseComp = function (key: string, element: any, allowRegPropsAndEmit: any
 
     // 处理slotsOption配置
     if (!!element.slotsOption) {
-        slotsMap.value[element.name] = element.slotsOption;
+        slotsMap.value[key] = element.slotsOption;
     }
     // 处理slots配置
     const slots: { [key: string]: any } = slotsMap.value[key];
@@ -214,6 +215,18 @@ const parseComp = function (key: string, element: any, allowRegPropsAndEmit: any
                 delete currentProps[item];
             }
         });
+    }
+
+    //统一处理双向绑定事件与名称存在不一致的问题,改为驼峰写法
+   for (let index = 0; index < currentUpdateModel.length; index++) {
+        const parts:any = currentUpdateModel[index].split(':')
+        if(!currentProps[parts[1]]){
+            const transformedPart = camelCase(parts[1]);
+            if(!!currentProps[transformedPart]) {
+                currentProps[parts[1]] = currentProps[transformedPart]
+                delete currentProps[transformedPart]
+            }
+        }
     }
     // 返回处理后的组件配置对象
     return {
@@ -275,7 +288,9 @@ function parseProps(obj: any, key: null | string | number, testKey?: string) {
         //         propObj.default = {}
         //     }
         // }
-        propObj.default = null
+        if(!obj.default) {
+            propObj.default = null
+        }
         newObj = propObj
         // 如果传入的是函数，解析其类型并设置默认值为null
     } else if (obj && typeof obj === 'function') {
@@ -525,9 +540,9 @@ const registerGlobalComps = function (app: { provide: (arg0: string, arg1: any) 
  * 
  * @param app 应用实例，用于注入自定义组件
  */
-const registerCustomComps = function (app: App<any>) {
+export const registerCustomComps = function (app: App<any>, UIName?: string) {
     // 找到当前使用的 UI 框架的组件信息
-    const currentUIData: any = UIData.find((item: { name: any }) => item.name === useUI.value)
+    const currentUIData: any = UIData.find((item: { name: any }) => item.name === (UIName || useUI.value))
     // 从组件信息中解构出组件前缀和组件映射表
     const { prefix, compMapping } = currentUIData
 
@@ -535,10 +550,9 @@ const registerCustomComps = function (app: App<any>) {
     for (const key in compMapping) {
         if (Object.hasOwnProperty.call(compMapping, key)) {
             const element = compMapping[key]
-            customComps['custom' + key] = createControl(prefix, element.component || key, element)
+            customComps['custom' + key] = createControl(prefix, element.component || key, element, app)
         }
     }
-
     // 将注册好的自定义组件注入到应用的上下文中
     app.provide('customComps', customComps)
 }

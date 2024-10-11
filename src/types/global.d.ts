@@ -910,5 +910,7 @@ declare namespace plug {
     interface renderInstall {
         customComps?: any;
         clearDefaultComps?: boolean;
+        iconUrl?: string;
+        UIName: string;
     }
 }

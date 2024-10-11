@@ -35,6 +35,7 @@ defineProps({
 });
 const { t } = useI18n()
 const message = inject("mlMessage");
+const comps:any = inject('mlComps')
 useKeys(message, t);
 const setData = (data: any) => {
   modelValue.value = restoreCss(data.modelValue);
@@ -47,7 +48,7 @@ const getData = (concise = true) => {
   if (concise) {
     return {
       globalAttrs,
-      modelValue: conciseJs(conciseCss(modelValue.value)),
+      modelValue: conciseJs(conciseCss(modelValue.value), comps.value),
     };
   } else {
     return {

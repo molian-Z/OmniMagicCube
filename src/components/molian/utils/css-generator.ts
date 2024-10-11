@@ -3,7 +3,6 @@ import {
     toKebabCase
 } from './util'
 import { compsRef } from '@molianComps/Designer/designerData'
-import { el } from 'element-plus/es/locale';
 export interface IStyleMap {
     opacity?: IOpacity;
     rotate?: IOpacity;

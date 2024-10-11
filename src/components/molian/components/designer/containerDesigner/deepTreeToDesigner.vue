@@ -5,8 +5,8 @@ import { compsRef, compsEl, variableData, globalAttrs } from "../designerData";
 import { isDraggable, dropKey, useDraggable, dropType, onDragenter } from "../draggable";
 import { getValue } from "@molian/utils/useCore";
 import { useElementBounding, watchDebounced } from "@vueuse/core";
-import {useI18n} from 'vue-i18n'
-const {t} = useI18n()
+import { useI18n } from "vue-i18n";
+const { t } = useI18n();
 defineOptions({
   name: "deepTree",
 });
@@ -49,12 +49,19 @@ const compData: any = computed({
     emit("update:modelValue", val);
   },
 });
-const slots:any = ref({})
-if(!!props.slotKey){
-    slots.value[props.slotKey] = props.slotVal
+const slots: any = ref({});
+if (!!props.slotKey) {
+  slots.value[props.slotKey] = props.slotVal;
 }
 const value = computed(() => {
-  return getValue(compData.value, variableData.value, {}, null, globalAttrs.variable, "designer");
+  return getValue(
+    compData.value,
+    variableData.value,
+    {},
+    null,
+    globalAttrs.variable,
+    "designer"
+  );
 });
 const { onDrop, onDropSlot } = useDraggable(comps, compData, message);
 const setRef = (el: any, comp: any, index: number) => {
@@ -70,44 +77,52 @@ const setRef = (el: any, comp: any, index: number) => {
     } else {
       compsRef[comp.id] = elDom || elNextDom || compsRef[comp.id];
     }
-    const { width, height } = useElementBounding(compsRef[comp.id]);
-    let pd = ["0", "0"];
-    if (height.value < 10) {
-      pd[0] = "10px";
-    }
-    if (width.value < 10) {
-      pd[1] = "10px";
-    }
-    if (
-      pd[0] !== "0" ||
-      (pd[1] !== "0" && !!compsRef[comp.id] && !!compsRef[comp.id].style)
-    ) {
-      try {
-        compsRef[comp.id].style.padding = `${pd[0]} ${pd[1]}`;
-      } catch (error) {
-        // 未缓存
+    // 如果获取不到节点暂时暂停。后续直接通过dom操作节点，不在采用uniapp等框架的兼容方案.
+    function setRef() {
+    //   if (!compsRef[comp.id]) {
+    //     setTimeout(() => {
+    //       setRef();
+    //     }, 300);
+    //   }
+      const { width, height } = useElementBounding(compsRef[comp.id]);
+      let pd = ["0", "0"];
+      if (height.value < 10) {
+        pd[0] = "10px";
       }
-    }
-    // 出现极端情况解决方案。如元素不存在以及无法对元素进行修改的情况
-    // 索引不会被更新实时获取索引
-    // 如果inhertAttrs未被引入将导致无法获取到元素
-    const errorComp = computed(() => {
-      return width.value === 0 && height.value === 0;
-    });
-    watchDebounced(
-      () => errorComp.value,
-      (newVal) => {
-        if (newVal && (!elDom || (elDom && !elDom.nextElementSibling)) && !!elNextDom) {
-          elNextDom.forceWatch = true;
-          compsRef[comp.id] = elNextDom;
+      if (width.value < 10) {
+        pd[1] = "10px";
+      }
+      if (
+        pd[0] !== "0" ||
+        (pd[1] !== "0" && !!compsRef[comp.id] && !!compsRef[comp.id].style)
+      ) {
+        try {
+          compsRef[comp.id].style.padding = `${pd[0]} ${pd[1]}`;
+        } catch (error) {
+          // 未缓存
         }
-      },
-      {
-        immediate: true,
-        debounce: 300,
-        maxWait: 1000,
       }
-    );
+      // 出现极端情况解决方案。如元素不存在以及无法对元素进行修改的情况
+      // 索引不会被更新实时获取索引
+      // 如果inhertAttrs未被引入将导致无法获取到元素
+      const errorComp = computed(() => {
+        return width.value === 0 && height.value === 0;
+      });
+      watchDebounced(
+        () => errorComp.value,
+        (newVal) => {
+          if (newVal && (!elDom || (elDom && !elDom.nextElementSibling)) && !!elNextDom) {
+            elNextDom.forceWatch = true;
+            compsRef[comp.id] = elNextDom;
+          }
+        },
+        {
+          debounce: 300,
+          maxWait: 1000,
+        }
+      );
+    }
+    setRef();
   });
 };
 </script>
@@ -126,7 +141,7 @@ const setRef = (el: any, comp: any, index: number) => {
         >
           {{
             t("container.drop") +
-            t("component." + comps[comp.name].title) +
+            t(comps[comp.name].title) +
             t("container.component") +
             t("container.before")
           }}
@@ -176,7 +191,7 @@ const setRef = (el: any, comp: any, index: number) => {
             >
               {{
                 t("container.dropComp") +
-                t("component." + comps[comp.name].title) +
+                t(comps[comp.name].title) +
                 t("container.component") +
                 t("slot." + slotKey) +
                 t("container.slot")
@@ -198,7 +213,7 @@ const setRef = (el: any, comp: any, index: number) => {
         >
           {{
             t("container.drop") +
-            t("component." + comps[comp.name].title) +
+            t(comps[comp.name].title) +
             t("container.component") +
             t("container.after")
           }}

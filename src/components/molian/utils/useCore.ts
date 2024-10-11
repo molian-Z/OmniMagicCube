@@ -1,17 +1,17 @@
 import { getCurrentOn, runOn } from '@molian/utils/customFunction'
 import { globalComps } from '@molian/utils/compsConfig'
-const {Message} = globalComps.value
+const { Message } = globalComps.value
 // 循环判断
-export const isFor = ({comp, $slot}: any) => {
-    let isFor:any = true
-    if (isIf({comp, $slot})) {
+export const isFor = ({ comp, $slot }: any) => {
+    let isFor: any = true
+    if (isIf({ comp, $slot })) {
         const { directives, vars } = comp
         if (!directives.for) {
             isFor = false
-        }else{
+        } else {
             isFor = data2Vars(directives.for, vars)
-            if(typeof isFor === 'function') {
-                isFor = isFor({$slot})
+            if (typeof isFor === 'function') {
+                isFor = isFor({ $slot })
             }
         }
     } else {
@@ -21,38 +21,38 @@ export const isFor = ({comp, $slot}: any) => {
 }
 
 // 渲染判断
-export const isIf = ({comp, $slot}: any) => {
+export const isIf = ({ comp, $slot }: any) => {
     const { directives, vars } = comp
-    let isIf:any = true
-    if(!!directives.if){
+    let isIf: any = true
+    if (!!directives.if) {
         isIf = data2Vars(directives.if, vars)
-        if(typeof isIf === 'function') {
-            isIf = isIf({$slot})
+        if (typeof isIf === 'function') {
+            isIf = isIf({ $slot })
         }
     }
     return !!isIf
 }
 
 // 显示判断
-export const isShow = ({comp, $slot}: any) => {
+export const isShow = ({ comp, $slot }: any) => {
     const { directives, vars } = comp
     const { show } = directives || null
-    let isShow:any = true
-    if(!!show){
+    let isShow: any = true
+    if (!!show) {
         isShow = data2Vars(show, vars)
-        if(typeof isShow === 'function') {
-            isShow = isShow({$slot})
+        if (typeof isShow === 'function') {
+            isShow = isShow({ $slot })
         }
     }
     return !!isShow
 }
 
-export const getValue = (modelValue: any, variable: any, expandAPI: any, slotData:any, originVariable:any,  type?: 'designer') => {
+export const getValue = (modelValue: any, variable: any, expandAPI: any, slotData: any, originVariable: any, type?: 'designer') => {
     return modelValue.map((item: { directives: { [x: string]: { [x: string]: any; type: any; value: any } }; on: { [x: string]: any }; nativeOn: { [x: string]: any } }) => {
         return {
             ...item,
             vars: variable,
-            cacheOn: type === 'designer' ? {} : getCurrentOn({ on: item.on, nativeOn: item.nativeOn }, variable, originVariable, slotData, expandAPI),
+            cacheOn: getCurrentOn({ on: item.on, nativeOn: item.nativeOn }, variable, originVariable, slotData, expandAPI),
         }
     })
 }
@@ -214,75 +214,86 @@ export const data2Vars = (directive: any, vars: any) => {
  * @param expandAPI 扩展API函数，用于在解析属性时调用扩展功能
  * @returns 返回一个对象，包含从组件实例和定义中解析出的属性键值对
  */
-export const parseProps = (comp: any, comps: any, variable: any, expandAPI:any, slotData?:any) => {
+export const parseProps = (comp: any, comps: any, variable: any, expandAPI: any, slotData?: any) => {
     // 初始化一个空对象，用于存储解析后的属性数据
     const propsData: {
         [key: string]: any;
-      } = {};
-      // 遍历组件实例的属性
-      for (const key in comp.attrs) {
+    } = {};
+    // 遍历组件实例的属性
+    for (const key in comp.attrs) {
         // 确保遍历的属性是组件实例自己的，而不是原型链上的
         if (Object.hasOwnProperty.call(comp.attrs, key)) {
-          const element = comp.attrs[key];
-          if(!comps[comp.name]){
-            try {
-                Message.error(`${comp.name} 组件不存在`)
-            } catch (error) {
-                console.log(`${comp.name} 组件不存在`)
+            const element = comp.attrs[key];
+            if (!comps[comp.name]) {
+                try {
+                    Message.error(`${comp.name} 组件不存在`)
+                } catch (error) {
+                    console.log(`${comp.name} 组件不存在`)
+                }
+                continue;
             }
-            continue;
-          }
-          const compProp = comps[comp.name].props[key];
-          // 检查组件属性是否应该被解析和包含在结果中
-          if (compProp && compProp.hidden && compProp.hidden(comp.attrs) === false || compProp && !compProp.hidden) {
+            const compProp = comps[comp.name].props[key];
+            // 检查组件属性是否应该被解析和包含在结果中
+            if (compProp && compProp.hidden && compProp.hidden(comp.attrs)) {
+                continue
+            }
             // 如果属性类型是变量，则从变量对象中解析其值
             if (element && element.type === "variable") {
-              let newVal = variable;
-              // 如果属性值是一个数组，逐级访问变量对象来获取最终值
-              if (element.value) {
-                element.value.forEach((item: string) => {
-                  newVal = newVal[item];
-                });
-              }
-              if(typeof newVal === 'function'){
-                if(Array.isArray(compProp.type) && compProp.type.indexOf('function') > -1 || compProp.type !== 'function'){
-                    newVal = newVal.call(null, {$slot:slotData})
-                }else{
-                    if(!!slotData){
-                        let func = function(){
-                            return newVal(...arguments, {$slot:slotData})
+                let newVal = variable;
+                // 如果属性值是一个数组，逐级访问变量对象来获取最终值
+                if (element.value) {
+                    element.value.forEach((item: string) => {
+                        newVal = newVal[item];
+                    });
+                }
+                if (typeof newVal === 'function') {
+                    if (Array.isArray(compProp.type) && compProp.type.indexOf('function') > -1 || compProp.type !== 'function') {
+                        newVal = newVal.call(null, { $slot: slotData })
+                    } else {
+                        if (!!slotData) {
+                            let func = function () {
+                                return newVal(...arguments, { $slot: slotData })
+                            }
+                            propsData[key] = func
+                            continue;
                         }
-                        propsData[key] = func
-                        continue;
                     }
                 }
-              }
-              // 将解析后的属性值存储到结果对象中
-              propsData[key] = newVal;
-            } else if (element && element.value !== undefined && element.value !== null) {
+                // 将解析后的属性值存储到结果对象中
+                propsData[key] = newVal;
+            } else if (element && element.value !== undefined) {
                 // 如果属性值是函数，且代码不为空，则调用扩展API来执行该函数
-                if(element.type === 'function'){
-                    if(element.value.code !== ""){
-                        if(!!slotData){
-                            let func = function(){
-                                return runOn(element, variable, expandAPI)(...arguments, {$slot:slotData})
+                if (element.type === 'function') {
+                    if (element.value && element.value.code !== "") {
+                        if (!!slotData) {
+                            let func = function () {
+                                return runOn(element, variable, expandAPI)(...arguments, { $slot: slotData })
                             }
                             propsData[key] = func
                         } else {
                             propsData[key] = runOn(element, variable, expandAPI)
                         }
                     }
-                }else{
-                    // 否则直接将属性值存储到结果对象中
-                    if(compProp.type === 'boolean' && element.value === false && compProp.default === null){
-                    } else if (element.value === compProp.default) {}else{
-                        propsData[key] = element.value;
+                } else {
+                    // console.log(element, key)
+                    // 如果属性值为 null，则删除该属性
+                    if (element.value !== null && element.value !== undefined) {
+                        // 否则直接将属性值存储到结果对象中
+                            const nativeProp = !!comps[comp.name].render || !!comps[comp.name].setup ? comps[comp.name].props[key] : comps[comp.name].comp.props[key]
+                            if (typeof nativeProp === 'object' && !Array.isArray(nativeProp)) {
+                                if (element.value !== nativeProp.default) {
+                                    propsData[key] = element.value;
+                                }
+                            } else if (typeof nativeProp === 'function' && element.value !== null) {
+                                propsData[key] = element.value;
+                            } else {
+                                propsData[key] = element.value;
+                            }
                     }
                 }
             }
-          }
         }
-      }
-      // 返回包含所有解析后属性的对象
-      return propsData;
+    }
+    // 返回包含所有解析后属性的对象
+    return propsData;
 }

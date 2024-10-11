@@ -117,6 +117,22 @@ export const directives = {
         const propsData: any = computed(() => {
             return parseProps(props.comp, comps.value, variableData.value, {})
         })
+
+        const emitData: any = computed(() => {
+            // update: xxx : onUpdate:xxx
+            const emitObj:any = {}
+            for (const key in props.comp.cacheOn) {
+                if (Object.prototype.hasOwnProperty.call(props.comp.cacheOn, key)) {
+                    if(key.startsWith('update:')){
+                        const element = props.comp.cacheOn[key];
+                        const onStr = key.charAt(0).toUpperCase() + key.slice(1);
+                        emitObj['on'+onStr] = element
+                    }
+                }
+            }
+            return emitObj
+        })
+
         const computedClass = computed(() => {
             return {
                 'designer-comp': comps.value[props.comp.name] && comps.value[props.comp.name].inheritAttrs !== false,
@@ -139,6 +155,7 @@ export const directives = {
             const attrObj = {
                 style: { ...parseStyle(props.comp.css, props.comp.key), ...!isShow({ comp: props.comp, $slot: props.slots }) && { display: 'none' } || {} },
                 ...propsData.value,
+                ...emitData.value,
                 // onMouseenter: withModifiers(($event) => onMouseEnter($event, props.comp, props.index), ['self','native']), // 暂且取消经过选择
                 onClick: withModifiers(($event: any) => onClick($event, props.comp, props.index), ['self', 'native', 'prevent', 'stop']),
                 onContextmenu: withModifiers(($event: any) => onContextmenu($event, props.comp, props.index), ['self', 'native', 'prevent', 'stop']),
@@ -200,9 +217,9 @@ export const directives = {
             return getForEachList(props.comp, variableData)
         })
         // 出现极端情况解决方案。如元素不存在以及无法对元素进行修改的情况
-        // 监听inheritAttrs未false的组件
+        // 监听inheritAttrs为false的组件
         if (comps.value[props.comp.name].inheritAttrs === false) {
-            watchDebounced(() => compsRef[props.comp.id], (resetDom) => {
+            watchDebounced(compsRef[props.comp.id], (resetDom) => {
                 //if(!resetDom?.forceWatch) return 
                 // await nextTick()
                 nextTick(() => {
@@ -232,7 +249,7 @@ export const directives = {
                     });
 
                     // 监听并修改属性数据及更新视图组件
-                    watchDebounced(propsData, (newProps) => {
+                    watchDebounced(() => propsData, (newProps) => {
                         Object.keys(newProps).forEach(item => {
                             try {
                                 resetDom[item] = newProps[item]

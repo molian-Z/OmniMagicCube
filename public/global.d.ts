@@ -870,7 +870,7 @@ declare namespace plug {
         useData?: any;
         compsConfig: plug.registerComps;
         iconUrl?: string;
-        i18nInstance? any;
+        i18nInstance?: any;
     }
 
     interface renderInstall {

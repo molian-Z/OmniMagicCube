@@ -165,12 +165,12 @@ export const getCurrentOn = (data: { on: any; nativeOn: any }, variable: any, or
     for (const key in nativeOn) {
         if (Object.prototype.hasOwnProperty.call(nativeOn, key)) {
             const { newKey, modifiers } = runModifier(key, nativeOn)
-            if (nativeOn[key].type === 'variable') {
+            if (nativeOn[key] && nativeOn[key].type === 'variable') {
                 if (nativeOn[key].value && nativeOn[key].value.length > 0) {
                     const data = originVariable[nativeOn[key].value[0]]
                     newNativeOn[newKey] = withModifiers(setFunc(data, variable, slotData, expandAPI), modifiers)
                 }
-            } else if (!!nativeOn[key].value && !!nativeOn[key].value.code) {
+            } else if (nativeOn[key] && !!nativeOn[key].value && !!nativeOn[key].value.code) {
                 newNativeOn[newKey] = withModifiers(setFunc(nativeOn[key], variable, slotData, expandAPI), modifiers)
             }
         }
@@ -178,12 +178,12 @@ export const getCurrentOn = (data: { on: any; nativeOn: any }, variable: any, or
     // 配置组件监听
     for (const key in on) {
         if (Object.prototype.hasOwnProperty.call(on, key)) {
-            if (on[key].type === 'variable') {
+            if (on[key] && on[key].type === 'variable') {
                 if(!!on[key].value && on[key].value.length > 0){
                     const data = originVariable[on[key].value[0]]
                     newOn[key] = setFunc(data, variable, slotData, expandAPI)
                 }
-            } else if (!!on[key].value && !!on[key].value.code) {
+            } else if (on[key] && !!on[key].value && !!on[key].value.code) {
                 newOn[key] = setFunc(on[key], variable, slotData, expandAPI)
             }
         }

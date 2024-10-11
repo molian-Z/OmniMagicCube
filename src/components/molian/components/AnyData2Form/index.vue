@@ -50,7 +50,13 @@ defineOptions({
 const emit = defineEmits(["update:modelValue"]);
 const value = computed({
   get() {
-    return (props.modelValue && props.modelValue.value) || null;
+    if(props.modelValue && props.modelValue.value != undefined) {
+        return props.modelValue && props.modelValue.value
+    } else if(typeof props.propData === 'object' && props.propData.default){
+        return props.propData.default
+    } else {
+        return null
+    }
   },
   set(val) {
     emit("update:modelValue", {

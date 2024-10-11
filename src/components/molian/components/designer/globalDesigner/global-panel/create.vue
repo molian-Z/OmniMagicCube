@@ -11,6 +11,7 @@ const {t} = useI18n()
 const customComps:any = inject('customComps')
 const { customButton, customTooltip, customDialog } = customComps
 const message:any = inject("mlMessage")
+const comps:any = inject('mlComps')
 const {
   isSupported,
   post,
@@ -70,7 +71,7 @@ const importModelData = function(){
 const exportModelData = function () {
   langMode.value = 'json'
   codeData.value = JSON.stringify({
-    modelValue:conciseJs(conciseCss(modelValue.value)),
+    modelValue:conciseJs(conciseCss(modelValue.value), comps.value),
     globalAttrs
   })
   showDialog.value = true

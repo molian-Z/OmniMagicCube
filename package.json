@@ -1,6 +1,6 @@
 {
   "name": "omni-magic-cube",
-  "version": "0.22.1",
+  "version": "0.24.1",
   "title": "无界魔方",
   "subTitle": "Omni Magic Cube",
   "private": false,
@@ -56,8 +56,8 @@
     "tdesign-vue-next": "^1.10.2",
     "vconsole": "^3.15.1",
     "vexip-ui": "^2.3.15",
-    "vue": "^3.5.10",
-    "vue-i18n": "^10.0.3",
+    "vue": "^3.5.11",
+    "vue-i18n": "^10.0.4",
     "vue3-colorpicker": "^2.3.0"
   },
   "devDependencies": {

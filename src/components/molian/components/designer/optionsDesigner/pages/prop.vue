@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, defineOptions, inject } from "vue";
+import {camelCase} from 'change-case'
 import { useCloned } from "@vueuse/core";
 import anyData2Form from "@molianComps/AnyData2Form/index.vue";
 import { selectedComp } from "../../designerData";
@@ -43,11 +44,11 @@ const updateAttrs = (item: any, value: any) => {
   if (value.type === "variable") {
     if (value.value == undefined) {
       currentAttrs.value[item.prop] = undefined;
-      selectedComp.value.on["update:modelValue"] = undefined;
+      selectedComp.value.on[item.emit] = undefined;
     } else {
       currentAttrs.value[item.prop] = value;
-      if (!!selectedComp.value) {
-        selectedComp.value.on["update:modelValue"] = {
+      if (!!selectedComp.value && !!value.value.join('.')) {
+        selectedComp.value.on[item.emit] = {
           type: "function",
           value: {
             code: `this.vars.${value.value.join(".")} = value;`,

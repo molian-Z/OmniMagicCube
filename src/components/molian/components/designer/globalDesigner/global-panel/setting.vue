@@ -7,10 +7,10 @@ import {useI18n} from 'vue-i18n'
 const {t} = useI18n()
 const customComps: any = inject('customComps')
 const { customSwitch, customButton } = customComps
-
+const i18n = useI18n()
 const syncCloudData = async () => {
     await deleteAll()
-    getCloudData()
+    getCloudData(i18n)
         .catch((err: any) => {
             console.log('cloudData is error', err)
         })

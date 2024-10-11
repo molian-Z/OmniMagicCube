@@ -75,7 +75,6 @@ declare module 'vue' {
     SwitchButton: typeof import('./../components/molian/components/SwitchButton/index.vue')['default']
     TagGroup: typeof import('./../components/molian/components/TagGroup/index.vue')['default']
     TagInput: typeof import('./../components/molian/components/TagInput/index.vue')['default']
-    Test: typeof import('./../components/molian/components/test/index.vue')['default']
     Text: typeof import('./../components/molian/components/Designer/optionsDesigner/tooltip/text.vue')['default']
     ToolBar: typeof import('./../components/molian/components/Designer/containerDesigner/toolBar/index.vue')['default']
     ToolSideBar: typeof import('./../components/molian/components/Designer/toolSideBar/index.vue')['default']

@@ -35,8 +35,11 @@ $marginTypeObj: ("12":"12px",
     "lg":"16px"
 );
 
-:root {
 
+:root {
+    --ml-bg-color:#{$bgColor};
+    --ml-bg-page-color:#{$bgPageColor};
+    --ml-border-color:#{$borderColor};
     // 文本及背景填充色
     @each $colorType,
     $colorValue in$textColorObj {
