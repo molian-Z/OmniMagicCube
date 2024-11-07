@@ -63,9 +63,9 @@ export const createJS = function (compObj: IComp, globalAttrs: { lifecycle: any;
         // 变量生成
         const variableStr = Object.keys(variable).map(key => {
             const type = variable[key].type
-            let value = variable[key].value
+            let value = variable[key].value || ''
             if (typeof value === 'object' && type !== 'function') {
-                value = JSON.stringify(value)
+                value = JSON.stringify(value).replace(/"/g, "'")
             }
             if (type === 'computed') {
                 if (importModule.vue.indexOf("computed") === -1) {
@@ -134,9 +134,9 @@ export const createJS = function (compObj: IComp, globalAttrs: { lifecycle: any;
         }
         Object.keys(variable).forEach(key => {
             const type = variable[key].type
-            let value = variable[key].value
+            let value = variable[key].value || ''
             if (typeof value === 'object') {
-                value = JSON.stringify(value)
+                value = JSON.stringify(value).replace(/"/g, "'")
             }
             if (type === 'computed') {
                 variableObj.computed += `${key}() {${value && value.code || "return null"}}\n`
@@ -145,12 +145,12 @@ export const createJS = function (compObj: IComp, globalAttrs: { lifecycle: any;
                     variableObj.methods += `  ['${key}']: ${parseJSCode(value)},\n`
                 }
             } else {
-                variableObj.data += `"${key}": ${type === 'string' ? '"' + value + '"' : value || 'null'},\n`
+                variableObj.data += `'${key}': ${type === 'string' ? "'" + value + "'" : value || 'null'},\n`
             }
         })
         // jsCode 写入
         let jsCode = Object.keys(jsCodeObj).map(key => {
-            return `  ['${key.replace(/:/g, '__')}']: ${jsCodeObj[key]}`
+            return `  ${key.replace(/:/g, '__')}: ${jsCodeObj[key]}`
         }).join(',\n')
         return `<script>
   export default {
@@ -183,7 +183,7 @@ export const conciseJs = function (modelValue: any, comps:any) {
             // 遍历当前项的属性，进行简化
             Object.keys(item.attrs).forEach(key => {
                 // 如果属性值为 null，则删除该属性
-                if (item.attrs[key].value === null) {
+                if (item.attrs[key].value === null || item.attrs[key].value === undefined) {
                     if(typeof attrs[key] === 'object' && (attrs[key].default === null || attrs[key].default === undefined)) {
                         delete item.attrs[key]
                     } else {
@@ -194,6 +194,19 @@ export const conciseJs = function (modelValue: any, comps:any) {
                 if (typeof attrs[key] === 'object' && !!attrs[key].default) {
                     if (item.attrs[key] && comps[item.name].comp.props[key] && comps[item.name].comp.props[key].default === item.attrs[key].value) {
                         delete item.attrs[key]
+                    } else if(typeof item.attrs[key] === 'object' && comps[item.name].comp.props[key] && comps[item.name].comp.props[key].default){
+                        if(JSON.stringify(comps[item.name].comp.props[key].default) === JSON.stringify(item.attrs[key].value)) {
+                            delete item.attrs[key]
+                        }
+                    }
+                } else {
+                    // 布尔数据判断是否为false，如果默认数据为false且值也为false则删除
+                    if(currentRegComps.value[item.name].props[key].type === 'boolean') {
+                        if(!currentRegComps.value[item.name].props[key].default) {
+                            if(item.attrs[key] && item.attrs[key].value === false) {
+                                delete item.attrs[key]
+                            }
+                        }
                     }
                 }
             })

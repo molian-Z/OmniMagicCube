@@ -15,7 +15,7 @@ const props = defineProps({
     },
     flexBasis: {
         type: String,
-        default: '100%'
+        default: ''
     },
     flexGrow: {
         type: Number,

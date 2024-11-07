@@ -25,7 +25,7 @@ const langMode = ref(``)
 const cacheImportTemplateData = ref(``)
 
 const createSFC = function (type: string | any) {
-  const template = createTemplate(modelValue.value)
+  const template = createTemplate(conciseJs(conciseCss(modelValue.value), comps.value))
   const css = createCss(modelValue.value)
   const js = createJS(modelValue.value, globalAttrs, type)
   const code = `${js}

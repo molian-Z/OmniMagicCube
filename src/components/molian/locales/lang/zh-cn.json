@@ -685,5 +685,8 @@
         "image": "图片",
         "icon": "图标",
         "button": "按钮"
+    },
+    "basic":{
+        "refField": "Ref名称"
     }
 }

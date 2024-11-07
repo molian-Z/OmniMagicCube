@@ -224,7 +224,7 @@ const tabType = () => {
           :isModifiers="isModifiers"
           :defaultData="propData"
           :mode="type"
-          :keyName="keyName"
+          :keyName="String(getI18n(keyName, (selectedComp && selectedComp.name) || ''))"
           v-model="value"
           v-else-if="['promise', 'function', 'object', 'array'].indexOf(type) > -1"
         />

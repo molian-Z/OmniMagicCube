@@ -150,7 +150,7 @@ export const defaultLifecycleMap = ref<IConfig.ILifecycleMap>({
  * @returns {ComponentMap} ComponentMap 返回默认插槽地图
  */
 
-export const defaultSlotsMap = ref<IConfig.IDefaultSlotsMap>({
+export const defaultSlotsMap = ref<IDefaultSlotsMap>({
     div: {
         default: 'auto'
     },

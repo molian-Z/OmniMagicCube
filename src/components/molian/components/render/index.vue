@@ -1,12 +1,11 @@
 <script setup lang="ts">
-// import '@molian/assets/styles/global.scss';
 import { defineProps, watch, onUnmounted, defineOptions } from "vue";
 import { getVariableData } from "@molian/utils/customFunction";
 import { useStyleTag } from "@vueuse/core";
 import renderTree from "./DeepTreeToRender.vue";
 import { runLifecycle } from "@molian/utils/customFunction";
 import { createCss } from "@molian/utils/css-generator";
-import { renderRef, variable, originVariable } from "./renderData";
+import useRenderData from "./renderData";
 defineOptions({
     name: "Render",
 })
@@ -37,8 +36,10 @@ const props = defineProps(<
 // 生命周期
 const lifecycle = ref<{ [key: string]: any }>({});
 // 注册css
-const { id, css, load, unload, isLoaded } = useStyleTag("");
+const { css, unload } = useStyleTag("");
 
+const interInc = useRenderData()
+const { renderRef, variable, originVariable } = interInc
 watch(
   () => props.globalAttrs,
   (newVal) => {
@@ -77,5 +78,6 @@ defineExpose({
   <renderTree
     :modelValue="modelValue"
     :expandAPI="expandAPI"
+    :interInc="interInc"
   ></renderTree>
 </template>

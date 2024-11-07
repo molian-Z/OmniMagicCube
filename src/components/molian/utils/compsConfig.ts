@@ -1,6 +1,3 @@
-// import {
-//     compMapInstall
-// } from './compMap'
 import {
     ref,
     markRaw,
@@ -44,7 +41,7 @@ export const currentRegComps = shallowRef<{
     [key: string]: any
 }>({})
 
-export const slotsMap = ref<IConfig.IDefaultSlotsMap>({})
+export const slotsMap = ref<IDefaultSlotsMap>(defaultSlotsMap.value)
 
 // 全局组件类似于全局指令message之类
 export const globalComps: { [key: string]: any } = ref({})
@@ -189,10 +186,12 @@ const parseComp = function (key: string, element: any, allowRegPropsAndEmit: any
 
     // 处理slotsOption配置
     if (!!element.slotsOption) {
-        slotsMap.value[key] = element.slotsOption;
+        if(slotsMap.value) {
+            slotsMap.value[key] = element.slotsOption;
+        }
     }
     // 处理slots配置
-    const slots: { [key: string]: any } = slotsMap.value[key];
+    const slots: any = slotsMap.value[key];
     autoSlots = parseSlot(slots);
     // 处理默认属性
     if (!!defaultAttrsMap.value[key]) {
@@ -569,8 +568,20 @@ export const compsInstall = function (app: App<any>, options: plug.registerComps
         ...options
     }
     // 合并自定义配置
+    // 获取slot数据并赋值给slotsMap
     if(options.slotsMap && typeof options.slotsMap === 'object') {
-        slotsMap.value = {...defaultSlotsMap.value, ...options.slotsMap}
+        Object.keys(options.slotsMap).forEach(key => {
+            if (options.slotsMap) {
+                (slotsMap.value as IDefaultSlotsMap)[key] = (options.slotsMap as IDefaultSlotsMap)[key]
+            }
+        })
+    } else if (typeof options.slotsMap === 'function') {
+        const slots = options.slotsMap()
+        Object.keys(slots).forEach(key => {
+            if (slots) {
+                (slotsMap.value as IDefaultSlotsMap)[key] = (slots as IDefaultSlotsMap)[key]
+            }
+        })
     }
     if(options.lifecycleMap && typeof options.lifecycleMap === 'object') {
         defaultLifecycleMap.value = {...defaultLifecycleMap.value, ...options.lifecycleMap}
@@ -583,7 +594,6 @@ export const compsInstall = function (app: App<any>, options: plug.registerComps
     }
 
     // 远程获取数据
-    // 获取slot数据并赋值给slotsMap
     registerCategory(options.categoryList, options.clearDefaultCategory)
 
     // 注册组件到应用

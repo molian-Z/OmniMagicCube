@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { defineOptions, defineProps, defineEmits, inject, useAttrs } from "vue";
 import Popper from "@molianComps/Popper/index.vue";
-import {useI18n} from 'vue-i18n'
+import { useI18n } from "vue-i18n";
 defineOptions({
   name: "VariablePicker",
   inheritAttrs: false,
@@ -19,10 +19,10 @@ const props = defineProps({
     type: String,
     default: "",
   },
-  clearable:{
+  clearable: {
     type: Boolean,
-    default: false
-  }
+    default: false,
+  },
 });
 const emit = defineEmits(["update:modelValue"]);
 const isClearable = ref(false);
@@ -34,7 +34,7 @@ const cmtdAttrs = computed(() => {
   });
   return newAttrs;
 });
-const {t} = useI18n()
+const { t } = useI18n();
 const customComps: any = inject("customComps");
 const { customInput } = customComps;
 
@@ -75,8 +75,17 @@ const selected = () => {
 };
 
 const clearValue = () => {
-    emit("update:modelValue", []);
-}
+  emit("update:modelValue", []);
+};
+
+const showModelValue = computed(() => {
+  return (
+    (!!props.modelValue &&
+      Array.isArray(props.modelValue) &&
+      props.modelValue.join("/")) ||
+    ""
+  );
+});
 </script>
 
 <template>
@@ -92,17 +101,26 @@ const clearValue = () => {
         v-bind="cmtdAttrs"
         :placeholder="props.placeholder || t('options.placeholder')"
         :readonly="true"
-        :modelValue="modelValue.join('/')"
+        :modelValue="showModelValue"
       >
         <template #suffix>
           <svg-icon
-            :icon="isClearable ? 'ep:circle-close' : 'ep:arrow-down'"
+            icon="ep:circle-close"
             :class="[
               'arrow-selected',
               isClearable && 'is-selected',
               !!openedShow && 'is-opened',
             ]"
             @click.stop="clearValue"
+            v-if="isClearable"
+          ></svg-icon>
+          <svg-icon
+            icon="ep:arrow-down"
+            :class="[
+              'arrow-selected',
+              !!openedShow && 'is-opened',
+            ]"
+            v-else
           ></svg-icon>
         </template>
       </customInput>

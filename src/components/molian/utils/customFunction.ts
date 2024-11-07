@@ -1,8 +1,8 @@
 import { withModifiers, mergeProps } from 'vue'
 import * as Vue from 'vue'
 import { defaultLifecycleMap } from '@molian/utils/defaultData'
-const asyncFunction = Object.getPrototypeOf(async function () { }).constructor
-const syncFunction = Object.getPrototypeOf(function () { }).constructor
+export const asyncFunction = Object.getPrototypeOf(async function () { }).constructor
+export const syncFunction = Object.getPrototypeOf(function () { }).constructor
 
 /**
  * 根据类型创建函数
@@ -15,13 +15,13 @@ const syncFunction = Object.getPrototypeOf(function () { }).constructor
  * @param code 实际要执行的代码逻辑
  * @returns 返回创建的函数能力对象，可以是同步函数或异步函数实例
  */
-export const createFunc = (type: string, codeVar: any, code: any) => {
-    if (type === 'function') {
-        // 当类型为同步函数时，通过new syncFunction创建并返回一个同步函数实例
-        return new syncFunction(...codeVar, code)
-    } else if (type === 'asyncFunction') {
+export const createFunc = (type: string, codeVar: string[], code: string) => {
+    if (type === 'asyncFunction') {
         // 当类型为异步函数时，通过new asyncFunction创建并返回一个异步函数实例
         return new asyncFunction(...codeVar, code)
+    } else {
+        // 当类型为同步函数时，通过new syncFunction创建并返回一个同步函数实例
+        return new syncFunction(...codeVar, code || '')
     }
 }
 
@@ -218,7 +218,7 @@ export const getVariableData = (variable: { [x: string]: any; }, expandAPI?: any
             // 如果是计算属性且函数模式为异步函数或普通函数
             if (!!value.functionMode && ['asyncFunction', 'function'].indexOf(value.functionMode) > -1) {
                 // 创建并绑定计算属性
-                vars[key] = computed(createFunc(value.functionMode, value.codeVar, value.code).bind({ app: Vue, vars: reactive(vars), ...expandAPI }))
+                vars[key] = setComputed(value, vars, expandAPI)
             }
         } else {
             // 对于其他类型，直接赋值
@@ -229,6 +229,9 @@ export const getVariableData = (variable: { [x: string]: any; }, expandAPI?: any
     return vars
 }
 
+export const setComputed = (computedObj:any, vars: any, expandAPI?:any) => {
+    return computed(createFunc(computedObj.functionMode, computedObj.codeVar, computedObj.code).bind({ app: Vue, vars: reactive(vars), ...expandAPI }))
+}
 
 function setFunc(data: any, variable: any, slotData:any, expandAPI: any){
     if(!!slotData){

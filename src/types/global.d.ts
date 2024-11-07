@@ -52,6 +52,42 @@ type FunctionDefinition = {
     };
 };
 
+interface IDefaultSlotsMap {
+    /**
+     * 组件的名称
+     */
+    [key: string]: {
+        /**
+         * 插槽的名称
+         */
+        [key: string]: string| boolean | {
+            /**
+             * 是否自动添加该插槽
+             */
+            auto?: boolean;
+            /**
+             * 允许的组件列表，这些组件可以被快速插入或附加
+             */
+            allowComps?: string[] | {
+                name: string,
+            }[];
+            /**
+             * 可以被快速插入的组件列表
+             * 这里可以指定组件的名称，以及可选的属性
+             */
+            appendComps?: string[] | {
+                name: string,
+                /**
+                 * 默认插入时递交的属性
+                */
+                attrs?: {
+                    [key: string]: any;
+                }
+            }[];
+        };
+    };
+}
+
 /**
 * 为 CubeData 命名空间声明类型和接口。
 */
@@ -432,7 +468,7 @@ declare namespace AI {
         /**
          * 消息文本，具体结构未定义。
          */
-        messageText?: messageText;
+        messageText?: any;
         /**
          * 是否使用用户界面。
          */
@@ -572,49 +608,6 @@ declare namespace IConfig {
         };
     }
 
-    /**
-     * IDefaultSlotsMap 接口定义了组件的默认插槽映射。
-     * 描述了插槽的名称和配置，包括允许的组件类型和自动插槽等。
-     */
-    interface IDefaultSlotsMap {
-        [key: string]: {
-            [key: string]: {
-                /**
-             * 组件的名称
-             */
-            [key: string]: {
-                /**
-                 * 插槽的名称
-                 */
-                [key: string]: string | {
-                    /**
-                     * 是否自动添加该插槽
-                     */
-                    auto?: true;
-                    /**
-                     * 允许的组件列表，这些组件可以被快速插入或附加
-                     */
-                    allowComps?: string[] | {
-                        name: string,
-                    }[];
-                    /**
-                     * 可以被快速插入的组件列表
-                     * 这里可以指定组件的名称，以及可选的属性
-                     */
-                    appendComps?: string[] | {
-                        name: string,
-                        /**
-                         * 默认插入时递交的属性
-                        */
-                        attrs?: {
-                            [key: string]: any;
-                        }
-                    }[];
-                };
-            };
-            } | string | boolean;
-        };
-    }
     /**
      * IData 接口定义了组件的基本数据配置。
      * 包括组件名称、前缀、图标、文档链接等信息。
@@ -815,41 +808,7 @@ declare namespace plug {
         /**
          * 可选的插槽映射，用于定义组件的插槽配置
          */
-        slotsMap?: {
-            /**
-             * 组件的名称
-             */
-            [key: string]: {
-                /**
-                 * 插槽的名称
-                 */
-                [key: string]: string | {
-                    /**
-                     * 是否自动添加该插槽
-                     */
-                    auto?: true;
-                    /**
-                     * 允许的组件列表，这些组件可以被快速插入或附加
-                     */
-                    allowComps?: string[] | {
-                        name: string,
-                    }[];
-                    /**
-                     * 可以被快速插入的组件列表
-                     * 这里可以指定组件的名称，以及可选的属性
-                     */
-                    appendComps?: string[] | {
-                        name: string,
-                        /**
-                         * 默认插入时递交的属性
-                        */
-                        attrs?: {
-                            [key: string]: any;
-                        }
-                    }[];
-                };
-            };
-        };
+        slotsMap?: IDefaultSlotsMap | (() => IDefaultSlotsMap) | (() => Promise<IDefaultSlotsMap>);
         /**
          * 可选的生命周期映射，用于存储生命周期函数的相关信息
          * 
@@ -912,5 +871,6 @@ declare namespace plug {
         clearDefaultComps?: boolean;
         iconUrl?: string;
         UIName: string;
+        appendUIMap?: any;
     }
 }

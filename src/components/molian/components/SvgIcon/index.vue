@@ -98,5 +98,6 @@ const style = computed(() => {
     outline: none;
     display: inline-block;
     user-select: none;
+    transition: .55s;
 }
 </style>

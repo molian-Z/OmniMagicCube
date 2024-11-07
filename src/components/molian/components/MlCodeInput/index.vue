@@ -32,13 +32,13 @@ const props = defineProps({
     default: {},
   },
 });
-const message = inject("mlMessage");
+const message:any = inject("mlMessage");
 const emits = defineEmits(["update:modelValue"]);
 const customComps: any = inject("customComps");
 const { customButton, customDialog, customRadioGroup, customRadioButton } = customComps;
 const codeMode = ref("javascript");
 const codeRef = ref();
-const {t} = useI18n()
+const { t } = useI18n()
 const visible = ref(false);
 const codeObj = ref<any>({});
 
@@ -63,7 +63,7 @@ const showDialog = (type: string) => {
     }
   } else {
     codeMode.value = "javascript";
-    if (typeof props.modelValue !== "object" || !props.modelValue) {
+    if (typeof props.modelValue !== "object" || !props.modelValue || Array.isArray(props.modelValue)) {
       const obj: {
         code: string;
         codeVar: string[];
@@ -126,15 +126,26 @@ const appendModifiers = (val: string[]) => {
   codeObj.value.modifiers = val;
   emits("update:modelValue", codeObj.value);
 };
+
+const currentStatus = (value :any) => {
+    if (props.mode === 'function') {
+        return !!value.code
+    } else if(props.mode === 'object') {
+        return !!value && Object.keys(value).length > 0 
+    } else if (props.mode === 'array') {
+        return !!value && value.length > 0
+    }
+    return false
+}
 </script>
 
 <template>
   <customButton
-    :theme="newValue.code ? 'warning' : 'primary'"
+    :theme="currentStatus(newValue) ? 'warning' : 'primary'"
     size="small"
     @click="showDialog(mode)"
   >
-    {{ newValue.code ? t("options.modify") : t("options.edit")
+    {{ currentStatus(newValue) ? t("options.modify") : t("options.edit")
     }}<span style="padding-left: 6px;">{{ t(`options.${mode}`) }}</span>
 
     <customDialog

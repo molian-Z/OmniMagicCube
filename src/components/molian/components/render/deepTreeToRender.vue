@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import { defineProps, computed } from "vue";
 import slotTemplate from "./SlotTemplate.vue";
-import vCustomDirectives from "@molian/utils/useDirectives";
+import renderFor from "./RenderFor.vue";
 import { isIf, isFor, isShow, data2Vars, getValue } from "@molian/utils/useCore";
-import { variable, originVariable } from "./renderData";
 const props = defineProps(<
   {
     modelValue: any;
@@ -11,6 +10,7 @@ const props = defineProps(<
     slotData: {
       [key: string]: any;
     };
+    interInc: any
   }
 >{
   modelValue: {
@@ -25,7 +25,12 @@ const props = defineProps(<
     type: Object,
     default: () => {},
   },
+  interInc:{
+    type: Object,
+    default: () => {}
+  }
 });
+const { variable, originVariable } = props.interInc
 const renderData = computed(() => {
   return getValue(
     props.modelValue,
@@ -49,17 +54,25 @@ const newForEach = ({ comp, $slot }: any) => {
 </script>
 <template>
   <template v-for="comp in renderData" :key="comp.key">
-    <slotTemplate
-      :comp="comp"
-      :expandAPI="expandAPI"
-      :slotData="slotData"
+    <renderFor
       v-if="isFor({ comp, $slot: slotData })"
-      :key="forItem[comp.directives.for.idKey] || forIndex"
-      v-for="(forItem, forIndex) in newForEach({ comp, $slot: slotData })"
-      v-show="isShow({ comp, $slot: slotData })"
-      v-on="comp.cacheOn"
-      v-customDirectives="{ comp, $slot: slotData }"
-    />
+      :modelValue="newForEach({ comp, $slot: slotData })"
+      :comp="comp"
+      :slotData="slotData"
+      :expandAPI="expandAPI"
+      :interInc="interInc"
+    >
+      <template #default="scoped">
+        <slotTemplate
+          :comp="comp"
+          :expandAPI="expandAPI"
+          :slotData="scoped.slotData"
+          v-show="isShow({ comp, $slot: scoped.slotData })"
+          v-on="scoped.cacheOn"
+          :interInc="interInc"
+        />
+      </template>
+    </renderFor>
     <slotTemplate
       :comp="comp"
       :expandAPI="expandAPI"
@@ -67,7 +80,7 @@ const newForEach = ({ comp, $slot }: any) => {
       v-else-if="isIf({ comp, $slot: slotData })"
       v-show="isShow({ comp, $slot: slotData })"
       v-on="comp.cacheOn"
-      v-customDirectives="{ comp, $slot: slotData }"
+      :interInc="interInc"
     />
   </template>
 </template>

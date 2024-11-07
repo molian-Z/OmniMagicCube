@@ -178,6 +178,7 @@ const actived = function (item: { type: string; value: any }) {
                         :icon="`flex-${item.type}-${item.icon}`" @click="flexSwitch(item.type, item.value)" />
                 </customTooltip>
             </div>
+            <div style="height:36px;"></div>
             <transform />
             <margin style="margin-top: var(--ml-mg-base);" />
             <font style="margin-top: var(--ml-mg-base);" />

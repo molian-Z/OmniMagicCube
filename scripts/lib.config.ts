@@ -70,7 +70,6 @@ export default defineConfig({
         rollupOptions: {
             // 确保外部化处理那些你不想打包进库的依赖
             external: ["vue", "element-plus", "naive-ui", "tdesign-vue-next", "vexip-ui", "ant-design-vue", "ace-builds", "echarts",
-                "vconsole",
                 "@popperjs/core",
                 "@imengyu/vue3-context-menu",
                 "@vueuse/core",
@@ -82,7 +81,6 @@ export default defineConfig({
                 "dexie",
                 "lodash-es",
                 "sortablejs",
-                "vconsole",
                 "vue3-colorpicker",
                 "@iconify/vue",
                 "ace-builds/src-min-noconflict/snippets/javascript",
@@ -117,7 +115,6 @@ export default defineConfig({
                     vue: "Vue",
                     ['ace-builds']: "ace-builds",
                     echarts: "echarts",
-                    vconsole: "vconsole",
                     ['vue-i18n']: 'vue-i18n',
                     ['ace-builds/src-min-noconflict/snippets/javascript']: "ace-builds/src-min-noconflict/snippets/javascript",
                     ["ace-builds/src-min-noconflict/snippets/css"]: "ace-builds/src-min-noconflict/snippets/css",

@@ -94,7 +94,7 @@ const value = computed(()=>{
 </script>
 <template>
   <div class="flex-container">
-    <span class="sub-title">{{ t('options.'+title) }}</span>
+    <span class="sub-title">{{ title }}</span>
     <svgIcon class="svg-icon " icon="clear" @click="clearData"></svgIcon>
   </div>
   <div class="for-list">
@@ -126,13 +126,13 @@ const value = computed(()=>{
         </customInput>
       </div>
     </div>
-    <div class="for-list__item">
+    <!-- <div class="for-list__item">
       <div class="for-list__label">{{ t('options.indexKey') }}</div>
       <div class="for-list__input">
         <customInput size="small" :modelValue="directives.indexKey" @update:modelValue="updateValue('indexKey', $event)">
         </customInput>
       </div>
-    </div>
+    </div> -->
   </div>
 </template>
 

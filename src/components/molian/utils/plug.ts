@@ -6,7 +6,6 @@ import {iconifyUrl} from './defaultData'
 import type { App } from 'vue'
 import '@imengyu/vue3-context-menu/lib/vue3-context-menu.css'
 import ContextMenu from '@imengyu/vue3-context-menu/lib/vue3-context-menu.es'
-import VConsole from 'vconsole';
 import { Icon, addAPIProvider } from '@iconify/vue'
 import SvgIcon from '@molianComps/SvgIcon/index.vue'
 import IconPicker from '@molianComps/IconPicker/index.vue'
@@ -81,8 +80,5 @@ export default {
             moveMenu: transformMenuPosition,
             isOpenedMenu: isAnyContextMenuOpen
         })
-        if(!!debug.value){
-            new VConsole();
-        }
     }
 }

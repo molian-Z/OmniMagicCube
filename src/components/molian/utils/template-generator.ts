@@ -27,7 +27,7 @@ function deepObjCreateTemplate(obj: { [x: string]: any }) {
         directives:element.directives,
         key: element.key,
         id: element.id,
-        categroy: element.categroy
+        categroy: element.categroy 
       })
       const slots = element.slots
       if (slots) {
@@ -68,12 +68,12 @@ function parseTemplate(obj: { tag: any; attrs: any; on: any; nativeOn: any; dire
         const elementType = obj.attrs[key].type;
         let element = obj.attrs[key].value;
         if (elementType === 'variable') {
-            if(!!element && element.indexOf('.') > -1){
+            if(!!element && Array.isArray(element)) {
                 element = element.join('.')
             }
         }
-        if(typeof element === 'object'){
-          element = JSON.stringify(element)
+        if(typeof element === 'object' && ['array', 'object'].indexOf(elementType) > -1){
+          element = JSON.stringify(element).replace(/"/g, "'")
         }
         if(element === "{}" || element === "[]" || element === 'null'){
           element = undefined

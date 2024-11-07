@@ -35,8 +35,8 @@ app.use(ArcoVue, {
 });
 
 app.use(TinyVue);
-const options:plug.designerInstall = {
-    useUI: "element-plus", 
+const options: plug.designerInstall = {
+    useUI: "element-plus",
     compsConfig: {
         globalComps: {
             Message: MessagePlugin,
@@ -53,39 +53,42 @@ const options:plug.designerInstall = {
         registerCloud: true, // 是否允许从远端获取组件数据
         registerCloudUrl: '', // 注册组件数据的链接
         // 插槽地图映射
-        slotsMap: {
-            TinyRow: {
-                default: {
-                    auto: true, //自动添加插槽
-                    allowComps: ['TinyCol'] // 该组件的该插槽只能放置这些组件
-                }
-            },
-            span: {
-                default: 'auto' //自动添加插槽
-            },
-            ElRow: {
-                default: {
-                    auto: true,
-                    allowComps: [{
-                        name:'ElCol',
-                    }],
-                    appendComps: [{
-                        name:'ElCol',
-                        attrs:{
-                            span: 12
-                        }
-                    }]
-                }
-            },
-            ElCol: {
-                default: {
-                    auto: true,
-                    appendComps: [{
-                        name:'ElFormItem',
-                    },{
-                        name:'ElRow',
-                    }]
-                }
+        slotsMap: function () {
+            return {
+                TinyRow: {
+                    default: {
+                        auto: true, //自动添加插槽
+                        allowComps: ['TinyCol'] // 该组件的该插槽只能放置这些组件
+                    }
+                },
+                ElRow: {
+                    default: {
+                        auto: true,
+                        allowComps: [{
+                            name: 'ElCol',
+                        }],
+                        appendComps: [{
+                            name: 'ElCol',
+                            attrs: {
+                                span: 12
+                            }
+                        }]
+                    }
+                },
+                ElCol: {
+                    default: {
+                        auto: true,
+                        appendComps: [
+                            {
+                                name: "ElFormItem",
+                            },
+                            {
+                                name: "ElRow",
+                            },
+                        ],
+                    },
+                    header: true
+                },
             }
         },
         // 生命周期映射

@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import { defineProps, inject } from "vue";
 import deepTreeToRender from "./DeepTreeToRender.vue";
-import { setRenderRef } from "./renderData";
 import { toKebabCase } from "@molian/utils/util";
 import { parseProps } from "@molian/utils/useCore";
-import { variable } from "./renderData";
+import vCustomDirectives from "@molian/utils/useDirectives";
 const comps: any = inject("mlComps");
 const props = defineProps(<
   {
@@ -13,6 +12,7 @@ const props = defineProps(<
     slotData: {
       [key: string]: any;
     };
+    interInc: any;
   }
 >{
   comp: {
@@ -27,7 +27,12 @@ const props = defineProps(<
     type: Object,
     default: () => {},
   },
+  interInc: {
+    type: Object,
+    default: () => {}
+  }
 });
+const { variable, setRenderRef } = props.interInc
 const useComp = computed(() => {
   return !!comps[props.comp.name] ? comps[props.comp.name].comp : props.comp.name;
 });
@@ -40,6 +45,7 @@ const setSlots = (slotProps: any) => {
     return props.slotData;
   }
 };
+const vCurrentDirectives = vCustomDirectives({ comp: props.comp, $slot: props.slotData, variable: variable.value, expandAPI: props.expandAPI })
 </script>
 <template>
   <component
@@ -48,6 +54,7 @@ const setSlots = (slotProps: any) => {
     :ref="(el: any) => setRenderRef(el, comp)"
     v-bind="parseProps(comp, comps, variable, expandAPI, slotData)"
     :class="toKebabCase(comp.name) + '__' + comp.key"
+    v-currentDirectives="{}"
   >
     <template
       v-for="(slotVal, slotKey) in comp.slots"
@@ -59,6 +66,7 @@ const setSlots = (slotProps: any) => {
           :expandAPI="expandAPI"
           :slotData="setSlots(slotProps)"
           v-model="slotVal.children"
+          :interInc="interInc"
         />
       </template>
     </template>

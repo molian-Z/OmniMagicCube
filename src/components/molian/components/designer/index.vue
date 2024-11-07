@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import {useI18n} from 'vue-i18n'
 import "@molian/assets/styles/global.scss";
 import { defineProps, inject } from "vue";
+import { currentRegComps, parseSlot, slotsMap } from "@molian/utils/compsConfig";
+import { useI18n } from "vue-i18n";
 import fullLoadingComps from "@molianComps/Loading/full-loading-1.vue";
 import {
   hiddenAllPanel,
@@ -33,9 +34,9 @@ defineProps({
     default: "100vh",
   },
 });
-const { t } = useI18n()
+const { t } = useI18n();
 const message = inject("mlMessage");
-const comps:any = inject('mlComps')
+const comps: any = inject("mlComps");
 useKeys(message, t);
 const setData = (data: any) => {
   modelValue.value = restoreCss(data.modelValue);
@@ -58,9 +59,19 @@ const getData = (concise = true) => {
   }
 };
 
+const setSlotsMap = (appendSlotsMap: IDefaultSlotsMap) => {
+  Object.keys(appendSlotsMap).forEach((key) => {
+    const useSlots = parseSlot(appendSlotsMap[key]);
+    Object.keys(useSlots).forEach((sKey) => {
+      currentRegComps.value[key].slots[sKey] = useSlots[sKey];
+    });
+    slotsMap.value[key] = appendSlotsMap[key];
+  });
+};
 defineExpose({
   setData,
   getData,
+  setSlotsMap,
 });
 </script>
 <template>
@@ -73,10 +84,13 @@ defineExpose({
         <action-designer></action-designer>
         <global-designer></global-designer>
       </template>
-      <comps-designer :style="`display:${selectedComp ? 'none' : 'block'}`"  v-if="!!setting.immerseLeftMode" />
+      <comps-designer
+        :style="`display:${selectedComp ? 'none' : 'block'}`"
+        v-if="!!setting.immerseLeftMode"
+      />
       <template v-else="!setting.immerseLeftMode">
         <transition name="slide2Width">
-            <comps-designer />
+          <comps-designer />
         </transition>
       </template>
     </div>

@@ -3,7 +3,7 @@ import { inject, ref, computed } from 'vue'
 import { selectedComp } from '@molianComps/Designer/designerData'
 import colorPicker from '@molianComps/ColorPicker/index.vue'
 import svgIcon from '@molianComps/SvgIcon/index.vue'
-import textComp from '@molianComps/Designer/optionsDesigner/tooltip/text.vue'
+import textComp from '@molianComps/Designer/optionsDesigner/tooltip/customDirectives.vue'
 import {useI18n} from 'vue-i18n'
 const {t} = useI18n()
 const customComps:any = inject('customComps')
@@ -154,7 +154,7 @@ const clickIcon = function (key: string | number, value: any) {
         </div>
         <div class="designer-mg-top">
             <div class="designer-container__body">
-                <textComp :title="t('css.textContent')"></textComp>
+                <textComp :title="t('css.textContent')" :methods="['string', 'function','variable']" name="text"></textComp>
             </div>
         </div>
     </div>

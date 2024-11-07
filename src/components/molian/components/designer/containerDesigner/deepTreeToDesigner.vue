@@ -31,6 +31,10 @@ const props = defineProps({
     type: Object,
     default: () => {},
   },
+  slotData: {
+    type: Object,
+    default: () => {}
+  }
 });
 const emit = defineEmits(["update:modelValue"]);
 const comps: any = inject("mlComps");
@@ -58,7 +62,7 @@ const value = computed(() => {
     compData.value,
     variableData.value,
     {},
-    null,
+    props.slotData,
     globalAttrs.variable,
     "designer"
   );
@@ -125,6 +129,10 @@ const setRef = (el: any, comp: any, index: number) => {
     setRef();
   });
 };
+
+const isSlotData = (slotProps: any) => {
+  return slotProps && Object.keys(slotProps).length > 0
+};
 </script>
 
 <template>
@@ -155,6 +163,7 @@ const setRef = (el: any, comp: any, index: number) => {
       :modelValue="compData"
       :parentNode="parentNode"
       :slots="slots"
+      :inheritProps="slotData"
     >
       <template
         v-for="(slotVal, slotKey) in comp.slots"
@@ -162,11 +171,11 @@ const setRef = (el: any, comp: any, index: number) => {
         #[slotKey]="slotProps"
       >
         <template v-if="slotVal && slotVal.children">
-          <template v-if="JSON.stringify(slotProps) !== '{}'">
+          <template v-if="isSlotData(slotProps)">
             <deepTreeToDesigner
               v-model="slotVal.children"
               :parentNode="comp"
-              :slotProp="slotProps"
+              :slotData="slotProps"
               :slotKey="slotKey"
               :slotVal="slotVal"
               :treeIndex="treeIndexNext"
@@ -176,6 +185,7 @@ const setRef = (el: any, comp: any, index: number) => {
             v-else
             v-model="slotVal.children"
             :parentNode="comp"
+            :slotData="slotProps"
             :slotKey="slotKey"
             :slotVal="slotVal"
             :treeIndex="treeIndexNext"
