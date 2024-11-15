@@ -50,7 +50,6 @@ const newForEach = ({ comp, $slot }: any) => {
     }
   }
 };
-
 </script>
 <template>
   <template v-for="comp in renderData" :key="comp.key">

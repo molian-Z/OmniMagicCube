@@ -33,6 +33,9 @@
         "tempDelete": "Xóa tạm thời, vui lòng nhấp vào lưu để xác nhận xóa!"
     },
     "attrs": {
+        "modelValue": "Dữ liệu liên kết",
+        "disabled": "Có bị vô hiệu hóa không",
+        "readonly": "Có chỉ đọc không",
         "beforeCreate": "Thực hiện trước khi tạo",
         "created": "Thực hiện sau khi tạo",
         "beforeMount": "Thực hiện trước khi hiển thị",

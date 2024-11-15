@@ -1,7 +1,11 @@
 <script setup lang="ts">
 import { defineProps, inject, computed, defineEmits } from "vue";
 import svgIcon from "@molianComps/SvgIcon/index.vue";
-import { selectedComp, compsRef, setSelectedComp } from "@molianComps/Designer/designerData";
+import {
+  selectedComp,
+  compsRef,
+  setSelectedComp,
+} from "@molianComps/Designer/designerData";
 import {
   hoverComp,
   hoverRef,
@@ -13,8 +17,8 @@ import {
   dropKey,
   dragIndex,
 } from "@molianComps/Designer/draggable";
-import {useI18n} from 'vue-i18n'
-const {t} = useI18n()
+import { useI18n } from "vue-i18n";
+const { t } = useI18n();
 const props = defineProps({
   modelValue: {
     type: Array,
@@ -42,8 +46,8 @@ const compData: any = computed({
 });
 const mlComps: any = inject("mlComps");
 const message: any = inject("mlMessage");
-const customComps: any = inject('customComps')
-const { customInput } = customComps
+const customComps: any = inject("customComps");
+const { customInput } = customComps;
 const isOpened = ref<boolean[]>([]);
 const typeStatus = ref("");
 const editCompIndex = ref(-1);
@@ -56,13 +60,13 @@ const showSlot = (slots: any) => {
   return btn;
 };
 
-const marginTreePx = computed(() =>{
-    if(typeStatus.value === 'append'){
-        return Number(20 + 12 * props.level) + 'px'
-    }else{
-        return Number(12 + 12 * props.level) + 'px'
-    }
-})
+const marginTreePx = computed(() => {
+  if (typeStatus.value === "append") {
+    return Number(20 + 12 * props.level) + "px";
+  } else {
+    return Number(12 + 12 * props.level) + "px";
+  }
+});
 
 watch(
   () => props.modelValue,
@@ -90,7 +94,21 @@ const onActive = (comp: any, index: number) => {
   //有错误暂未修复，先允许删除
   hoverComp.value = comp;
   hoverRef.value = compsRef[comp.key];
-  setSelectedComp(comp)
+  setSelectedComp(comp);
+};
+
+const currentTitle = (comp: any) => {
+  if (!!comp.subTitle) return comp.subTitle;
+  if (
+    comp &&
+    comp.directives &&
+    comp.directives.text &&
+    comp.directives.text.type === "string" &&
+    !!comp.directives.text.value
+  ) {
+    return comp.directives.text.value;
+  }
+  return (mlComps.value[comp.name] && mlComps.value[comp.name].title) || comp.name;
 };
 </script>
 
@@ -106,7 +124,7 @@ const onActive = (comp: any, index: number) => {
       class="append-line"
       v-if="dropKey === comp.key && dragIndex > index && typeStatus !== 'append'"
     >
-        <div class="append-line-text">{{ t(`container.typeStatus.${typeStatus}`) }}</div>
+      <div class="append-line-text">{{ t(`container.typeStatus.${typeStatus}`) }}</div>
     </div>
     <div
       class="tree-node-header"
@@ -127,10 +145,26 @@ const onActive = (comp: any, index: number) => {
         @dragend="onDragend"
         @drop.stop="onDrop($event, index, slotData)"
       >
-        <div v-if="editCompIndex !== index">{{ comp.subTitle || mlComps[comp.name] && mlComps[comp.name].title || comp.name }}</div>
-        <customInput style="width:100px;" size="small" v-model="comp.subTitle" @blur="editCompIndex = -1" v-else></customInput>
-        <svg-icon class="tree-node-header__title-icon" icon="ep:edit" @click="editCompIndex = index" v-if="editCompIndex !== index"></svg-icon>
-        <svg-icon class="tree-node-header__title-icon" icon="ep:select" v-else @click="editCompIndex = -1"></svg-icon>
+        <div v-if="editCompIndex !== index">{{ currentTitle(comp) }}</div>
+        <customInput
+          style="width: 100px"
+          size="small"
+          v-model="comp.subTitle"
+          @blur="editCompIndex = -1"
+          v-else
+        ></customInput>
+        <svg-icon
+          class="tree-node-header__title-icon"
+          icon="ep:edit"
+          @click="editCompIndex = index"
+          v-if="editCompIndex !== index"
+        ></svg-icon>
+        <svg-icon
+          class="tree-node-header__title-icon"
+          icon="ep:select"
+          v-else
+          @click="editCompIndex = -1"
+        ></svg-icon>
       </div>
     </div>
     <el-collapse-transition>
@@ -163,7 +197,7 @@ const onActive = (comp: any, index: number) => {
       class="append-line"
       v-if="dropKey === comp.key && (dragIndex < index || typeStatus === 'append')"
     >
-        <div class="append-line-text">{{ t(`container.typeStatus.${typeStatus}`) }}</div>
+      <div class="append-line-text">{{ t(`container.typeStatus.${typeStatus}`) }}</div>
     </div>
   </div>
 </template>
@@ -210,11 +244,11 @@ const onActive = (comp: any, index: number) => {
       font-size: 12px;
       display: flex;
       align-items: center;
-      &-icon{
+      &-icon {
         margin-left: var(--ml-mg-small);
         transition: var(--ml-transition-base);
         color: var(--ml-primary-color);
-        &:hover{
+        &:hover {
           color: var(--ml-primary-color-light-hover);
         }
       }
@@ -242,11 +276,11 @@ const onActive = (comp: any, index: number) => {
   transition: var(--ml-transition-base);
   position: relative;
 
-  .append-line-text{
+  .append-line-text {
     position: absolute;
     width: 50%;
     top: -16px;
-    color:var(--ml-primary-color-6);
+    color: var(--ml-primary-color-6);
   }
 }
 </style>

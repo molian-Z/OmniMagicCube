@@ -142,7 +142,7 @@ export const directives = {
         // 定义一个计算属性propsData，用于解析和计算组件的props
         const propsData: any = computed(() => {
             // 调用parseProps函数解析组件的props，并返回解析结果
-            return parseProps(props.comp, comps.value, variableData.value, {})
+            return parseProps(props.comp, comps.value, variableData.value, {}, 'designer')
         })
         // 根据组件的缓存配置计算需要发射的数据
         const emitData: any = computed(() => {

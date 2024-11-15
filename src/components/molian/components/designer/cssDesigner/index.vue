@@ -124,14 +124,16 @@ const flexSwitch = function (type: string, value: any) {
             css.value.justifyContent = value
         }
     } else if (type === 'v') {
-        if (css.value.alignItems === value) {
-            css.value.alignItems = ''
+        if (css.value.alignContent === value) {
+            css.value.alignContent = ''
             if (!css.value.justifyContent) {
                 delete css.value.display
             }
+            delete css.value.flexWrap
         } else {
             css.value.display = 'flex'
-            css.value.alignItems = value
+            css.value.alignContent = value
+            css.value.flexWrap = 'wrap'
         }
     }
 }
@@ -156,10 +158,6 @@ const actived = function (item: { type: string; value: any }) {
                         :class="['css-svg-icon', 'toolbar-icon', actived(item) && 'is-active', !selectedComp && 'disabled']"
                         :icon="`flex-${item.type}-${item.icon}`" @click="flexSwitch(item.type, item.value)" />
                 </customTooltip>
-                <!-- <svg-icon class="css-svg-icon" icon="flex-v-space" @click="flexSwitch('v','space-around')" />
-                <svg-icon class="css-svg-icon" icon="flex-v-space" @click="flexSwitch('v','space-evenly')" />
-                <svg-icon class="css-svg-icon" icon="flex-h-space" @click="flexSwitch('h','space-around')" />
-                <svg-icon class="css-svg-icon" icon="flex-h-space" @click="flexSwitch('h','space-evenly')" /> -->
             </template>
             <template v-slot:default="{ activeData }">
                 <transform v-if="activeData.name === 'transform'" />

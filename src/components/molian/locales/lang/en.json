@@ -33,6 +33,9 @@
         "tempDelete": "Temporarily Deleted, Please Click Save to Confirm Deletion!"
     },
     "attrs": {
+        "modelValue":"Bound Data",
+        "disabled":"Whether Disabled",
+        "readonly":"Whether Readonly",
         "beforeCreate": "Execute Before Creation",
         "created": "Execute After Creation",
         "beforeMount": "Execute Before Rendering",

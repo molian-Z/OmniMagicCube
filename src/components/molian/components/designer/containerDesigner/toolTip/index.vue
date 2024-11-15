@@ -1,50 +1,82 @@
 <script setup lang="ts">
-import { computed, inject } from 'vue'
-import { hoverComp, hoverBounding, startDraggable, useDraggable } from '../../draggable'
-import svgIcon from '@molianComps/SvgIcon/index.vue'
-import {useI18n} from 'vue-i18n'
-const {t} = useI18n()
-const customComps: any = inject('customComps')
-const { customInput } = customComps
-const { onDragend } = useDraggable(null, null, null)
-const { top, left, width, height } = hoverBounding
-const comps: any = inject('mlComps')
+import { computed, inject } from "vue";
+import { hoverComp, hoverBounding, startDraggable, useDraggable } from "../../draggable";
+import svgIcon from "@molianComps/SvgIcon/index.vue";
+import { useI18n } from "vue-i18n";
+const { t } = useI18n();
+const customComps: any = inject("customComps");
+const { customInput } = customComps;
+const { onDragend } = useDraggable(null, null, null);
+const { top, left, height } = hoverBounding;
+const mlComps: any = inject("mlComps");
 const currentBounding = computed(() => {
-  let isWidth = 160
   if (hoverComp.value) {
     let obj: any = {
       //left: left.value + width.value / 2 <= (isWidth / 2) ? '5px' : Number(left.value - (isWidth / 2)) + width.value / 2 + 'px',
-      left: left.value + 'px',
+      left: left.value + "px",
       // width: isWidth + 'px'
-    }
+    };
     if (top.value < 60) {
-      obj.top = top.value + height.value + 5 + 'px'
+      obj.top = top.value + height.value + 5 + "px";
     } else {
       // obj.top = top.value - 60 + 'px'
-      obj.top = top.value - 65 + 'px'
+      obj.top = top.value - 65 + "px";
     }
-    return obj
+    return obj;
   }
-})
-const editSubTitle = ref(false)
+});
+const editSubTitle = ref(false);
+const currentTitle = computed(() => {
+  if (!!hoverComp.value.subTitle) return hoverComp.value.subTitle;
+  if (
+    hoverComp.value &&
+    hoverComp.value.directives &&
+    hoverComp.value.directives.text &&
+    hoverComp.value.directives.text.type === "string" && 
+    !!hoverComp.value.directives.text.value
+  ) {
+    return hoverComp.value.directives.text.value;
+  }
+  return (mlComps.value[hoverComp.value.name] && mlComps.value[hoverComp.value.name].title) || hoverComp.value.name;
+});
 </script>
 
 <template>
-  <div class="drag-shadow"  @click.stop :style="currentBounding" v-if="hoverComp">
+  <div class="drag-shadow" @click.stop :style="currentBounding" v-if="hoverComp">
     <div class="drag-tips">
       <svg-icon size="22" class="drag-icon" :icon="hoverComp.icon || 'comps-default'" />
       <div class="drag-title">
         <div class="drag-title-text">
-        <div v-if="!editSubTitle">{{ hoverComp.subTitle || t(comps[hoverComp.name].title) }}</div>
-        <customInput size="small" v-model="hoverComp.subTitle" @blur="editSubTitle = false" v-else></customInput>
-        <svg-icon class="drag-title-text__icon" icon="ep:edit" @click="editSubTitle = true" v-if="!editSubTitle"></svg-icon>
-        <svg-icon class="drag-title-text__icon" icon="ep:select" v-else @click="editSubTitle = false"></svg-icon>
+          <div v-if="!editSubTitle">{{ currentTitle }}</div>
+          <customInput
+            size="small"
+            v-model="hoverComp.subTitle"
+            @blur="editSubTitle = false"
+            v-else
+          ></customInput>
+          <svg-icon
+            class="drag-title-text__icon"
+            icon="ep:edit"
+            @click="editSubTitle = true"
+            v-if="!editSubTitle"
+          ></svg-icon>
+          <svg-icon
+            class="drag-title-text__icon"
+            icon="ep:select"
+            v-else
+            @click="editSubTitle = false"
+          ></svg-icon>
         </div>
         <div class="drag-title__desc">{{ hoverComp.name }}</div>
       </div>
     </div>
 
-    <div class="drag-handler" draggable="true" @dragstart="startDraggable($event, hoverComp)" @dragend="onDragend">
+    <div
+      class="drag-handler"
+      draggable="true"
+      @dragstart="startDraggable($event, hoverComp)"
+      @dragend="onDragend"
+    >
       <svgIcon icon="drag-move"></svgIcon>
       <!-- <span>{{ t('container.moveComp') }}</span> -->
     </div>
@@ -72,10 +104,10 @@ const editSubTitle = ref(false)
     display: flex;
     align-items: center;
 
-    .drag-icon{
+    .drag-icon {
       width: 22px;
       height: 22px;
-      color:var(--ml-text-color-1);
+      color: var(--ml-text-color-1);
     }
 
     .drag-title {
@@ -88,21 +120,21 @@ const editSubTitle = ref(false)
       .drag-title-text {
         font-weight: bold;
         padding-bottom: var(--ml-pd-small);
-        color:var(--ml-text-color-1);
+        color: var(--ml-text-color-1);
         width: 100%;
         display: flex;
         align-items: center;
         justify-content: space-between;
 
-        &__icon{
-            padding-left: var(--ml-pd-small);
-            color: var(--ml-primary-color-4);
-            cursor: pointer;
-            transition: var(--ml-transition-base);
+        &__icon {
+          padding-left: var(--ml-pd-small);
+          color: var(--ml-primary-color-4);
+          cursor: pointer;
+          transition: var(--ml-transition-base);
 
-            &:hover{
-                color: var(--ml-primary-color-light-hover);
-            }
+          &:hover {
+            color: var(--ml-primary-color-light-hover);
+          }
         }
       }
 

@@ -109,7 +109,6 @@ const directives = computed({
     if (!selectedComp.value.directives) {
       selectedComp.value.directives = {};
     }
-
     // 根据传入值是否为null，分别处理移除文本指令和设置文本指令的情况
     if (val === null) {
       selectedComp.value.directives[props.name] = null;

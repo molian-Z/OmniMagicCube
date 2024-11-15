@@ -129,7 +129,7 @@ const transitionBeforeEnd = () => {
 }
 .popper-container {
   border-radius: var(--ml-radius-base);
-  z-index: 1000;
+  z-index: 2000;
 }
 .v-enter-active,
 .v-leave-active {

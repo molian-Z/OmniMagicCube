@@ -44,7 +44,7 @@ const activeObj: any = ref({})
 const el = ref(null)
 const dragHeader = ref(null)
 const isFold = ref(true)
-const { x, y, isDragging } = useDraggable(dragHeader)
+const { x, y } = useDraggable(dragHeader)
 const { width } = useWindowSize()
 const floatPos = computed(() => {
     const foldWidth = isFold.value ? 60 : props.foldWidth
@@ -56,10 +56,11 @@ const floatPos = computed(() => {
             width: foldWidth + 'px',
             height: foldHeight + 'px'
         }
-    } else {
+    }
+     else {
         return {
-            right: width.value - x.value + 'px',
-            top: y.value + 'px',
+            right: width.value - x.value - 40 + 'px',
+            top: y.value - 46 + 'px',
             width: foldWidth + 'px',
             height: foldHeight + 'px'
         }
@@ -67,11 +68,11 @@ const floatPos = computed(() => {
 })
 nextTick(() => {
     if (props.float === 'right') {
-        x.value = width.value - props.offset[0]
+        x.value = width.value - props.offset[0] - 40
     } else {
         x.value = props.offset[0]
     }
-    y.value = props.offset[1]
+    y.value = props.offset[1] + 46
 })
 
 watch(() => props.isShow, (newVal) => {
@@ -154,7 +155,7 @@ const closePanel = function (evt: any) {
 @use '../../assets/styles/global.scss';
 
 .float-panel-container {
-    position: absolute;
+    position: fixed;
     border-radius: var(--ml-radius-lg);
     border: 1px solid var(--color-fill-3, #E5E6EB);
     background-color: rgba(global.$bgColor, 0.15);
@@ -235,6 +236,7 @@ const closePanel = function (evt: any) {
                     align-items: center;
                     background-color: var(--ml-bg-color);
                     border-top: 1px solid var(--ml-fill-color-4);
+                    overflow: hidden;
                 }
             }
 
@@ -318,6 +320,7 @@ const closePanel = function (evt: any) {
                 position: relative;
                 padding: var(--ml-pd-base);
                 height: calc(100% - 40px);
+                overflow: auto;
 
                 &.is-left {
                     padding-left: 0;

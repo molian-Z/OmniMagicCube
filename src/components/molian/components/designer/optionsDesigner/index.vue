@@ -180,7 +180,7 @@ const openDialog = (type: string) => {
       v-model="optionsPanel"
       @clickClose="closeFloatPanel"
       :foldWidth="365"
-      :foldHeight="600"
+      :foldHeight="510"
       :isShow="globalMenu === 'option'"
       v-if="!!setting.immerseRightMode"
     >
@@ -209,6 +209,8 @@ const openDialog = (type: string) => {
                 <component
                   :is="item.component"
                   :title="item.label"
+                  :methods="item.methods"
+                  :name="item.value"
                   @close="item.show = false"
                 />
               </template>

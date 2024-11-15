@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { useAttrs } from 'vue'
 defineOptions({
     name: 'MlVerticalContainer',
     slotsOption: {
@@ -35,20 +34,19 @@ const props = defineProps({
         optionItems:['auto', 'visible', 'hidden', 'scroll', 'clip']
     }
 })
-const attrs = useAttrs()
-const { isDesigner } = attrs
 
-const flexWrap = computed(() => {
-    return props.flexWrap ? 'wrap' : 'nowrap'
-})
-
-const flex = computed(() => {
-    return `${props.flexBasis} ${props.flexGrow} ${props.flexShrink}`
-})
+const containerStyle = computed(() => ({
+    'flexWrap': props.flexWrap ? 'wrap' : 'nowrap',
+    'flexBasis': props.flexBasis,
+    'flexGrow': props.flexGrow || '0',
+    'flexShrink': props.flexShrink || '0',
+    'overflow': props.overflow,
+    'order': props.order
+}))
 </script>
 
 <template>
-    <div class="molian-vertical-container">
+    <div class="molian-vertical-container" :style="containerStyle">
         <slot></slot>
     </div>
 </template>
@@ -57,9 +55,5 @@ const flex = computed(() => {
 .molian-vertical-container {
     display: flex;
     flex-direction: column;
-    flex-wrap: v-bind(flexWrap);
-    flex: v-bind(flex);
-    order: v-bind(order);
-    overflow: v-bind(overflow);
 }
 </style>

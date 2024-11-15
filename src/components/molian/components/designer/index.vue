@@ -38,20 +38,39 @@ const { t } = useI18n();
 const message = inject("mlMessage");
 const comps: any = inject("mlComps");
 useKeys(message, t);
+/**
+ * 设置数据函数，用于更新组件的模型值和全局属性
+ * @param {any} data - 包含模型值和全局属性的对象
+ */
 const setData = (data: any) => {
+  // 更新组件的模型值
   modelValue.value = restoreCss(data.modelValue);
+  
+  // 遍历全局属性对象的每个键，更新或添加属性
   Object.keys(data.globalAttrs).forEach((key: string) => {
     globalAttrs[key] = Object.assign({}, data.globalAttrs[key]);
   });
 };
 
+/**
+ * 根据参数决定返回原始数据或处理后的数据
+ * 
+ * 此函数用于根据传入的参数决定是否对数据进行处理如果需要处理数据，
+ * 则使用 conciseJs 函数处理 modelValue 的值，并且可以处理自定义组件的值
+ * 如果不需要处理数据，则直接返回原始的 modelValue 值
+ * 
+ * @param {boolean} concise - 指示是否需要对数据进行处理默认为 true
+ * @returns {Object} - 包含 globalAttrs 和 modelValue 属性的对象
+ */
 const getData = (concise = true) => {
   if (concise) {
+    // 当需要处理数据时，返回包含处理后的 modelValue 和 globalAttrs 的对象
     return {
       globalAttrs,
       modelValue: conciseJs(conciseCss(modelValue.value), comps.value),
     };
   } else {
+    // 当不需要处理数据时，直接返回包含原始 modelValue 和 globalAttrs 的对象
     return {
       globalAttrs,
       modelValue: modelValue.value,
@@ -59,12 +78,20 @@ const getData = (concise = true) => {
   }
 };
 
+/**
+ * 合并现有的slots映射
+ * @param {IDefaultSlotsMap} appendSlotsMap - 新的slots映射，用于扩展或更新当前组件的slots
+ */
 const setSlotsMap = (appendSlotsMap: IDefaultSlotsMap) => {
+  // 遍历新的slots映射的每一个键值对
   Object.keys(appendSlotsMap).forEach((key) => {
+    // 解析每个组件的slots，以适应当前组件的使用
     const useSlots = parseSlot(appendSlotsMap[key]);
+    // 将解析后的slots合并到当前组件的slots中
     Object.keys(useSlots).forEach((sKey) => {
       currentRegComps.value[key].slots[sKey] = useSlots[sKey];
     });
+    // 将新的slots映射添加到全局的slotsMap中
     slotsMap.value[key] = appendSlotsMap[key];
   });
 };

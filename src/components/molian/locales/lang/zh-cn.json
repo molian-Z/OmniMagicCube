@@ -33,6 +33,9 @@
         "tempDelete": "暂时删除,请点击保存确认删除!"
     },
     "attrs": {
+        "modelValue":"绑定数据",
+        "disabled":"是否禁用",
+        "readonly":"是否只读",
         "beforeCreate": "创建前执行",
         "created": "创建后执行",
         "beforeMount": "渲染前执行",

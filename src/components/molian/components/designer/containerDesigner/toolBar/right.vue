@@ -13,6 +13,10 @@ const { customPopup, customDialog } = customComps
 
 const showRenderDialog = ref(false)
 
+const renderCode = () => {
+    return JSON.parse(JSON.stringify(modelValue.value))
+}
+
 </script>
 
 <template>
@@ -61,7 +65,7 @@ const showRenderDialog = ref(false)
     <customDialog appendToBody header="效果预览" width="1200px" :close-on-click-modal="false"
       @escKeydown="showRenderDialog = false" @closeBtnClick="showRenderDialog = false"
       v-model:visible="showRenderDialog" destroyOnClose>
-      <render :modelValue="modelValue" :expandAPI="{test:()=>{}}" :globalAttrs="globalAttrs" />
+      <render :modelValue="renderCode()" :expandAPI="{test:()=>{}}" :globalAttrs="globalAttrs" />
     </customDialog>
   </div>
 </template>

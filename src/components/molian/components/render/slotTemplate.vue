@@ -29,10 +29,10 @@ const props = defineProps(<
   },
   interInc: {
     type: Object,
-    default: () => {}
-  }
+    default: () => {},
+  },
 });
-const { variable, setRenderRef } = props.interInc
+const { variable, setRenderRef } = props.interInc;
 const useComp = computed(() => {
   return !!comps[props.comp.name] ? comps[props.comp.name].comp : props.comp.name;
 });
@@ -45,14 +45,19 @@ const setSlots = (slotProps: any) => {
     return props.slotData;
   }
 };
-const vCurrentDirectives = vCustomDirectives({ comp: props.comp, $slot: props.slotData, variable: variable.value, expandAPI: props.expandAPI })
+const vCurrentDirectives = vCustomDirectives({
+  comp: props.comp,
+  $slot: props.slotData,
+  variable: variable.value,
+  expandAPI: props.expandAPI,
+});
 </script>
 <template>
   <component
     :id="comp.id"
     :is="useComp"
     :ref="(el: any) => setRenderRef(el, comp)"
-    v-bind="parseProps(comp, comps, variable, expandAPI, slotData)"
+    v-bind="parseProps(comp, comps, variable, expandAPI, slotData, 'render')"
     :class="toKebabCase(comp.name) + '__' + comp.key"
     v-currentDirectives="{}"
   >

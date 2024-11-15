@@ -384,7 +384,7 @@ export const data2Vars = (directive: any, vars: any, options?: any) => {
  * @param expandAPI 扩展API函数，用于在解析属性时调用扩展功能
  * @returns 返回一个对象，包含从组件实例和定义中解析出的属性键值对
  */
-export const parseProps = (comp: any, comps: any, variable: any, expandAPI: any, slotData?: any) => {
+export const parseProps = (comp: any, comps: any, variable: any, expandAPI: any, slotData?: any, type?: 'designer' | 'render') => {
     // 初始化一个空对象，用于存储解析后的属性数据
     const propsData: {
         [key: string]: any;
@@ -451,7 +451,9 @@ export const parseProps = (comp: any, comps: any, variable: any, expandAPI: any,
                     // 否则直接将属性值存储到结果对象中
                     const nativeProp = !!comps[comp.name].render || !!comps[comp.name].setup ? comps[comp.name].props[key] : comps[comp.name].comp.props[key]
                     if (typeof nativeProp === 'object' && !Array.isArray(nativeProp)) {
-                        if (element.value !== nativeProp.default) {
+                        if (element.value !== nativeProp.default && type === 'designer') {
+                            newVal = element.value;
+                        } else if(type === 'render') {
                             newVal = element.value;
                         }
                     } else if (typeof nativeProp === 'function' && element.value !== null) {
@@ -485,7 +487,11 @@ export const parseProps = (comp: any, comps: any, variable: any, expandAPI: any,
                 newVal = newVal.value
             }
             // 将解析后的属性值存储到结果对象中
-            propsData[key] = newVal;
+            if(newVal === null) {
+                delete propsData[key];
+            } else {
+                propsData[key] = newVal;
+            }
         }
     }
     // 返回包含所有解析后属性的对象
