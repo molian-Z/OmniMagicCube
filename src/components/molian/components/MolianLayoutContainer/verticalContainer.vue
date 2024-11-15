@@ -35,14 +35,16 @@ const props = defineProps({
     }
 })
 
-const containerStyle = computed(() => ({
-    'flexWrap': props.flexWrap ? 'wrap' : 'nowrap',
-    'flexBasis': props.flexBasis,
-    'flexGrow': props.flexGrow || '0',
-    'flexShrink': props.flexShrink || '0',
-    'overflow': props.overflow,
-    'order': props.order
-}))
+const containerStyle = computed(() => {
+  return {
+    flexWrap: props.flexWrap ? "wrap" : "nowrap",
+    flexBasis: props.flexBasis,
+    flexGrow: props.flexGrow || "0",
+    flexShrink: props.flexShrink || "0",
+    overflow: props.overflow,
+    order: props.order,
+  };
+});
 </script>
 
 <template>
