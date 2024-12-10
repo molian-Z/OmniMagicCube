@@ -1,4 +1,4 @@
-import { modelValue, aiImRef, fullLoading, compsRef, selectedComp } from './designerData'
+import { modelValue, aiImRef, fullLoading, compsEls, selectedComp } from './designerData'
 import { AIURL, contextLevel } from '@molian/utils/defaultData'
 import { useUI } from '@molian/utils/UIMap'
 import { getNthParent } from '@molian/utils/useCore'

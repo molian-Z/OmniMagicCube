@@ -1,14 +1,16 @@
 <script setup lang="ts">
 import { ref, inject } from 'vue'
 import {
-    useCloned, useElementSize
+    useCloned, useElementSize, useStyleTag
 } from '@vueuse/core'
+import { throttle } from "lodash-es";
 import deepComps from './deepTreeToDesigner.vue'
 import toolTip from './toolTip/index.vue'
 import toolBar from './toolBar/index.vue'
 import { modelValue, selectedComp, createComp, screenRatioInfo } from '../designerData'
 import { resetHover, dragNodes, dragIndex, dropIndex, resetDraggable, onDragenter } from '../draggable'
 import { calculateRatio, scaleCalculate } from '@molian/utils/util'
+import { createCss } from "@molian/utils/css-generator";
 const comps: any = inject('mlComps')
 const containerRef = ref()
 const onDrop = function (evt: any) {
@@ -81,6 +83,24 @@ const getCoverStyle = function (cover: { left: any; width: any; top: any; height
 const confirmDropContainer = async() =>{
    onDragenter(-1, modelValue, null, modelValue)
 }
+
+const { css, unload } = useStyleTag('',{
+    id: 'omni-magic-cube-designer',
+});
+const throttledCreateCss = throttle((newVal: any) => {
+  css.value = createCss(newVal);
+}, 1000);
+watch(
+  () => modelValue.value,
+  (newVal) => {
+    throttledCreateCss(newVal);
+  },
+  { deep: true }
+);
+
+onUnmounted(() => {
+  unload();
+});
 </script>
 <template>
     <div class="container-designer" @click="onClick">

@@ -6,7 +6,6 @@ import autoImport from 'unplugin-auto-import/vite'
 import components from 'unplugin-vue-components/vite'
 import visualizer from 'rollup-plugin-visualizer'
 import commonjs from '@rollup/plugin-commonjs'
-import dts from 'vite-plugin-dts'
 import loadVersion from 'vite-plugin-package-version'
 import vueI18n from '@intlify/unplugin-vue-i18n/vite'
 
@@ -72,6 +71,11 @@ export default defineConfig({
             external: ["vue", "element-plus", "naive-ui", "tdesign-vue-next", "vexip-ui", "ant-design-vue", "ace-builds", "echarts",
                 "@popperjs/core",
                 "@imengyu/vue3-context-menu",
+                "@imengyu/vue3-context-menu/lib/vue3-context-menu.es",
+                "ContextMenu",
+                "vue-i18n",
+                "@intlify",
+                "@vueuse",
                 "@vueuse/core",
                 "@vueuse/integrations",
                 "@vueuse/math",

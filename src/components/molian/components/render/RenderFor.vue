@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { memoize } from "lodash-es";
 import { getCurrentOn } from '@molian/utils/customFunction'
 import { createSlot } from "@molian/utils/useCore";
 const props = defineProps({
@@ -24,9 +25,9 @@ const props = defineProps({
   }
 })
 const { variable, originVariable } = props.interInc
-const getOn = (item: any, index:number) => {
-    return getCurrentOn({ on: props.comp.on, nativeOn: props.comp.nativeOn }, variable.value, originVariable.value, createSlot(item,index, props.comp, props.slotData), props.expandAPI)
-}
+const getOn = memoize((item: any, index: number) => {
+  return getCurrentOn({ on: props.comp.on, nativeOn: props.comp.nativeOn }, variable.value, originVariable.value, createSlot(item, index, props.comp, props.slotData), props.expandAPI);
+});
 </script>
 
 <template>

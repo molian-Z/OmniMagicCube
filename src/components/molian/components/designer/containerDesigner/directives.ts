@@ -7,8 +7,9 @@ import {
     withDirectives
 } from 'vue'
 import { watchDebounced } from '@vueuse/core'
+import { toKebabCase } from "@molian/utils/util";
 import {
-    compsRef,
+    compsEls,
     selectedComp,
     setSelectedComp,
     variableData
@@ -21,9 +22,6 @@ import {
     onDragenter
 } from '../draggable'
 import { useMenus } from './menus'
-import {
-    parseStyle
-} from '@molian/utils/css-generator'
 import vCustomDirectives from '@molian/utils/useDirectives'
 import { isIf, isFor, isShow, getForEachList, isNotSlot, parseProps, createSlot } from '@molian/utils/useCore'
 export const directives = {
@@ -51,11 +49,10 @@ export const directives = {
         index: number | any;
         slots: any;
         inheritProps: any;
-    }, context: any) {
-        let { slots, emits, expose }: any = context
+    }, { slots, emits, expose }: any) {
         const comps: any = inject('mlComps')
         const message: any = inject("mlMessage")
-        const { showMenu, hideMenu, ContextMenu } = <any>inject('cmdMenu');
+        const { showMenu } = <any>inject('cmdMenu');
         const compData: any = computed({
             get() {
                 return props.modelValue
@@ -180,7 +177,8 @@ export const directives = {
                 // 当选中的组件与当前组件相同时，添加'selectedComp'类
                 'selectedComp': selectedComp && selectedComp.value && selectedComp.value.key === props.comp.key,
                 // 当组件内没有文本指令且不可拖动且不是插槽时，添加'designer-comp-is-empty'类
-                'designer-comp-is-empty': !props.comp.directives.text && !isDraggable.value && isNotSlot(props.comp.slots)
+                'designer-comp-is-empty': !props.comp.directives.text && !isDraggable.value && isNotSlot(props.comp.slots),
+                [toKebabCase(props.comp.name) + '__' + props.comp.key]: true,
             }
         })
 
@@ -201,7 +199,7 @@ export const directives = {
             const slotData = props.comp.directives && props.comp.directives.for ? createSlot(row, index, props.comp, props.inheritProps) : props.inheritProps
             // 构建组件的属性对象，包括样式、数据、事件处理函数和类名等
             const attrObj = {
-                style: { ...parseStyle(props.comp.css, props.comp.key), ...!isShow({ comp: props.comp, $slot: slotData, expandAPI: {} }) && { display: 'none' } || {} },
+                style: { ...!isShow({ comp: props.comp, $slot: slotData, expandAPI: {} }) && { display: 'none' } || {} },
                 // 合并组件的数据和发射的数据
                 ...propsData.value,
                 ...emitData.value,
@@ -277,7 +275,7 @@ export const directives = {
         // 出现极端情况解决方案。如元素不存在以及无法对元素进行修改的情况
         // 监听inheritAttrs为false的组件
         if (comps.value[props.comp.name].inheritAttrs === false) {
-            watchDebounced(compsRef[props.comp.id], (resetDom) => {
+            watchDebounced(compsEls[props.comp.id], (resetDom) => {
                 //if(!resetDom?.forceWatch) return 
                 // await nextTick()
                 nextTick(() => {
@@ -293,7 +291,7 @@ export const directives = {
                         onDragenter(props.index, props.comp, null, compData)
                     }
                     const styleData: any = computed(() => {
-                        return { ...parseStyle(props.comp.css, props.comp.key), ...!isShow({ comp: props.comp, $slot: props.inheritProps, expandAPI: {} }) && { display: 'none' } || {} }
+                        return { ...!isShow({ comp: props.comp, $slot: props.inheritProps, expandAPI: {} }) && { display: 'none' } || {} }
                     })
                     // 监听并修改样式数据及更新视图组件
                     watchDebounced(styleData, (newAttrs) => {
@@ -342,7 +340,7 @@ export const directives = {
                 maxWait: 1000,
             })
         }
-        expose(elRef.value)
+        expose(elRef)
         // 返回一个函数，根据不同的条件渲染DOM元素
         return () => [
             // 当newForEachList存在且有数据时，并且满足isFor条件，对数据进行map遍历，渲染每个元素

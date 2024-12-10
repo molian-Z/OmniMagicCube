@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, inject, nextTick, watch } from 'vue'
 import { onClickOutside } from '@vueuse/core'
-import { aiImRef, fullLoading, compsRef } from '@molianComps/Designer/designerData'
+import { aiImRef, fullLoading, compsEls } from '@molianComps/Designer/designerData'
 import { AIURL } from '@molian/utils/defaultData'
 import svgIcon from '@molianComps/SvgIcon/index.vue'
 import floatBall from '@molianComps/FloatBall/index.vue'
@@ -47,7 +47,7 @@ const onContextMenu = (e: MouseEvent) => {
     zIndex: 1200,
     x: e.x,
     y: e.y,
-    items: Object.values(compsRef).map((item: any) => {
+    items: Object.values(compsEls).map((item: any) => {
       return {
         label: item.comp.name + '_' + item.comp.key,
         onClick: () => {

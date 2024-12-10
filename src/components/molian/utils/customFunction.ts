@@ -33,10 +33,11 @@ export const createFunc = (type: string, codeVar: string[], code: string) => {
  */
 export const runLifecycle = function (lifecycle: any, variable: any, expandAPI: any) {
     // 遍历生命周期对象中的所有生命周期方法
-    for (const key in lifecycle.value) {
-        if (Object.prototype.hasOwnProperty.call(lifecycle.value, key)) {
+    const realLifecycle = isRef(lifecycle) ? lifecycle.value : lifecycle
+    for (const key in realLifecycle) {
+        if (Object.prototype.hasOwnProperty.call(realLifecycle, key)) {
             // 解构获取当前生命周期方法的类型和代码配置
-            const { type, value } = lifecycle.value[key];
+            const { type, value } = realLifecycle[key];
             if (value) {
                 const { code, codeVar } = value;
                 // 判断当前生命周期方法是否不在默认的生命周期映射中
@@ -210,9 +211,11 @@ export const getVariableData = (variable: { [x: string]: any; }, expandAPI?: any
         // 根据类型处理变量
         if (type === 'function') {
             // 如果函数模式存在且为异步函数或普通函数
-            if (!!value.functionMode && ['asyncFunction', 'function'].indexOf(value.functionMode) > -1) {
+            if (value && !!value.functionMode && ['asyncFunction', 'function'].indexOf(value.functionMode) > -1) {
                 // 创建并绑定函数
                 vars[key] = createFunc(value.functionMode, value.codeVar, value.code).bind({ app: Vue, vars: reactive(vars), ...expandAPI })
+            } else {
+                vars[key] = createFunc('function', [], '').bind({ app: Vue, vars: reactive(vars), ...expandAPI })
             }
         } else if (type === 'computed') {
             // 如果是计算属性且函数模式为异步函数或普通函数

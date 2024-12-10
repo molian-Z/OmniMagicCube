@@ -4,7 +4,7 @@ import vue from '@vitejs/plugin-vue'
 // import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
 import autoImport from 'unplugin-auto-import/vite'
 import components from 'unplugin-vue-components/vite'
-import visualizer from 'rollup-plugin-visualizer'
+// import visualizer from 'rollup-plugin-visualizer'
 // import dts from 'vite-plugin-dts'
 
 // https://vitejs.dev/config/
@@ -32,7 +32,7 @@ export default defineConfig({
             include: [/\.vue$/, /\.vue\?vue/, /\.tsx$/],
             dts: './src/types/components.d.ts',
         }),
-        visualizer(),
+        // visualizer(),
         // dts({ rollupTypes: true })
     ],
     resolve: {

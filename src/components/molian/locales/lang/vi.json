@@ -691,5 +691,21 @@
     },
     "basic": {
         "refField": "Tên Ref"
+    },
+    "codeEditor": {
+        "getVars": "Lấy biến",
+        "getApp": "Lấy phiên bản ứng dụng",
+        "getRefs": "Lấy phiên bản",
+        "varFunc": "Hàm biến",
+        "var": "Biến",
+        "useVarFunc": "Sử dụng hàm biến",
+        "useVar": "Sử dụng biến",
+        "ref": "Thành phần phiên bản",
+        "getRef": "Lấy phiên bản {key}",
+        "useRef": "Sử dụng phiên bản {key}",
+        "refFunction": "Hàm thành phần",
+        "useRefFunction": "Sử dụng hàm {childKey}",
+        "refVars": "Biến thành phần",
+        "getRefVars": "Lấy thuộc tính ${childKey}"
     }
 }

@@ -33,18 +33,21 @@ const props = defineProps(<
   },
 });
 const { variable, setRenderRef } = props.interInc;
-const useComp = computed(() => {
-  return !!comps[props.comp.name] ? comps[props.comp.name].comp : props.comp.name;
-});
+
+const useComp = ref(null);
+watch([() => comps, () => props.comp.name], ([newComps, newName]) => {
+  useComp.value = !!newComps[newName] ? newComps[newName].comp : newName;
+}, { immediate: true });
 
 const setSlots = (slotProps: any) => {
+  const slotData = props.slotData || {}; // 确保 slotData 是对象类型
   if (slotProps && Object.keys(slotProps).length > 0) {
-    const slot = Object.assign({}, props.slotData, { [props.comp.id]: slotProps });
-    return slot;
+    return { ...slotData, [props.comp.id]: slotProps };
   } else {
-    return props.slotData;
+    return slotData;
   }
 };
+
 const vCurrentDirectives = vCustomDirectives({
   comp: props.comp,
   $slot: props.slotData,

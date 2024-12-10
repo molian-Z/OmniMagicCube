@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, inject, defineOptions, defineProps, defineEmits, nextTick } from "vue";
 import { directives } from "./directives";
-import { compsRef, compsEl, variableData, globalAttrs } from "../designerData";
+import { compsRefs, compsEls, variableData, globalAttrs } from "../designerData";
 import { isDraggable, dropKey, useDraggable, dropType, onDragenter } from "../draggable";
 import { getValue } from "@molian/utils/useCore";
 import { useElementBounding, watchDebounced } from "@vueuse/core";
@@ -71,24 +71,24 @@ const { onDrop, onDropSlot } = useDraggable(comps, compData, message);
 const setRef = (el: any, comp: any, index: number) => {
   // await nextTick();
   nextTick(() => {
-    compsEl[comp.id] = el;
+    compsRefs[comp.id] = el;
     let elDom: any = document.getElementById(comp.id);
     let elNextDom: any = el?.$el?.nextElementSibling;
     if (elDom?.classList?.contains("designer-comp")) {
-      compsRef[comp.id] = elDom;
+      compsEls[comp.id] = elDom;
     } else if (elNextDom?.classList?.contains("designer-comp")) {
-      compsRef[comp.id] = elNextDom;
+        compsEls[comp.id] = elNextDom;
     } else {
-      compsRef[comp.id] = elDom || elNextDom || compsRef[comp.id];
+        compsEls[comp.id] = elDom || elNextDom || compsEls[comp.id];
     }
     // 如果获取不到节点暂时暂停。后续直接通过dom操作节点，不在采用uniapp等框架的兼容方案.
-    function setRef() {
-    //   if (!compsRef[comp.id]) {
+    function setElementDom() {
+    //   if (!compsEls[comp.id]) {
     //     setTimeout(() => {
-    //       setRef();
+    //       setElementDom();
     //     }, 300);
     //   }
-      const { width, height } = useElementBounding(compsRef[comp.id]);
+      const { width, height } = useElementBounding(compsEls[comp.id]);
       let pd = ["0", "0"];
       if (height.value < 10) {
         pd[0] = "10px";
@@ -98,10 +98,10 @@ const setRef = (el: any, comp: any, index: number) => {
       }
       if (
         pd[0] !== "0" ||
-        (pd[1] !== "0" && !!compsRef[comp.id] && !!compsRef[comp.id].style)
+        (pd[1] !== "0" && !!compsEls[comp.id] && !!compsEls[comp.id].style)
       ) {
         try {
-          compsRef[comp.id].style.padding = `${pd[0]} ${pd[1]}`;
+            compsEls[comp.id].style.padding = `${pd[0]} ${pd[1]}`;
         } catch (error) {
           // 未缓存
         }
@@ -117,7 +117,7 @@ const setRef = (el: any, comp: any, index: number) => {
         (newVal) => {
           if (newVal && (!elDom || (elDom && !elDom.nextElementSibling)) && !!elNextDom) {
             elNextDom.forceWatch = true;
-            compsRef[comp.id] = elNextDom;
+            compsEls[comp.id] = elNextDom;
           }
         },
         {
@@ -126,7 +126,7 @@ const setRef = (el: any, comp: any, index: number) => {
         }
       );
     }
-    setRef();
+    setElementDom();
   });
 };
 

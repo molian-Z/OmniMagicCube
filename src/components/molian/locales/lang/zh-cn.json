@@ -691,5 +691,21 @@
     },
     "basic":{
         "refField": "Ref名称"
+    },
+    "codeEditor": {
+        "getVars": "获取变量",
+        "getApp": "获取应用实例",
+        "getRefs":"获取实例",
+        "varFunc" : "变量函数",
+        "var":"变量",
+        "useVarFunc":"引用变量函数",
+        "useVar":"引用变量",
+        "ref":"组件实例",
+        "getRef":"获取{key}实例",
+        "useRef":"使用{key}实例",
+        "refFunction":"组件函数",
+        "useRefFunction": "使用{childKey}函数",
+        "refVars": "组件变量",
+        "getRefVars":"获取${childKey}属性"
     }
 }

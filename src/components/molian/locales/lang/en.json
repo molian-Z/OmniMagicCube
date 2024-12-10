@@ -33,9 +33,9 @@
         "tempDelete": "Temporarily Deleted, Please Click Save to Confirm Deletion!"
     },
     "attrs": {
-        "modelValue":"Bound Data",
-        "disabled":"Whether Disabled",
-        "readonly":"Whether Readonly",
+        "modelValue": "Bound Data",
+        "disabled": "Whether Disabled",
+        "readonly": "Whether Readonly",
         "beforeCreate": "Execute Before Creation",
         "created": "Execute After Creation",
         "beforeMount": "Execute Before Rendering",
@@ -690,5 +690,21 @@
     },
     "basic": {
         "refField": "Ref Name"
+    },
+    "codeEditor": {
+        "getVars": "Get Variables",
+        "getApp": "Get App Instance",
+        "getRefs": "Get Instance",
+        "varFunc": "Variable Function",
+        "var": "Variable",
+        "useVarFunc": "Use Variable Function",
+        "useVar": "Use Variable",
+        "ref": "Component Instance",
+        "getRef": "Get {key} Instance",
+        "useRef": "Use {key} Instance",
+        "refFunction": "Component Function",
+        "useRefFunction": "Use {childKey} Function",
+        "refVars": "Component Variables",
+        "getRefVars": "Get ${childKey} Properties"
     }
 }

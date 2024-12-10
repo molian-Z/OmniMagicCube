@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { defineProps, watch, onUnmounted, defineOptions } from "vue";
+import { defineProps, watch, onUnmounted, defineOptions, render } from "vue";
+import { throttle } from "lodash-es";
 import { getVariableData } from "@molian/utils/customFunction";
 import { useStyleTag } from "@vueuse/core";
 import renderTree from "./DeepTreeToRender.vue";
@@ -31,39 +32,34 @@ const props = defineProps(<
   },
 });
 
-// 渲染数据
-// const renderData = ref<Ref[]>([]);
 // 生命周期
 const lifecycle = ref<{ [key: string]: any }>({});
 // 注册css
-const { css, unload } = useStyleTag("");
-
+const { css, unload } = useStyleTag('',{
+    id: 'omni-magic-cube-render',
+});
 const interInc = useRenderData()
 const { renderRef, variable, originVariable } = interInc
 watch(
   () => props.globalAttrs,
   (newVal) => {
-    originVariable.value = newVal.variable
+    originVariable.value = newVal.variable;
     variable.value = getVariableData(newVal.variable, props.expandAPI, true);
     lifecycle.value = newVal.lifecycle;
-    // 执行生命周期
     runLifecycle(lifecycle, variable.value, props.expandAPI);
   },
-  { 
-    immediate: true,
-  }
+  { immediate: true }
 );
-
+const throttledCreateCss = throttle((newVal: any) => {
+  css.value = createCss(newVal);
+}, 300);
 watch(
   () => props.modelValue,
   (newVal) => {
-    css.value = createCss(newVal);
+    throttledCreateCss(newVal);
   },
-  {
-    immediate: true,
-  }
+  { immediate: true }
 );
-
 onUnmounted(() => {
   unload();
 });

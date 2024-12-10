@@ -10,6 +10,8 @@ import {
   modelValue,
   globalAttrs,
   useKeys,
+  compsRefs,
+  variableData,
 } from "./designerData";
 import globalTool from "./globalTool/index.vue";
 import cssDesigner from "./cssDesigner/index.vue";
@@ -24,7 +26,7 @@ import treeDir from "./tools/treeDir/index.vue";
 import { setting } from "@molian/utils/defaultData";
 import { conciseJs } from "@molian/utils/js-generator";
 import { conciseCss, restoreCss } from "@molian/utils/css-generator";
-defineProps({
+const props = defineProps({
   width: {
     type: String,
     default: "100vw",
@@ -32,6 +34,42 @@ defineProps({
   height: {
     type: String,
     default: "100vh",
+  },
+  customEditorData: {
+    type: Object,
+    default: () => {
+      return {
+        highRules: ["$dp", "$edit"],
+        completions: [
+          {
+            meta: "全局属性",
+            caption: `$dp`,
+            value: `$dp()`,
+            score: 9999,
+            mode: "javascript",
+            prefix: ["this"],
+          },
+          {
+            meta: "全局函数",
+            caption: `$edit`,
+            value: `$edit()`,
+            score: 9999,
+            mode: "javascript",
+            prefix: ["this"],
+          },
+        ],
+        snippets: [
+          {
+            score: 1000,
+            completerId: "snippetCompleter",
+            mode: "javascript",
+            meta: "全局函数",
+            caption: "获取数据 $dp",
+            snippet: "//获取数据\nthis.\\$dp.({\n${1:test},${2:hello},\n})",
+          },
+        ],
+      };
+    },
   },
 });
 const { t } = useI18n();
@@ -45,7 +83,7 @@ useKeys(message, t);
 const setData = (data: any) => {
   // 更新组件的模型值
   modelValue.value = restoreCss(data.modelValue);
-  
+
   // 遍历全局属性对象的每个键，更新或添加属性
   Object.keys(data.globalAttrs).forEach((key: string) => {
     globalAttrs[key] = Object.assign({}, data.globalAttrs[key]);
@@ -54,11 +92,11 @@ const setData = (data: any) => {
 
 /**
  * 根据参数决定返回原始数据或处理后的数据
- * 
+ *
  * 此函数用于根据传入的参数决定是否对数据进行处理如果需要处理数据，
  * 则使用 conciseJs 函数处理 modelValue 的值，并且可以处理自定义组件的值
  * 如果不需要处理数据，则直接返回原始的 modelValue 值
- * 
+ *
  * @param {boolean} concise - 指示是否需要对数据进行处理默认为 true
  * @returns {Object} - 包含 globalAttrs 和 modelValue 属性的对象
  */
@@ -95,6 +133,16 @@ const setSlotsMap = (appendSlotsMap: IDefaultSlotsMap) => {
     slotsMap.value[key] = appendSlotsMap[key];
   });
 };
+
+const codeEditorTips = reactive({
+  variable: computed(() => globalAttrs.variable),
+  refs: compsRefs,
+  selectedComp,
+  custom: props.customEditorData,
+});
+
+provide("codeEditor", codeEditorTips);
+
 defineExpose({
   setData,
   getData,

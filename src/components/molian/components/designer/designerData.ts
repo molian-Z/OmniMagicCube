@@ -1,7 +1,8 @@
 import {
     reactive,
     ref,
-    watch
+    watch,
+    provide,
 } from 'vue'
 import uniqueId from 'lodash-es/uniqueId'
 import {
@@ -50,6 +51,7 @@ export const globalAttrs = reactive<CubeData.GlobalAttrs | any>(store.value.glob
 export const variableData = computed(() => {
     return getVariableData(globalAttrs.variable)
 })
+
 // 清空画布
 export const clearCanvas = () => {
     modelValue.value = []
@@ -81,8 +83,8 @@ watch(history as any, (val: any[]) => {
         globalAttrs
     }
 })
-export const compsRef = reactive<any>({})
-export const compsEl = reactive<any>({})
+export const compsEls = reactive<any>({})
+export const compsRefs = reactive<any>({})
 export const selectedComp = ref<CubeData.ModelValue | null | any>(null)
 
 /**

@@ -2,7 +2,7 @@ import { useCloned } from '@vueuse/core'
 import {
     toKebabCase
 } from './util'
-import { compsRef } from '@molianComps/Designer/designerData'
+import { compsEls } from '@molianComps/Designer/designerData'
 export interface IStyleMap {
     opacity?: IOpacity;
     rotate?: IOpacity;
@@ -108,7 +108,7 @@ const styleMap: IStyleMap = {
     // 暂不转换xy,实际使用应根据组件因素考虑是否替换为margin-left、margin-top
     constX: {
         rawValue: function (val: string, obj: { moveX: string; width: string;units: any; }, key: any) {
-            if (!obj.moveX || obj.moveX == '0' && !compsRef[key]) return ''
+            if (!obj.moveX || obj.moveX == '0' && !compsEls[key]) return ''
             const X = createSuffix(obj.moveX, obj.units && obj.units.moveX)
             if (val === 'left') {
                 return {
@@ -136,7 +136,7 @@ const styleMap: IStyleMap = {
     },
     constY: {
         rawValue: function (val: string, obj: { moveY: string;height: string;units:any; }, key: any) {
-            if (!obj.moveY || obj.moveY == '0' && !compsRef[key]) return ''
+            if (!obj.moveY || obj.moveY == '0' && !compsEls[key]) return ''
             const Y = createSuffix(obj.moveY, obj.units && obj.units.moveY)
             if (val === 'top') {
                 return {

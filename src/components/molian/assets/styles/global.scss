@@ -1,3 +1,4 @@
+@use 'sass:color';
 // UI组件库
 // $UIPrefix:'td'; // td el a (规范不同暂不启用)
 
@@ -66,13 +67,13 @@ $marginTypeObj: (
     $colorValue in$colorTypeObj {
 
         @for $i from 1 through 5 {
-            --ml-#{$colorType}-color-#{$i}: #{lighten($colorValue,(5 - $i) * 9%)};
+            --ml-#{$colorType}-color-#{$i}: #{color.adjust($colorValue, $lightness: (5 - $i) * 9%)};
         }
 
         --ml-#{$colorType}-color-6:#{$colorValue};
 
         @for $i from 1 through 3 {
-            --ml-#{$colorType}-color-#{6 + $i}: #{darken($colorValue,$i * 10%)};
+            --ml-#{$colorType}-color-#{6 + $i}: #{color.adjust($colorValue, $lightness: -$i * 10%)};
         }
         --ml-#{$colorType}-color:var(--ml-#{$colorType}-color-6);
         --ml-#{$colorType}-color-light: var(--ml-#{$colorType}-color-1);
@@ -87,7 +88,7 @@ $marginTypeObj: (
     @each $colorType,
     $colorValue in$textColorObj {
         @for $i from 1 through 7 {
-            --ml-#{$colorType}-color-#{$i}: #{lighten($colorValue,$i * 8.7%)};
+            --ml-#{$colorType}-color-#{$i}: #{color.adjust($colorValue, $lightness: $i * 8.7%)};
         }
     }
 
@@ -98,7 +99,6 @@ $marginTypeObj: (
     --ml-fill-color-4:#F2F4F7;
     --ml-fill-color-5:#FAFAFB;
     --ml-icon-color:#BDBDBD;
-
 
     // 生成常用的外边距大小
     @each $key,

@@ -3,7 +3,7 @@ import { defineProps, inject, computed, defineEmits } from "vue";
 import svgIcon from "@molianComps/SvgIcon/index.vue";
 import {
   selectedComp,
-  compsRef,
+  compsEls,
   setSelectedComp,
 } from "@molianComps/Designer/designerData";
 import {
@@ -93,7 +93,7 @@ const onActive = (comp: any, index: number) => {
   hoverIndex.value = index;
   //有错误暂未修复，先允许删除
   hoverComp.value = comp;
-  hoverRef.value = compsRef[comp.key];
+  hoverRef.value = compsEls[comp.key];
   setSelectedComp(comp);
 };
 

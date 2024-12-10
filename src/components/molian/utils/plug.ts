@@ -1,7 +1,7 @@
 import {
     compsInstall
 } from './compsConfig'
-import { useUI, UIData, usePrefix, debug } from './UIMap'
+import { useUI, UIData, usePrefix } from './UIMap'
 import {iconifyUrl} from './defaultData'
 import type { App } from 'vue'
 import '@imengyu/vue3-context-menu/lib/vue3-context-menu.css'

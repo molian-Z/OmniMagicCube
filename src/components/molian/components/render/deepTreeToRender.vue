@@ -31,15 +31,17 @@ const props = defineProps(<
   }
 });
 const { variable, originVariable } = props.interInc
-const renderData = computed(() => {
-  return getValue(
-    props.modelValue,
+const renderData = ref([]);
+
+watch(() => props.modelValue, (newVal) => {
+  renderData.value = getValue(
+    newVal,
     variable.value,
     props.expandAPI,
     props.slotData,
     originVariable.value
   );
-});
+}, { immediate: true });
 const newForEach = ({ comp, $slot }: any) => {
   if (!!comp.directives.for) {
     const forData = data2Vars(comp.directives.for, variable.value);
