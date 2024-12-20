@@ -48,6 +48,7 @@ const props = defineProps({
             score: 9999,
             mode: "javascript",
             prefix: ["this"],
+            snippetStr: "this.\\$dp.({\n${1:test},${2:hello},\n})",
           },
           {
             meta: "全局函数",
@@ -56,18 +57,9 @@ const props = defineProps({
             score: 9999,
             mode: "javascript",
             prefix: ["this"],
+            snippetStr: "this.\\$edit.({\n${1:test},${2:hello},\n})",
           },
-        ],
-        snippets: [
-          {
-            score: 1000,
-            completerId: "snippetCompleter",
-            mode: "javascript",
-            meta: "全局函数",
-            caption: "获取数据 $dp",
-            snippet: "//获取数据\nthis.\\$dp.({\n${1:test},${2:hello},\n})",
-          },
-        ],
+        ]
       };
     },
   },

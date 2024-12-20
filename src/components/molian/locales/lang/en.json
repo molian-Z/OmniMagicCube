@@ -618,6 +618,7 @@
         "appendComponent": "Insert Component",
         "basic": "Basic",
         "properties": "Properties",
+        "moreProperties": "More Properties",
         "slot": "Slot",
         "js": "Event",
         "function": "Function",

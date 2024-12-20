@@ -456,12 +456,8 @@ const getCompletions = () => {
   // 检查customTips对象是否存在，并包含refs和variable属性
   if (customTips && customTips.refs && customTips.variable) {
     // 提取refs和variables的键，并对键进行转义处理，以防它们在代码中具有特殊含义
-    const refsKeys = Object.keys(customTips.refs).map((key) => {
-      return key.replace("$", "\\$");
-    });
-    const variablesKeys = Object.keys(customTips.variable).map((key) => {
-      return key.replace("$", "\\$");
-    });
+    const refsKeys = Object.keys(customTips.refs);
+    const variablesKeys = Object.keys(customTips.variable);
 
     // 返回一个合并了多个子数组的新数组，包含默认补全项、处理后的refs和variables补全项，以及自定义补全项
     return [
@@ -469,8 +465,8 @@ const getCompletions = () => {
       ...refsKeys.map((key, index) => {
         return {
           meta: t("codeEditor.ref"),
-          caption: `${key}`,
-          value: key,
+          caption: `${key.replace("$", "\\$")}`,
+          value: key.replace("$", "\\$"),
           score: index + 1,
           mode: "javascript",
           prefix: ["$refs", "ref"],
@@ -479,17 +475,29 @@ const getCompletions = () => {
       ...variablesKeys.map((key, index) => {
         return {
           meta:
-            typeof customTips.variable[key].type === "function"
+            customTips.variable[key].type === "function"
               ? t("codeEditor.varFunc")
               : t("codeEditor.var"),
           caption: customTips.variable[key].label || `${key}`,
-          value: typeof customTips.variable[key].type === "function" ? `${key}()` : key,
+          value:
+            customTips.variable[key].type === "function"
+              ? `${key.replace("$", "\$")}()`
+              : key.replace("$", "\$"),
           score: index + 1,
           mode: "javascript",
           prefix: ["vars"],
         };
       }),
-      ...customTips.custom.completions,
+      ...customTips.custom.completions.map((item, index) => {
+        return {
+          meta: item.meta,
+          caption: item.caption,
+          value: item.value,
+          score: item.score || index + 1,
+          mode: "javascript",
+          prefix: item.prefix,
+        };
+      }),
     ];
   }
 };
@@ -505,10 +513,7 @@ const getSnippet = () => {
   // 检查customTips及其属性refs和variable是否存在
   if (customTips && customTips.refs && customTips.variable) {
     // 处理variables，将键中的$符号进行转义
-    const variablesKeys = Object.keys(customTips.variable).map((key) => {
-      return key.replace("$", "\\$");
-    });
-
+    const variablesKeys = Object.keys(customTips.variable);
     // 初始化用于存储refs数据的数组
     const refData = [];
 
@@ -525,9 +530,8 @@ const getSnippet = () => {
         caption: t("codeEditor.getRef", { key }),
         snippet: `//${t("codeEditor.getRef", { key })}\nthis.\\$refs.${key}`,
       });
-
       // 遍历组件的属性，生成对属性的操作代码片段
-      Object.keys(currentRef).forEach((childKey, childIndex) => {
+      !!currentRef && Object.keys(currentRef).forEach((childKey, childIndex) => {
         if (typeof currentRef[childKey] === "function") {
           // 如果属性是函数，生成调用函数的代码片段
           const tabs = extractArgsFromString(currentRef[childKey].toString())
@@ -552,7 +556,7 @@ const getSnippet = () => {
             score: index + 1,
             completerId: "snippetCompleter",
             mode: "javascript",
-            meta: key,// t("codeEditor.refVars"),
+            meta: key, // t("codeEditor.refVars"),
             caption: t("codeEditor.getRefVars", { childKey }),
             snippet: `//${t("codeEditor.getRefVars", {
               key,
@@ -569,17 +573,28 @@ const getSnippet = () => {
       ...variablesKeys.map((key, index) => {
         return {
           meta:
-            typeof customTips.variable[key].type === "function"
+            customTips.variable[key].type === "function"
               ? t("codeEditor.useVarFunc")
               : t("codeEditor.useVar"),
           caption: customTips.variable[key].label || `${key}`,
           completerId: "snippetCompleter",
-          snippet: typeof customTips.variable[key].type === "function" ? `this.vars.${key}()` : `this.vars.${key}`,
+          snippet: customTips.variable[key].type === "function" ? `this.vars.${key.replace("$", "\\$")}()` : `this.vars.${key.replace("$", "\\$")}`,
           score: index + 1,
           mode: "javascript",
         };
       }),
-      ...customTips.custom.snippets,
+      ...customTips.custom.completions.filter(item => {
+        return !!item.snippetStr;
+      }).map((item, index) => {
+        return {
+          completerId: "snippetCompleter",
+          score: item.score || index + 1,
+          mode: "javascript",
+          meta: item.meta,
+          caption: item.caption,
+          snippet: '// '+item.meta+'\n'+item.snippetStr,
+        };
+      }),
     ];
   }
 };

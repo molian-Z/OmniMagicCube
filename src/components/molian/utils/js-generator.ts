@@ -14,8 +14,16 @@ export interface IComp {
 }
 export interface ICss {
     borderRadius?: (string)[];
-    margin?: (string)[];
-    padding?: (string)[];
+    // margin?: (string)[];  // 取消使用
+    // padding?: (string)[]; // 取消使用
+    marginTop?: string | number;
+    marginLeft?: string | number;
+    marginRight?: string | number;
+    marginBottom?: string | number;
+    paddingTop?: string | number;
+    paddingLeft?: string | number;
+    paddingRight?: string | number;
+    paddingBottom?: string | number;
     constX?: string;
     constY?: string;
     color?: IColor;
@@ -172,7 +180,7 @@ export const createJS = function (compObj: IComp, globalAttrs: { lifecycle: any;
 // 参数 modelValue: 任意类型，通常是一个对象，包含名称、属性和插槽等信息
 // 返回值: 简化后的 modelValue 对象
 // 定义一个函数，用于简化 JavaScript 对象的表示
-export const conciseJs = function (modelValue: any, comps:any) {
+export const conciseJs = function (modelValue: any, comps: any) {
     // 使用 useCloned 函数克隆 modelValue，避免修改原始数据
     const { cloned } = useCloned(modelValue)
     // 遍历克隆后的对象，处理每个项
@@ -184,7 +192,7 @@ export const conciseJs = function (modelValue: any, comps:any) {
             Object.keys(item.attrs).forEach(key => {
                 // 如果属性值为 null，则删除该属性
                 if (item.attrs[key].value === null || item.attrs[key].value === undefined) {
-                    if(typeof attrs[key] === 'object' && (attrs[key].default === null || attrs[key].default === undefined)) {
+                    if (typeof attrs[key] === 'object' && (attrs[key].default === null || attrs[key].default === undefined)) {
                         delete item.attrs[key]
                     } else {
                         delete item.attrs[key]
@@ -194,16 +202,16 @@ export const conciseJs = function (modelValue: any, comps:any) {
                 if (typeof attrs[key] === 'object' && !!attrs[key].default) {
                     if (item.attrs[key] && comps[item.name].comp.props[key] && comps[item.name].comp.props[key].default === item.attrs[key].value) {
                         delete item.attrs[key]
-                    } else if(typeof item.attrs[key] === 'object' && comps[item.name].comp.props[key] && comps[item.name].comp.props[key].default){
-                        if(JSON.stringify(comps[item.name].comp.props[key].default) === JSON.stringify(item.attrs[key].value)) {
+                    } else if (typeof item.attrs[key] === 'object' && comps[item.name].comp.props[key] && comps[item.name].comp.props[key].default) {
+                        if (JSON.stringify(comps[item.name].comp.props[key].default) === JSON.stringify(item.attrs[key].value)) {
                             delete item.attrs[key]
                         }
                     }
                 } else {
                     // 布尔数据判断是否为false，如果默认数据为false且值也为false则删除
-                    if(currentRegComps.value[item.name].props[key].type === 'boolean') {
-                        if(!currentRegComps.value[item.name].props[key].default) {
-                            if(item.attrs[key] && item.attrs[key].value === false) {
+                    if (currentRegComps.value[item.name].props[key].type === 'boolean') {
+                        if (!currentRegComps.value[item.name].props[key].default) {
+                            if (item.attrs[key] && item.attrs[key].value === false) {
                                 delete item.attrs[key]
                             }
                         }

@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { defineProps, computed } from "vue";
+import { defineProps } from "vue";
+import { watchThrottled } from "@vueuse/core";
 import slotTemplate from "./SlotTemplate.vue";
 import renderFor from "./RenderFor.vue";
 import { isIf, isFor, isShow, data2Vars, getValue } from "@molian/utils/useCore";
@@ -33,7 +34,7 @@ const props = defineProps(<
 const { variable, originVariable } = props.interInc
 const renderData = ref([]);
 
-watch(() => props.modelValue, (newVal) => {
+watchThrottled(() => props.modelValue, (newVal) => {
   renderData.value = getValue(
     newVal,
     variable.value,
@@ -41,7 +42,7 @@ watch(() => props.modelValue, (newVal) => {
     props.slotData,
     originVariable.value
   );
-}, { immediate: true });
+}, { immediate: true, throttle: 50 });
 const newForEach = ({ comp, $slot }: any) => {
   if (!!comp.directives.for) {
     const forData = data2Vars(comp.directives.for, variable.value);

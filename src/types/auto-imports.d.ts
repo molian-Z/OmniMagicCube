@@ -7,6 +7,7 @@
 export {}
 declare global {
   const AIURL: typeof import('../components/molian/utils/defaultData')['AIURL']
+  const CodeEditor: typeof import('../lib-render-main')['CodeEditor']
   const EffectScope: typeof import('vue')['EffectScope']
   const UIData: typeof import('../components/molian/utils/UIMap')['UIData']
   const actionPanel: typeof import('../components/molian/components/Designer/designerData')['actionPanel']
@@ -27,10 +28,8 @@ declare global {
   const compMapInstall: typeof import('../components/molian/utils/compMap')['compMapInstall']
   const compPanel: typeof import('../components/molian/components/Designer/designerData')['compPanel']
   const completions: typeof import('../components/molian/components/MlCodeEditor/tips.js')['completions']
-  const compsEl: typeof import('../components/molian/components/Designer/designerData')['compsEl']
   const compsEls: typeof import('../components/molian/components/Designer/designerData')['compsEls']
   const compsInstall: typeof import('../components/molian/utils/compsConfig')['compsInstall']
-  const compsRef: typeof import('../components/molian/components/Designer/designerData')['compsRef']
   const compsRefs: typeof import('../components/molian/components/Designer/designerData')['compsRefs']
   const computed: typeof import('vue')['computed']
   const conciseCss: typeof import('../components/molian/utils/css-generator')['conciseCss']
@@ -216,6 +215,12 @@ declare global {
 // for type re-export
 declare global {
   // @ts-ignore
-  export type { Component, ComponentPublicInstance, ComputedRef, DirectiveBinding, ExtractDefaultPropTypes, ExtractPropTypes, ExtractPublicPropTypes, InjectionKey, PropType, Ref, MaybeRef, MaybeRefOrGetter, VNode, WritableComputedRef } from 'vue'
-  import('vue')
+  export type { IStyleMap, IConstX, IBorderRadius, IOpacity, IComp, ICss, IBlur, IColor, ISlots, IDefault, IAttrs, Component, ComponentPublicInstance, ComputedRef, DirectiveBinding, ExtractDefaultPropTypes, ExtractPropTypes, ExtractPublicPropTypes, InjectionKey, PropType, Ref, MaybeRef, MaybeRefOrGetter, VNode, WritableComputedRef } from './auto-imports.d'
+  import('./auto-imports.d')
+  // @ts-ignore
+  export type { GlobalComponents } from './components.d'
+  import('./components.d')
+  // @ts-ignore
+  export type { IPopup } from './global.d'
+  import('./global.d')
 }

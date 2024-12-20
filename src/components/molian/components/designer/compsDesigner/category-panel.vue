@@ -122,7 +122,7 @@ const onDragend = function () {
         align-content: flex-start;
         flex-wrap: wrap;
         overflow: auto;
-        height: 510px;
+        height: calc(100% - 60px);
         background-color: var(--ml-bg-color);
         border-radius: var(--ml-radius-lg);
         padding: var(--ml-pd-base);

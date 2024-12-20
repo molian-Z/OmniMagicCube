@@ -198,6 +198,7 @@ const closePanel = function (evt: any) {
             display: flex;
             flex-direction: column;
             align-items: center;
+            overflow: scroll;
 
             .float-panel-header__close {
                 display: flex;
@@ -333,6 +334,7 @@ const closePanel = function (evt: any) {
         }
 
         &.is-fold {
+            height: 60vh;
             justify-content: space-between;
 
             .float-panel-header__close {
@@ -342,6 +344,10 @@ const closePanel = function (evt: any) {
 
             .float-panel-item {
                 margin: var(--ml-mg-base);
+            }
+
+            .float-panel-list{
+                padding-top: 72px;
             }
         }
     }

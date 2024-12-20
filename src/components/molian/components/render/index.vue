@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { defineProps, watch, onUnmounted, defineOptions, render } from "vue";
-import { throttle } from "lodash-es";
+import { defineProps, onUnmounted, defineOptions } from "vue";
+import { uniqueId } from "lodash-es";
 import { getVariableData } from "@molian/utils/customFunction";
-import { useStyleTag } from "@vueuse/core";
+import { useStyleTag, watchThrottled } from "@vueuse/core";
 import renderTree from "./DeepTreeToRender.vue";
 import { runLifecycle } from "@molian/utils/customFunction";
 import { createCss } from "@molian/utils/css-generator";
@@ -36,7 +36,7 @@ const props = defineProps(<
 const lifecycle = ref<{ [key: string]: any }>({});
 // 注册css
 const { css, unload } = useStyleTag('',{
-    id: 'omni-magic-cube-render',
+    id: uniqueId('omc-r_'),
 });
 const interInc = useRenderData()
 const { renderRef, variable, originVariable } = interInc
@@ -50,15 +50,12 @@ watch(
   },
   { immediate: true }
 );
-const throttledCreateCss = throttle((newVal: any) => {
-  css.value = createCss(newVal);
-}, 300);
-watch(
+watchThrottled(
   () => props.modelValue,
   (newVal) => {
-    throttledCreateCss(newVal);
+    css.value = createCss(newVal);
   },
-  { immediate: true }
+  { immediate: true, throttle: 50 }
 );
 onUnmounted(() => {
   unload();

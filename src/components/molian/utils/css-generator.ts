@@ -45,6 +45,14 @@ const suffix: {
     'lineHeight': 'px',
     'letterSpacing': 'px',
     'paragraphSpacing': '%',
+    'marginTop': 'px',
+    'marginLeft': 'px',
+    'marginRight': 'px',
+    'marginBottom': 'px',
+    'paddingTop': 'px',
+    'paddingLeft': 'px',
+    'paddingRight': 'px',
+    'paddingBottom': 'px',
 }
 const styleMap: IStyleMap = {
     moveX: {
@@ -72,7 +80,7 @@ const styleMap: IStyleMap = {
     borderRadius: {
         isGlobal: true,
         prop: 'border-radius',
-        value: function (val: any[], obj:{ units: any; }) {
+        value: function (val: any[], obj: { units: any; }) {
             const index = val.findIndex((item: string) => {
                 return item !== '0' || !item
             })
@@ -85,29 +93,33 @@ const styleMap: IStyleMap = {
         isGlobal: true,
         prop: 'margin',
         value: function (val: any[], obj:{ units: any; }) {
-            const index = val.findIndex((item: string) => {
-                return item !== '0' || !item
-            })
-            return index > -1 ? val && val.map((item: string) => {
-                return createSuffix(item, obj.units && obj.units.margin && obj.units.margin[index])
-            }).join(' ') : ''
+            if(val) {
+                const index = val.findIndex((item: string) => {
+                    return item !== '0' || !item
+                })
+                return index > -1 ? val && val.map((item: string) => {
+                    return createSuffix(item, obj.units && obj.units.margin && obj.units.margin[index])
+                }).join(' ') : ''
+            }
         }
     },
     padding: {
         isGlobal: true,
         prop: 'padding',
         value: function (val: any[], obj:{ units: any; }) {
-            const index = val.findIndex((item: string) => {
-                return item !== '0' || !item
-            })
-            return index > -1 ? val && val.map((item: string) => {
-                return createSuffix(item, obj.units && obj.units.margin && obj.units.margin[index])
-            }).join(' ') : ''
+            if(val) {
+                const index = val.findIndex((item: string) => {
+                    return item !== '0' || !item
+                })
+                return index > -1 ? val && val.map((item: string) => {
+                    return createSuffix(item, obj.units && obj.units.padding && obj.units.padding[index])
+                }).join(' ') : ''
+            }
         }
     },
     // 暂不转换xy,实际使用应根据组件因素考虑是否替换为margin-left、margin-top
     constX: {
-        rawValue: function (val: string, obj: { moveX: string; width: string;units: any; }, key: any) {
+        rawValue: function (val: string, obj: { moveX: string; width: string; units: any; }, key: any) {
             if (!obj.moveX || obj.moveX == '0' && !compsEls[key]) return ''
             const X = createSuffix(obj.moveX, obj.units && obj.units.moveX)
             if (val === 'left') {
@@ -119,7 +131,7 @@ const styleMap: IStyleMap = {
                     right: X
                 }
             } else if (val === 'left2right') {
-                let spx:number = 0
+                let spx: number = 0
                 if (!!Number(obj.width)) {
                     spx = Number(obj.moveX) + Number(obj.width)
                     return {
@@ -135,7 +147,7 @@ const styleMap: IStyleMap = {
         }
     },
     constY: {
-        rawValue: function (val: string, obj: { moveY: string;height: string;units:any; }, key: any) {
+        rawValue: function (val: string, obj: { moveY: string; height: string; units: any; }, key: any) {
             if (!obj.moveY || obj.moveY == '0' && !compsEls[key]) return ''
             const Y = createSuffix(obj.moveY, obj.units && obj.units.moveY)
             if (val === 'top') {
@@ -210,39 +222,47 @@ const styleMap: IStyleMap = {
     }
 }
 
-export const initCss :any = function(){
+export const initCss: any = function () {
     return {
-        "borderRadius": ["0", "0", "0", "0"],
-        "margin": ["0", "0", "0", "0"],
-        "padding": ["0", "0", "0", "0"],
-        "constX": "left",
-        "constY": "top",
-        "moveX":"",
-        "moveY":"",
-        "width":"",
-        "height":"",
-        "position": "relative",
-        "color": {
-            "isShow": true,
-            "modelValue": ""
+        'borderRadius': ['0', '0', '0', '0'],
+        // 'margin': ['0', '0', '0', '0'],
+        // 'padding': ['0', '0', '0', '0'],
+        'marginTop': '',
+        'marginLeft': '',
+        'marginRight': '',
+        'marginBottom': '',
+        'paddingTop': '',
+        'paddingLeft': '',
+        'paddingRight': '',
+        'paddingBottom': '',
+        'constX': 'left',
+        'constY': 'top',
+        'moveX': '',
+        'moveY': '',
+        'width': '',
+        'height': '',
+        'position': 'relative',
+        'color': {
+            'isShow': true,
+            'modelValue': ''
         },
-        "background": {
-            "isShow": true,
-            "modelValue": ""
+        'background': {
+            'isShow': true,
+            'modelValue': ''
         },
-        "border": [],
-        "mixBlendMode": {
-            "isShow": true,
-            "modelValue": "normal"
+        'border': [],
+        'mixBlendMode': {
+            'isShow': true,
+            'modelValue': 'normal'
         },
-        "blur": {
-            "isShow": true,
-            "modelValue": "",
-            "field": ""
+        'blur': {
+            'isShow': true,
+            'modelValue': '',
+            'field': ''
         },
-        "units": {},
-        "boxShadow": [],
-        "customCss": {}
+        'units': {},
+        'boxShadow': [],
+        'customCss': {}
     }
 }
 
@@ -283,17 +303,17 @@ export const parseStyle = function (styleObj: { [x: string]: any; }, compKey: an
                 if (!customCss[key]) {
                     // 为0时默认不显示
                     if (typeof Number(val) && !Number.isNaN(Number(val)) && val != 0 || styleObj.units && !!styleObj.units[key] || !!suffix[key]) {
-                        if(!styleObj.units){
+                        if (!styleObj.units) {
                             styleObj.units = {
-                                [key] : 'px'
-                            } 
+                                [key]: 'px'
+                            }
                         }
-                        if(styleObj.units[key]){
+                        if (styleObj.units[key]) {
                             customCss[key] = createSuffix(val, styleObj.units[key])
-                        }else{
+                        } else {
                             customCss[key] = suffix[key] ? createSuffix(val, suffix[key]) : val
                         }
-                    }else {
+                    } else {
                         customCss[key] = val
                     }
                 }
@@ -314,7 +334,7 @@ export const createCss = function (compObj: any) {
         for (const key in item.value) {
             if (Object.hasOwnProperty.call(item.value, key)) { // 筛选出item.value对象自身的属性
                 const element = item.value[key]; // 获取属性值
-                if(key === 'customCss'){
+                if (key === 'customCss') {
                     for (const customKey in element) {
                         if (Object.prototype.hasOwnProperty.call(element, customKey)) {
                             const customVal = element[customKey];
@@ -341,7 +361,7 @@ export const createCss = function (compObj: any) {
  * @param modelValue 模型值，可以是任何结构，但通常是一个包含CSS信息的对象
  * @returns 返回简化后的模型值
  */
-export const conciseCss = function(modelValue: any){
+export const conciseCss = function (modelValue: any) {
     // 使用useCloned钩子克隆模型值，避免修改原始数据
     const { cloned } = useCloned(modelValue)
     // 遍历克隆后的模型值数组
@@ -349,11 +369,11 @@ export const conciseCss = function(modelValue: any){
         // 找出当前项CSS与初始CSS的差异
         const diffArr = shallowDiff(item.css, initCss())
         // 移除与初始CSS相同的属性
-        diffArr.forEach((diffItem:string) => {
+        diffArr.forEach((diffItem: string) => {
             delete item.css[diffItem]
         })
         // 如果当前项包含slots，则对其子元素递归应用简化逻辑
-        if(!!item.slots){
+        if (!!item.slots) {
             Object.keys(item.slots).forEach(key => {
                 item.slots[key].children = conciseCss(item.slots[key].children)
             })
@@ -363,7 +383,7 @@ export const conciseCss = function(modelValue: any){
     return cloned.value
 }
 
-export const restoreCss = function(modelValue: any){
+export const restoreCss = function (modelValue: any) {
     // 使用useCloned钩子克隆模型值，避免修改原始数据
     const { cloned } = useCloned(modelValue)
     // 遍历克隆后的模型值数组
@@ -371,7 +391,7 @@ export const restoreCss = function(modelValue: any){
         // 找出当前项CSS与初始CSS的差异
         item.css = Object.assign({}, initCss(), item.css)
         // 如果当前项包含slots，则对其子元素递归应用简化逻辑
-        if(!!item.slots){
+        if (!!item.slots) {
             Object.keys(item.slots).forEach(key => {
                 item.slots[key].children = restoreCss(item.slots[key].children)
             })
@@ -463,12 +483,12 @@ function deepObjCreateCss(obj: { [x: string]: any; }, css: any[]) {
  * @param unit {string} - 单位字符串，例如'px'、'%'等。
  * @returns {string} - 返回带有单位的字符串。
  */
-function createSuffix(value:string | any, unit:string){
-    if(!unit) return value+'px'
-    if(unit === 'calc'){
+function createSuffix(value: string | any, unit: string) {
+    if (!unit) return value + 'px'
+    if (unit === 'calc') {
         return `${unit}(${addSpacesToOperators(value)})`
-    }else{
-        return value+unit
+    } else {
+        return value + unit
     }
 }
 
@@ -485,7 +505,7 @@ function addSpacesToOperators(str: string) {
     // 移除字符串中的所有空格
     str = str.replace(/ /g, '');
     // 在算术运算符周围添加空格
-    str = str.replace(/([+\-*/])/g,' $1 ');
+    str = str.replace(/([+\-*/])/g, ' $1 ');
     return str;
 }
 
@@ -496,7 +516,7 @@ function addSpacesToOperators(str: string) {
  * @param obj2 第二个对象
  * @returns 一个数组，包含两个对象在浅层相同属性的名称
  */
-function shallowDiff(obj1:any, obj2:any) {
+function shallowDiff(obj1: any, obj2: any) {
     // 初始化一个数组来存储相同属性的名称
     const sameKeys = [];
 

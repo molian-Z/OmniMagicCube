@@ -618,6 +618,7 @@
         "appendComponent": "插入组件",
         "basic": "基础",
         "properties": "特性",
+        "moreProperties": "更多特性",
         "slot": "插槽",
         "js": "事件",
         "funciton": "函数",

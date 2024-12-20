@@ -618,6 +618,7 @@
         "appendComponent": "Chèn thành phần",
         "basic": "Cơ bản",
         "properties": "Thuộc tính",
+        "moreProperties": "Thuộc tính thêm",
         "slot": "Khe cắm",
         "js": "Sự kiện",
         "funciton": "Hàm",

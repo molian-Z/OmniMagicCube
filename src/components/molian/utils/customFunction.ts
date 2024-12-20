@@ -5,7 +5,7 @@ export const asyncFunction = Object.getPrototypeOf(async function () { }).constr
 export const syncFunction = Object.getPrototypeOf(function () { }).constructor
 
 /**
- * 根据类型创建函数
+ * 根据类型创建函数 
  * 
  * 本函数旨在根据传入的类型参数，动态创建不同类型的函数能力对象
  * 它支持创建同步函数和异步函数，以满足不同场景下的需求
@@ -16,13 +16,19 @@ export const syncFunction = Object.getPrototypeOf(function () { }).constructor
  * @returns 返回创建的函数能力对象，可以是同步函数或异步函数实例
  */
 export const createFunc = (type: string, codeVar: string[], code: string) => {
+    const cacheCode = `try{
+        ${code}
+    } catch (error) {
+        console.log(error)
+    }`
     if (type === 'asyncFunction') {
         // 当类型为异步函数时，通过new asyncFunction创建并返回一个异步函数实例
-        return new asyncFunction(...codeVar, code)
+        return new asyncFunction(...codeVar, cacheCode)
     } else {
         // 当类型为同步函数时，通过new syncFunction创建并返回一个同步函数实例
-        return new syncFunction(...codeVar, code || '')
+        return new syncFunction(...codeVar, cacheCode || '')
     }
+
 }
 
 /**
@@ -154,7 +160,7 @@ export const runModifier = function (key: string, data: { [x: string]: { value: 
  * @param expandAPI 扩展API对象，可选参数，用于扩展事件的功能
  * @returns 返回合并后的事件监听配置对象
  */
-export const getCurrentOn = (data: { on: any; nativeOn: any }, variable: any, originVariable: any, slotData:any, expandAPI: any) => {
+export const getCurrentOn = (data: { on: any; nativeOn: any }, variable: any, originVariable: any, slotData: any, expandAPI: any) => {
     const { on, nativeOn } = data
     const newNativeOn: {
         [key: string]: any;
@@ -179,13 +185,14 @@ export const getCurrentOn = (data: { on: any; nativeOn: any }, variable: any, or
     // 配置组件监听
     for (const key in on) {
         if (Object.prototype.hasOwnProperty.call(on, key)) {
+            const { newKey, modifiers } = runModifier(key, on)
             if (on[key] && on[key].type === 'variable') {
-                if(!!on[key].value && on[key].value.length > 0){
+                if (!!on[key].value && on[key].value.length > 0) {
                     const data = originVariable[on[key].value[0]]
-                    newOn[key] = setFunc(data, variable, slotData, expandAPI)
+                    newOn[newKey] = withModifiers(setFunc(data, variable, slotData, expandAPI), modifiers)
                 }
             } else if (on[key] && !!on[key].value && !!on[key].value.code) {
-                newOn[key] = setFunc(on[key], variable, slotData, expandAPI)
+                newOn[newKey] = withModifiers(setFunc(on[key], variable, slotData, expandAPI), modifiers)
             }
         }
     }
@@ -232,16 +239,16 @@ export const getVariableData = (variable: { [x: string]: any; }, expandAPI?: any
     return vars
 }
 
-export const setComputed = (computedObj:any, vars: any, expandAPI?:any) => {
+export const setComputed = (computedObj: any, vars: any, expandAPI?: any) => {
     return computed(createFunc(computedObj.functionMode, computedObj.codeVar, computedObj.code).bind({ app: Vue, vars: reactive(vars), ...expandAPI }))
 }
 
-function setFunc(data: any, variable: any, slotData:any, expandAPI: any){
-    if(!!slotData){
-        return function(){
-            return runOn(data, variable, expandAPI)(...arguments, {$slot:slotData})
+function setFunc(data: any, variable: any, slotData: any, expandAPI: any) {
+    if (!!slotData) {
+        return function () {
+            return runOn(data, variable, expandAPI)(...arguments, { $slot: slotData })
         }
-    }else{
+    } else {
         return runOn(data, variable, expandAPI)
     }
 }

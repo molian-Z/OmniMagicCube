@@ -414,7 +414,11 @@ export const parseProps = (comp: any, comps: any, variable: any, expandAPI: any,
                 if (element.value && element.value.length > 0) {
                     newVal = variable;
                     element.value.forEach((item: string) => {
-                        newVal = newVal[item];
+                        if(newVal && newVal[item]) {
+                            newVal = newVal[item];
+                        } else {
+                            newVal = undefined
+                        }
                     });
                 }
                 if (typeof newVal === 'function') {

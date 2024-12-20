@@ -6,6 +6,7 @@ import svgIcon from "@molianComps/SvgIcon/index.vue";
 import floatPanel from "@molianComps/FloatPanel/index.vue";
 import basicComp from "./pages/basic.vue";
 import propComp from "./pages/prop.vue";
+import moreProp from "./pages/moreProp.vue";
 import slotComp from "./pages/slot.vue";
 import nativeOnComp from "./pages/nativeOn.vue";
 import jsComp from "./pages/javascript.vue";
@@ -106,6 +107,11 @@ const pageData = ref([
     text: t("options.properties"),
   },
   {
+    component: moreProp,
+    value: "moreProp",
+    text: t("options.moreProperties"),
+  },
+  {
     component: slotComp,
     value: "slot",
     text: t("options.slot"),
@@ -133,6 +139,7 @@ const pageData = ref([
 const showVar = ref<any>({
   basic: true,
   prop: true,
+  moreProp: false,
   slot: true,
   js: true,
   nativeOn: false,

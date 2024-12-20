@@ -1,4 +1,3 @@
-import { nextTick } from 'vue';
 import { runOn } from '@molian/utils/customFunction'
 
 /**
@@ -15,35 +14,38 @@ export const customText = (compObj: any) => {
     // 获取指令和变量信息
     const { directives, vars }: any = compObj.comp
     const { text } = directives
-    let newText: any = ''
     // 根据指令类型处理文本内容
     if (text.type === 'variable') {
         // 当变量值变化时，更新文本内容
-        newText = vars;
-        text.value.forEach((item: string) => {
-            newText = newText[item]
+        const cmptdText = computed(() => {
+            let newText: any = vars
+            text.value.forEach((item: string) => {
+                newText = newText[item]
+            })
+            // 如果文本内容是一个函数，则调用该函数并传入相关参数
+            if (typeof newText === 'function') {
+                newText = newText({
+                    comp: compObj.comp,
+                    $slot: compObj.$slot
+                });
+            }
+            // 如果文本内容是一个对象，则将其转换为字符串
+            if (typeof newText === 'object') {
+                newText = JSON.stringify(newText);
+            }
+            return newText
         })
-        // 如果文本内容是一个函数，则调用该函数并传入相关参数
-        if (typeof newText === 'function') {
-            newText = newText({
-                comp: compObj.comp,
-                $slot: compObj.$slot
-            });
-        }
-        // 如果文本内容是一个对象，则将其转换为字符串
-        if (typeof newText === 'object') {
-            newText = JSON.stringify(newText);
-        }
+        return cmptdText
     } else if (text.type === 'string') {
-        newText = text.value
+        return text.value
     } else if (text.type === 'function') {
         // 获取函数执行模式、变量和代码，并执行函数生成文本内容
-        newText = runOn(text, compObj.variable, compObj.expandAPI)({
+        return runOn(text, compObj.variable, compObj.expandAPI)({
             comp: compObj.comp,
             $slot: compObj.$slot
         })
     }
-    return newText
+    return ''
 }
 
 /**

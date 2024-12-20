@@ -230,13 +230,45 @@ declare namespace CubeData {
              */
             borderRadius?: string[] | string | number | number[];
             /**
-             * 外边距样式。
+             * 外边距样式。 ( TODO: 取消使用)
              */
             margin?: string[] | string | number | number[];
             /**
- * 内边距样式。
- */
+             * 内边距样式。 ( TODO: 取消使用)
+             */
             padding?: string[] | string | number | number[];
+            /**
+             * 顶部外边距。
+             */
+            marginTop?: string | number;
+            /**
+             * 左侧外边距。
+             */
+            marginLeft?: string | number;
+            /**
+             * 右侧外边距。
+             */
+            marginRight?: string | number;
+            /**
+             * 底部外边距。
+             */
+            marginBottom?: string | number;
+            /**
+             * 顶部内边距。
+             */
+            paddingTop?: string | number;
+            /**
+             * 左侧内边距。
+             */
+            paddingLeft?: string | number;
+            /**
+             * 右侧内边距。
+             */
+            paddingRight?: string | number;
+            /**
+             * 底部内边距。
+             */
+            paddingBottom?: string | number;
             /**
              * 水平对齐方式。
              */

@@ -12,12 +12,14 @@ const props = defineProps({
     type: String,
     default: "bar",
     optionItems: ["bar", "line", "pie", "gauge"],
+    order: 2,
   },
   modelValue: {
     type: [Object, Array],
     default: () => {
       return [];
     },
+    order:1,
   },
   width: {
     type: String,
@@ -119,12 +121,14 @@ const props = defineProps({
     type: String,
     default: "colors1",
     optionItems: ["colors1", "colors2", "colors3", "colors4", "colors5"],
+    order:3,
   },
   options: {
     type: Object,
     default: () => {
       return {};
     },
+    removeAttr: true
   },
 });
 

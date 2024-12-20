@@ -4,6 +4,8 @@ import deepTreeToRender from "./DeepTreeToRender.vue";
 import { toKebabCase } from "@molian/utils/util";
 import { parseProps } from "@molian/utils/useCore";
 import vCustomDirectives from "@molian/utils/useDirectives";
+import { watchThrottled } from '@vueuse/core';
+
 const comps: any = inject("mlComps");
 const props = defineProps(<
   {
@@ -35,9 +37,9 @@ const props = defineProps(<
 const { variable, setRenderRef } = props.interInc;
 
 const useComp = ref(null);
-watch([() => comps, () => props.comp.name], ([newComps, newName]) => {
-  useComp.value = !!newComps[newName] ? newComps[newName].comp : newName;
-}, { immediate: true });
+watchThrottled(() => props.comp.name, (newName) => {
+  useComp.value = !!comps[newName] ? comps[newName].comp : newName;
+}, { immediate: true, throttle: 50 });
 
 const setSlots = (slotProps: any) => {
   const slotData = props.slotData || {}; // 确保 slotData 是对象类型

@@ -10,7 +10,7 @@ import MlVerticalContainer from '@molianComps/MolianLayoutContainer/verticalCont
 import MlSubContainer from '@molianComps/MolianLayoutContainer/subContainer.vue'
 import MlEcharts from '@molianComps/Echarts/index.vue'
 import MlSubForm from '@molianComps/MlSubForm/index.vue'
-// import MlCodeEditor from '@molianComps/MlCodeEditor/index.vue'
+import MlCodeEditor from '@molianComps/MlCodeEditor/index.vue'
 import '@molian/assets/styles/render.scss'
 import { UIData } from '@molian/utils/UIMap'
 const installRender = function (app: any, options: plug.renderInstall) {
@@ -24,7 +24,6 @@ const installRender = function (app: any, options: plug.renderInstall) {
     app.component('MlSubContainer', MlSubContainer)
     app.component('MlEcharts', MlEcharts)
     app.component('MlSubForm', MlSubForm)
-    // app.component('MlCodeEditor', MlCodeEditor)
     app.component('OmcRender', Render)
     let comps = {}
     if(!options.clearDefaultComps){
@@ -41,4 +40,6 @@ const installRender = function (app: any, options: plug.renderInstall) {
         resources: [iconifyUrl.value],
     })
 }
+
+export const CodeEditor = MlCodeEditor
 export default installRender
