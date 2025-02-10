@@ -64,19 +64,17 @@ export const parseSlot = function (slots: { [x: string]: any }) {
         // 确保skey是对象自身的属性
         if (Object.hasOwnProperty.call(slots, skey)) {
             // 使用useCloned处理插槽内容，获取其副本
-            const {
-                cloned
-            } = useCloned(slots[skey])
+            const cloned = {
+                ...slots[skey]
+            }
             // 检查插槽内容是否标记为自动或包含自动属性
-            if (cloned.value === 'auto' || typeof cloned.value === 'object' && !!cloned.value.auto) {
-                // 标记为自动的插槽内容被赋予新的结构
-                cloned.value = {
-                    allowComps: typeof cloned.value === 'object' && cloned.value.allowComps || [],
-                    appendComps: typeof cloned.value === 'object' && cloned.value.appendComps || [],
+            if (cloned === 'auto' || typeof cloned === 'object' && !!cloned.auto) {
+                // 将处理后的自动插槽添加到自动插槽对象中
+                autoSlots[skey] = {
+                    allowComps: typeof cloned === 'object' && cloned.allowComps || [],
+                    appendComps: typeof cloned === 'object' && cloned.appendComps || [],
                     children: []
                 }
-                // 将处理后的自动插槽添加到自动插槽对象中
-                autoSlots[skey] = cloned.value
             }
         }
     }

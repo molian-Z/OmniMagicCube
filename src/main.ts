@@ -70,7 +70,10 @@ const options: plug.designerInstall = {
                         appendComps: [{
                             name: 'ElCol',
                             attrs: {
-                                span: 12
+                                span: {
+                                    type: 'number',
+                                    value: 12,
+                                }
                             }
                         }]
                     }
@@ -81,6 +84,17 @@ const options: plug.designerInstall = {
                         appendComps: [
                             {
                                 name: "ElFormItem",
+                                attrs: {
+                                    labelWidth: {
+                                        type: 'number',
+                                        value: 80,
+                                    },
+                                    rules: {
+                                        valueFn: ({ attrs }: any) => {
+                                            return { 'required': true, }
+                                        }
+                                    }
+                                }
                             },
                             {
                                 name: "ElRow",
@@ -89,6 +103,37 @@ const options: plug.designerInstall = {
                     },
                     header: true
                 },
+                ElFormItem: {
+                    default: {
+                        auto: true,
+                        appendComps: [
+                            {
+                                name: "ElInput",
+                                attrs: {
+                                    modelValue: {
+                                        type: 'variable',
+                                        valueFn: ({ attrs }: any) => {
+                                            return ['$modelValue', attrs.prop.value]
+                                        },
+                                    },
+                                },
+                                on: {
+                                    'update:modelValue': {
+                                        type: 'function',
+                                        valueFn: `function ({attrs}) {
+                                            return {
+                                                code: \`this.vars.$modelValue.\${attrs.prop.value} = value;\`,
+                                                codeVar: ['value'],
+                                                modifiers: [],
+                                                functionMode: 'function',
+                                            }
+                                        }`
+                                    },
+                                },
+                            },
+                        ],
+                    },
+                }
             }
         },
         // 生命周期映射

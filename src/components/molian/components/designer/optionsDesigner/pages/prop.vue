@@ -40,8 +40,10 @@ const currentProps = computed(() => {
   });
   Object.keys(objData).forEach((key) => {
     const val = objData[key];
-    if (val && val.hidden && val.hidden(currentAttrs.value) === true) {
-        delete objData[key];
+    if (val && val.hidden) {
+        if((typeof val.hidden === 'function' && val.hidden(currentAttrs.value)) || (typeof val.hidden === 'boolean' && val.hidden)) {
+            delete objData[key];
+        }
     }
     if(isRemoveAttr(key)) {
         delete objData[key];

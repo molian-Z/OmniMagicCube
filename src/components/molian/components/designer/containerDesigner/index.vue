@@ -3,7 +3,7 @@ import { ref, inject } from 'vue'
 import {
     useCloned, useElementSize, useStyleTag
 } from '@vueuse/core'
-import { throttle } from "lodash-es";
+import { throttle } from "es-toolkit";
 import deepComps from './deepTreeToDesigner.vue'
 import toolTip from './toolTip/index.vue'
 import toolBar from './toolBar/index.vue'

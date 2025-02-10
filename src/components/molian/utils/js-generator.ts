@@ -209,7 +209,7 @@ export const conciseJs = function (modelValue: any, comps: any) {
                     }
                 } else {
                     // 布尔数据判断是否为false，如果默认数据为false且值也为false则删除
-                    if (currentRegComps.value[item.name].props[key].type === 'boolean') {
+                    if (currentRegComps.value[item.name].props[key] && currentRegComps.value[item.name].props[key].type === 'boolean') {
                         if (!currentRegComps.value[item.name].props[key].default) {
                             if (item.attrs[key] && item.attrs[key].value === false) {
                                 delete item.attrs[key]

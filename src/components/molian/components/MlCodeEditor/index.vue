@@ -474,11 +474,11 @@ const getCompletions = () => {
       }),
       ...variablesKeys.map((key, index) => {
         return {
-          meta:
+          meta: (customTips.variable[key].label || key) + ' ' +
             customTips.variable[key].type === "function"
               ? t("codeEditor.varFunc")
               : t("codeEditor.var"),
-          caption: customTips.variable[key].label || `${key}`,
+          caption: key,
           value:
             customTips.variable[key].type === "function"
               ? `${key.replace("$", "\$")}()`
@@ -576,7 +576,7 @@ const getSnippet = () => {
             customTips.variable[key].type === "function"
               ? t("codeEditor.useVarFunc")
               : t("codeEditor.useVar"),
-          caption: customTips.variable[key].label || `${key}`,
+          caption: customTips.variable[key].label ? `${customTips.variable[key].label} ${key}` : `${key}`,
           completerId: "snippetCompleter",
           snippet: customTips.variable[key].type === "function" ? `this.vars.${key.replace("$", "\\$")}()` : `this.vars.${key.replace("$", "\\$")}`,
           score: index + 1,

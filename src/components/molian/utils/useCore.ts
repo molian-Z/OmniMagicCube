@@ -161,20 +161,20 @@ export const getValue = (modelValue: any, variable: any, expandAPI: any, slotDat
 export const createSlot = (item: any, index: any, comp: any, slotData: any) => {
     // 从组件的指令中提取for循环的配置，包括数据项的键和ID的键
     const { dataKey, idKey } = comp.directives.for;
-    
+
     // 创建一个对象，包含当前项的数据和ID，使用指令中提供的键名或默认值
     let obj = {
         [dataKey || 'item']: item,
         [idKey || 'key']: index,
     };
-    
+
     // 如果没有额外的槽数据，返回一个包含当前项数据和ID的对象
     if (!slotData) {
         return {
             [`${comp.key}_for`]: obj,
         };
     }
-    
+
     // 如果有额外的槽数据，将其与当前项的数据和ID合并后返回
     return { ...slotData, [`${comp.key}_for`]: obj };
 };
@@ -194,12 +194,12 @@ export const getForEachList = function (comp: any, variable: any) {
     if (comp.directives && comp.directives.for && comp.directives.for.type === 'variable') {
         // 将指令的for属性和变量值转换为可迭代的数据
         let forEachData = data2Vars(comp.directives.for, variable.value)
-        
+
         // 如果转换后的数据是一个函数，则调用该函数并传入组件作为参数
         if (typeof forEachData === 'function') {
             forEachData = forEachData(comp)
         }
-        
+
         // 如果转换后的数据是一个对象，则根据其类型（数组或对象）返回相应的结构
         if (typeof forEachData === 'object') {
             // 如果数据是数组，则直接返回数组类型和数据
@@ -404,8 +404,10 @@ export const parseProps = (comp: any, comps: any, variable: any, expandAPI: any,
             }
             const compProp = comps[comp.name].props[key];
             // 检查组件属性是否应该被解析和包含在结果中
-            if (compProp && compProp.hidden && compProp.hidden(comp.attrs)) {
-                continue
+            if (compProp && compProp.hidden) {
+                if ((typeof compProp.hidden === 'function' && compProp.hidden(currentAttrs.value)) || (typeof compProp.hidden === 'boolean' && compProp.hidden)) {
+                    continue
+                }
             }
             let newVal: any = null;
             // 如果属性类型是变量，则从变量对象中解析其值
@@ -414,7 +416,7 @@ export const parseProps = (comp: any, comps: any, variable: any, expandAPI: any,
                 if (element.value && element.value.length > 0) {
                     newVal = variable;
                     element.value.forEach((item: string) => {
-                        if(newVal && newVal[item]) {
+                        if (newVal && newVal[item]) {
                             newVal = newVal[item];
                         } else {
                             newVal = undefined
@@ -422,7 +424,7 @@ export const parseProps = (comp: any, comps: any, variable: any, expandAPI: any,
                     });
                 }
                 if (typeof newVal === 'function') {
-                    if(compProp.type === 'function' || typeof compProp === 'function' || (Array.isArray(compProp.type) && compProp.type.includes('function'))) {
+                    if (compProp.type === 'function' || typeof compProp === 'function' || (Array.isArray(compProp.type) && compProp.type.includes('function'))) {
                         if (!!slotData) {
                             let func = function () {
                                 return newVal(...arguments, { $slot: slotData })
@@ -444,7 +446,7 @@ export const parseProps = (comp: any, comps: any, variable: any, expandAPI: any,
                     } else {
                         newVal = runOn(element, variable, expandAPI)
                     }
-                    if(compProp && compProp.type === 'function' || typeof compProp === 'function' || (Array.isArray(compProp.type) && compProp.type.includes('function'))) {} else {
+                    if (compProp && compProp.type === 'function' || typeof compProp === 'function' || (Array.isArray(compProp.type) && compProp.type.includes('function'))) { } else {
                         newVal = newVal() || null
                     }
                 }
@@ -457,7 +459,7 @@ export const parseProps = (comp: any, comps: any, variable: any, expandAPI: any,
                     if (typeof nativeProp === 'object' && !Array.isArray(nativeProp)) {
                         if (element.value !== nativeProp.default && type === 'designer') {
                             newVal = element.value;
-                        } else if(type === 'render') {
+                        } else if (type === 'render') {
                             newVal = element.value;
                         }
                     } else if (typeof nativeProp === 'function' && element.value !== null) {
@@ -487,11 +489,11 @@ export const parseProps = (comp: any, comps: any, variable: any, expandAPI: any,
                 }
             }
 
-            if(isRef(newVal)) {
+            if (isRef(newVal)) {
                 newVal = newVal.value
             }
             // 将解析后的属性值存储到结果对象中
-            if(newVal === null) {
+            if (newVal === null) {
                 delete propsData[key];
             } else {
                 propsData[key] = newVal;

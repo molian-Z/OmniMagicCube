@@ -906,3 +906,17 @@ declare namespace plug {
         appendUIMap?: any;
     }
 }
+
+
+interface InitObj {
+    [key: string]: any;
+}
+
+interface AppendComp {
+    [pKey: string]: {
+        [key: string]: {
+            value?: any;
+            valueFn?: (params: any) => any;
+        };
+    };
+}

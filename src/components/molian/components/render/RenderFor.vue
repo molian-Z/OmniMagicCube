@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { memoize } from "lodash-es";
+import { memoize } from "es-toolkit";
 import { getCurrentOn } from '@molian/utils/customFunction'
 import { createSlot } from "@molian/utils/useCore";
 const props = defineProps({

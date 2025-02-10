@@ -64,7 +64,7 @@ export default defineConfig({
                 "gsap",
                 "change-case",
                 "dexie",
-                "lodash-es",
+                "es-toolkit",
                 "sortablejs",
                 "vue3-colorpicker",
                 "@iconify/vue",

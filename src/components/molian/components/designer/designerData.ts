@@ -2,9 +2,8 @@ import {
     reactive,
     ref,
     watch,
-    provide,
 } from 'vue'
-import uniqueId from 'lodash-es/uniqueId'
+import {uniqueId} from 'es-toolkit/compat'
 import {
     useCloned,
     useDebouncedRefHistory,
@@ -169,7 +168,61 @@ export const useKeys = (message: any, t: any) => {
 }
 
 
-// 创建组件的函数
+/**
+ * 初始化组件数据
+ * 此函数用于将额外的组件数据合并到初始对象中，如果指定了特定的属性和键，并且这些属性和键存在
+ * 
+ * @param initObj - 初始化对象，将与组件数据合并
+ * @param appendComp - 包含额外组件数据的对象
+ * @param key - 组件数据的键
+ * @param pKey - 父级键，用于在appendComp中查找组件数据
+ */
+const initCompData = (initObj: InitObj, { appendComp, key, pKey }: { appendComp: AppendComp; key: string; pKey: string }) => {
+    // 检查appendComp及其子结构是否存在
+    if (appendComp && appendComp[pKey] && appendComp[pKey][key]) {
+        const compData = appendComp[pKey][key];
+
+        // 合并对象
+        initObj[key] = {
+            ...initObj[key],
+            ...compData,
+        };
+
+        // 如果存在valueFn函数，尝试执行它以获取值
+        if (compData.valueFn) {
+            if (typeof compData.valueFn === 'function') {
+                try {
+                    initObj[key].value = compData.valueFn({ ...selectedComp.value });
+                } catch (error) {
+                    console.error(`Error executing valueFn for key ${key}:`, error);
+                }
+            } else if (typeof compData.valueFn === 'string') {
+                try {
+                    // 使用 new Function 将字符串转换为函数并执行
+                    const fn = new Function('data', `return ${compData.valueFn}(data);`);
+                    initObj[key].value = fn({ ...selectedComp.value });
+                } catch (error) {
+                    console.error(`Error converting or executing valueFn string for key ${key}:`, error);
+                }
+            } else {
+                throw new Error(`valueFn for key ${key} is neither a function nor a string`);
+            }
+            // 执行完valueFn后，从initObj中删除这个属性
+            delete initObj[key].valueFn;
+        }
+    }
+};
+
+/**
+ * 创建组件的函数
+ * 
+ * 此函数用于根据提供的配置信息生成一个新的组件对象它克隆插槽内容，初始化组件属性，
+ * 并生成一个带有随机键和唯一标识符的组件对象
+ * 
+ * @param comp 组件配置对象，包含组件的属性、插槽、类别和名称
+ * @param appendComp 可选参数，包含额外的组件信息，如事件、指令等
+ * @returns 返回一个带有随机键和唯一标识符的新组件对象
+ */
 export const createComp = function (comp: {
     comp?: any;
     category: string;
@@ -191,6 +244,11 @@ export const createComp = function (comp: {
     let initAttrs = <{
         [key: string]: any;
     }>{}
+    const initObj: any = {
+        on: {},
+        nativeOn: {},
+        directives: {},
+    }
     // 遍历组件的属性定义，初始化属性信息
     for (const key in comp.props) {
         if (Object.hasOwnProperty.call(comp.props, key)) {
@@ -210,21 +268,33 @@ export const createComp = function (comp: {
                     value: null
                 }
             }
-            if(appendComp && typeof appendComp.attrs === 'object' && !!appendComp.attrs[key]){
-                initAttrs[key].value = appendComp.attrs[key]
+            // 初始化组件数据
+            initCompData(initAttrs, { appendComp, key, pKey: 'attrs' })
+        }
+    }
+
+    // 初始化其他对象属性，如事件、指令等
+    for (const pKey in initObj) {
+        if (Object.hasOwnProperty.call(initObj, pKey) && appendComp) {
+            for (const key in appendComp[pKey]) {
+                initCompData(initObj[pKey], { appendComp, key, pKey })
             }
         }
     }
+
+    // 移除 appendComps 内容
+    Object.values(cloned.value).forEach(value => {
+        delete value.appendComps
+    })
+
     // 返回创建的组件对象
     return {
         name: comp.name,
         category: comp.category,
         attrs: initAttrs,
-        on: {},
-        nativeOn: {},
-        directives: {},
         slots: cloned.value,
         css: initCss(),
+        ...initObj,
         key: randomStr,
         id: randomStr
     }

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { defineProps, onUnmounted, defineOptions } from "vue";
-import { uniqueId } from "lodash-es";
+import { uniqueId } from "es-toolkit/compat";
 import { getVariableData } from "@molian/utils/customFunction";
 import { useStyleTag, watchThrottled } from "@vueuse/core";
 import renderTree from "./DeepTreeToRender.vue";

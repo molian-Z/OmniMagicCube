@@ -1,5 +1,5 @@
 import messages from '@intlify/unplugin-vue-i18n/messages'
-import { cloneDeep } from 'lodash-es'
+import { cloneDeep } from 'es-toolkit'
 import { createI18n } from 'vue-i18n'
 
 function setupI18n() {
