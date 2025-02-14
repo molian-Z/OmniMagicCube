@@ -81,7 +81,7 @@ const onActive = (comp: any, index: number) => {
   //有错误暂未修复，先允许删除
   hoverComp.value = comp;
   hoverRef.value = compsEls[comp.key];
-  setSelectedComp(comp);
+  setSelectedComp(comp, null);
 };
 
 const currentTitle = (comp: any) => {

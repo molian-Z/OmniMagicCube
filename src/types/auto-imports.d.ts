@@ -170,11 +170,13 @@ declare global {
   const scaleCalculate: typeof import('../components/molian/utils/util')['scaleCalculate']
   const screenRatioInfo: typeof import('../components/molian/components/Designer/designerData')['screenRatioInfo']
   const selectedComp: typeof import('../components/molian/components/Designer/designerData')['selectedComp']
+  const selectedDom: typeof import('../components/molian/components/Designer/designerData')['selectedDom']
   const selectedNativeOn: typeof import('../components/molian/components/Designer/designerData')['selectedNativeOn']
   const selectedOn: typeof import('../components/molian/components/Designer/designerData')['selectedOn']
   const setComputed: typeof import('../components/molian/utils/customFunction')['setComputed']
   const setSelectedComp: typeof import('../components/molian/components/Designer/designerData')['setSelectedComp']
   const setText: typeof import('../components/molian/utils/useCore')['setText']
+  const setZoomMode: typeof import('../components/molian/components/Designer/designerData')['setZoomMode']
   const setting: typeof import('../components/molian/utils/defaultData')['setting']
   const setupI18n: typeof import('../components/molian/locales/index')['setupI18n']
   const shallowReactive: typeof import('vue')['shallowReactive']
@@ -211,6 +213,8 @@ declare global {
   const watchEffect: typeof import('vue')['watchEffect']
   const watchPostEffect: typeof import('vue')['watchPostEffect']
   const watchSyncEffect: typeof import('vue')['watchSyncEffect']
+  const zoomModeModelValue: typeof import('../components/molian/components/Designer/designerData')['zoomModeModelValue']
+  const zoomModeName: typeof import('../components/molian/components/Designer/designerData')['zoomModeName']
 }
 // for type re-export
 declare global {

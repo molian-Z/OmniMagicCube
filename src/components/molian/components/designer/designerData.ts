@@ -31,6 +31,8 @@ export const globalPanel = ref<string>('')
 export const treeDirRef = ref()
 export const aiImRef = ref()
 export const fullLoading = ref<boolean>(false)
+export const zoomModeName = ref<string>('')
+export const zoomModeModelValue = ref<any>([])
 // 页面数据
 // 缓存数据
 const store = useStorage('omc_history', {
@@ -85,7 +87,7 @@ watch(history as any, (val: any[]) => {
 export const compsEls = reactive<any>({})
 export const compsRefs = reactive<any>({})
 export const selectedComp = ref<CubeData.ModelValue | null | any>(null)
-
+export const selectedDom = ref<HTMLElement | null>()
 /**
  * 设置选中的组件，并初始化其CSS属性
  * @param comp 选中的组件对象，该对象应包含一个css属性，用于存储CSS样式
@@ -93,9 +95,15 @@ export const selectedComp = ref<CubeData.ModelValue | null | any>(null)
  * 此函数的目的是确保选中的组件有一个完整的css对象，
  * 即使该组件的css对象中缺少某些初始化Css中包含的键
  */
-export const setSelectedComp = (comp: any) => {
+export const setSelectedComp = (comp: any, evt:any) => {
     // 将选中的组件设置为全局选中的组件
     selectedComp.value = comp
+    // 设置打点框
+    if(evt) {
+        selectedDom.value = evt.target
+    } else {
+        selectedDom.value = null
+    }
 }
 
 // 编辑输入框内容时不触发魔术键
@@ -407,4 +415,14 @@ const pasteData: any = function (data: any) {
         }
     }
     return data
+}
+
+export const setZoomMode = function (comp: any) {
+    if(comp) {
+        zoomModeName.value = comp.name
+        zoomModeModelValue.value = comp
+    }else {
+        zoomModeName.value = ''
+        zoomModeModelValue.value = []
+    }
 }

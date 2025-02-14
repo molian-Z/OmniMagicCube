@@ -12,6 +12,7 @@ import {
     compsEls,
     selectedComp,
     setSelectedComp,
+    setZoomMode,
     variableData
 } from '../designerData'
 import {
@@ -88,10 +89,29 @@ export const directives = {
                 console.log(e)
             }
             // 设置选中的组件
-            setSelectedComp(comp)
+            setSelectedComp(comp, evt)
             // 显示工具栏，传入事件对象、组件、组件索引和模型值
             showToolbar(evt, comp, index, props.modelValue)
         }
+
+        /** 
+         * 处理双击事件的函数，用于处理在组件上的双击行为
+         */
+        const onDblclick = function (evt: any, comp: any) {
+            // 尝试阻止事件传播，以处理不同来源的事件格式
+            try {
+                if (evt.e) {
+                    evt.e.stopPropagation()
+                } else {
+                    evt.stopPropagation()
+                }
+            } catch (e) {
+                // 如果阻止事件传播过程中出现异常，打印异常信息
+                console.log(e)
+            }
+            setZoomMode(comp)
+        }
+
         const { menus } = useMenus()
         /**
          * 右键点击事件处理函数
@@ -115,7 +135,7 @@ export const directives = {
                 console.log(e)
             }
             // 设置当前选中的组件
-            setSelectedComp(comp)
+            setSelectedComp(comp, evt)
             // 显示自定义右键菜单
             showToolbar(evt, comp, index, props.modelValue)
             // 确保DOM更新后，再显示右键菜单
@@ -173,7 +193,7 @@ export const directives = {
                 // 当拖动索引与当前组件索引相同时，添加'hiddenComps'类
                 'hiddenComps': dragIndex.value === props.index,
                 // 当放置索引与当前组件索引相同且组件可拖动时，添加'is-margin'类
-                'is-margin': dropIndex.value === props.index && isDraggable.value,
+                // 'is-margin': dropIndex.value === props.index && isDraggable.value,
                 // 当选中的组件与当前组件相同时，添加'selectedComp'类
                 'selectedComp': selectedComp && selectedComp.value && selectedComp.value.key === props.comp.key,
                 // 当组件内没有文本指令且不可拖动且不是插槽时，添加'designer-comp-is-empty'类
@@ -206,6 +226,8 @@ export const directives = {
                 // setText({ comp: props.comp, $slot: slotData, expandAPI: {} })
                 // 绑定点击事件处理函数，并使用修饰符
                 onClick: withModifiers(($event: any) => onClick($event, props.comp, props.index), ['self', 'prevent', 'stop']),
+                // 绑定双击事件处理函数, 并使用修饰符开启模块编辑模式
+                ondblclick: withModifiers(($event: any) => onDblclick($event, props.comp), ['self', 'prevent', 'stop']),
                 // 绑定上下文菜单事件处理函数，并使用修饰符
                 onContextmenu: withModifiers(($event: any) => onContextmenu($event, props.comp, props.index), ['self', 'prevent', 'stop']),
                 // 绑定拖拽悬停事件处理函数，并使用修饰符

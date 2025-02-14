@@ -1,16 +1,15 @@
 <script setup lang="ts">
 import { ref, inject } from 'vue'
-import {
-    useCloned, useElementSize, useStyleTag
-} from '@vueuse/core'
+import { useCloned, useElementSize, useStyleTag, useElementBounding } from '@vueuse/core'
 import { throttle } from "es-toolkit";
 import deepComps from './deepTreeToDesigner.vue'
 import toolTip from './toolTip/index.vue'
 import toolBar from './toolBar/index.vue'
-import { modelValue, selectedComp, createComp, screenRatioInfo } from '../designerData'
+import { modelValue, selectedComp, selectedDom, createComp, screenRatioInfo, zoomModeModelValue, zoomModeName, setZoomMode } from '../designerData'
 import { resetHover, dragNodes, dragIndex, dropIndex, resetDraggable, onDragenter } from '../draggable'
 import { calculateRatio, scaleCalculate } from '@molian/utils/util'
 import { createCss } from "@molian/utils/css-generator";
+import { positionProp } from 'vexip-ui/dist/components/modal/props';
 const comps: any = inject('mlComps')
 const containerRef = ref()
 const onDrop = function (evt: any) {
@@ -34,6 +33,7 @@ const onDrop = function (evt: any) {
 
 const onClick = function () {
     selectedComp.value = null
+    selectedDom.value = null
     resetHover()
 }
 const containerSize = useElementSize(containerRef)
@@ -98,13 +98,29 @@ watch(
   { deep: true }
 );
 
+const cmtdModelValue:any = computed(() => {
+    if(zoomModeName.value) {
+        return [zoomModeModelValue.value]
+    } else {
+        return modelValue.value
+    }
+})
+const pointsStyle = computed(() => {
+    const { top, left, width, height } = useElementBounding(selectedDom.value)
+    return {
+        top: top.value ? Number(top.value - 2).toFixed(0) + 'px' : '0',
+        left: left.value ? Number(left.value - 2).toFixed(0) + 'px' : '0',
+        width: width.value ? Number(width.value + 6).toFixed(0) + 'px' : '0',
+        height: height.value ? Number(height.value + 6).toFixed(0) + 'px' : '0',
+    }
+})
 onUnmounted(() => {
   unload();
 });
 </script>
 <template>
     <div class="container-designer" @click="onClick">
-        <div class="container-body">
+        <div class="container-body" @dblclick="setZoomMode(null)">
             <toolBar class="container-toolbar" >
                 <template v-slot:left>
                     <slot name="toolbarLeft"></slot>
@@ -120,7 +136,7 @@ onUnmounted(() => {
                 <div class="container-draggable-body"
                     :style="{ width: layoutSize.width + 'px', height: layoutSize.height + 'px' }" @dragover.prevent
                     @dragenter.self="confirmDropContainer" @drop="onDrop">
-                    <deepComps v-model="modelValue"></deepComps>
+                    <deepComps v-model="cmtdModelValue"></deepComps>
                     <div class="container-draggable-cover" :style="getCoverStyle(item)" :key="index"
                         v-for="(item, index) in screenRatioInfo.coverBackground"
                         v-if="!!screenRatioInfo.coverBackground && screenRatioInfo.coverBackground.length > 0"></div>
@@ -131,6 +147,8 @@ onUnmounted(() => {
         <!-- <div class="drag-tips" v-if="isDraggable">{{ t('container.dropContent') }}</div> -->
         <!-- 组件工具栏 -->
         <toolTip></toolTip>
+        <!-- 组件打点框 -->
+        <div class="points-container" :style="pointsStyle"></div>
     </div>
 </template>
 
@@ -202,6 +220,15 @@ onUnmounted(() => {
             font-size: 26px;
         }
     }
+
+    .points-container{
+        position: fixed;
+        pointer-events: none;
+        border: 4px solid var(--ml-primary-color-4);
+        border-radius: var(--ml-radius-small);
+        transition: .2s;
+        z-index: 998;
+    }
 }
 </style>
 
@@ -242,12 +269,12 @@ onUnmounted(() => {
     margin: 8px;
   }
 
-  &.selectedComp {
-    &::after {
-      border: 2px solid var(--ml-primary-color);
-      display: block;
-    }
-  }
+//   &.selectedComp {
+//     &::after {
+//       border: 2px solid var(--ml-primary-color);
+//       display: block;
+//     } 
+//   }
 }
 
 .designer-comp-is-empty::after {

@@ -190,4 +190,7 @@ defineExpose({
     box-sizing: border-box;
   }
 }
+.designer-page * {
+  scrollbar-width: none;
+}
 </style>

@@ -9,7 +9,8 @@
         "ignore": [
           "scrollbar-color",
           "scrollbar-width",
-          "scrollbar-width: thin"
+          "scrollbar-width: thin",
+          "user-select"
         ]
       }
     ]

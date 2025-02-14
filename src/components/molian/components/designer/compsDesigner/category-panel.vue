@@ -132,7 +132,7 @@ const onDragend = function () {
             margin: var(--ml-mg-base);
             border-radius: var(--ml-radius-base);
             cursor: all-scroll;
-            width: 110px;
+            width: calc(50% - 16px);
             display: flex;
             justify-content: space-between;
             flex-direction: column;
