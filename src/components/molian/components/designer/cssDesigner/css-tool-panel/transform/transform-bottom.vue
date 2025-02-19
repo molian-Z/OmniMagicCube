@@ -7,24 +7,37 @@ const {t} = useI18n()
 const customComps:any = inject('customComps')
 const { customSelect } = customComps
 
-const css = computed(() => {
-    return selectedComp.value && selectedComp.value.css || {}
+// 定义类型接口
+interface CSSProperties {
+  constX?: string;
+  constY?: string;
+  position?: string;
+}
+
+interface SelectOption {
+  label: string;
+  value: string;
+  disabled?: boolean;
+}
+
+// 优化计算属性
+const css = computed<CSSProperties>(() => {
+  return selectedComp.value?.css ?? {}
 })
 
-const leftOptions = ref([{
-    label: t('css.left.left'),
-    value: 'left'
-}, {
-    label: t('css.left.center'),
-    value: 'center',
-    disabled: true
-}, {
-    label: t('css.left.right'),
-    value: 'right'
-}, {
-    label: t('css.left.left2right'),
-    value: 'left2right'
-}])
+// 提取常量配置
+const CONST_TYPES = {
+  VERTICAL: ['top', 'bottom', 'top2bottom'],
+  HORIZONTAL: ['left', 'right', 'left2right']
+} as const
+
+// 优化选项配置
+const leftOptions = ref<SelectOption[]>([
+  { label: t('css.left.left'), value: 'left' },
+  { label: t('css.left.center'), value: 'center', disabled: true },
+  { label: t('css.left.right'), value: 'right' },
+  { label: t('css.left.left2right'), value: 'left2right' }
+])
 const topOptions = ref([{
     label: t('css.top.top'),
     value: 'top'
@@ -57,33 +70,42 @@ const positionOptions = ref([{
     value: 'fixed'
 }])
 
-const svgClick = function (val: string | any) {
-    const { constY, constX } = css.value
-    if (['top', 'bottom', 'top2bottom'].indexOf(val) > -1) {
-        if (constY === 'top' && val === 'bottom' || constY === 'bottom' && val === 'top'){
-            css.value.constY = 'top2bottom'
-        }else if(constY === 'top2bottom'){
-            if(val === 'top'){
-                css.value.constY = 'bottom'
-            }else if(val === 'bottom' || val === 'top2bottom'){
-                css.value.constY = 'top'
-            }
-        }else if(constY !== val){
-            css.value.constY = val
-        }
-    } else if (['left', 'right', 'left2right'].indexOf(val) > -1) {
-        if (constX === 'left' && val === 'right' || constX === 'right' && val === 'left'){
-            css.value.constX = 'left2right'
-        }else if(constX === 'left2right'){
-            if(val === 'left'){
-                css.value.constX = 'right'
-            }else if(val === 'right' || val === 'left2right'){
-                css.value.constX = 'left'
-            }
-        }else if(constX !== val){
-            css.value.constX = val
-        }
-    }
+// 优化约束处理函数
+const svgClick = function (val: string) {
+  const { constY, constX } = css.value
+  
+  if ((CONST_TYPES.VERTICAL as readonly string[]).includes(val)) {
+    handleVerticalConstraint(val, constY)
+  } else if ((CONST_TYPES.HORIZONTAL as readonly string[]).includes(val)) {
+    handleHorizontalConstraint(val, constX)
+  }
+}
+
+// 提取约束处理逻辑
+const handleVerticalConstraint = (val: string, currentConst?: string) => {
+  if (!currentConst || currentConst === val) return
+  
+  if ((currentConst === 'top' && val === 'bottom') || 
+      (currentConst === 'bottom' && val === 'top')) {
+    css.value.constY = 'top2bottom'
+  } else if (currentConst === 'top2bottom') {
+    css.value.constY = val === 'top' ? 'bottom' : 'top'
+  } else {
+    css.value.constY = val
+  }
+}
+
+const handleHorizontalConstraint = (val: string, currentConst?: string) => {
+  if (!currentConst || currentConst === val) return
+  
+  if ((currentConst === 'left' && val === 'right') || 
+      (currentConst === 'right' && val === 'left')) {
+    css.value.constX = 'left2right'
+  } else if (currentConst === 'left2right') {
+    css.value.constX = val === 'left' ? 'right' : 'left'
+  } else {
+    css.value.constX = val
+  }
 }
 </script>
 
@@ -92,7 +114,7 @@ const svgClick = function (val: string | any) {
         <div class="transform-container__body-title">{{t('css.const')}}</div>
         <div class="transform-container__body-constraints">
             <div class="transform-constraints_panel">
-                <svg width="108" height="108">
+                <svg width="108" height="108" class="constraints-svg">
                     <!-- 四周线条 -->
                     <line :class="['hoverSvg', css.constX && css.constX.includes('left') && 'is-active']" x1="5" y1="54"
                         x2="25" y2="54" stroke-width="5" @click="svgClick('left')" />

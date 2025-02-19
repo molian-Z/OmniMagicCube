@@ -324,33 +324,74 @@ export const parseStyle = function (styleObj: { [x: string]: any; }, compKey: an
     return customCss
 }
 
-// 创建CSS函数
+// 缓存 kebab-case 转换结果
+const kebabCache = new Map<string, string>();
+
+// 获取缓存的 kebab-case 值
+const getKebabCase = (str: string): string => {
+    if (kebabCache.has(str)) {
+        return kebabCache.get(str)!;
+    }
+    const result = toKebabCase(str);
+    kebabCache.set(str, result);
+    return result;
+};
+
+/**
+ * 创建 CSS 样式字符串
+ * 该函数遍历一个组件对象，收集并生成相应的 CSS 规则
+ * 
+ * @param compObj 组件对象，包含组件的结构和样式信息
+ * @returns 返回生成的 CSS 样式字符串
+ */
 export const createCss = function (compObj: any) {
-    const css: any[] = [] // 存储CSS规则
-    deepObjCreateCss(compObj, css) // 递归生成CSS规则
-    let allCssStr = ``
-    allCssStr += css.map(item => {
-        let cssStr = `` // 存储CSS样式
-        for (const key in item.value) {
-            if (Object.hasOwnProperty.call(item.value, key)) { // 筛选出item.value对象自身的属性
-                const element = item.value[key]; // 获取属性值
-                if (key === 'customCss') {
-                    for (const customKey in element) {
-                        if (Object.prototype.hasOwnProperty.call(element, customKey)) {
-                            const customVal = element[customKey];
-                            cssStr += `\n${customKey}:${customVal};`
-                        }
-                    }
-                } else {
-                    cssStr += `\n${toKebabCase(key)}:${element};` // 拼接CSS样式字符串
-                }
-            }
+    // 初始化一个数组，用于收集 CSS 规则
+    const css: any[] = [];
+    // 调用深度遍历函数，将 CSS 规则添加到数组中
+    deepObjCreateCss(compObj, css);
+
+    // 使用数组收集 CSS 规则，避免字符串拼接
+    const cssRules = css.map(item => {
+        // 如果项没有值，则返回空字符串
+        if (!item.value) return '';
+
+        // 初始化一个数组，用于收集 CSS 属性
+        const cssProperties: string[] = [];
+        // 解构项的值、名称和键
+        const { value, name, key } = item;
+
+        // 处理自定义 CSS
+        if (value.customCss) {
+            // 遍历自定义 CSS 属性，并添加到 CSS 属性数组中
+            Object.entries(value.customCss).forEach(([customKey, customVal]) => {
+                cssProperties.push(`${customKey}:${customVal}`);
+            });
         }
-        return !cssStr ? '' : `.${toKebabCase(item.name)}__${item.key}{  ${cssStr}\n}` // 返回CSS规则字符串
-    }).join('\n')
-    return allCssStr
+
+        // 处理其他 CSS 属性
+        // 过滤掉自定义 CSS 属性，遍历并添加到 CSS 属性数组中
+        Object.entries(value)
+            .filter(([k]) => k !== 'customCss')
+            .forEach(([k, v]) => {
+                cssProperties.push(`${getKebabCase(k)}:${v}`);
+            });
+
+        // 如果没有 CSS 属性，返回空字符串
+        if (cssProperties.length === 0) return '';
+
+        // 构建 CSS 规则
+        return `.${getKebabCase(name)}__${key}{
+            ${cssProperties.join(';')};
+        }`;
+    });
+
+    // 过滤掉空规则并合并
+    // 返回最终的 CSS 样式字符串
+    return cssRules.filter(Boolean).join('\n');
 }
 
+// 缓存初始 CSS 对象
+const INITIAL_CSS = initCss()
 /**
  * 将模型值转换为简洁的CSS对象
  * 
@@ -362,42 +403,92 @@ export const createCss = function (compObj: any) {
  * @returns 返回简化后的模型值
  */
 export const conciseCss = function (modelValue: any) {
-    // 使用useCloned钩子克隆模型值，避免修改原始数据
+    // 避免重复克隆，只在必要时克隆
+    if (!modelValue) return modelValue
+    
     const { cloned } = useCloned(modelValue)
-    // 遍历克隆后的模型值数组
-    cloned.value.forEach((item: any) => {
-        // 找出当前项CSS与初始CSS的差异
-        const diffArr = shallowDiff(item.css, initCss())
-        // 移除与初始CSS相同的属性
-        diffArr.forEach((diffItem: string) => {
-            delete item.css[diffItem]
+    
+    // 使用 Map 缓存已处理过的 CSS 对象
+    const cssCache = new Map()
+    
+    // 优化递归处理函数
+    const processCssItems = (items: any[]): any[] => {
+        return items.map(item => {
+            // 处理 CSS
+            if (item.css) {
+                // 使用缓存检查是否已处理过相同的 CSS
+                const cacheKey = JSON.stringify(item.css)
+                if (cssCache.has(cacheKey)) {
+                    item.css = cssCache.get(cacheKey)
+                } else {
+                    const diffArr = shallowDiff(item.css, INITIAL_CSS)
+                    diffArr.forEach(key => {
+                        delete item.css[key]
+                    })
+                    cssCache.set(cacheKey, { ...item.css })
+                }
+            }
+            
+            // 处理插槽
+            if (item.slots) {
+                // 使用 Object.entries 优化遍历
+                Object.entries(item.slots).forEach(([key, slot]: [string, any]) => {
+                    if (Array.isArray(slot.children)) {
+                        slot.children = processCssItems(slot.children)
+                    }
+                })
+            }
+            
+            return item
         })
-        // 如果当前项包含slots，则对其子元素递归应用简化逻辑
-        if (!!item.slots) {
-            Object.keys(item.slots).forEach(key => {
-                item.slots[key].children = conciseCss(item.slots[key].children)
-            })
-        }
-    })
-    // 返回简化后的模型值
+    }
+    
+    // 使用优化后的处理函数
+    cloned.value = processCssItems(cloned.value)
     return cloned.value
 }
 
+/**
+ * 恢复 CSS 样式函数
+ * 该函数用于根据提供的模型值恢复 CSS 样式，主要处理模型值中的 CSS 属性和插槽（slots）
+ * @param modelValue 模型值，通常是一个对象，包含 CSS 样式和其他信息
+ * @returns 返回处理后的模型值
+ */
 export const restoreCss = function (modelValue: any) {
-    // 使用useCloned钩子克隆模型值，避免修改原始数据
+    // 如果模型值为空，直接返回
+    if (!modelValue) return modelValue
+
+    // 使用 useCloned 函数创建模型值的克隆版本
     const { cloned } = useCloned(modelValue)
-    // 遍历克隆后的模型值数组
-    cloned.value.forEach((item: any) => {
-        // 找出当前项CSS与初始CSS的差异
-        item.css = Object.assign({}, initCss(), item.css)
-        // 如果当前项包含slots，则对其子元素递归应用简化逻辑
-        if (!!item.slots) {
-            Object.keys(item.slots).forEach(key => {
-                item.slots[key].children = restoreCss(item.slots[key].children)
-            })
-        }
-    })
-    // 返回简化后的模型值
+
+    // 优化递归处理函数
+    const processItems = (items: any[]): any[] => {
+        // 遍历每个项目，并对每个项目进行处理
+        return items.map(item => {
+            // 处理 CSS
+            if (item.css) {
+                // 将项目中的 CSS 样式与初始 CSS 样式合并
+                item.css = { ...INITIAL_CSS, ...item.css }
+            }
+
+            // 处理插槽
+            if (item.slots) {
+                // 遍历每个插槽，并对插槽中的子元素进行递归处理
+                Object.entries(item.slots).forEach(([, slot]: [string, any]) => {
+                    if (Array.isArray(slot.children)) {
+                        slot.children = processItems(slot.children)
+                    }
+                })
+            }
+
+            // 返回处理后的项目
+            return item
+        })
+    }
+
+    // 对克隆的值进行处理
+    cloned.value = processItems(cloned.value)
+    // 返回处理后的克隆值
     return cloned.value
 }
 
@@ -499,8 +590,7 @@ function createSuffix(value: string | any, unit: string) {
  * 这样做是为了提高代码的可读性，使得在解析字符串时能够更容易区分不同的运算符和操作数
  * 
  * @param str 待处理的字符串，可能包含算术表达式
- * @returns 返回处理后的字符串，其中算术运算符周围被空格包围
- */
+ * @returns 返回处理后的字符串，其中算术运算符周围被空格包围 */
 function addSpacesToOperators(str: string) {
     // 移除字符串中的所有空格
     str = str.replace(/ /g, '');
@@ -517,31 +607,31 @@ function addSpacesToOperators(str: string) {
  * @returns 一个数组，包含两个对象在浅层相同属性的名称
  */
 function shallowDiff(obj1: any, obj2: any) {
-    // 初始化一个数组来存储相同属性的名称
-    const sameKeys = [];
-
-    // 遍历第一个对象的所有属性
-    for (const key in obj1) {
-        // 确保当前属性同时存在于两个对象中，以避免比较原型链上的属性
-        if (obj1.hasOwnProperty(key) && obj2.hasOwnProperty(key)) {
-            // 获取两个对象中当前属性的值
-            const value1 = obj1[key];
-            const value2 = obj2[key];
-
-            // 如果值是原始类型（非对象）且相等，则将属性名称添加到数组中
-            if (typeof value1 !== 'object' && value1 === value2) {
-                sameKeys.push(key);
-            } else if (typeof value1 === 'object' && typeof value2 === 'object') {
-                // 如果值是对象，递归比较这些对象的属性
-                const innerSameKeys = shallowDiff(value1, value2);
-                // 如果两个对象的属性数量相同，并且所有比较的属性值都相同，则将当前属性名称添加到数组中
-                if (Object.keys(value1).length === Object.keys(value2).length && innerSameKeys.length === Object.keys(value1).length) {
-                    sameKeys.push(key);
-                }
+    if (!obj1 || !obj2) return []
+    
+    // 使用 Set 存储相同的键，提高查找效率
+    const sameKeys = new Set<string>()
+    
+    // 使用 Object.entries 替代 for...in
+    Object.entries(obj1).forEach(([key, value1]) => {
+        if (!obj2.hasOwnProperty(key)) return
+        
+        const value2 = obj2[key]
+        
+        if (value1 === value2) {
+            sameKeys.add(key)
+            return
+        }
+        
+        if (typeof value1 === 'object' && typeof value2 === 'object') {
+            if (!value1 || !value2) return
+            
+            const innerSameKeys = shallowDiff(value1, value2)
+            if (Object.keys(value1).length === Object.keys(value2).length && 
+                innerSameKeys.length === Object.keys(value1).length) {
+                sameKeys.add(key)
             }
         }
-    }
-
-    // 返回包含所有相同属性名称的数组
-    return sameKeys;
+    })
+    return Array.from(sameKeys)
 }

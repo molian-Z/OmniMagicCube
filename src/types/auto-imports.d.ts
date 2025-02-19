@@ -8,6 +8,7 @@ export {}
 declare global {
   const AIURL: typeof import('../components/molian/utils/defaultData')['AIURL']
   const CodeEditor: typeof import('../lib-render-main')['CodeEditor']
+  const ComponentPool: typeof import('../components/molian/utils/componentPool')['ComponentPool']
   const EffectScope: typeof import('vue')['EffectScope']
   const UIData: typeof import('../components/molian/utils/UIMap')['UIData']
   const actionPanel: typeof import('../components/molian/components/Designer/designerData')['actionPanel']
@@ -43,6 +44,7 @@ declare global {
   const createFunc: typeof import('../components/molian/utils/customFunction')['createFunc']
   const createFuse: typeof import('../components/molian/utils/fuse')['createFuse']
   const createJS: typeof import('../components/molian/utils/js-generator')['createJS']
+  const createRenderWorker: typeof import('../components/molian/components/Render/workers/createWorker')['createRenderWorker']
   const createSlot: typeof import('../components/molian/utils/useCore')['createSlot']
   const createTemplate: typeof import('../components/molian/utils/template-generator')['createTemplate']
   const cssPanel: typeof import('../components/molian/components/Designer/designerData')['cssPanel']
@@ -218,6 +220,9 @@ declare global {
 }
 // for type re-export
 declare global {
+  // @ts-ignore
+  export type { ComponentPool } from '../components/molian/utils/componentPool'
+  import('../components/molian/utils/componentPool')
   // @ts-ignore
   export type { IStyleMap, IConstX, IBorderRadius, IOpacity, IComp, ICss, IBlur, IColor, ISlots, IDefault, IAttrs, Component, ComponentPublicInstance, ComputedRef, DirectiveBinding, ExtractDefaultPropTypes, ExtractPropTypes, ExtractPublicPropTypes, InjectionKey, PropType, Ref, MaybeRef, MaybeRefOrGetter, VNode, WritableComputedRef } from './auto-imports.d'
   import('./auto-imports.d')

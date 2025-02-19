@@ -13,6 +13,7 @@
           "user-select"
         ]
       }
-    ]
+    ],
+    "create-element-svg": "off"
   }
 }

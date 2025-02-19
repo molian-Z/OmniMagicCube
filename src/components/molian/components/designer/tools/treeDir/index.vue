@@ -129,11 +129,10 @@ onMounted(() => {
   }
 
   .append-line {
-    border: 1px solid var(--ml-primary-color-6);
     transition: var(--ml-transition-base);
     position: relative;
-    margin-top: 6px;
-    margin-bottom: 6px;
+    height: 1px;
+    background: var(--ml-primary-color-6);
 
     .append-line-text {
       position: absolute;
@@ -144,6 +143,8 @@ onMounted(() => {
       transform: translate(-50%, 0);
       background: #fff;
       color: var(--ml-primary-color-6);
+      pointer-events: none;
+      font-size: 12px;
     }
   }
 }

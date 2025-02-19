@@ -1,6 +1,70 @@
 import { withModifiers, mergeProps } from 'vue'
 import * as Vue from 'vue'
 import { defaultLifecycleMap } from '@molian/utils/defaultData'
+
+type FunctionType = 'asyncFunction' | 'function';
+type FunctionConstructor = typeof asyncFunction | typeof syncFunction;
+interface LifecycleValue {
+    type: FunctionType;
+    value: {
+        code: string;
+        codeVar: string[];
+    };
+}
+
+interface LifecycleConfig {
+    [key: string]: LifecycleValue;
+}
+interface RunOnData {
+    value: {
+        code: string;
+        codeVar?: string[];
+        functionMode: FunctionType;
+    };
+}
+interface ModifierData {
+    value?: {
+        modifiers: string[];
+    };
+}
+
+interface ModifierResult {
+    newKey: string;
+    modifiers: string[];
+}
+interface EventConfig {
+    type?: 'variable';
+    value?: {
+        length: number;
+        code?: string;
+        [key: string]: any;
+    };
+}
+
+interface EventData {
+    on: Record<string, EventConfig>;
+    nativeOn: Record<string, EventConfig>;
+}
+interface VariableValue {
+    functionMode?: FunctionType;
+    codeVar?: string[];
+    code?: string;
+    [key: string]: any;
+}
+
+interface VariableData {
+    type: 'function' | 'computed' | string;
+    value: VariableValue;
+}
+interface ComputedConfig {
+    functionMode: FunctionType;
+    codeVar: string[];
+    code: string;
+}
+interface SetFuncData extends RunOnData {
+    type?: 'variable';
+}
+
 export const asyncFunction = Object.getPrototypeOf(async function () { }).constructor
 export const syncFunction = Object.getPrototypeOf(function () { }).constructor
 
@@ -15,21 +79,24 @@ export const syncFunction = Object.getPrototypeOf(function () { }).constructor
  * @param code 实际要执行的代码逻辑
  * @returns 返回创建的函数能力对象，可以是同步函数或异步函数实例
  */
-export const createFunc = (type: string, codeVar: string[], code: string) => {
-    const cacheCode = `try{
-        ${code}
-    } catch (error) {
-        console.log(error)
-    }`
-    if (type === 'asyncFunction') {
-        // 当类型为异步函数时，通过new asyncFunction创建并返回一个异步函数实例
-        return new asyncFunction(...codeVar, cacheCode)
-    } else {
-        // 当类型为同步函数时，通过new syncFunction创建并返回一个同步函数实例
-        return new syncFunction(...codeVar, cacheCode || '')
-    }
+export const createFunc = (type: FunctionType, codeVar: string[], code: string): Function => {
+    const constructorMap: Record<FunctionType, FunctionConstructor> = {
+        'asyncFunction': asyncFunction,
+        'function': syncFunction
+    };
 
-}
+    const cacheCode = `
+        try {
+            ${code}
+        } catch (error) {
+            console.error('[Function Execution Error]:', error);
+            throw error;
+        }
+    `;
+
+    const Constructor = constructorMap[type];
+    return new Constructor(...codeVar, cacheCode || '');
+};
 
 /**
  * 执行生命周期函数
@@ -37,38 +104,40 @@ export const createFunc = (type: string, codeVar: string[], code: string) => {
  * @param variable 传入的变量对象
  * @param expandAPI 扩展的API对象
  */
-export const runLifecycle = function (lifecycle: any, variable: any, expandAPI: any) {
-    // 遍历生命周期对象中的所有生命周期方法
-    const realLifecycle = isRef(lifecycle) ? lifecycle.value : lifecycle
-    for (const key in realLifecycle) {
-        if (Object.prototype.hasOwnProperty.call(realLifecycle, key)) {
-            // 解构获取当前生命周期方法的类型和代码配置
-            const { type, value } = realLifecycle[key];
-            if (value) {
-                const { code, codeVar } = value;
-                // 判断当前生命周期方法是否不在默认的生命周期映射中
-                if (!defaultLifecycleMap.value[key].function) {
-                    // 创建执行函数
-                    const runFn: any = createFunc(type, codeVar, code)
-                    // 绑定上下文并执行生命周期方法
-                    runFn.bind({ app: Vue, vars: variable, ...expandAPI }).call([])
-                } else {
-                    // 如果默认生命周期映射中存在当前生命周期方法，则创建并执行新的函数
-                    defaultLifecycleMap.value[key].function(function () {
-                        const _args: any[] = []
-                        for (let index = 0; index < arguments.length; index++) {
-                            const newVar = arguments[index];
-                            _args.push(newVar)
-                        }
-                        const runFn: any = createFunc(type, codeVar, code)
-                        // 绑定上下文并传入参数执行生命周期方法
-                        runFn.bind({ app: Vue, vars: variable, ...expandAPI }).call(..._args)
-                    })
-                }
-            }
+export const runLifecycle = function (
+    lifecycle: Ref<LifecycleConfig> | LifecycleConfig,
+    variable: Record<string, any>,
+    expandAPI: Record<string, any>
+): void {
+    const realLifecycle = isRef(lifecycle) ? lifecycle.value : lifecycle;
+    
+    const executeLifecycleMethod = (
+        type: FunctionType,
+        code: string,
+        codeVar: string[],
+        context: Record<string, any>,
+        args: any[] = []
+    ) => {
+        const runFn = createFunc(type, codeVar, code);
+        runFn.bind(context).call(null, ...args);
+    };
+
+    Object.entries(realLifecycle).forEach(([key, entry]) => {
+        const { type, value } = entry as LifecycleValue;
+        if (!value) return;
+
+        const { code, codeVar } = value;
+        const context = { app: Vue, vars: variable, ...expandAPI };
+
+        if (!defaultLifecycleMap.value[key].function) {
+            executeLifecycleMethod(type, code, codeVar, context);
+        } else {
+            defaultLifecycleMap.value[key].function(function (...args: any[]) {
+                executeLifecycleMethod(type, code, codeVar, context, args);
+            });
         }
-    }
-}
+    });
+};
 
 /**
  * 根据提供的数据和扩展API生成函数，并绑定Vue实例和变量
@@ -78,24 +147,24 @@ export const runLifecycle = function (lifecycle: any, variable: any, expandAPI: 
  * @param expandAPI 要扩展的API对象
  * @returns 返回一个绑定Vue实例和变量的函数
  */
-export const runOn = function (data: { value: any }, variable: any, expandAPI: any) {
-    // 从data对象中解构出代码字符串、代码变量和函数模式
-    const { code, codeVar, functionMode } = data.value
+export const runOn = function (
+    data: RunOnData,
+    variable: Record<string, any>,
+    expandAPI: Record<string, any>
+): Function {
+    const { code, codeVar = [], functionMode } = data.value;
+    const prefixCode = codeVar
+        .map((item, index) => `const ${item} = arguments[${index}];`)
+        .join('\n');
+    const context = { app: Vue, vars: variable, ...expandAPI };
+    return createFunc(
+        functionMode,
+        [],
+        prefixCode ? `${prefixCode}\n${code}` : code
+    ).bind(context);
+};
 
-    // 定义一个空字符串用于存储前置代码
-    let prefixCode = ``
-
-    // 如果存在代码变量且长度大于0，则遍历并构建前置代码
-    if (codeVar && codeVar.length > 0) {
-        codeVar.forEach((item: any, index: any) => {
-            prefixCode += `const ${item} = arguments[${index}];\n`
-        })
-    }
-
-    // 创建并返回一个新的函数，该函数模式执行，并绑定Vue实例和变量
-    return createFunc(functionMode, [], prefixCode + code).bind({ app: Vue, vars: variable, ...expandAPI })
-}
-
+const SPECIAL_MODIFIERS = ['once', 'capture', 'passive'] as const;
 /**
  * 根据给定的键和数据对象，处理特定的修饰符
  * 
@@ -107,46 +176,28 @@ export const runOn = function (data: { value: any }, variable: any, expandAPI: a
  * 本函数旨在处理事件修饰符，例如在找到'once'、'capture'、'passive'修饰符时，
  * 会将它们的首字母大写并拼接到键值后。同时，还会筛选出其他自定义修饰符返回。
  */
-export const runModifier = function (key: string, data: { [x: string]: { value: { modifiers: any[] } } }) {
-    // 初始化新键值
-    let newKey = key
-
-    // 如果当前键值在数据对象中不存在，或者没有对应的修饰符，则返回空的修饰符数组
-    if (!data[key].value) {
-        return {
-            newKey,
-            modifiers: []
-        }
+export const runModifier = function(
+    key: string,
+    data: Record<string, ModifierData>
+): ModifierResult {
+    if (!data[key]?.value?.modifiers) {
+        return { newKey: key, modifiers: [] };
     }
 
-    // 如果存在修饰符，则筛选出'once'、'capture'、'passive'修饰符
-    if (data[key].value.modifiers) {
-        const toKey = data[key].value.modifiers.filter((item: string) => {
-            return ['once', 'capture', 'passive'].indexOf(item) > -1
-        })
-        // 将筛选出的修饰符首字母大写并拼接到键值后，形成新的键值
-        if (toKey.length > 0) {
-            newKey = `${key}${toKey.map((item: string) => item.charAt(0).toUpperCase() + item.slice(1)).join('')}`
-        }
-    }
+    const { modifiers } = data[key].value;
+    const specialModifiers = modifiers.filter((item): item is typeof SPECIAL_MODIFIERS[number] => 
+        SPECIAL_MODIFIERS.includes(item as typeof SPECIAL_MODIFIERS[number])
+    );
+    const otherModifiers = modifiers.filter(item => !SPECIAL_MODIFIERS.includes(item as typeof SPECIAL_MODIFIERS[number]));
 
-    // 筛选出除'once'、'capture'、'passive'之外的其他修饰符
-    if (!!data[key].value.modifiers) {
-        const otherModifiers = data[key].value.modifiers.filter((item: string) => {
-            return ['once', 'capture', 'passive'].indexOf(item) === -1
-        })
-        return {
-            newKey,
-            modifiers: otherModifiers
-        }
-    } else {
-        // 如果没有修饰符，则返回空的修饰符数组
-        return {
-            newKey,
-            modifiers: []
-        }
-    }
-}
+    const newKey = specialModifiers.length > 0
+        ? `${key}${specialModifiers.map(item => 
+            item.charAt(0).toUpperCase() + item.slice(1)
+          ).join('')}`
+        : key;
+
+    return { newKey, modifiers: otherModifiers };
+};
 
 /**
  * 获取当前的事件监听配置
@@ -160,44 +211,46 @@ export const runModifier = function (key: string, data: { [x: string]: { value: 
  * @param expandAPI 扩展API对象，可选参数，用于扩展事件的功能
  * @returns 返回合并后的事件监听配置对象
  */
-export const getCurrentOn = (data: { on: any; nativeOn: any }, variable: any, originVariable: any, slotData: any, expandAPI: any) => {
-    const { on, nativeOn } = data
-    const newNativeOn: {
-        [key: string]: any;
-    } = {}
-    const newOn: {
-        [key: string]: any;
-    } = {}
-    // 配置原生监听
-    for (const key in nativeOn) {
-        if (Object.prototype.hasOwnProperty.call(nativeOn, key)) {
-            const { newKey, modifiers } = runModifier(key, nativeOn)
-            if (nativeOn[key] && nativeOn[key].type === 'variable') {
-                if (nativeOn[key].value && nativeOn[key].value.length > 0) {
-                    const data = originVariable[nativeOn[key].value[0]]
-                    newNativeOn[newKey] = withModifiers(setFunc(data, variable, slotData, expandAPI), modifiers)
-                }
-            } else if (nativeOn[key] && !!nativeOn[key].value && !!nativeOn[key].value.code) {
-                newNativeOn[newKey] = withModifiers(setFunc(nativeOn[key], variable, slotData, expandAPI), modifiers)
+export const getCurrentOn = (
+    data: EventData,
+    variable: Record<string, any>,
+    originVariable: Record<string, any>,
+    slotData: any,
+    expandAPI: Record<string, any>
+): Record<string, any> => {
+    const processEventHandlers = (
+        events: Record<string, EventConfig>
+    ): Record<string, any> => {
+        return Object.entries(events).reduce((acc:any, [key, event]) => {
+            if (!event) return acc;
+
+            const { newKey, modifiers }:{newKey:string;modifiers:any } = runModifier(key, events as Record<string, ModifierData>);
+            const handler = event.type === 'variable' && event.value?.length
+                ? originVariable[event.value[0]]
+                : event.value?.code
+                    ? event
+                    : null;
+
+            if (handler) {
+                // 创建事件处理函数，确保其符合 Event 处理器的类型签名
+                const eventHandler = (event: Event, ...args: unknown[]) => {
+                    const fn = setFunc(handler, variable, slotData, expandAPI);
+                    return fn(event, ...args);
+                };
+                
+                acc[newKey] = withModifiers(eventHandler, modifiers);
             }
-        }
-    }
-    // 配置组件监听
-    for (const key in on) {
-        if (Object.prototype.hasOwnProperty.call(on, key)) {
-            const { newKey, modifiers } = runModifier(key, on)
-            if (on[key] && on[key].type === 'variable') {
-                if (!!on[key].value && on[key].value.length > 0) {
-                    const data = originVariable[on[key].value[0]]
-                    newOn[newKey] = withModifiers(setFunc(data, variable, slotData, expandAPI), modifiers)
-                }
-            } else if (on[key] && !!on[key].value && !!on[key].value.code) {
-                newOn[newKey] = withModifiers(setFunc(on[key], variable, slotData, expandAPI), modifiers)
-            }
-        }
-    }
-    return mergeProps(newOn, newNativeOn)
-}
+
+            return acc;
+        }, {});
+    };
+
+    const { on = {}, nativeOn = {} } = data;
+    return mergeProps(
+        processEventHandlers(on),
+        processEventHandlers(nativeOn)
+    );
+};
 
 /**
  * 获取可变数据
@@ -209,46 +262,92 @@ export const getCurrentOn = (data: { on: any; nativeOn: any }, variable: any, or
  * @param isRoot 标记该变量是否为根变量，未在代码中使用，但保留以备将来可能的使用
  * @returns 返回一个包含根据variable参数中定义的属性和行为的数据对象
  */
-export const getVariableData = (variable: { [x: string]: any; }, expandAPI?: any, isRoot?: boolean) => {
-    // 创建一个空对象，用于存储处理后的变量数据
-    const vars: any = {}
-    // 遍历variable对象的每个属性
-    Object.keys(variable).forEach(key => {
-        const { type, value } = variable[key]
-        // 根据类型处理变量
-        if (type === 'function') {
-            // 如果函数模式存在且为异步函数或普通函数
-            if (value && !!value.functionMode && ['asyncFunction', 'function'].indexOf(value.functionMode) > -1) {
-                // 创建并绑定函数
-                vars[key] = createFunc(value.functionMode, value.codeVar, value.code).bind({ app: Vue, vars: reactive(vars), ...expandAPI })
-            } else {
-                vars[key] = createFunc('function', [], '').bind({ app: Vue, vars: reactive(vars), ...expandAPI })
-            }
-        } else if (type === 'computed') {
-            // 如果是计算属性且函数模式为异步函数或普通函数
-            if (!!value.functionMode && ['asyncFunction', 'function'].indexOf(value.functionMode) > -1) {
-                // 创建并绑定计算属性
-                vars[key] = setComputed(value, vars, expandAPI)
-            }
-        } else {
-            // 对于其他类型，直接赋值
-            vars[key] = value
-        }
-    })
-    // 返回处理后的变量数据对象
-    return vars
-}
+export const getVariableData = (
+    variable: Record<string, VariableData>,
+    expandAPI: Record<string, any> = {},
+    isRoot?: boolean
+): Record<string, any> => {
+    const vars = reactive<Record<string, any>>({});
+    const context = { app: Vue, vars, ...expandAPI };
 
-export const setComputed = (computedObj: any, vars: any, expandAPI?: any) => {
-    return computed(createFunc(computedObj.functionMode, computedObj.codeVar, computedObj.code).bind({ app: Vue, vars: reactive(vars), ...expandAPI }))
-}
-
-function setFunc(data: any, variable: any, slotData: any, expandAPI: any) {
-    if (!!slotData) {
-        return function () {
-            return runOn(data, variable, expandAPI)(...arguments, { $slot: slotData })
+    const processFunction = (value: VariableValue): Function => {
+        if (value?.functionMode && ['asyncFunction', 'function'].includes(value.functionMode)) {
+            return createFunc(value.functionMode, value.codeVar || [], value.code || '');
         }
-    } else {
-        return runOn(data, variable, expandAPI)
-    }
+        return createFunc('function', [], '');
+    };
+
+    Object.entries(variable).forEach(([key, { type, value }]) => {
+        switch (type) {
+            case 'function':
+                vars[key] = processFunction(value).bind(context);
+                break;
+            case 'computed':
+                if (value?.functionMode && ['asyncFunction', 'function'].includes(value.functionMode)) {
+                    // 确保 value 符合 ComputedConfig 接口要求
+                    const computedConfig: ComputedConfig = {
+                        functionMode: value.functionMode,
+                        codeVar: value.codeVar || [],
+                        code: value.code || ''
+                    };
+                    vars[key] = setComputed(computedConfig, vars, expandAPI);
+                }
+                break;
+            default:
+                vars[key] = value;
+        }
+    });
+
+    return vars;
+};
+
+/**
+ * 创建一个计算属性
+ * 
+ * 此函数的目的是通过给定的配置和变量来构造一个计算属性它使用Vue的computed函数来创建一个响应式的计算属性
+ * 
+ * @param computedObj 计算属性的配置对象，包含函数模式、代码变量和代码
+ * @param vars 一个包含变量的对象，这些变量将用于计算属性中
+ * @param expandAPI 一个可选的扩展API对象，允许在计算属性中访问额外的属性或方法
+ * @returns 返回一个计算属性引用，该引用是响应式的，会根据其依赖项自动更新
+ */
+export const setComputed = (
+    computedObj: ComputedConfig,
+    vars: Record<string, any>,
+    expandAPI: Record<string, any> = {}
+): ComputedRef<any> => {
+    // 创建一个上下文对象，包含Vue应用实例、变量和扩展API
+    const context = { app: Vue, vars: reactive(vars), ...expandAPI };
+    // 创建计算属性的函数，根据给定的配置和代码
+    const computedFn = createFunc(computedObj.functionMode, computedObj.codeVar, computedObj.code);
+    // 使用Vue的computed函数创建并返回计算属性，绑定上下文以使其在执行时可用
+    return computed(computedFn.bind(context));
+};
+
+/**
+ * 动态设置函数的执行环境和行为
+ * 
+ * 此函数用于根据提供的数据和变量生成一个新的函数它允许在调用新生成的函数时，
+ * 动态地访问和操作这些数据和变量如果提供了slotData参数，则将其作为函数执行上下文的一部分
+ * 
+ * @param data 动态数据，用于配置函数执行的特定行为和环境
+ * @param variable 一个记录类型的变量，用于存储函数执行可能需要的任何上下文信息
+ * @param slotData 可选参数，表示特定的插槽数据，用于在函数执行时提供额外的上下文信息
+ * @param expandAPI 一个记录类型的API对象，用于扩展函数执行时的可用方法或属性
+ * @returns 返回一个函数，该函数当被调用时，会根据提供的数据和变量执行相应的逻辑如果提供了slotData，
+ * 返回的函数会将slotData作为执行上下文的一部分
+ */
+function setFunc(
+    data: SetFuncData,
+    variable: Record<string, any>,
+    slotData: Record<string, any> | null,
+    expandAPI: Record<string, any>
+): Function {
+    // 创建一个闭包函数，用于在指定的上下文中运行逻辑
+    const runOnWithContext = () => runOn(data, variable, expandAPI);
+    
+    // 根据是否提供了slotData，决定返回哪种类型的函数
+    return slotData
+        ? (...args: any[]) => runOnWithContext()(...args, { $slot: slotData })
+        : runOnWithContext;
 }

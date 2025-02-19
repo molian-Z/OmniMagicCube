@@ -65,7 +65,7 @@ const props = defineProps({
   },
 });
 const { t } = useI18n();
-const message = inject("mlMessage");
+const message:any = inject("mlMessage");
 const comps: any = inject("mlComps");
 useKeys(message, t);
 /**

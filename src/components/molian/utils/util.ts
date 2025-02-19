@@ -41,27 +41,36 @@ export const toKebabCase = function (str: string): string {
     return changeCase.value;
 }
 
-export const deepObjToArray: any = function (obj: any) {
-    let newArr = []
-    for (const key in obj) {
-        if (Object.hasOwnProperty.call(obj, key)) {
-            const value = obj[key]
-            if (typeof value === 'object' && !Array.isArray(value)) {
-                newArr.push({
-                    label: key,
-                    value: key,
-                    children: deepObjToArray(value)
-                })
-            } else {
-                newArr.push({
-                    label: key,
-                    value: key
-                })
-            }
-        }
-    }
-    return newArr
+interface TreeNode {
+    label: string;
+    value: string;
+    children?: TreeNode[];
 }
+
+/**
+ * 将一个嵌套对象转换为树形结构的数组
+ * 此函数通过递归遍历对象的键值对，将每个键值对转换为一个树节点，并根据值的结构决定是否创建子节点
+ * @param obj 一个嵌套对象，其键和值将被转换为树形结构
+ * @returns 返回一个树形结构的数组，每个元素代表原始对象中的一个键值对
+ */
+export const deepObjToArray = function (obj: Record<string, any>): TreeNode[] {
+    // 遍历对象的每个键值对，将它们转换为树节点
+    return Object.entries(obj).map(([key, value]) => {
+        // 创建一个基础节点，包含当前键作为标签和值
+        const baseNode: TreeNode = {
+            label: key,
+            value: key
+        };
+
+        // 如果当前值是一个非数组的对象，则递归调用deepObjToArray来转换为子树
+        if (value && typeof value === 'object' && !Array.isArray(value)) {
+            baseNode.children = deepObjToArray(value);
+        }
+
+        // 返回当前节点，它可能包含子节点
+        return baseNode;
+    });
+};
 
 export const deepModelValueToTree = (modelValue: CubeData.ModelValue[]) => {
     const data: CubeData.ModelValue[] = []

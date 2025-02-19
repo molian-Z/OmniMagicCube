@@ -159,7 +159,7 @@ export const directives = {
         // 定义一个计算属性propsData，用于解析和计算组件的props
         const propsData: any = computed(() => {
             // 调用parseProps函数解析组件的props，并返回解析结果
-            return parseProps(props.comp, comps.value, variableData.value, {},{},'designer')
+            return parseProps(props.comp, comps.value, variableData.value, {}, {}, 'designer')
         })
         // 根据组件的缓存配置计算需要发射的数据
         const emitData: any = computed(() => {
@@ -213,85 +213,119 @@ export const directives = {
             // 如果是组件名称，则直接使用该名称作为标签
             currentTag = comps.value[props.comp.name].comp ? markRaw(comps.value[props.comp.name].comp) : comps.value[props.comp.name].name
         }
-        const renderDom: any = (domForAttr: { row?: any; index?: any; keyProps?: any; type?: any }) => {
-            const { row, index, keyProps } = domForAttr
-            // 根据组件指令创建插槽数据，如果存在for指令，则创建对应的插槽，否则使用继承的属性
-            const slotData = props.comp.directives && props.comp.directives.for ? createSlot(row, index, props.comp, props.inheritProps) : props.inheritProps
-            // 构建组件的属性对象，包括样式、数据、事件处理函数和类名等
+        // 修改事件处理函数缓存的实现
+        const eventHandlersCache = new Map();
+
+        /**
+         * 创建事件处理函数
+         * 此函数用于生成和缓存特定于组件实例和索引的事件处理函数
+         * 它通过组合组件ID和索引来创建缓存键，以确保每个组件实例的事件处理函数是唯一的
+         * 如果在缓存中找到现有的事件处理函数，则直接返回，以避免重复创建
+         * 
+         * @param comp 组件实例，用于访问组件ID和传递给事件处理函数
+         * @param index 组件的索引，用于创建唯一的缓存键和传递给某些事件处理函数
+         * @returns 返回一个包含各种事件处理函数的对象
+         */
+        const createEventHandlers = (comp: any, index: number) => {
+            // 使用对象作为缓存键
+            const cacheKey = `${comp.id}_${index}`;
+            const cached = eventHandlersCache.get(cacheKey);
+            if (cached) return cached;
+            
+            const handlers = {
+                // 点击事件处理函数
+                onClick: withModifiers(($event: any) => onClick($event, comp, index), ['self', 'prevent', 'stop']),
+                // 双击事件处理函数
+                ondblclick: withModifiers(($event: any) => onDblclick($event, comp), ['self', 'prevent', 'stop']),
+                // 上下文菜单事件处理函数
+                onContextmenu: withModifiers(($event: any) => onContextmenu($event, comp, index), ['self', 'prevent', 'stop']),
+                // 拖拽悬浮事件处理函数
+                onDragover: withModifiers(() => onDragenter(index, comp, null, null), ['self', 'prevent'])
+            };
+            
+            eventHandlersCache.set(cacheKey, handlers);
+            return handlers;
+        };
+
+        // 修改渲染缓存的实现
+        const renderCache = new Map();
+        /**
+         * 渲染 DOM 元素
+         * 此函数根据提供的属性生成或更新 DOM 元素，以用于组件渲染
+         * 它通过计算属性、事件处理程序和插槽来创建或更新 VNode
+         * 
+         * @param domForAttr 包含行数据、索引、键属性和类型的对象
+         * @returns 返回生成或更新的 VNode
+         */
+        const renderDom = (domForAttr: { row?: any; index?: any; keyProps?: any; type?: any }) => {
+            const { row, index, keyProps } = domForAttr;
+        
+            // 使用字符串作为缓存键
+            const cacheKey = JSON.stringify({
+                compId: props.comp.id,
+                row: row?.id,
+                index,
+                keyProps: keyProps?.idKey
+            });
+        
+            // 检查缓存
+            const cached = renderCache.get(cacheKey);
+            if (cached && !props.comp.directives?.for) {
+                return cached;
+            }
+        
+            // 优化插槽数据创建
+            const slotData = props.comp.directives?.for
+                ? createSlot(row, index, props.comp, props.inheritProps)
+                : props.inheritProps;
+        
+            // 优化属性对象创建
             const attrObj = {
-                style: { ...!isShow({ comp: props.comp, $slot: slotData, expandAPI: {} }) && { display: 'none' } || {} },
-                // 合并组件的数据和发射的数据
+                style: computed(() => ({
+                    ...(!isShow({ comp: props.comp, $slot: slotData, expandAPI: {} }) && { display: 'none' } || {})
+                })),
                 ...propsData.value,
                 ...emitData.value,
-                // setText({ comp: props.comp, $slot: slotData, expandAPI: {} })
-                // 绑定点击事件处理函数，并使用修饰符
-                onClick: withModifiers(($event: any) => onClick($event, props.comp, props.index), ['self', 'prevent', 'stop']),
-                // 绑定双击事件处理函数, 并使用修饰符开启模块编辑模式
-                ondblclick: withModifiers(($event: any) => onDblclick($event, props.comp), ['self', 'prevent', 'stop']),
-                // 绑定上下文菜单事件处理函数，并使用修饰符
-                onContextmenu: withModifiers(($event: any) => onContextmenu($event, props.comp, props.index), ['self', 'prevent', 'stop']),
-                // 绑定拖拽悬停事件处理函数，并使用修饰符
-                onDragover: withModifiers(() => onDragenter(props.index, props.comp, null, null), ['self', 'prevent']),
-                // 绑定拖拽开始事件处理函数，并使用修饰符
-                // onDragstart: withModifiers((evt: any) => onDragStart(evt, props.comp), ['self', 'prevent']),
-                // 绑定拖拽结束事件处理函数
-                // onDragend: onDragend,
-                // 绑定拖放事件处理函数，并使用修饰符
-                // onDrop: withModifiers(($event: any) => onDrop($event, null, null), ['self', 'stop']),
-                // 绑定鼠标进入事件处理函数，并使用修饰符
-                // onMouseenter: withModifiers(($event) => onMouseEnter($event, props.comp, props.index), ['self','native']), // 暂且取消经过选择
-                // 设置组件的类名
+                ...createEventHandlers(props.comp, props.index),
                 class: computedClass.value,
-                // 设置组件的ID
                 id: props.comp.id,
-                // 设置组件的键值，用于识别组件
                 ['data-key']: props.comp.key,
-                // 表示是否在设计模式下
                 isDesigner: true,
-                // 设置组件的引用
                 ref: elRef
-            }
+            };
+        
+            // 优化 key 处理
             if (index >= 0) {
-                attrObj.key = keyProps.idKey && row[keyProps.idKey] || index || null
+                attrObj.key = keyProps?.idKey ? row[keyProps.idKey] : index;
             }
-            const nowSlots: {
-                [key: string]: any;
-            } = {}
-            // 遍历slots对象的每个属性
-            for (const key in slots) {
-                if (Object.hasOwnProperty.call(slots, key)) {
-                    const value = slots[key];
-                    // 如果keyProps存在
-                    if (keyProps) {
-                        // 插槽写入 slotData
-                        nowSlots[key] = value(slotData)
-                    } else {
-                        nowSlots[key] = () => value(slotData)
-                    }
-                }
-            }
-            // 当前标签为字符串类型时，执行特定逻辑
-            if (typeof currentTag === 'string') {
-                // 使用withDirectives和h函数创建带有自定义指令的VNode
-                // withDirectives函数用于添加指令，h函数用于创建VNode
-                // vCustomDirectives是自定义指令的名称，{ comp: props.comp, $slot: slotData }是指令的绑定参数
-                return withDirectives(
+        
+            // 优化插槽处理
+            const nowSlots = Object.entries(slots).reduce((acc, [key, value]) => {
+                acc[key] = keyProps ? value(slotData) : () => value(slotData);
+                return acc;
+            }, {});
+        
+            // 创建 VNode
+            const vnode = typeof currentTag === 'string'
+                ? withDirectives(
                     h(currentTag, attrObj, nowSlots.default),
-                        [
-                            [vCustomDirectives({ comp: props.comp, $slot: slotData, variable: variableData.value, expandAPI: {} })]
-                        ]
-                    )
-            } else {
-                // 当前标签非字符串类型时，执行其他逻辑
-                // 同样使用withDirectives和h函数创建带有自定义指令的VNode，但此处的nowSlots未指定默认值
-                return withDirectives(h(currentTag, attrObj, nowSlots),
-                    [
-                        [vCustomDirectives({ comp: props.comp, $slot: slotData, variable: variableData.value, expandAPI: {} })]
-                    ]
+                    [[vCustomDirectives({ comp: props.comp, $slot: slotData, variable: variableData.value, expandAPI: {} })]]
                 )
+                : withDirectives(
+                    h(currentTag, attrObj, nowSlots),
+                    [[vCustomDirectives({ comp: props.comp, $slot: slotData, variable: variableData.value, expandAPI: {} })]]
+                );
+        
+            // 缓存结果
+            if (!props.comp.directives?.for) {
+                renderCache.set(cacheKey, vnode);
             }
-        }
-        let newForEachList = computed(() => {
+        
+            return vnode;
+        };
+        const newForEachList = computed(() => {
+            // 添加条件判断，避免不必要的计算
+            if (!props.comp.directives?.for) return null;
             return getForEachList(props.comp, variableData)
         })
         // 出现极端情况解决方案。如元素不存在以及无法对元素进行修改的情况
@@ -312,56 +346,55 @@ export const directives = {
                     resetDom.ondragover = () => {
                         onDragenter(props.index, props.comp, null, compData)
                     }
-                    const styleData: any = computed(() => {
-                        return { ...!isShow({ comp: props.comp, $slot: props.inheritProps, expandAPI: {} }) && { display: 'none' } || {} }
-                    })
-                    // 监听并修改样式数据及更新视图组件
-                    watchDebounced(styleData, (newAttrs) => {
-                        Object.keys(newAttrs).forEach(item => {
-                            resetDom.style[item] = newAttrs[item]
-                        })
-                    }, {
-                        immediate: true,
-                        debounce: 300,
-                        maxWait: 1000,
-                    });
-
-                    // 监听并修改属性数据及更新视图组件
-                    watchDebounced(() => propsData, (newProps) => {
-                        Object.keys(newProps).forEach(item => {
-                            try {
-                                resetDom[item] = newProps[item]
-                            } catch (error) {
-                                console.log('属性不允许修改')
-                            }
-
-                        })
-                    }, {
-                        immediate: true,
-                        debounce: 300,
-                        maxWait: 1000,
-                    });
-
-                    // 监听并修改class数据及更新视图组件
-                    watchDebounced(computedClass, (newClass: any) => {
-                        Object.keys(newClass).forEach(item => {
-                            if (!!newClass[item]) {
-                                resetDom.classList.add(item)
-                            } else {
-                                resetDom.classList.remove(item)
-                            }
-                        })
-                    }, {
-                        immediate: true,
-                        debounce: 300,
-                        maxWait: 1000,
-                    });
+                    const batchUpdateDOM = (resetDom: HTMLElement | any) => {
+                        const updates = reactive({
+                            styles: computed(() => {
+                                return { ...!isShow({ comp: props.comp, $slot: props.inheritProps, expandAPI: {} }) && { display: 'none' } || {} }
+                            }),
+                            props: computed(() => propsData.value),
+                            classes: computed(() => computedClass.value)
+                        });
+                        watchDebounced(() => updates, (newValues) => {
+                            nextTick(() => {
+                                // 批量处理样式更新
+                                if (newValues.styles) {
+                                    Object.assign(resetDom.style, newValues.styles);
+                                }
+                                // 批量处理属性更新
+                                if (newValues.props) {
+                                    Object.entries(newValues.props).forEach(([key, value]) => {
+                                        try {
+                                            resetDom[key] = value;
+                                        } catch (error) {
+                                            console.warn(`属性 ${key} 不可修改`);
+                                        }
+                                    });
+                                }
+                                // 批量处理类名更新
+                                if (newValues.classes) {
+                                    resetDom.className = Object.entries(newValues.classes)
+                                        .filter(([, active]) => active)
+                                        .map(([className]) => className)
+                                        .join(' ');
+                                }
+                            });
+                        }, {
+                            immediate: true,
+                            debounce: 300,
+                            maxWait: 1000
+                        });
+                    };
+                    batchUpdateDOM(resetDom)
                 })
             }, {
                 debounce: 300,
                 maxWait: 1000,
             })
         }
+        onUnmounted(() => {
+            eventHandlersCache.clear();
+            renderCache.clear();
+        });
         expose(elRef)
         // 返回一个函数，根据不同的条件渲染DOM元素
         return () => [

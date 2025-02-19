@@ -31,7 +31,6 @@ const createSFC = function (type: string | any) {
   const code = `${js}
   <template>${template}\n</template>
   <style>${css}</style>`
-  // console.log(codeData)
   return code
 }
 

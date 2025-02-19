@@ -7,6 +7,7 @@ import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
 import autoImport from 'unplugin-auto-import/vite'
 import components from 'unplugin-vue-components/vite'
 import loadVersion from 'vite-plugin-package-version';
+import vueDevTools from 'vite-plugin-vue-devtools'
 // https://vitejs.dev/config/
 export default defineConfig({
     base: './', // 这里更改打包相对绝对路径
@@ -17,6 +18,7 @@ export default defineConfig({
     plugins: [
         loadVersion(),
         vue(),
+        vueDevTools(),
         VitePWA({
             // 使用注入模式
             registerType: 'autoUpdate',
@@ -73,8 +75,7 @@ export default defineConfig({
         }),
         vueI18n({
             include: resolve(process.cwd(), 'src/components/molian/locales/lang/**'),
-          }),
-      
+        }),
     ],
     resolve: {
         alias: {

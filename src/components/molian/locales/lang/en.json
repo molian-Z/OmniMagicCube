@@ -416,8 +416,8 @@
         "copyCode": "Copy Code",
         "pasteCode": "Paste Code",
         "typeStatus": {
-            "pull": "Move Within Same Level",
-            "append": "Place Inside Slot"
+            "pull": "Move above {title}",
+            "append": "Move into the slot of {title}"
         }
     },
     "css": {

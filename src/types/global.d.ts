@@ -391,7 +391,7 @@ declare namespace CubeData {
          * 子标题。
          */
         subTitle: string;
-    };
+    }
     /**
     * 全局属性接口。
     */
@@ -651,7 +651,7 @@ declare namespace IConfig {
         docUrl?: string;
         removeAttrs?: string[];
         compMapping?: ICompMapping;
-    };
+    }
     /**
      * ICompMapping 接口定义了组件映射。
      * 用于映射组件名称到其特定配置，支持多种组件类型。

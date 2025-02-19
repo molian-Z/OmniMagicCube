@@ -63,6 +63,13 @@ export const clearCanvas = () => {
     globalAttrs.actions = []
 }
 // 历史记录
+const historyOptions: HistoryOptions = {
+    deep: true,      // 深度监听变化
+    debounce: 500,   // 防抖时间（毫秒）
+    capacity: 5,     // 历史记录最大容量
+    clone: true      // 克隆数据而不是引用
+};
+
 export const {
     history,
     undo,
@@ -70,20 +77,19 @@ export const {
     clear,
     canRedo,
     canUndo,
-} = useDebouncedRefHistory(modelValue, {
-    deep: true,
-    debounce: 500,
-    capacity: 5,
-    clone: true
-})
+} = useDebouncedRefHistory(modelValue, historyOptions);
 
-export const screenRatioInfo: any = useStorage('omc_screenRatio', { ...deviceList.value[0], rotate: false })
-watch(history as any, (val: any[]) => {
+export const screenRatioInfo = useStorage<ScreenRatio>('omc_screenRatio', {
+    ...deviceList.value[0],
+    rotate: false
+});
+
+watch(history, (val) => {
     store.value = {
-        modelValue: val[0].snapshot,
+        modelValue: val[0]?.snapshot ?? [],
         globalAttrs
-    }
-})
+    };
+});
 export const compsEls = reactive<any>({})
 export const compsRefs = reactive<any>({})
 export const selectedComp = ref<CubeData.ModelValue | null | any>(null)
@@ -117,64 +123,115 @@ const notUsingInput = computed(() =>
  * @param message 用于显示消息的对象
  * @param t 用于翻译文本的函数
  */
-export const useKeys = (message: any, t: any) => {
-    // 初始化魔术键（快捷键）监听
+export const useKeys = (message: MessageService, t: (key: string) => string): void => {
+    // 定义快捷键配置
+    const shortcutKeys: KeyConfig[] = [
+        { key: 'ctrl_z', handler: () => undo(), description: '撤销' },
+        { key: 'ctrl_y', handler: () => redo(), description: '重做' },
+        { key: 'ctrl_a', handler: () => globalMenu.value = 'style', description: '样式面板' },
+        { key: 'ctrl_s', handler: () => globalMenu.value = 'option', description: '选项面板' },
+        { key: 'ctrl_d', handler: () => globalMenu.value = 'action', description: '动作面板' },
+        { key: 'ctrl_f', handler: () => globalMenu.value = 'global', description: '全局面板' },
+        { 
+            key: 'ctrl_c', 
+            handler: () => {
+                if (selectedComp.value) {
+                    sessionStorage.setItem('omc_copyedCache', JSON.stringify(selectedComp.value));
+                    message.success(t('container.copySuccess'));
+                }
+            },
+            description: '复制'
+        },
+        {
+            key: 'ctrl_v',
+            handler: () => {
+                const copedCache = sessionStorage.getItem('omc_copyedCache');
+                if (!copedCache) return;
+                
+                const compData = JSON.parse(copedCache);
+                const target = selectedComp.value?.slots?.default?.children
+                    ? selectedComp.value.slots.default.children
+                    : modelValue.value;
+                
+                target.push(pasteData(compData));
+                message.success(t('container.pasteSuccess'));
+            },
+            description: '粘贴'
+        },
+        {
+            key: 'ctrl_b',
+            handler: () => treeDirRef.value.switchExpand(!treeDirRef.value.expand),
+            description: '切换树面板'
+        },
+        {
+            key: 'ctrl_h',
+            handler: () => aiImRef.value.switchExpand(!aiImRef.value.expand),
+            description: '切换AI面板'
+        },
+        {
+            key: 'delete',
+            handler: () => {
+                if (hoverNodes.value && typeof hoverIndex.value === 'number' && hoverIndex.value >= 0) {
+                    hoverNodes.value.splice(hoverIndex.value, 1);
+                    resetDraggable();
+                }
+            },
+            description: '删除'
+        }
+    ];
+
     const keys = useMagicKeys({
         passive: false,
-        onEventFired(e) {
-            // 当不在输入状态时，处理特定的快捷键事件
-            if (notUsingInput.value) {
-                // 阻止默认行为，以处理自定义快捷键
-                if (e.ctrlKey && ['a', 's', 'd', 'f', 'z', 'y', 'b', 'h'].indexOf(e.key) > -1 && e.type === 'keydown') {
+        onEventFired(e: KeyboardEvent) {
+            if (notUsingInput.value && e.type === 'keydown' && e.ctrlKey) {
+                const validKeys = ['a', 's', 'd', 'f', 'z', 'y', 'b', 'h'];
+                if (validKeys.includes(e.key)) {
                     e.preventDefault();
                     e.stopPropagation();
                 }
             }
         }
-    })
-    // 绑定快捷键逻辑：撤销、重做、切换面板等
-    whenever(logicAnd(keys.ctrl_z, notUsingInput), () => undo());
-    whenever(logicAnd(keys.ctrl_y, notUsingInput), () => redo());
-    whenever(logicAnd(keys.ctrl_a, notUsingInput), () => globalMenu.value = 'style');
-    whenever(logicAnd(keys.ctrl_s, notUsingInput), () => globalMenu.value = 'option');
-    whenever(logicAnd(keys.ctrl_d, notUsingInput), () => globalMenu.value = 'action');
-    whenever(logicAnd(keys.ctrl_f, notUsingInput), () => globalMenu.value = 'global');
-    // 处理复制操作
-    whenever(logicAnd(keys.ctrl_c, notUsingInput), () => {
-        if (!!selectedComp.value) {
-            sessionStorage.setItem('omc_copyedCache', JSON.stringify(selectedComp.value));
-            message.success(t('container.copySuccess'))
-        }
     });
-    // 处理粘贴操作
-    whenever(logicAnd(keys.ctrl_v, notUsingInput), () => {
-        const copedCache = sessionStorage.getItem('omc_copyedCache');
-        if (!copedCache) return false
-        const compData = JSON.parse(copedCache)
-        if (!!selectedComp.value && selectedComp.value.slots && selectedComp.value.slots.default && selectedComp.value.slots.default.children) {
-            selectedComp.value.slots.default.children.push(pasteData(compData))
-        } else {
-            modelValue.value.push(pasteData(compData))
-        }
-        message.success(t('container.pasteSuccess'))
-    });
-    // 切换树面板的展开状态
-    whenever(logicAnd(keys.ctrl_b, notUsingInput), () => {
-        treeDirRef.value.switchExpand(!treeDirRef.value.expand)
-    });
-    // 切换AI交互面板的展开状态
-    whenever(logicAnd(keys.ctrl_h, notUsingInput), () => {
-        aiImRef.value.switchExpand(!aiImRef.value.expand)
-    });
-    // 处理删除操作
-    whenever(logicAnd(keys.delete, notUsingInput), () => {
-        if (hoverNodes.value && hoverNodes.value) {
-            hoverNodes.value.splice(hoverIndex.value, 1)
-        }
-        resetDraggable()
-    })
-}
 
+    // 注册所有快捷键
+    shortcutKeys.forEach(({ key, handler }) => {
+        whenever(logicAnd(keys[key], notUsingInput), handler);
+    });
+};
+
+/**
+ * 执行值函数
+ * 该函数用于处理传入的值函数或字符串表达式，并根据选定的组件数据执行相应的逻辑
+ * 
+ * @param valueFn - 值函数或字符串表达式 需要执行的函数或表达式字符串
+ * @param selectedComp - 选定的组件对象 其属性和方法将被用于执行valueFn
+ * @returns 由valueFn执行得到的结果 或者在执行过程中遇到错误时返回null
+ */
+const executeValueFunction = (valueFn: ValueFunction | string, selectedComp: any): any => {
+    try {
+        // 检查valueFn是否为函数类型
+        if (typeof valueFn === 'function') {
+            // 如果是函数，直接调用并传入选定的组件对象的副本
+            return valueFn({ ...selectedComp });
+        }
+        
+        // 检查valueFn是否为字符串类型
+        if (typeof valueFn === 'string') {
+            // 如果是字符串，创建一个新的函数并执行该字符串表达式
+            const fn = new Function('data', `return ${valueFn}(data);`);
+            // 调用新创建的函数，并传入选定的组件对象的副本
+            return fn({ ...selectedComp });
+        }
+        
+        // 如果valueFn既不是函数也不是字符串，则抛出错误
+        throw new Error('Invalid valueFn type');
+    } catch (error) {
+        // 捕获执行过程中的任何错误，并在控制台中输出错误信息
+        console.error('Error executing valueFn:', error);
+        // 错误处理后，返回null
+        return null;
+    }
+};
 
 /**
  * 初始化组件数据
@@ -185,40 +242,64 @@ export const useKeys = (message: any, t: any) => {
  * @param key - 组件数据的键
  * @param pKey - 父级键，用于在appendComp中查找组件数据
  */
-const initCompData = (initObj: InitObj, { appendComp, key, pKey }: { appendComp: AppendComp; key: string; pKey: string }) => {
-    // 检查appendComp及其子结构是否存在
-    if (appendComp && appendComp[pKey] && appendComp[pKey][key]) {
-        const compData = appendComp[pKey][key];
+const initCompData = (initObj: InitObj, { appendComp, key, pKey }: { appendComp: AppendComp; key: string; pKey: string }): void => {
+    const compData = appendComp?.[pKey]?.[key];
+    if (!compData) return;
 
-        // 合并对象
-        initObj[key] = {
-            ...initObj[key],
-            ...compData,
-        };
+    // 合并对象
+    initObj[key] = {
+        ...initObj[key],
+        ...compData,
+    };
 
-        // 如果存在valueFn函数，尝试执行它以获取值
-        if (compData.valueFn) {
-            if (typeof compData.valueFn === 'function') {
-                try {
-                    initObj[key].value = compData.valueFn({ ...selectedComp.value });
-                } catch (error) {
-                    console.error(`Error executing valueFn for key ${key}:`, error);
-                }
-            } else if (typeof compData.valueFn === 'string') {
-                try {
-                    // 使用 new Function 将字符串转换为函数并执行
-                    const fn = new Function('data', `return ${compData.valueFn}(data);`);
-                    initObj[key].value = fn({ ...selectedComp.value });
-                } catch (error) {
-                    console.error(`Error converting or executing valueFn string for key ${key}:`, error);
-                }
-            } else {
-                throw new Error(`valueFn for key ${key} is neither a function nor a string`);
-            }
-            // 执行完valueFn后，从initObj中删除这个属性
-            delete initObj[key].valueFn;
-        }
+    // 处理 valueFn
+    if (compData.valueFn) {
+        initObj[key].value = executeValueFunction(compData.valueFn, selectedComp.value);
+        delete initObj[key].valueFn;
     }
+};
+
+/**
+ * 根据默认值确定属性类型
+ * 
+ * 此函数旨在通过检查给定的默认值来确定其类型它特别处理了对象和数组的情况，
+ * 因为在JavaScript中，数组是一种特殊的对象，但在这两种情况之间进行区分是有用的
+ * 
+ * @param defaultValue 任意类型的默认值，用于类型检查
+ * @returns 返回属性的类型名称如果默认值是一个对象，则进一步检查以确定它是否为数组
+ */
+const getPropertyType = (defaultValue: any): string => {
+    // 检查默认值是否为对象类型，因为对象和数组在JavaScript中都属于对象类别
+    if (typeof defaultValue === 'object') {
+        // 判断是否为数组，因为数组在JavaScript中是一种特殊的对象
+        return Array.isArray(defaultValue) ? 'array' : typeof defaultValue;
+    }
+    // 如果不是对象，则直接返回默认值的类型
+    return typeof defaultValue;
+};
+
+/**
+ * 初始化组件属性
+ * 
+ * 此函数根据PropConfig配置对象来构造一个ComponentAttribute对象它主要负责设置属性的类型和默认值（如果有）
+ * 
+ * @param prop PropConfig配置对象，包含了属性的类型和默认值等信息
+ * @returns 返回一个ComponentAttribute对象，包括属性的类型和值
+ */
+const initializeAttribute = (prop: PropConfig): ComponentAttribute => {
+    // 如果配置了默认值，则使用默认值的类型作为属性类型，并设置属性值为默认值
+    if (prop.default !== undefined) {
+        return {
+            type: getPropertyType(prop.default),
+            value: prop.default
+        };
+    }
+    // 如果没有配置默认值，则根据prop.type来确定属性类型，并将属性值设为null
+    // 注意：如果prop.type是一个数组，则取数组的第一个元素作为属性类型
+    return {
+        type: Array.isArray(prop.type) ? prop.type[0] : prop.type,
+        value: null
+    };
 };
 
 /**
@@ -231,71 +312,42 @@ const initCompData = (initObj: InitObj, { appendComp, key, pKey }: { appendComp:
  * @param appendComp 可选参数，包含额外的组件信息，如事件、指令等
  * @returns 返回一个带有随机键和唯一标识符的新组件对象
  */
-export const createComp = function (comp: {
-    comp?: any;
-    category: string;
-    slots: {
-        [key: string]: any;
-    };
-    props: {
-        [key: string]: any;
-    };
-    name: string;
-}, appendComp?: any) {
-    // 生成一个随机字符串作为组件的唯一标识
-    const randomStr = generateRandomString(5, 'comp_')
-    // 克隆插槽内容
-    const {
-        cloned
-    } = useCloned(comp.slots)
-    // 初始化组件属性
-    let initAttrs = <{
-        [key: string]: any;
-    }>{}
-    const initObj: any = {
+export const createComp = function (comp: ComponentConfig, appendComp?: any) {
+    const randomStr = generateRandomString(5, 'comp_');
+    const { cloned } = useCloned(comp.slots);
+    
+    // 初始化属性
+    const initAttrs: Record<string, ComponentAttribute> = {};
+    const initObj: InitialObject = {
         on: {},
         nativeOn: {},
         directives: {},
-    }
-    // 遍历组件的属性定义，初始化属性信息
-    for (const key in comp.props) {
-        if (Object.hasOwnProperty.call(comp.props, key)) {
-            const element = comp.props[key]
-            // 判断属性的默认值类型
-            let currentType = typeof element.default === 'object' && Array.isArray(element.default) ? 'array' : typeof element.default
-            // 如果属性有默认值，则使用默认值
-            if (element.default) {
-                initAttrs[key] = {
-                    type: currentType,
-                    value: element.default
-                }
-            } else {
-                // 如果没有默认值，则使用属性定义中的类型或默认为null
-                initAttrs[key] = {
-                    type: Array.isArray(element.type) ? element.type[0] : element.type,
-                    value: null
-                }
-            }
-            // 初始化组件数据
-            initCompData(initAttrs, { appendComp, key, pKey: 'attrs' })
-        }
-    }
+    };
 
-    // 初始化其他对象属性，如事件、指令等
-    for (const pKey in initObj) {
-        if (Object.hasOwnProperty.call(initObj, pKey) && appendComp) {
-            for (const key in appendComp[pKey]) {
-                initCompData(initObj[pKey], { appendComp, key, pKey })
+    // 处理组件属性
+    Object.entries(comp.props).forEach(([key, prop]) => {
+        initAttrs[key] = initializeAttribute(prop);
+        initCompData(initAttrs, { appendComp, key, pKey: 'attrs' });
+    });
+
+    // 处理其他属性
+    Object.entries(initObj).forEach(([pKey, _]) => {
+        if (appendComp?.[pKey as keyof typeof appendComp]) {
+            const appendCompKey = appendComp[pKey as keyof typeof appendComp];
+            if (appendCompKey && typeof appendCompKey === 'object') {
+                Object.keys(appendCompKey).forEach(key => {
+                    initCompData(initObj[pKey as keyof InitialObject], { appendComp, key, pKey });
+                });
             }
         }
-    }
+    });
 
-    // 移除 appendComps 内容
+    // 清理 slots 中的 appendComps
     Object.values(cloned.value).forEach(value => {
-        delete value.appendComps
-    })
+        delete value.appendComps;
+    });
 
-    // 返回创建的组件对象
+    // 返回组件配置
     return {
         name: comp.name,
         category: comp.category,
@@ -305,8 +357,8 @@ export const createComp = function (comp: {
         ...initObj,
         key: randomStr,
         id: randomStr
-    }
-}
+    };
+};
 
 // 初始化组件数据的函数
 export const initCompsData = function (data: any) {
@@ -336,17 +388,17 @@ export const selectedNativeOn: any = computed(() => {
 /** 
  * 格式化所有可以使用的原生事件
  */
-export const currentNativeOn: any = computed(() => {
-    if (!selectedComp.value) return {}
-    const newNativeOn = Array.from(new Set(Object.keys(defaultNativeEventMap.value).concat(selectedNativeOn.value ? Object.keys(selectedNativeOn.value) : [])))
-    return selectedComp.value && newNativeOn.map(item => {
-        return {
-            key: item,
-            type: 'function',
-            codeVar: defaultNativeEventMap.value[item]
-        }
-    })
-})
+export const currentNativeOn = computed<NativeEvent[]>(() => {
+    if (!selectedComp.value) return [];
+    const defaultEvents = new Set(Object.keys(defaultNativeEventMap.value));
+    const customEvents = selectedNativeOn.value ? Object.keys(selectedNativeOn.value) : [];
+    return [...new Set([...defaultEvents, ...customEvents])]
+        .map(key => ({
+            key,
+            type: 'function' as const,
+            codeVar: defaultNativeEventMap.value[key]
+        }));
+});
 
 /** 
  * 添加原生事件
@@ -368,17 +420,19 @@ export const selectedOn: any = computed(() => {
 /** 
 * 获取所有自定义事件
 */
-export const currentEmits = computed(() => {
-    if (!selectedComp.value) return {}
-    return selectedComp.value && currentRegComps.value[selectedComp.value.name].emits.filter((item: any) => {
-        return item.indexOf('update:') === -1
-    }).map((item: any) => {
-        return {
+export const currentEmits = computed<EmitEvent[]>(() => {
+    if (!selectedComp.value) return [];
+    
+    const componentEmits = currentRegComps.value[selectedComp.value.name]?.emits;
+    if (!componentEmits?.length) return [];
+    
+    return componentEmits
+        .filter((item: string) => !item.startsWith('update:'))
+        .map((item: string) => ({
             key: item,
-            type: 'function'
-        }
-    })
-})
+            type: 'function' as const
+        }));
+});
 
 /** 
  * 获取生命周期事件
@@ -394,35 +448,137 @@ export const currentLifecycle = computed(() => {
     })
 })
 
-// 处理粘贴数据的函数
-const pasteData: any = function (data: any) {
-    // 生成一个随机字符串作为组件的键和ID
-    const randomStr = generateRandomString(5, 'comp_')
-    data.key = randomStr
-    data.id = randomStr
-    // 如果数据包含插槽，则遍历每个插槽
-    if (!!data.slots) {
-        for (const key in data.slots) {
-            if (Object.prototype.hasOwnProperty.call(data.slots, key)) {
-                const element = data.slots[key];
-                // 如果插槽包含子元素，则递归调用pasteData处理每个子元素
-                if (element.children.length > 0) {
-                    element.children = element.children.map((item: any) => {
-                        return pasteData(item)
-                    })
-                }
+
+/**
+ * 粘贴数据函数，用于处理组件数据的粘贴操作
+ * 它通过生成一个新的随机字符串来创建一个新的组件数据对象，以避免数据冲突
+ * 同时，它还会递归地处理组件的插槽（slots），以确保所有子组件也遵循相同的逻辑
+ * 
+ * @param data 要粘贴的组件数据，包括组件的属性、插槽等信息
+ * @returns 返回一个新的组件数据对象，具有唯一的key和id，以避免直接修改输入数据
+ */
+const pasteData = (data: ComponentData): ComponentData => {
+    // 生成一个随机字符串，用于创建唯一的组件key和id
+    const randomStr = generateRandomString(5, 'comp_');
+    
+    // 创建新对象而不是直接修改输入对象
+    const newData = {
+        ...data,
+        key: randomStr,
+        id: randomStr
+    };
+
+    // 处理插槽
+    if (newData.slots) {
+        newData.slots = Object.entries(newData.slots).reduce<ComponentData['slots']>((acc = {}, [key, slot]) => {
+            // 如果插槽中有子组件，则递归调用pasteData函数处理子组件
+            if (slot.children?.length) {
+                acc[key] = {
+                    ...slot,
+                    children: slot.children.map(pasteData)
+                };
+            } else {
+                acc[key] = slot;
             }
-        }
+            return acc;
+        }, {});
     }
-    return data
+
+    return newData;
+};
+
+/**
+ * 设置缩放模式
+ * 此函数用于更新缩放模式的名称和模型值
+ * 它接受一个可选的缩放模式组件作为参数，如果未提供，则将相关值设置为空
+ * 
+ * @param comp - 可能为null的缩放模式组件，用于设置缩放模式的名称和模型值
+ *               如果为null，则将缩放模式的名称设置为空字符串，模型值设置为空数组
+ */
+export const setZoomMode = (comp: ZoomModeComponent | null): void => {
+    // 更新缩放模式的名称，如果comp为null，则设置为空字符串
+    zoomModeName.value = comp?.name ?? '';
+    // 更新缩放模式的模型值，如果comp为null，则设置为空数组
+    zoomModeModelValue.value = comp ?? [];
+};
+
+interface HistoryOptions {
+    deep: boolean;
+    debounce: number;
+    capacity: number;
+    clone: boolean;
 }
 
-export const setZoomMode = function (comp: any) {
-    if(comp) {
-        zoomModeName.value = comp.name
-        zoomModeModelValue.value = comp
-    }else {
-        zoomModeName.value = ''
-        zoomModeModelValue.value = []
-    }
+interface ScreenRatio {
+    rotate: boolean;
+    [key: string]: any;
+}
+
+interface KeyConfig {
+    key: string;
+    handler: () => void;
+    description: string;
+}
+
+interface MessageService {
+    success: (message: string) => void;
+    error: (message: string) => void;
+}
+
+interface ValueFunction {
+    (data: any): any;
+}
+
+interface CompData {
+    valueFn?: ValueFunction | string;
+    [key: string]: any;
+}
+
+interface ComponentConfig {
+    comp?: any;
+    category: string;
+    slots: Record<string, any>;
+    props: Record<string, PropConfig>;
+    name: string;
+}
+
+interface PropConfig {
+    type: any;
+    default?: any;
+}
+
+interface ComponentAttribute {
+    type: string;
+    value: any;
+}
+
+interface InitialObject {
+    on: Record<string, any>;
+    nativeOn: Record<string, any>;
+    directives: Record<string, any>;
+}
+
+interface NativeEvent {
+    key: string;
+    type: 'function';
+    codeVar: any;
+}
+interface EmitEvent {
+    key: string;
+    type: 'function';
+}
+
+interface ComponentData {
+    key: string;
+    id: string;
+    slots?: {
+        [key: string]: {
+            children: ComponentData[];
+        };
+    };
+}
+
+interface ZoomModeComponent {
+    name: string;
+    [key: string]: any;
 }

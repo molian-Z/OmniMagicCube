@@ -4,8 +4,9 @@ import { directives } from "./directives";
 import { compsRefs, compsEls, variableData, globalAttrs } from "../designerData";
 import { isDraggable, dropKey, useDraggable, dropType, onDragenter } from "../draggable";
 import { getValue } from "@molian/utils/useCore";
-import { useElementBounding, watchDebounced } from "@vueuse/core";
+import { useElementBounding } from "@vueuse/core";
 import { useI18n } from "vue-i18n";
+import DropHint from './components/DropHint.vue';
 const { t } = useI18n();
 defineOptions({
   name: "deepTree",
@@ -45,117 +46,76 @@ const treeIndexNext = computed(() => {
 const treeIndexDrop = computed(() => {
   return props.treeIndex + 2;
 });
-const compData: any = computed({
-  get() {
-    return props.modelValue;
-  },
-  set(val) {
-    emit("update:modelValue", val);
-  },
-});
 const slots: any = ref({});
 if (!!props.slotKey) {
   slots.value[props.slotKey] = props.slotVal;
 }
-const value = computed(() => {
-  return getValue(
-    compData.value,
-    variableData.value,
-    {},
-    props.slotData,
-    globalAttrs.variable,
-    "designer"
-  );
+const compData:any = computed({
+    get: () => props.modelValue,
+    set: (val) => emit("update:modelValue", val)
 });
+
+const value = computed(() => 
+    getValue(
+        compData.value,
+        variableData.value,
+        {},
+        props.slotData,
+        globalAttrs.variable,
+        "designer"
+    )
+);
 const { onDrop, onDropSlot } = useDraggable(comps, compData, message);
-const setRef = (el: any, comp: any, index: number) => {
-  // await nextTick();
-  nextTick(() => {
-    compsRefs[comp.id] = el;
-    let elDom: any = document.getElementById(comp.id);
-    let elNextDom: any = el?.$el?.nextElementSibling;
-    if (elDom?.classList?.contains("designer-comp")) {
-      compsEls[comp.id] = elDom;
-    } else if (elNextDom?.classList?.contains("designer-comp")) {
-        compsEls[comp.id] = elNextDom;
-    } else {
-        compsEls[comp.id] = elDom || elNextDom || compsEls[comp.id];
-    }
-    // 如果获取不到节点暂时暂停。后续直接通过dom操作节点，不在采用uniapp等框架的兼容方案.
-    function setElementDom() {
-    //   if (!compsEls[comp.id]) {
-    //     setTimeout(() => {
-    //       setElementDom();
-    //     }, 300);
-    //   }
-      const { width, height } = useElementBounding(compsEls[comp.id]);
-      let pd = ["0", "0"];
-      if (height.value < 10) {
-        pd[0] = "10px";
-      }
-      if (width.value < 10) {
-        pd[1] = "10px";
-      }
-      if (
-        pd[0] !== "0" ||
-        (pd[1] !== "0" && !!compsEls[comp.id] && !!compsEls[comp.id].style)
-      ) {
-        try {
-            compsEls[comp.id].style.padding = `${pd[0]} ${pd[1]}`;
-        } catch (error) {
-          // 未缓存
+const setRef = async (el: HTMLElement, comp: any, index: number) => {
+    await nextTick();
+    const updateCompRefs = () => {
+        compsRefs[comp.id] = el;
+        const elDom = document.getElementById(comp.id);
+        const elNextDom = el?.nextElementSibling;
+        compsEls[comp.id] = elDom?.classList?.contains("designer-comp") 
+            ? elDom 
+            : elNextDom?.classList?.contains("designer-comp")
+                ? elNextDom
+                : elDom || elNextDom || compsEls[comp.id];
+    };
+    const updateElementPadding = () => {
+        const element = compsEls[comp.id];
+        if (!element?.style) return;
+
+        const { width, height } = useElementBounding(element);
+        const padding = [
+            height.value < 10 ? '10px' : '0',
+            width.value < 10 ? '10px' : '0'
+        ];
+        if (padding[0] !== '0' || padding[1] !== '0') {
+            try {
+                element.style.padding = `${padding[0]} ${padding[1]}`;
+            } catch (error) {
+                console.warn('Failed to update element padding:', error);
+            }
         }
-      }
-      // 出现极端情况解决方案。如元素不存在以及无法对元素进行修改的情况
-      // 索引不会被更新实时获取索引
-      // 如果inhertAttrs未被引入将导致无法获取到元素
-      const errorComp = computed(() => {
-        return width.value === 0 && height.value === 0;
-      });
-      watchDebounced(
-        () => errorComp.value,
-        (newVal) => {
-          if (newVal && (!elDom || (elDom && !elDom.nextElementSibling)) && !!elNextDom) {
-            elNextDom.forceWatch = true;
-            compsEls[comp.id] = elNextDom;
-          }
-        },
-        {
-          debounce: 300,
-          maxWait: 1000,
-        }
-      );
-    }
-    setElementDom();
-  });
+    };
+    updateCompRefs();
+    updateElementPadding();
 };
 
-const isSlotData = (slotProps: any) => {
-  return slotProps && Object.keys(slotProps).length > 0
-};
+const isSlotData = (slotProps: Record<string, any>): boolean => Boolean(slotProps && Object.keys(slotProps).length);
 </script>
 
 <template>
   <template v-for="(comp, index) in compData" :key="comp.key">
-    <transition name="fade">
-      <div class="drop__empty" v-if="isDraggable && dropKey === comp.key">
-        <div
-          :class="[
-            'prefix-drop-slot',
-            dropKey === comp.key && dropType === 'prev' && 'dropping-comp',
-          ]"
-          @drop.self.stop="onDrop($event, index, slotVal)"
-          @dragover.self.prevent="onDragenter(index, comp, 'prev', compData)"
-        >
-          {{
-            t("container.drop") +
-            t(comps[comp.name].title) +
-            t("container.component") +
-            t("container.before")
-          }}
-        </div>
-      </div>
-    </transition>
+    <drop-hint
+      v-if="isDraggable"
+      type="prefix"
+      :comp="comp"
+      :index="index"
+      :drop-key="dropKey || ''"
+      :drop-type="dropType"
+      :tree-index="treeIndexDrop"
+      :comps="comps"
+      @drop="onDrop"
+      @dragenter="onDragenter"
+    />
     <directives
       :ref="(el: any) => setRef(el, comp, index)"
       :comp="value[index]"
@@ -190,14 +150,24 @@ const isSlotData = (slotProps: any) => {
             :slotVal="slotVal"
             :treeIndex="treeIndexNext"
           />
-          <div class="designer-comp__empty" v-if="isDraggable && dropKey === comp.key">
+          <div 
+            class="designer-comp__empty" 
+            v-if="isDraggable && dropKey === comp.key"
+          >
             <div
               :class="[
                 'designer-comp__empty-content',
                 dropKey === comp.key && !dropType && 'dropping-comp',
               ]"
+              :style="{
+                padding: '8px',
+                textAlign: 'center',
+                backgroundColor: 'var(--ml-primary-color-1)',
+                borderRadius: '4px',
+                width: '300px',
+              }"
               @dragover.self.prevent.stop="onDragenter(index, comp, null, compData)"
-              @drop.self.stop="onDropSlot($event, slotVal)"
+              @drop.self.stop="onDropSlot($event, slotVal, comp)"
             >
               {{
                 t("container.dropComp") +
@@ -211,43 +181,68 @@ const isSlotData = (slotProps: any) => {
         </template>
       </template>
     </directives>
-    <transition name="fade">
-      <div class="drop__empty" v-if="isDraggable && dropKey === comp.key">
-        <div
-          :class="[
-            'suffix-drop-slot',
-            dropKey === comp.key && dropType === 'next' && 'dropping-comp',
-          ]"
-          @dragover.self.prevent="onDragenter(index, comp, 'next', compData)"
-          @drop.self.stop="onDrop($event, index + 1, slotVal)"
-        >
-          {{
-            t("container.drop") +
-            t(comps[comp.name].title) +
-            t("container.component") +
-            t("container.after")
-          }}
-        </div>
-      </div>
-    </transition>
+    <drop-hint
+      v-if="isDraggable"
+      type="suffix"
+      :comp="comp"
+      :index="index"
+      :drop-key="dropKey || ''"
+      :drop-type="dropType"
+      :tree-index="treeIndexDrop"
+      :comps="comps"
+      @drop="onDrop"
+      @dragenter="onDragenter"
+    />
   </template>
 </template>
 
 <style lang="scss">
-.designer-comp::after {
-  z-index: v-bind(treeIndex);
+.designer-comp {
+  position: relative;
+  z-index: v-bind(treeIndexNext);
+  
+  &::after {
+    z-index: v-bind(treeIndexNext);
+  }
+}
+
+.designer-comp__empty {
+    position: relative;
+    bottom:0;
+    right:0;
+    z-index: 9998;
+    &:hover{
+        z-index: 9999;
+    }
+}
+
+.drop__empty {
+  position: relative;
 }
 
 .prefix-drop-slot,
 .suffix-drop-slot {
-  z-index: v-bind(treeIndexDrop);
+  border-radius: 4px;
+  border: 2px dashed var(--ml-primary-color);
+  font-size: 12px;
+  color: var(--ml-primary-color);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.designer-comp__empty-content {
+  transition: all 0.3s ease;
+  cursor: pointer;
+  
+  &:hover {
+    background-color: var(--ml-primary-color-2) !important;
+    transform: scale(1.02);
+  }
 }
 
-.designer-comp {
-  --el-index-normal: v-bind(treeIndex);
-}
-
-.designer-comp__empty {
-  z-index: v-bind(treeIndexNext);
+.dropping-comp {
+  background-color: var(--ml-primary-color-2) !important;
+  transform: scale(1.05);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 </style>

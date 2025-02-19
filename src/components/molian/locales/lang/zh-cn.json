@@ -416,8 +416,8 @@
         "copyCode": "复制代码",
         "pasteCode": "粘贴代码",
         "typeStatus": {
-            "pull": "同级移动",
-            "append": "放置于插槽内部"
+            "pull": "移动到{title}上方",
+            "append": "移动到{title}插槽内"
         }
     },
     "css": {

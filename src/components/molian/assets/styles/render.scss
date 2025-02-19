@@ -1,3 +1,4 @@
+@use 'sass:color';
 $textColorObj:("text":#1D2129,
     "text-reverse":#FFF);
 
@@ -44,7 +45,7 @@ $marginTypeObj: ("12":"12px",
     @each $colorType,
     $colorValue in$textColorObj {
         @for $i from 1 through 7 {
-            --ml-#{$colorType}-color-#{$i}: #{lighten($colorValue,$i * 8.7%)};
+            --ml-#{$colorType}-color-#{$i}: #{color.scale($colorValue, $lightness: $i * 8.7%)};
         }
     }
 

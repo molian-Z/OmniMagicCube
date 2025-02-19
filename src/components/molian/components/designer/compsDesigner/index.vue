@@ -7,26 +7,32 @@ import { categoryList } from "@molian/utils/compsConfig";
 import { useUI, UIData } from "@molian/utils/UIMap";
 import { setting } from "@molian/utils/defaultData";
 import svgIcon from "@molianComps/SvgIcon/index.vue";
-import {useI18n} from 'vue-i18n'
-const {t} = useI18n()
+import { useI18n } from "vue-i18n";
+
+interface CategoryItem {
+  name: string;
+  title?: string;
+  text: string;
+  icon: string;
+}
+const { t } = useI18n();
 const comps: any = inject("mlComps");
 const customComps: any = inject("customComps");
 const { customTooltip } = customComps;
 const compList = Object.values(comps.value);
+// 优化计算属性
 const allUI = computed(() => {
-  return UIData.filter((item: any) => {
-    return compList.find((fitem: any) => fitem.prefix === item.prefix);
-  });
-});
-const i18nList = computed(() => {
-  return categoryList.value.map((item) => {
-    return {
-      ...item,
-      text: item.title || t("component.category." + item.name),
-    };
-  });
+  return UIData.filter((item) =>
+    compList.some((comp: { prefix?: string }) => comp?.prefix === item.prefix)
+  );
 });
 
+const i18nList = computed<CategoryItem[]>(() => {
+  return categoryList.value.map((item) => ({
+    ...item,
+    text: item.title || t(`component.category.${item.name}`),
+  }));
+});
 const activeDivData = computed(() => {
   return {
     name: compPanel.value,
@@ -85,7 +91,7 @@ const activeDivData = computed(() => {
         />
         <template #content>
           <div class="link-container">
-            <span style="user-select: none;">{{ item.name }}</span>
+            <span style="user-select: none">{{ item.name }}</span>
             <a class="ml-link" :href="item.docUrl" target="_blank" v-if="!!item.docUrl">
               <svg-icon icon="outLink"></svg-icon>
             </a>

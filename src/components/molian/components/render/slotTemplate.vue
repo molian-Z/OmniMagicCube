@@ -36,35 +36,55 @@ const props = defineProps(<
 });
 const { variable, setRenderRef } = props.interInc;
 
-const useComp = ref(null);
-watchThrottled(() => props.comp.name, (newName) => {
-  useComp.value = !!comps[newName] ? comps[newName].comp : newName;
-}, { immediate: true, throttle: 50 });
+// 使用 shallowRef 优化性能
+const useComp = shallowRef(null);
 
-const setSlots = (slotProps: any) => {
-  const slotData = props.slotData || {}; // 确保 slotData 是对象类型
-  if (slotProps && Object.keys(slotProps).length > 0) {
-    return { ...slotData, [props.comp.id]: slotProps };
-  } else {
-    return slotData;
+// 优化组件监听逻辑
+watchThrottled(
+  () => props.comp.name,
+  (newName) => {
+    if (!newName) return;
+    useComp.value = comps[newName]?.comp || newName;
+  },
+  { immediate: true, throttle: 50 }
+);
+const setSlots = computed(() => (slotProps: any) => {
+  if (!slotProps || Object.keys(slotProps).length === 0) {
+    return props.slotData || {};
   }
-};
+  return {
+    ...(props.slotData || {}),
+    [props.comp.id]: slotProps
+  };
+});
 
-const vCurrentDirectives = vCustomDirectives({
+// 使用计算属性优化频繁计算的值
+const parsedProps = computed(() => 
+  parseProps(props.comp, comps.value, variable.value, props.expandAPI, props.slotData, 'render')
+);
+
+const componentClass = computed(() => 
+  `${toKebabCase(props.comp.name)}__${props.comp.key}`
+);
+const directiveParams = computed(() => ({
   comp: props.comp,
   $slot: props.slotData,
   variable: variable.value,
   expandAPI: props.expandAPI,
-});
+}));
+
+const vCurrentDirectives = computed(() => 
+  vCustomDirectives(directiveParams.value)
+);
 </script>
 <template>
   <component
     :id="comp.id"
     :is="useComp"
     :ref="(el: any) => setRenderRef(el, comp)"
-    v-bind="parseProps(comp, comps, variable, expandAPI, slotData, 'render')"
-    :class="toKebabCase(comp.name) + '__' + comp.key"
-    v-currentDirectives="{}"
+    v-bind="parsedProps"
+    :class="componentClass"
+    v-currentDirectives="directiveParams"
   >
     <template
       v-for="(slotVal, slotKey) in comp.slots"

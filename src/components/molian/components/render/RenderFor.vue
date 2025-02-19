@@ -25,17 +25,32 @@ const props = defineProps({
   }
 })
 const { variable, originVariable } = props.interInc
+// 优化 memoize 函数的缓存键生成
 const getOn = memoize((item: any, index: number) => {
-  return getCurrentOn({ on: props.comp.on, nativeOn: props.comp.nativeOn }, variable.value, originVariable.value, createSlot(item, index, props.comp, props.slotData), props.expandAPI);
+  return getCurrentOn(
+    { 
+      on: props.comp.on, 
+      nativeOn: props.comp.nativeOn 
+    }, 
+    variable.value, 
+    originVariable.value, 
+    createSlot(item, index, props.comp, props.slotData), 
+    props.expandAPI
+  );
 });
+const idKey = computed(() => props.comp.directives.for.idKey);
 </script>
 
 <template>
   <template
     v-for="(item, index) in modelValue"
-    :key="item[comp.directives.for.idKey] || index"
+    :key="item[idKey] || index"
   >
-    <slot :slotData="createSlot(item, index, comp, slotData)" :cacheOn="getOn(item, index)"></slot>
+    <slot
+      v-memo="[idKey ? (item as any)?.[idKey.value] : undefined, getOn(item, index)]"
+      :slotData="createSlot(item, index, comp, slotData)"
+      :cacheOn="getOn(item, index)"
+    ></slot>
   </template>
 </template>
 

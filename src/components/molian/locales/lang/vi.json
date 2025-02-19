@@ -416,8 +416,8 @@
         "copyCode": "Sao chép mã",
         "pasteCode": "Dán mã",
         "typeStatus": {
-            "pull": "Di chuyển cùng cấp",
-            "append": "Đặt trong khe cắm"
+            "pull": "Di chuyển lên trên {title}",
+            "append": "Di chuyển vào trong khung của {title}"
         }
     },
     "css": {

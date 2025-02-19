@@ -1,4 +1,43 @@
 import { runOn } from '@molian/utils/customFunction'
+interface CompObj {
+    comp: {
+        directives: {
+            text: {
+                type: 'variable' | 'string' | 'function';
+                value: any;
+            };
+        };
+        vars: Record<string, any>;
+    };
+    variable: any;
+    expandAPI: any;
+    $slot: any;
+}
+
+interface HTMLElementWithOnce extends HTMLElement {
+    _once?: boolean;
+}
+
+interface CustomOnceCompObj {
+    comp?: string | null;
+}
+
+interface TextDomElement extends HTMLElement {
+    childNodes: NodeListOf<HTMLElement & { id?: string }>;
+}
+
+interface DirectiveCompObj extends CompObj {
+    comp: CompObj['comp'] & {
+        slots: Record<string, any>;
+        directives: CompObj['comp']['directives'] & {
+            once?: boolean;
+        };
+    };
+}
+
+interface DirectiveElement extends TextDomElement {
+    textContent: string;
+}
 
 /**
  * 自定义文本指令
@@ -10,129 +49,114 @@ import { runOn } from '@molian/utils/customFunction'
  * 它根据指令的类型（变量、字符串或函数）来决定插入的文本内容
  * 该函数还监听变量的变化，并在变量变化时更新文本内容
  */
-export const customText = (compObj: any) => {
-    // 获取指令和变量信息
-    const { directives, vars }: any = compObj.comp
-    const { text } = directives
-    // 根据指令类型处理文本内容
-    if (text.type === 'variable') {
-        // 当变量值变化时，更新文本内容
-        const cmptdText = computed(() => {
-            let newText: any = vars
-            text.value.forEach((item: string) => {
-                newText = newText[item]
-            })
-            // 如果文本内容是一个函数，则调用该函数并传入相关参数
-            if (typeof newText === 'function') {
-                newText = newText({
-                    comp: compObj.comp,
-                    $slot: compObj.$slot
-                });
-            }
-            // 如果文本内容是一个对象，则将其转换为字符串
-            if (typeof newText === 'object') {
-                newText = JSON.stringify(newText);
-            }
-            return newText
-        })
-        return cmptdText
-    } else if (text.type === 'string') {
-        return text.value
-    } else if (text.type === 'function') {
-        // 获取函数执行模式、变量和代码，并执行函数生成文本内容
-        return runOn(text, compObj.variable, compObj.expandAPI)({
-            comp: compObj.comp,
-            $slot: compObj.$slot
-        })
+export const customText = (compObj: CompObj): ComputedRef<string> | string => {
+    const { directives, vars } = compObj.comp;
+    const { text } = directives;
+
+    switch (text.type) {
+        case 'variable':
+            return computed(() => {
+                const value = text.value.reduce((result: any, key: string) => {
+                    return result?.[key];
+                }, vars);
+
+                if (typeof value === 'function') {
+                    return value({
+                        comp: compObj.comp,
+                        $slot: compObj.$slot
+                    });
+                }
+
+                return typeof value === 'object' 
+                    ? JSON.stringify(value)
+                    : String(value ?? '');
+            });
+
+        case 'string':
+            return text.value;
+
+        case 'function':
+            return runOn(text, compObj.variable, compObj.expandAPI)({
+                comp: compObj.comp,
+                $slot: compObj.$slot
+            });
+
+        default:
+            return '';
     }
-    return ''
-}
+};
 
 /**
  * 自定义指令customOnce的定义，用于在组件的生命周期中只执行一次操作
  * 这个指令在元素挂载和更新时检查条件，并相应地更新元素的文本内容
  */
 export const customOnce = {
-    /**
-     * 在元素挂载时执行的操作
-     * @param el 被绑定的元素
-     * @param binding 指令的绑定值，包含comp属性
-     */
-    mounted: (el: any, compObj: any) => {
+    mounted: (el: HTMLElementWithOnce, compObj: CustomOnceCompObj) => {
         el._once = true;
-        if (compObj.comp) {
-            el.textContent = compObj.comp;
-        } else {
-            el.textContent = el.innerHTML;
-        }
+        el.textContent = compObj.comp ?? el.innerHTML;
     },
-    /**
-     * 在元素更新时执行的操作
-     * @param el 被绑定的元素
-     * @param binding 指令的绑定值，包含comp属性
-     */
-    updated: (el: any, compObj: any) => {
-        if (!el._once && compObj && compObj.comp) {
+
+    updated: (el: HTMLElementWithOnce, compObj: CustomOnceCompObj) => {
+        if (!el._once && compObj?.comp) {
             el.textContent = compObj.comp;
         }
     }
-}
+};
 
-export default (compObj: any) => {
-    let newText: any
-    if (compObj.comp.directives && compObj.comp.directives.text) {
-        newText = customText(compObj)
+const updateTextContent = (el: DirectiveElement, text: string, hasSlots: boolean): void => {
+    if (hasSlots) {
+        setTextDom(el, text);
+    } else {
+        el.textContent = text;
     }
+};
+
+export default (compObj: DirectiveCompObj) => {
+    const newText = compObj.comp.directives?.text ? customText(compObj) : null;
+    const hasSlots = Object.keys(compObj.comp.slots).length > 0;
+
     return {
-        mounted(el: any) {
-            if (!!compObj.comp.directives.text) {
+        mounted(el: DirectiveElement) {
+            if (compObj.comp.directives.text) {
                 if (isRef(newText)) {
-                    watch(() => newText.value, (newVal: any)=> {
-                        if(Object.keys(compObj.comp.slots).length > 0) {
-                            setTextDom(el, newVal)
-                        } else {
-                            el.textContent = newVal
-                        }
-                    }, {
-                        immediate: true
-                    })
+                    watch(
+                        () => newText.value,
+                        (value) => updateTextContent(el, value, hasSlots),
+                        { immediate: true }
+                    );
                 } else {
-                    if(Object.keys(compObj.comp.slots).length > 0) {
-                        setTextDom(el, newText)
-                    } else {
-                        el.textContent = newText
-                    }
+                    updateTextContent(el, newText, hasSlots);
                 }
             }
-            if (!!compObj.comp.directives.once) {
-                customOnce.mounted(el, compObj)
-            }
-        },
-        updated(el: any) {
-            if (!!compObj.comp.directives.text) {
-                if (!isRef(newText)) {
-                    if(Object.keys(compObj.comp.slots).length > 0) {
-                        setTextDom(el, newText)
-                    } else {
-                        el.textContent = newText
-                    }
-                }
-            }
-        },
-    }
-}
 
-const setTextDom = (el: any, text: string) => {
-    // 移除已存在的自定义文本节点
-    el.childNodes.forEach((item: { id: string; remove: () => void; }) => {
-        if (item.id === 'custom-text') {
-            item.remove()
+            if (compObj.comp.directives.once) {
+                customOnce.mounted(el, compObj);
+            }
+        },
+
+        updated(el: DirectiveElement) {
+            if (compObj.comp.directives.text && !isRef(newText)) {
+                updateTextContent(el, newText, hasSlots);
+            }
+        },
+    };
+};
+
+const setTextDom = (el: TextDomElement, text: string): void => {
+    // 查找并移除已存在的自定义文本节点
+    let textContainer = el.querySelector('#custom-text');
+    if (textContainer) {
+        // 如果内容相同，直接返回
+        if (textContainer.textContent === text) {
+            return;
         }
-    })
-    // 创建并插入新的文本节点
-    let tag = document.createTextNode(text)
-    const textTag = document.createElement('text')
-    textTag.setAttribute('id', 'custom-text')
-    textTag.appendChild(tag)
-    el.appendChild(textTag)
-} 
+        // 直接更新现有节点的内容
+        textContainer.textContent = text;
+    } else {
+        // 首次创建节点
+        textContainer = document.createElement('text');
+        textContainer.id = 'custom-text';
+        textContainer.textContent = text;
+        el.appendChild(textContainer);
+    }
+};
