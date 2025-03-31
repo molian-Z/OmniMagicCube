@@ -89,7 +89,12 @@ const changeValue = function(val: any, option: any, pathValues: any){
 }
 
 const value = computed(()=>{
-  return data2Vars(directives.value, variableData.value)
+  return data2Vars(directives.value, variableData.value, {
+    slotData: null,
+    expandAPI: {
+        __type: 'designer'
+    }
+  })
 })
 </script>
 <template>

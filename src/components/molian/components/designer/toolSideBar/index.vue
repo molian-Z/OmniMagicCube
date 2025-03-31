@@ -20,7 +20,7 @@ const currentComponent = computed(() => {
 </script>
 
 <template>
-    <div class="toolSideBar">
+    <div class="toolSideBar" @click.stop>
         <div class="toolSideBar__header">
             <globalTool></globalTool>
         </div>
@@ -42,7 +42,7 @@ const currentComponent = computed(() => {
 <style lang="scss" scoped>
 .toolSideBar {
     height: 100%;
-    border-left: 1px solid var(--ml-border-color);
+    box-shadow: -1px 0px 2px rgba(0, 0, 0, 0.07), -1px 0 1px rgba(0, 0, 0, 0.05);
     width: 330px;
 
     .toolSideBar__header {

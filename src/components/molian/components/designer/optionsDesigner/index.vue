@@ -16,6 +16,9 @@ import vuefor from "./tooltip/for.vue";
 import MlAnimate from "@molianComps/AnimateHeight/index.vue";
 import { useI18n } from "vue-i18n";
 import CustomDirectives from "./tooltip/customDirectives.vue";
+// 引入动画组件
+import animationComp from "./pages/animation.vue";
+
 const { t } = useI18n();
 const customComps: any = inject("customComps");
 const { customTooltip, customPopup } = customComps;
@@ -49,6 +52,11 @@ const menus = ref([
     icon: "lifecycle",
     text: t("options.lifecycle"),
     name: "lifecycle",
+  },
+  {
+    icon: "animation",
+    text: t("options.animation"),
+    name: "animation",
   },
 ]);
 
@@ -135,6 +143,11 @@ const pageData = ref([
     value: "lifecycle",
     text: t("options.lifecycle"),
   },
+  {
+    component: animationComp,
+    value: "animation",
+    text: t("options.animation"),
+  }
 ]);
 const showVar = ref<any>({
   basic: true,
@@ -233,12 +246,9 @@ const openDialog = (type: string) => {
         </customTooltip>
       </template>
       <template v-slot:default="{ activeData }">
-        <basicComp v-if="activeData.name === 'basic'" />
-        <propComp v-else-if="activeData.name === 'prop'" />
-        <slotComp v-else-if="activeData.name === 'slot'" />
-        <jsComp v-else-if="activeData.name === 'javascript'" />
-        <nativeOnComp v-else-if="activeData.name === 'nativeOn'" />
-        <lifecycleComp v-else-if="activeData.name === 'lifecycle'" />
+        <template v-for="item in pageData" :key="item.value">
+            <component :is="item.component" v-if="activeData.name === item.value" />
+        </template>
       </template>
     </float-panel>
     <div class="is-side-bar" v-else>
@@ -284,7 +294,7 @@ const openDialog = (type: string) => {
         </customTooltip>
       </div>
       <div style="height: 44px"></div>
-      <div class="comp-content" v-for="item in pageData" :key="item.value">
+      <div class="comp-container" v-for="item in pageData" :key="item.value">
         <template v-if="item.show !== false">
           <div
             class="designer-container__body-title"
@@ -315,22 +325,6 @@ const openDialog = (type: string) => {
 </template>
 
 <style scoped lang="scss">
-.options-designer {
-  .float-panel {
-    height: 600px;
-  }
-}
-
-.comp-content {
-  background-color: var(--ml-bg-color);
-  margin-bottom: var(--ml-mg-base);
-  max-width: 330px !important;
-  position: relative;
-  .comp-content {
-    padding: 0 var(--ml-pd-lg);
-  }
-}
-
 :deep(.css-svg-icon) {
   margin: 0 var(--ml-mg-small) !important;
 }

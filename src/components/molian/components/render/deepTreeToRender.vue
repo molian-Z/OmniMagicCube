@@ -96,7 +96,12 @@ watchThrottled(
 );
 const newForEach = memoize(({ comp, $slot }: any) => {
   if (!!comp.directives.for) {
-    const forData = data2Vars(comp.directives.for, variable.value);
+    const forData = data2Vars(comp.directives.for, variable.value, {
+        slotData: $slot,
+        expandAPI: {
+            __type: 'render'
+        }
+    });
     if (typeof forData === "function") {
       return forData($slot);
     }

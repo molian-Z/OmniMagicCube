@@ -35,6 +35,7 @@ app.use(ArcoVue, {
 });
 
 app.use(TinyVue);
+
 const options: plug.designerInstall = {
     useUI: "element-plus",
     compsConfig: {
@@ -186,6 +187,7 @@ const options: plug.designerInstall = {
     iconUrl: 'http://flower.molianpro.com:33000',
     // i18nInstance: useI18n(),
 }
+
 app.use(plug, options);
 
 app.mount('#app');

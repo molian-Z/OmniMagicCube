@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { computed, inject, defineOptions, defineProps, defineEmits, nextTick } from "vue";
 import { directives } from "./directives";
 import { compsRefs, compsEls, variableData, globalAttrs } from "../designerData";
 import { isDraggable, dropKey, useDraggable, dropType, onDragenter } from "../draggable";
@@ -8,6 +7,7 @@ import { useElementBounding } from "@vueuse/core";
 import { useI18n } from "vue-i18n";
 import DropHint from './components/DropHint.vue';
 const { t } = useI18n();
+const expandAPI = inject("mlExpandAPI");
 defineOptions({
   name: "deepTree",
 });
@@ -124,6 +124,7 @@ const isSlotData = (slotProps: Record<string, any>): boolean => Boolean(slotProp
       :parentNode="parentNode"
       :slots="slots"
       :inheritProps="slotData"
+      :expandAPI="expandAPI"
     >
       <template
         v-for="(slotVal, slotKey) in comp.slots"

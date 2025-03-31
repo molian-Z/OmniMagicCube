@@ -78,29 +78,40 @@ const toolbarData = ref([{
 }])
 
 const menus = ref([{
+    component: transform,
     icon: 'transform',
     text: t('css.transform'),
     name: 'transform'
 }, {
+    component: margin,
     icon: 'margin',
     text: t('css.margins'),
     name: 'margin'
 }, {
+    component: font,
     icon: 'font',
     text: t('css.text'),
     name: 'font'
 }, {
+    component: fill,
     icon: 'fill',
     text: t('css.fill'),
     name: 'fill'
 }, {
+    component: stroke,
     icon: 'stroke',
     text: t('css.stroke'),
     name: 'stroke'
 }, {
+    component: effect,
     icon: 'effect',
     text: t('css.effect'),
     name: 'effect'
+}, {
+    component: customCss,
+    icon: 'customCss',
+    text: 'CSS',
+    name: 'customCss'
 }])
 
 const css = computed(() => {
@@ -160,12 +171,9 @@ const actived = function (item: { type: string; value: any }) {
                 </customTooltip>
             </template>
             <template v-slot:default="{ activeData }">
-                <transform v-if="activeData.name === 'transform'" />
-                <margin v-else-if="activeData.name === 'margin'"></margin>
-                <font v-else-if="activeData.name === 'font'" />
-                <fill v-else-if="activeData.name === 'fill'" />
-                <stroke v-else-if="activeData.name === 'stroke'" />
-                <effect v-else-if="activeData.name === 'effect'" />
+                <template v-for="item in menus" :key="item.name">
+                    <component :is="item.component" style="margin-top: var(--ml-mg-base);" v-if="activeData.name === item.name" />
+                </template>
             </template>
         </float-panel>
         <div class="is-side-bar" v-else>
@@ -176,14 +184,16 @@ const actived = function (item: { type: string; value: any }) {
                         :icon="`flex-${item.type}-${item.icon}`" @click="flexSwitch(item.type, item.value)" />
                 </customTooltip>
             </div>
-            <div style="height:36px;"></div>
-            <transform />
-            <margin style="margin-top: var(--ml-mg-base);" />
-            <font style="margin-top: var(--ml-mg-base);" />
-            <fill style="margin-top: var(--ml-mg-base);" />
-            <stroke style="margin-top: var(--ml-mg-base);" />
-            <effect style="margin-top: var(--ml-mg-base);" />
-            <customCss style="margin-top: var(--ml-mg-base);" />
+            <div style="height:45px;"></div>
+            <template v-for="item in menus" :key="item.value">
+                <component :is="item.component" style="margin-top: var(--ml-mg-base);" />
+            </template>
         </div>
     </div>
 </template>
+
+<style scoped>
+:deep(.float-panel-content-detail__content){
+    max-height: 511px;
+}
+</style>

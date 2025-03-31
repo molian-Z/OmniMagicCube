@@ -52,7 +52,6 @@ interface DirectiveElement extends TextDomElement {
 export const customText = (compObj: CompObj): ComputedRef<string> | string => {
     const { directives, vars } = compObj.comp;
     const { text } = directives;
-
     switch (text.type) {
         case 'variable':
             return computed(() => {
@@ -71,16 +70,17 @@ export const customText = (compObj: CompObj): ComputedRef<string> | string => {
                     ? JSON.stringify(value)
                     : String(value ?? '');
             });
-
         case 'string':
             return text.value;
-
         case 'function':
-            return runOn(text, compObj.variable, compObj.expandAPI)({
-                comp: compObj.comp,
-                $slot: compObj.$slot
-            });
-
+            try{
+                return runOn(text, compObj.variable, compObj.expandAPI)({
+                    comp: compObj.comp,
+                    $slot: compObj.$slot
+                });
+            }catch(e){
+                return 'function Text';
+            }
         default:
             return '';
     }
@@ -154,9 +154,11 @@ const setTextDom = (el: TextDomElement, text: string): void => {
         textContainer.textContent = text;
     } else {
         // 首次创建节点
-        textContainer = document.createElement('text');
+        textContainer = document.createElement('span');
         textContainer.id = 'custom-text';
-        textContainer.textContent = text;
         el.appendChild(textContainer);
+        nextTick(() => {
+            textContainer.textContent = text;
+        })
     }
 };

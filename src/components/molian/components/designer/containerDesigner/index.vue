@@ -244,6 +244,8 @@ onUnmounted(() => {
     width: 100%;
 
     .container-toolbar {
+      position: relative;
+      background-color: var(--ml-bg-color);
       height: 42px;
     }
 

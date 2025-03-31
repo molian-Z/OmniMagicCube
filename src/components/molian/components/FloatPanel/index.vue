@@ -54,7 +54,6 @@ const floatPos = computed(() => {
             left: x.value + 'px',
             top: y.value + 'px',
             width: foldWidth + 'px',
-            height: foldHeight + 'px'
         }
     }
      else {
@@ -62,7 +61,6 @@ const floatPos = computed(() => {
             right: width.value - x.value - 40 + 'px',
             top: y.value - 46 + 'px',
             width: foldWidth + 'px',
-            height: foldHeight + 'px'
         }
     }
 })
@@ -158,7 +156,7 @@ const closePanel = function (evt: any) {
     position: fixed;
     border-radius: var(--ml-radius-lg);
     border: 1px solid var(--color-fill-3, #E5E6EB);
-    background-color: rgba(global.$bgColor, 0.15);
+    background-color: rgba(global.$bgColor, 0.55);
     box-shadow: var(--ml-shadow-lg);
     backdrop-filter:saturate(150%) var(--ml-bg-blur-base);
     transition: width var(--ml-transition-base);
@@ -173,7 +171,6 @@ const closePanel = function (evt: any) {
         display: flex;
         flex-direction: row-reverse;
         justify-content: flex-start;
-        height: 100%;
 
         &.float-left {
             flex-direction: row;
@@ -294,6 +291,7 @@ const closePanel = function (evt: any) {
 
             .float-panel-header__title-holder {
                 height: 40px;
+                background-color: var(--ml-bg-color);
             }
 
             .float-panel-header__title {
@@ -334,7 +332,6 @@ const closePanel = function (evt: any) {
         }
 
         &.is-fold {
-            height: 60vh;
             justify-content: space-between;
 
             .float-panel-header__close {
@@ -344,10 +341,6 @@ const closePanel = function (evt: any) {
 
             .float-panel-item {
                 margin: var(--ml-mg-base);
-            }
-
-            .float-panel-list{
-                padding-top: 72px;
             }
         }
     }

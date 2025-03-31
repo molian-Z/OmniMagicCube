@@ -13,14 +13,14 @@ const css = computed(() => {
     return selectedComp.value.css;
   }
   return {
-    marginTop: '',
-    marginLeft: '',
-    marginRight: '',
-    marginBottom: '',
-    paddingTop: '',
-    paddingLeft: '',
-    paddingRight: '',
-    paddingBottom: '',
+    marginTop: "",
+    marginLeft: "",
+    marginRight: "",
+    marginBottom: "",
+    paddingTop: "",
+    paddingLeft: "",
+    paddingRight: "",
+    paddingBottom: "",
     units: {},
   };
 });
@@ -43,7 +43,7 @@ watch(selectedComp, (val: any) => {
     if (
       margins.every((margin) => margin === val.css.marginTop) &&
       val.css.marginTop !== undefined &&
-      val.css.marginTop !== ''
+      val.css.marginTop !== ""
     ) {
       activeMargin.value = true;
     } else {
@@ -62,7 +62,7 @@ watch(selectedComp, (val: any) => {
     if (
       paddings.every((padding) => padding === val.css.paddingTop) &&
       val.css.paddingTop !== undefined &&
-      val.css.paddingTop !== ''
+      val.css.paddingTop !== ""
     ) {
       activePadding.value = true;
     } else {
@@ -123,7 +123,7 @@ const updateModelValue = (
   // 检查css.value是否存在且obj.value可以转换为数字
   if (css.value && !isNaN(Number(obj.value))) {
     // 将obj.value转换为字符串形式的数字
-    const newVal = obj.value != '' ? Number(obj.value).toString() : '';
+    const newVal = obj.value != "" ? Number(obj.value).toString() : "";
     // 判断是否需要更新四个方向的值
     if (
       (obj.type === "margin" && activeMargin.value) ||
@@ -176,261 +176,254 @@ const updateUnit = (prop: string, obj: { type: "margin" | "padding"; value: any 
 };
 </script>
 <template>
-  <div :class="['designer-container', !selectedComp && 'disabled']">
-    <div class="designer-container__body-title">
-      <span>{{ t("css.margin.margin") }}</span>
+  <div class="css-panel">
+    <div class="css-panel__header">
+      <span class="css-panel__title">{{ t("css.margin.margin") }}</span>
+      <div class="css-panel__actions">
+        <!-- 可能的操作按钮 -->
+      </div>
     </div>
-    <div class="designer-container__body">
-      <div class="designer-list-item">
-        <customInput
-          class="designer-input-base"
-          size="small"
-          :modelValue="css.marginTop"
-          @update:modelValue="
-            updateModelValue('marginTop', { type: 'margin', value: $event })
-          "
-          :disabled="!selectedComp"
-          :placeholder="t('css.margin.top')"
-        >
-          <template #prefixIcon>
-            <customTooltip :content="t('css.margin.top')">
-              <svg-icon icon="margin-top"></svg-icon>
-            </customTooltip>
-          </template>
-          <template #suffix>
-            <suffix-unit
-              :modelValue="css.units.marginTop"
-              @update:modelValue="
-                updateUnit('marginTop', { type: 'margin', value: $event })
-              "
-            />
-          </template>
-        </customInput>
-        <customInput
-          class="designer-input-base"
-          size="small"
-          :modelValue="css.marginBottom"
-          @update:modelValue="
-            updateModelValue('marginBottom', { type: 'margin', value: $event })
-          "
-          :disabled="!selectedComp || activeMargin"
-          :placeholder="t('css.margin.bottom')"
-        >
-          <template #prefixIcon>
-            <customTooltip :content="t('css.margin.bottom')">
-              <svg-icon icon="margin-bottom"></svg-icon>
-            </customTooltip>
-          </template>
-          <template #suffix>
-            <suffix-unit
-              :modelValue="css.units.marginBottom"
-              @update:modelValue="
-                updateUnit('marginBottom', { type: 'margin', value: $event })
-              "
-            />
-          </template>
-        </customInput>
-        <div
-          :class="['link-icon', activeMargin && 'is-active']"
-          @click="changeMarign('margin')"
-        >
-          <customTooltip :content="t('css.link')">
-            <svg-icon class="svg" icon="link" />
-          </customTooltip>
+    <div class="css-panel__body">
+      <!-- 外边距控制 -->
+      <div
+        class="css-panel__row css-panel__row--between"
+        style="position: relative; margin-bottom: 8px"
+      >
+        <div class="css-panel__input-wrapper">
+          <customInput
+            :modelValue="css.marginTop"
+            @update:modelValue="
+              updateModelValue('marginTop', { type: 'margin', value: $event })
+            "
+            :disabled="!selectedComp"
+            placeholder=""
+          >
+            <template #prefixIcon>
+              <customTooltip :content="t('css.margin.top')">
+                <svg-icon icon="margin-top"></svg-icon>
+              </customTooltip>
+            </template>
+            <template #suffix>
+              <suffix-unit
+                :modelValue="css.units.marginTop"
+                @update:modelValue="
+                  updateUnit('marginTop', { type: 'margin', value: $event })
+                "
+              />
+            </template>
+          </customInput>
+        </div>
+        <div class="css-panel__input-wrapper">
+          <customInput
+            :modelValue="css.marginBottom"
+            @update:modelValue="
+              updateModelValue('marginBottom', { type: 'margin', value: $event })
+            "
+            :disabled="!selectedComp || activeMargin"
+            placeholder=""
+          >
+            <template #prefixIcon>
+              <customTooltip :content="t('css.margin.bottom')">
+                <svg-icon icon="margin-bottom"></svg-icon>
+              </customTooltip>
+            </template>
+            <template #suffix>
+              <suffix-unit
+                :modelValue="css.units.marginBottom"
+                @update:modelValue="
+                  updateUnit('marginBottom', { type: 'margin', value: $event })
+                "
+              />
+            </template>
+          </customInput>
         </div>
       </div>
-      <div class="designer-list-item">
-        <customInput
-          class="designer-input-base"
-          size="small"
-          :modelValue="css.marginLeft"
-          @update:modelValue="
-            updateModelValue('marginLeft', { type: 'margin', value: $event })
-          "
-          :disabled="!selectedComp || activeMargin"
-          :placeholder="t('css.margin.left')"
-        >
-          <template #prefixIcon>
-            <customTooltip :content="t('css.margin.left')">
-              <svg-icon icon="margin-left"></svg-icon>
-            </customTooltip>
-          </template>
-          <template #suffix>
-            <suffix-unit
-              :modelValue="css.units.marginLeft"
-              @update:modelValue="
-                updateUnit('marginLeft', { type: 'margin', value: $event })
-              "
-            />
-          </template>
-        </customInput>
-        <customInput
-          class="designer-input-base"
-          size="small"
-          :modelValue="css.marginRight"
-          @update:modelValue="
-            updateModelValue('marginRight', { type: 'margin', value: $event })
-          "
-          :disabled="!selectedComp || activeMargin"
-          :placeholder="t('css.margin.right')"
-        >
-          <template #prefixIcon>
-            <customTooltip :content="t('css.margin.right')">
-              <svg-icon icon="margin-right"></svg-icon>
-            </customTooltip>
-          </template>
-          <template #suffix>
-            <suffix-unit
-              :modelValue="css.units.marginRight"
-              @update:modelValue="
-                updateUnit('marginRight', { type: 'margin', value: $event })
-              "
-            />
-          </template>
-        </customInput>
-      </div>
-    </div>
 
-    <div class="designer-container__body-title designer-mg-top">
-      <span>{{ t("css.padding.padding") }}</span>
-    </div>
-    <div class="designer-container__body">
-      <div class="designer-list-item">
-        <customInput
-          class="designer-input-base"
-          size="small"
-          :modelValue="css.paddingTop"
-          @update:modelValue="
-            updateModelValue('paddingTop', { type: 'padding', value: $event })
-          "
-          :disabled="!selectedComp"
-          :placeholder="t('css.padding.top')"
-        >
-          <template #prefixIcon>
-            <customTooltip :content="t('css.padding.top')">
-              <svg-icon icon="padding-top"></svg-icon>
-            </customTooltip>
-          </template>
-          <template #suffix>
-            <suffix-unit
-              :modelValue="css.units.paddingTop"
-              @update:modelValue="
-                updateUnit('paddingTop', { type: 'padding', value: $event })
-              "
-            />
-          </template>
-        </customInput>
-        <customInput
-          class="designer-input-base"
-          size="small"
-          :modelValue="css.paddingBottom"
-          @update:modelValue="
-            updateModelValue('paddingBottom', { type: 'padding', value: $event })
-          "
-          :disabled="!selectedComp || activePadding"
-          :placeholder="t('css.padding.bottom')"
-        >
-          <template #prefixIcon>
-            <customTooltip :content="t('css.padding.bottom')">
-              <svg-icon icon="padding-bottom"></svg-icon>
-            </customTooltip>
-          </template>
-          <template #suffix>
-            <suffix-unit
-              :modelValue="css.units.paddingBottom"
-              @update:modelValue="
-                updateUnit('paddingBottom', { type: 'padding', value: $event })
-              "
-            />
-          </template>
-        </customInput>
-        <div
-          :class="['link-icon', activePadding && 'is-active']"
-          @click="changeMarign('padding')"
-        >
-          <customTooltip :content="t('css.link')">
-            <svg-icon class="svg" icon="link" />
-          </customTooltip>
+      <div class="css-panel__row css-panel__row--between" style="position: relative">
+        <div class="css-panel__input-wrapper">
+          <customInput
+            :modelValue="css.marginLeft"
+            @update:modelValue="
+              updateModelValue('marginLeft', { type: 'margin', value: $event })
+            "
+            :disabled="!selectedComp || activeMargin"
+            placeholder=""
+          >
+            <template #prefixIcon>
+              <customTooltip :content="t('css.margin.left')">
+                <svg-icon icon="margin-left"></svg-icon>
+              </customTooltip>
+            </template>
+            <template #suffix>
+              <suffix-unit
+                :modelValue="css.units.marginLeft"
+                @update:modelValue="
+                  updateUnit('marginLeft', { type: 'margin', value: $event })
+                "
+              />
+            </template>
+          </customInput>
+        </div>
+        <div class="css-panel__input-wrapper">
+          <customInput
+            :modelValue="css.marginRight"
+            @update:modelValue="
+              updateModelValue('marginRight', { type: 'margin', value: $event })
+            "
+            :disabled="!selectedComp || activeMargin"
+            placeholder=""
+          >
+            <template #prefixIcon>
+              <customTooltip :content="t('css.margin.right')">
+                <svg-icon icon="margin-right"></svg-icon>
+              </customTooltip>
+            </template>
+            <template #suffix>
+              <suffix-unit
+                :modelValue="css.units.marginRight"
+                @update:modelValue="
+                  updateUnit('marginRight', { type: 'margin', value: $event })
+                "
+              />
+            </template>
+          </customInput>
+        </div>
+
+        <!-- 链接图标绝对定位在中心 -->
+        <div class="css-panel__radius-link-container">
+          <svg-icon
+            class="css-panel__icon-btn css-panel__radius-link-icon"
+            :class="{ 'css-panel__icon-btn--active': activeMargin }"
+            icon="link"
+            @click="changeMarign('margin')"
+          />
         </div>
       </div>
-      <div class="designer-list-item">
-        <customInput
-          class="designer-input-base"
-          size="small"
-          :modelValue="css.paddingLeft"
-          @update:modelValue="
-            updateModelValue('paddingLeft', { type: 'padding', value: $event })
-          "
-          :disabled="!selectedComp || activePadding"
-          :placeholder="t('css.padding.left')"
-        >
-          <template #prefixIcon>
-            <customTooltip :content="t('css.padding.left')">
-              <svg-icon icon="padding-left"></svg-icon>
-            </customTooltip>
-          </template>
-          <template #suffix>
-            <suffix-unit
-              :modelValue="css.units.paddingLeft"
-              @update:modelValue="
-                updateUnit('paddingLeft', { type: 'padding', value: $event })
-              "
-            />
-          </template>
-        </customInput>
-        <customInput
-          class="designer-input-base"
-          size="small"
-          :modelValue="css.paddingRight"
-          @update:modelValue="
-            updateModelValue('paddingRight', { type: 'padding', value: $event })
-          "
-          :disabled="!selectedComp || activePadding"
-          :placeholder="t('css.padding.right')"
-        >
-          <template #prefixIcon>
-            <customTooltip :content="t('css.padding.right')">
-              <svg-icon icon="padding-right"></svg-icon>
-            </customTooltip>
-          </template>
-          <template #suffix>
-            <suffix-unit
-              :modelValue="css.units.paddingRight"
-              @update:modelValue="
-                updateUnit('paddingRight', { type: 'padding', value: $event })
-              "
-            />
-          </template>
-        </customInput>
+    </div>
+  </div>
+  <div class="css-panel">
+    <div class="css-panel__header css-panel__header--divider">
+      <span class="css-panel__title">{{ t("css.padding.padding") }}</span>
+      <div class="css-panel__actions">
+        <!-- 可能的操作按钮 -->
+      </div>
+    </div>
+    <div class="css-panel__body">
+      <!-- 内边距控制 -->
+      <div
+        class="css-panel__row css-panel__row--between"
+        style="position: relative; margin-bottom: 8px"
+      >
+        <div class="css-panel__input-wrapper">
+          <customInput
+            :modelValue="css.paddingTop"
+            @update:modelValue="
+              updateModelValue('paddingTop', { type: 'padding', value: $event })
+            "
+            :disabled="!selectedComp"
+            placeholder=""
+          >
+            <template #prefixIcon>
+              <customTooltip :content="t('css.padding.top')">
+                <svg-icon icon="padding-top"></svg-icon>
+              </customTooltip>
+            </template>
+            <template #suffix>
+              <suffix-unit
+                :modelValue="css.units.paddingTop"
+                @update:modelValue="
+                  updateUnit('paddingTop', { type: 'padding', value: $event })
+                "
+              />
+            </template>
+          </customInput>
+        </div>
+        <div class="css-panel__input-wrapper">
+          <customInput
+            :modelValue="css.paddingBottom"
+            @update:modelValue="
+              updateModelValue('paddingBottom', { type: 'padding', value: $event })
+            "
+            :disabled="!selectedComp || activePadding"
+            placeholder=""
+          >
+            <template #prefixIcon>
+              <customTooltip :content="t('css.padding.bottom')">
+                <svg-icon icon="padding-bottom"></svg-icon>
+              </customTooltip>
+            </template>
+            <template #suffix>
+              <suffix-unit
+                :modelValue="css.units.paddingBottom"
+                @update:modelValue="
+                  updateUnit('paddingBottom', { type: 'padding', value: $event })
+                "
+              />
+            </template>
+          </customInput>
+        </div>
+      </div>
+
+      <div class="css-panel__row css-panel__row--between" style="position: relative">
+        <div class="css-panel__input-wrapper">
+          <customInput
+            :modelValue="css.paddingLeft"
+            @update:modelValue="
+              updateModelValue('paddingLeft', { type: 'padding', value: $event })
+            "
+            :disabled="!selectedComp || activePadding"
+            placeholder=""
+          >
+            <template #prefixIcon>
+              <customTooltip :content="t('css.padding.left')">
+                <svg-icon icon="padding-left"></svg-icon>
+              </customTooltip>
+            </template>
+            <template #suffix>
+              <suffix-unit
+                :modelValue="css.units.paddingLeft"
+                @update:modelValue="
+                  updateUnit('paddingLeft', { type: 'padding', value: $event })
+                "
+              />
+            </template>
+          </customInput>
+        </div>
+        <div class="css-panel__input-wrapper">
+          <customInput
+            :modelValue="css.paddingRight"
+            @update:modelValue="
+              updateModelValue('paddingRight', { type: 'padding', value: $event })
+            "
+            :disabled="!selectedComp || activePadding"
+            placeholder=""
+          >
+            <template #prefixIcon>
+              <customTooltip :content="t('css.padding.right')">
+                <svg-icon icon="padding-right"></svg-icon>
+              </customTooltip>
+            </template>
+            <template #suffix>
+              <suffix-unit
+                :modelValue="css.units.paddingRight"
+                @update:modelValue="
+                  updateUnit('paddingRight', { type: 'padding', value: $event })
+                "
+              />
+            </template>
+          </customInput>
+        </div>
+
+        <!-- 链接图标绝对定位在中心 -->
+        <div class="css-panel__radius-link-container">
+          <svg-icon
+            class="css-panel__icon-btn css-panel__radius-link-icon"
+            :class="{ 'css-panel__icon-btn--active': activePadding }"
+            icon="link"
+            @click="changeMarign('padding')"
+          />
+        </div>
       </div>
     </div>
   </div>
 </template>
-
-<style scoped lang="scss">
-.between {
-  .designer-input-base {
-    width: calc(50% - 15px);
-  }
-}
-
-.designer-list-item {
-  align-items: center;
-}
-
-.link-icon {
-  cursor: pointer;
-  transition: var(--ml-transition-base);
-  padding: 5px 0;
-  border-radius: var(--ml-radius-small);
-  margin-left: var(--ml-mg-small);
-
-  &:hover {
-    background-color: var(--ml-bg-page-color);
-  }
-
-  &.is-active {
-    background-color: var(--ml-fill-color-4);
-  }
-}
-</style>

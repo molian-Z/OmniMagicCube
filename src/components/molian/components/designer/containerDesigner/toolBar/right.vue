@@ -65,7 +65,9 @@ const renderCode = () => {
     <customDialog appendToBody header="效果预览" width="1200px" :close-on-click-modal="false"
       @escKeydown="showRenderDialog = false" @closeBtnClick="showRenderDialog = false"
       v-model:visible="showRenderDialog" destroyOnClose>
-      <render :modelValue="renderCode()" :expandAPI="{test:()=>{}}" :globalAttrs="globalAttrs" />
+      <div class="render-container"> 
+        <render :modelValue="renderCode()" :expandAPI="{test:()=>{}}" :globalAttrs="globalAttrs" />
+      </div>
     </customDialog>
   </div>
 </template>
@@ -101,5 +103,10 @@ const renderCode = () => {
       opacity: .7;
     }
   }
+}
+
+.render-container{
+    height: 60vh;
+    overflow: auto;
 }
 </style>

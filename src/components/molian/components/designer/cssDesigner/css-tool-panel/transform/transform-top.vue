@@ -102,178 +102,195 @@ const updateModelValue = function (prop: string, val: any) {
 }
 </script>
 <template>
-    <div class="transform-container__body designer-container__body">
-        <div class="transform-container__body-title" style="padding-left: 0;">{{ t('css.transform') }}</div>
-        <div class="designer-list-item">
-            <div class=" designer-input-base">
-                <customInput size="small" :modelValue="css.moveX" @update:modelValue="updateModelValue('moveX', $event)"
-                    :disabled="!selectedComp" placeholder="">
-                    <template #prefixIcon>
-                        <customTooltip :content="t('css.moveX')">
-                            <svg-icon icon="posX"></svg-icon>
-                        </customTooltip>
-                    </template>
-                    <template #suffix>
-                        <suffix-unit v-model="css.units.moveX" />
-                    </template>
-                </customInput>
-            </div>
-            <div class=" designer-input-base">
-                <customInput size="small" :modelValue="css.moveY" @update:modelValue="updateModelValue('moveY', $event)"
-                    :disabled="!selectedComp" placeholder="">
-                    <template #prefixIcon>
-                        <customTooltip :content="t('css.moveY')">
-                            <svg-icon icon="posY"></svg-icon>
-                        </customTooltip>
-                    </template>
-                    <template #suffix>
-                        <suffix-unit v-model="css.units.moveY" />
-                    </template>
-                </customInput>
-            </div>
-        </div>
-        <div class="designer-list-item">
-            <div class=" designer-input-base">
-                <customInput size="small" :modelValue="css.width" @update:modelValue="updateModelValue('width', $event)"
-                    :disabled="!selectedComp" placeholder="">
-                    <template #prefixIcon>
-                        <customTooltip :content="t('css.width')">
-                            <svg-icon icon="width"></svg-icon>
-                        </customTooltip>
-                    </template>
-                    <template #suffix>
-                        <suffix-unit  v-model="css.units.width" />
-                    </template>
-                </customInput>
-            </div>
-            <div class=" designer-input-base">
-                <customInput size="small" :modelValue="css.height"
-                    @update:modelValue="updateModelValue('height', $event)" :disabled="!selectedComp" placeholder="">
-                    <template #prefixIcon>
-                        <customTooltip :content="t('css.height')">
-                            <svg-icon icon="height"></svg-icon>
-                        </customTooltip>
-                    </template>
-                    <template #suffix>
-                        <suffix-unit  v-model="css.units.height" />
-                    </template>
-                </customInput>
-            </div>
-            <div :class="['link-icon', activeLink && 'is-active']" @click="activeLink = !activeLink">
-                <customTooltip :content="t('css.link')">
-                <svg-icon icon="link" />
-                </customTooltip>
-            </div>
-        </div>
-        <div class="designer-list-item">
-            <div class=" designer-input-base">
-                <customInput size="small" :modelValue="css.rotate"
-                    @update:modelValue="updateModelValue('rotate', $event)" :disabled="!selectedComp" placeholder="">
-                    <template #prefixIcon>
-                        <customTooltip :content="t('css.rotate')">
-                            <svg-icon icon="ic_angel"></svg-icon>
-                        </customTooltip>
-                    </template>
-                    <template #suffix>
-                        <span class="suffix-tag">°</span>
-                    </template>
-                </customInput>
-            </div>
-            <div class=" designer-input-base">
-                <customInput size="small" :modelValue="activeRadius && '-' || Array.isArray(css.borderRadius) && css.borderRadius[0]"
-                    @update:modelValue="updateModelValue('borderRadius', $event)"
-                    :disabled="!selectedComp || activeRadius" placeholder="">
-                    <template #prefixIcon>
-                        <customTooltip :content="t('css.borderRadius')">
-                            <svg-icon icon="ic_corner"></svg-icon>
-                        </customTooltip>
-                    </template>
-                    <template #suffix>
-                        <span class="suffix-tag">px</span>
-                    </template>
-                </customInput>
-            </div>
-            <div :class="['link-icon', activeRadius && 'is-active']" @click="switchRadius">
-                <customTooltip :content="t('css.setRadius')">
-                <svg-icon icon="ic_radius" />
-                </customTooltip>
-            </div>
-        </div>
-        <template v-if="activeRadius">
-            <div class="designer-list-item">
-                <div class=" designer-input-base">
-                    <customInput size="small" :modelValue="Array.isArray(css.borderRadius) && css.borderRadius[0] || '0'"
-                        @update:modelValue="updateModelValue('borderRadius', { index: 0, value: $event })"
-                        :disabled="!selectedComp" placeholder="">
-                        <template #prefixIcon>
-                            <svg-icon icon="ic_corner"></svg-icon>
-                        </template>
-                        <template #suffix>
-                            <span class="suffix-tag">px</span>
-                        </template>
-                    </customInput>
-                </div>
-                <div class=" designer-input-base">
-                    <customInput size="small" :modelValue="Array.isArray(css.borderRadius) && css.borderRadius[1] || '0'"
-                        @update:modelValue="updateModelValue('borderRadius', { index: 1, value: $event })"
-                        :disabled="!selectedComp" placeholder="">
-                        <template #prefixIcon>
-                            <svg-icon icon="ic_corner" style="transform: rotate(90deg);"></svg-icon>
-                        </template>
-                        <template #suffix>
-                            <span class="suffix-tag">px</span>
-                        </template>
-                    </customInput>
-                </div>
-            </div>
-            <div class="designer-list-item">
-                <div class=" designer-input-base">
-                    <customInput size="small" :modelValue="Array.isArray(css.borderRadius) && css.borderRadius[3] || '0'"
-                        @update:modelValue="updateModelValue('borderRadius', { index: 3, value: $event })"
-                        :disabled="!selectedComp" placeholder="">
-                        <template #prefixIcon>
-                            <svg-icon icon="ic_corner" style="transform: rotate(270deg);"></svg-icon>
-                        </template>
-                        <template #suffix>
-                            <span class="suffix-tag">px</span>
-                        </template>
-                    </customInput>
-                </div>
-                <div class=" designer-input-base">
-                    <customInput size="small" :modelValue="Array.isArray(css.borderRadius) && css.borderRadius[2] || '0'"
-                        @update:modelValue="updateModelValue('borderRadius', { index: 2, value: $event })"
-                        :disabled="!selectedComp" placeholder="">
-                        <template #prefixIcon>
-                            <svg-icon icon="ic_corner" style="transform: rotate(180deg);"></svg-icon>
-                        </template>
-                        <template #suffix>
-                            <span class="suffix-tag">px</span>
-                        </template>
-                    </customInput>
-                </div>
-            </div>
-        </template>
+  <div class="css-panel">
+    <div class="css-panel__header">
+      <span class="css-panel__title">{{ t('css.transform') }}</span>
+      <div class="css-panel__actions">
+        <!-- 可能的操作按钮 -->
+      </div>
     </div>
+    <div class="css-panel__body">
+      <!-- 位置控制 -->
+      <div class="css-panel__row css-panel__row--between">
+        <div class="css-panel__input-wrapper">
+          <customInput 
+            :modelValue="css.moveX" 
+            @update:modelValue="updateModelValue('moveX', $event)"
+            :disabled="!selectedComp" 
+            placeholder="">
+            <template #prefixIcon>
+              <customTooltip :content="t('css.moveX')">
+                <svg-icon icon="posX"></svg-icon>
+              </customTooltip>
+            </template>
+            <template #suffix>
+              <suffix-unit v-model="css.units.moveX" />
+            </template>
+          </customInput>
+        </div>
+        <div class="css-panel__input-wrapper">
+          <customInput 
+            :modelValue="css.moveY" 
+            @update:modelValue="updateModelValue('moveY', $event)"
+            :disabled="!selectedComp" 
+            placeholder="">
+            <template #prefixIcon>
+              <customTooltip :content="t('css.moveY')">
+                <svg-icon icon="posY"></svg-icon>
+              </customTooltip>
+            </template>
+            <template #suffix>
+              <suffix-unit v-model="css.units.moveY" />
+            </template>
+          </customInput>
+        </div>
+      </div>
+      
+      <!-- 尺寸控制 -->
+      <div class="css-panel__row css-panel__row--between">
+        <div class="css-panel__input-wrapper">
+          <customInput 
+            :modelValue="css.width" 
+            @update:modelValue="updateModelValue('width', $event)"
+            :disabled="!selectedComp" 
+            placeholder="">
+            <template #prefixIcon>
+              <customTooltip :content="t('css.width')">
+                <svg-icon icon="width"></svg-icon>
+              </customTooltip>
+            </template>
+            <template #suffix>
+              <suffix-unit v-model="css.units.width" />
+            </template>
+          </customInput>
+        </div>
+        <div class="css-panel__input-wrapper" style="flex: 0 0 auto;">
+          <svg-icon 
+            class="css-panel__icon-btn" 
+            :class="{'css-panel__icon-btn--active': activeLink}" 
+            icon="link" 
+            @click="activeLink = !activeLink" 
+          />
+        </div>
+        <div class="css-panel__input-wrapper">
+          <customInput 
+            :modelValue="css.height" 
+            @update:modelValue="updateModelValue('height', $event)"
+            :disabled="!selectedComp" 
+            placeholder="">
+            <template #prefixIcon>
+              <customTooltip :content="t('css.height')">
+                <svg-icon icon="height"></svg-icon>
+              </customTooltip>
+            </template>
+            <template #suffix>
+              <suffix-unit v-model="css.units.height" />
+            </template>
+          </customInput>
+        </div>
+      </div>
+      
+      <!-- 圆角控制 -->
+      <div v-if="!activeRadius" class="css-panel__row">
+        <div class="css-panel__input-wrapper">
+          <customInput 
+            :modelValue="Array.isArray(css.borderRadius) ? css.borderRadius[0] : css.borderRadius" 
+            @update:modelValue="updateModelValue('borderRadius', $event)"
+            :disabled="!selectedComp" 
+            placeholder="">
+            <template #prefixIcon>
+              <customTooltip :content="t('css.borderRadius')">
+                <svg-icon icon="ic_corner"></svg-icon>
+              </customTooltip>
+            </template>
+            <template #suffix>
+              <span class="css-panel__suffix">px</span>
+            </template>
+          </customInput>
+        </div>
+        <div class="css-panel__input-wrapper" style="flex: 0 0 auto;">
+          <svg-icon 
+            class="css-panel__icon-btn" 
+            :class="{'css-panel__icon-btn--active': !activeRadius}" 
+            icon="link" 
+            @click="switchRadius" 
+          />
+        </div>
+      </div>
+      
+      <!-- 多圆角设置 -->
+      <template v-if="activeRadius">
+        <div class="css-panel__row css-panel__row--between" style="position: relative; margin-bottom: 8px;">
+          <div class="css-panel__input-wrapper">
+            <customInput 
+              :modelValue="Array.isArray(css.borderRadius) && css.borderRadius[0] || '0'"
+              @update:modelValue="updateModelValue('borderRadius', { index: 0, value: $event })"
+              :disabled="!selectedComp" 
+              placeholder="">
+              <template #prefixIcon>
+                <svg-icon icon="ic_corner"></svg-icon>
+              </template>
+              <template #suffix>
+                <span class="css-panel__suffix">px</span>
+              </template>
+            </customInput>
+          </div>
+          <div class="css-panel__input-wrapper">
+            <customInput 
+              :modelValue="Array.isArray(css.borderRadius) && css.borderRadius[1] || '0'"
+              @update:modelValue="updateModelValue('borderRadius', { index: 1, value: $event })"
+              :disabled="!selectedComp" 
+              placeholder="">
+              <template #prefixIcon>
+                <svg-icon icon="ic_corner" style="transform: rotate(90deg);"></svg-icon>
+              </template>
+              <template #suffix>
+                <span class="css-panel__suffix">px</span>
+              </template>
+            </customInput>
+          </div>
+        </div>
+        
+        <div class="css-panel__row css-panel__row--between" style="position: relative;">
+          <div class="css-panel__input-wrapper">
+            <customInput 
+              :modelValue="Array.isArray(css.borderRadius) && css.borderRadius[3] || '0'"
+              @update:modelValue="updateModelValue('borderRadius', { index: 3, value: $event })"
+              :disabled="!selectedComp" 
+              placeholder="">
+              <template #prefixIcon>
+                <svg-icon icon="ic_corner" style="transform: rotate(270deg);"></svg-icon>
+              </template>
+              <template #suffix>
+                <span class="css-panel__suffix">px</span>
+              </template>
+            </customInput>
+          </div>
+          <div class="css-panel__input-wrapper">
+            <customInput 
+              :modelValue="Array.isArray(css.borderRadius) && css.borderRadius[2] || '0'"
+              @update:modelValue="updateModelValue('borderRadius', { index: 2, value: $event })"
+              :disabled="!selectedComp" 
+              placeholder="">
+              <template #prefixIcon>
+                <svg-icon icon="ic_corner" style="transform: rotate(180deg);"></svg-icon>
+              </template>
+              <template #suffix>
+                <span class="css-panel__suffix">px</span>
+              </template>
+            </customInput>
+          </div>
+          
+          <div class="css-panel__radius-link-container">
+            <svg-icon 
+              class="css-panel__icon-btn css-panel__radius-link-icon" 
+              :class="{'css-panel__icon-btn--active': !activeRadius}" 
+              icon="link" 
+              @click="switchRadius" 
+            />
+          </div>
+        </div>
+      </template>
+    </div>
+  </div>
 </template>
-
-
-<style scoped lang="scss">
-.transform-container__body {
-    margin-bottom: var(--ml-mg-base);
-}
-
-.link-icon {
-    cursor: pointer;
-    transition: var(--ml-transition-base);
-    padding: 5px 0;
-    border-radius: var(--ml-radius-small);
-
-    &:hover {
-        background-color: var(--ml-bg-page-color);
-    }
-
-    &.is-active {
-        background-color: var(--ml-fill-color-4);
-    }
-}
-</style>

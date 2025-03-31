@@ -26,6 +26,7 @@ import treeDir from "./tools/treeDir/index.vue";
 import { setting } from "@molian/utils/defaultData";
 import { conciseJs } from "@molian/utils/js-generator";
 import { conciseCss, restoreCss } from "@molian/utils/css-generator";
+import { getSelectedAIData, getAIPrompt, updateFromAI } from "./designerForAi";
 const props = defineProps({
   width: {
     type: String,
@@ -63,10 +64,21 @@ const props = defineProps({
       };
     },
   },
+  expandAPI: {
+    type: Object,
+    default: () => {},
+  },
 });
 const { t } = useI18n();
 const message:any = inject("mlMessage");
 const comps: any = inject("mlComps");
+const currentExpandAPI = computed(() => {
+  return {
+    ...props.expandAPI,
+    __type: 'designer',
+  };
+});
+provide('mlExpandAPI', currentExpandAPI.value);
 useKeys(message, t);
 /**
  * 设置数据函数，用于更新组件的模型值和全局属性
@@ -139,6 +151,9 @@ defineExpose({
   setData,
   getData,
   setSlotsMap,
+  getSelectedAIData,
+  getAIPrompt,
+  updateFromAI,
 });
 </script>
 <template>

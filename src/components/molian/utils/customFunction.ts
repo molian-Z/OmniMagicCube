@@ -79,7 +79,7 @@ export const syncFunction = Object.getPrototypeOf(function () { }).constructor
  * @param code 实际要执行的代码逻辑
  * @returns 返回创建的函数能力对象，可以是同步函数或异步函数实例
  */
-export const createFunc = (type: FunctionType, codeVar: string[], code: string): Function => {
+export const createFunc = (functionMode: FunctionType, codeVar: string[], code: string, type: 'designer' | null): Function => {
     const constructorMap: Record<FunctionType, FunctionConstructor> = {
         'asyncFunction': asyncFunction,
         'function': syncFunction
@@ -89,12 +89,11 @@ export const createFunc = (type: FunctionType, codeVar: string[], code: string):
         try {
             ${code}
         } catch (error) {
-            console.error('[Function Execution Error]:', error);
-            throw error;
+            ${type === 'designer' ? 'throw error;' : "console.error('[Function Execution Error]:', error);"}
         }
     `;
 
-    const Constructor = constructorMap[type];
+    const Constructor = constructorMap[functionMode];
     return new Constructor(...codeVar, cacheCode || '');
 };
 
@@ -110,15 +109,16 @@ export const runLifecycle = function (
     expandAPI: Record<string, any>
 ): void {
     const realLifecycle = isRef(lifecycle) ? lifecycle.value : lifecycle;
-    
+
     const executeLifecycleMethod = (
-        type: FunctionType,
+        functionMode: FunctionType,
         code: string,
         codeVar: string[],
         context: Record<string, any>,
         args: any[] = []
     ) => {
-        const runFn = createFunc(type, codeVar, code);
+        const type: string | null = context.__type;
+        const runFn = createFunc(functionMode, codeVar, code, type);
         runFn.bind(context).call(null, ...args);
     };
 
@@ -157,10 +157,12 @@ export const runOn = function (
         .map((item, index) => `const ${item} = arguments[${index}];`)
         .join('\n');
     const context = { app: Vue, vars: variable, ...expandAPI };
+    const type: 'designer' | null = expandAPI.__type
     return createFunc(
         functionMode,
         [],
-        prefixCode ? `${prefixCode}\n${code}` : code
+        prefixCode ? `${prefixCode}\n${code}` : code,
+        type
     ).bind(context);
 };
 
@@ -176,7 +178,7 @@ const SPECIAL_MODIFIERS = ['once', 'capture', 'passive'] as const;
  * 本函数旨在处理事件修饰符，例如在找到'once'、'capture'、'passive'修饰符时，
  * 会将它们的首字母大写并拼接到键值后。同时，还会筛选出其他自定义修饰符返回。
  */
-export const runModifier = function(
+export const runModifier = function (
     key: string,
     data: Record<string, ModifierData>
 ): ModifierResult {
@@ -185,15 +187,15 @@ export const runModifier = function(
     }
 
     const { modifiers } = data[key].value;
-    const specialModifiers = modifiers.filter((item): item is typeof SPECIAL_MODIFIERS[number] => 
+    const specialModifiers = modifiers.filter((item): item is typeof SPECIAL_MODIFIERS[number] =>
         SPECIAL_MODIFIERS.includes(item as typeof SPECIAL_MODIFIERS[number])
     );
     const otherModifiers = modifiers.filter(item => !SPECIAL_MODIFIERS.includes(item as typeof SPECIAL_MODIFIERS[number]));
 
     const newKey = specialModifiers.length > 0
-        ? `${key}${specialModifiers.map(item => 
+        ? `${key}${specialModifiers.map(item =>
             item.charAt(0).toUpperCase() + item.slice(1)
-          ).join('')}`
+        ).join('')}`
         : key;
 
     return { newKey, modifiers: otherModifiers };
@@ -221,10 +223,10 @@ export const getCurrentOn = (
     const processEventHandlers = (
         events: Record<string, EventConfig>
     ): Record<string, any> => {
-        return Object.entries(events).reduce((acc:any, [key, event]) => {
+        return Object.entries(events).reduce((acc: any, [key, event]) => {
             if (!event) return acc;
 
-            const { newKey, modifiers }:{newKey:string;modifiers:any } = runModifier(key, events as Record<string, ModifierData>);
+            const { newKey, modifiers }: { newKey: string; modifiers: any } = runModifier(key, events as Record<string, ModifierData>);
             const handler = event.type === 'variable' && event.value?.length
                 ? originVariable[event.value[0]]
                 : event.value?.code
@@ -237,7 +239,7 @@ export const getCurrentOn = (
                     const fn = setFunc(handler, variable, slotData, expandAPI);
                     return fn(event, ...args);
                 };
-                
+
                 acc[newKey] = withModifiers(eventHandler, modifiers);
             }
 
@@ -269,12 +271,12 @@ export const getVariableData = (
 ): Record<string, any> => {
     const vars = reactive<Record<string, any>>({});
     const context = { app: Vue, vars, ...expandAPI };
-
+    const type: string | null = expandAPI.__type;
     const processFunction = (value: VariableValue): Function => {
         if (value?.functionMode && ['asyncFunction', 'function'].includes(value.functionMode)) {
-            return createFunc(value.functionMode, value.codeVar || [], value.code || '');
+            return createFunc(value.functionMode, value.codeVar || [], value.code || '', type);
         }
-        return createFunc('function', [], '');
+        return createFunc('function', [], '', type);
     };
 
     Object.entries(variable).forEach(([key, { type, value }]) => {
@@ -318,8 +320,9 @@ export const setComputed = (
 ): ComputedRef<any> => {
     // 创建一个上下文对象，包含Vue应用实例、变量和扩展API
     const context = { app: Vue, vars: reactive(vars), ...expandAPI };
+    const type: string | null = expandAPI.__type;
     // 创建计算属性的函数，根据给定的配置和代码
-    const computedFn = createFunc(computedObj.functionMode, computedObj.codeVar, computedObj.code);
+    const computedFn = createFunc(computedObj.functionMode, computedObj.codeVar, computedObj.code, type);
     // 使用Vue的computed函数创建并返回计算属性，绑定上下文以使其在执行时可用
     return computed(computedFn.bind(context));
 };
@@ -345,7 +348,7 @@ function setFunc(
 ): Function {
     // 创建一个闭包函数，用于在指定的上下文中运行逻辑
     const runOnWithContext = () => runOn(data, variable, expandAPI);
-    
+
     // 根据是否提供了slotData，决定返回哪种类型的函数
     return slotData
         ? (...args: any[]) => runOnWithContext()(...args, { $slot: slotData })

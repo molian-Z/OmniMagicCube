@@ -13,7 +13,7 @@ const runRedo = () => {
 </script>
 
 <template>
-  <div class="toolBar">
+  <div class="toolBar" @click.stop>
     <div class="toolBar-left">
       <svg-icon class="logo" icon="project_icon-Cube"></svg-icon>
       <div>

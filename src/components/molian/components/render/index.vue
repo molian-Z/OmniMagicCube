@@ -43,17 +43,23 @@ const { css, unload } = useStyleTag('',{
 });
 const interInc = useRenderData()
 const { renderRef, variable, originVariable } = interInc
+const realExpandAPI = computed(() => { 
+    return {
+        ...props.expandAPI,
+        __type: 'render',
+    }
+})
 watch(
   () => props.globalAttrs,
   (newVal) => {
     // 只在真正需要更新的时候才更新
     if (newVal.variable !== originVariable.value) {
       originVariable.value = newVal.variable;
-      variable.value = getVariableData(newVal.variable, props.expandAPI, true);
+      variable.value = getVariableData(newVal.variable, realExpandAPI.value, true);
     }
     if (newVal.lifecycle !== lifecycle.value) {
       lifecycle.value = newVal.lifecycle;
-      runLifecycle(lifecycle, variable.value, props.expandAPI);
+      runLifecycle(lifecycle, variable.value, realExpandAPI.value);
     }
   },
   { 
@@ -75,7 +81,6 @@ watchThrottled(
 onUnmounted(() => {
   unload();
 });
-
 defineExpose({
   renderRef,
   variable,
@@ -85,7 +90,7 @@ defineExpose({
 <template>
   <renderTree
     :modelValue="modelValue"
-    :expandAPI="expandAPI"
+    :expandAPI="realExpandAPI"
     :interInc="interInc"
   ></renderTree>
 </template>

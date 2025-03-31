@@ -14,6 +14,7 @@
         ]
       }
     ],
-    "create-element-svg": "off"
+    "create-element-svg": "off",
+    "typescript-config/consistent-casing": "off"
   }
 }

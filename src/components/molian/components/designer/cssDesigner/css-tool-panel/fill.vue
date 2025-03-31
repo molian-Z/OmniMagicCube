@@ -10,13 +10,26 @@ const css = computed(() => {
 })
 </script>
 <template>
-    <div class="designer-container">
-        <div class="designer-container__body-title">{{t('css.fill')}}</div>
-        <div class="designer-container__body">
-            <div class="designer-list-item between">
-                <colorPicker size="small" :disabled="!selectedComp" v-model="css.modelValue" />
-                <svg-icon class="css-svg-icon mg-left-base link-icon" :icon="css.isShow ? 'ic_eye' : 'ic_eye_close'" @click.stop="css.isShow = !css.isShow" />
-            </div>
-        </div>
+  <div class="css-panel">
+    <div class="css-panel__header">
+      <span class="css-panel__title">{{ t('css.fill') }}</span>
+      <div class="css-panel__actions">
+        <!-- 可能的操作按钮 -->
+      </div>
     </div>
+    <div class="css-panel__body">
+      <div class="css-panel__row css-panel__row--between">
+        <div class="css-panel__input-wrapper">
+          <colorPicker use-type="pure" :disabled="!selectedComp" v-model="css.modelValue" />
+        </div>
+        <div class="css-panel__input-wrapper" style="flex: 0 0 auto;">
+          <svg-icon 
+            class="css-panel__icon-btn" 
+            :icon="css.isShow ? 'ic_eye' : 'ic_eye_close'"
+            @click="css.isShow = !css.isShow" 
+          />
+        </div>
+      </div>
+    </div>
+  </div>
 </template>

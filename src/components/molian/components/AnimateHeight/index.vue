@@ -32,7 +32,7 @@ function onBeforeEnter(el: any) {
     el.dataset.oldPaddingTop = el.style.paddingTop;
     el.dataset.oldPaddingBottom = el.style.paddingBottom;
     el.style.transition = `max-height ${Number(props.duration)}ms ease-out 0s, max-width ${Number(props.duration)+ 200}ms ease-in `;
-    el.style.maxWidth = 0;
+    // el.style.maxWidth = 0;
     el.style.maxHeight = 0;
     el.style.paddingTop = 0;
     el.style.paddingBottom = 0;
@@ -45,11 +45,11 @@ function onEnter(el: any, done: () => void) {
     el.dataset.oldOverflow = el.style.overflow;
     if (el.scrollHeight !== 0) {
         el.style.maxHeight = props.height ? props.height+'px' : `${el.scrollHeight}px`;
-        el.style.maxWidth = `${el.scrollHeight}px`;
+        // el.style.maxWidth = `${el.scrollHeight}px`;
         el.style.paddingTop = el.dataset.oldPaddingTop;
         el.style.paddingBottom = el.dataset.oldPaddingBottom;
     } else {
-        el.style.maxWidth = 0;
+        // el.style.maxWidth = 0;
         el.style.maxHeight = 0;
         el.style.paddingTop = el.dataset.oldPaddingTop;
         el.style.paddingBottom = el.dataset.oldPaddingBottom;
@@ -63,7 +63,7 @@ function onEnter(el: any, done: () => void) {
 
 // 当进入过渡完成时调用。
 function onAfterEnter(el: any) {
-    el.style.maxWidth = "";
+    // el.style.maxWidth = "";
     el.style.maxHeight = "";
     el.style.overflow = el.dataset.oldOverflow;
     el.style.transition = ``;
@@ -84,7 +84,7 @@ function onBeforeLeave(el: any) {
     el.dataset.oldPaddingTop = el.style.paddingTop;
     el.dataset.oldPaddingBottom = el.style.paddingBottom;
     el.dataset.oldOverflow = el.style.overflow;
-    el.style.maxWidth = `${el.scrollWidth}px`;
+    // el.style.maxWidth = `${el.scrollWidth}px`;
     el.style.maxHeight = props.height ? props.height+'px' : `${el.scrollHeight}px`;
     el.style.overflow = "hidden";
     $emit('onBeforeLeave')
@@ -96,7 +96,7 @@ function onLeave(el: any, done: () => void) {
     // 调用回调函数 done 表示过渡结束
     // 如果与 CSS 结合使用，则这个回调是可选参数
     if (el.scrollHeight !== 0) {
-        el.style.maxWidth = 0;
+        // el.style.maxWidth = 0;
         el.style.maxHeight = 0;
         el.style.paddingTop = 0;
         el.style.paddingBottom = 0;
@@ -111,7 +111,7 @@ function onLeave(el: any, done: () => void) {
 // 且元素已从 DOM 中移除时调用
 function onAfterLeave(el: any) {
     el.style.maxHeight = "";
-    el.style.maxWidth = "";
+    // el.style.maxWidth = "";
     el.style.overflow = el.dataset.oldOverflow;
     el.style.paddingTop = el.dataset.oldPaddingTop;
     el.style.paddingBottom = el.dataset.oldPaddingBottom;

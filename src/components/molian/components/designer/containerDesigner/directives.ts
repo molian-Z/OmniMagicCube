@@ -7,7 +7,6 @@ import {
     withDirectives
 } from 'vue'
 import { watchDebounced } from '@vueuse/core'
-import { toKebabCase } from "@molian/utils/util";
 import {
     compsEls,
     selectedComp,
@@ -26,7 +25,7 @@ import { useMenus } from './menus'
 import vCustomDirectives from '@molian/utils/useDirectives'
 import { isIf, isFor, isShow, getForEachList, isNotSlot, parseProps, createSlot } from '@molian/utils/useCore'
 export const directives = {
-    props: <any>['comp', 'index', 'modelValue', 'parentNode', 'slots', 'inheritProps'],
+    props: <any>['comp', 'index', 'modelValue', 'parentNode', 'slots', 'inheritProps', 'expandAPI'],
     setup(props: {
         modelValue: any;
         parentNode: any;
@@ -50,6 +49,7 @@ export const directives = {
         index: number | any;
         slots: any;
         inheritProps: any;
+        expandAPI: any;
     }, { slots, emits, expose }: any) {
         const comps: any = inject('mlComps')
         const message: any = inject("mlMessage")
@@ -198,7 +198,7 @@ export const directives = {
                 'selectedComp': selectedComp && selectedComp.value && selectedComp.value.key === props.comp.key,
                 // 当组件内没有文本指令且不可拖动且不是插槽时，添加'designer-comp-is-empty'类
                 'designer-comp-is-empty': !props.comp.directives.text && !isDraggable.value && isNotSlot(props.comp.slots),
-                [toKebabCase(props.comp.name) + '__' + props.comp.key]: true,
+                [props.comp.key]: true,
             }
         })
 
@@ -282,7 +282,7 @@ export const directives = {
             // 优化属性对象创建
             const attrObj = {
                 style: computed(() => ({
-                    ...(!isShow({ comp: props.comp, $slot: slotData, expandAPI: {} }) && { display: 'none' } || {})
+                    ...(!isShow({ comp: props.comp, $slot: slotData, expandAPI: props.expandAPI }) && { display: 'none' } || {})
                 })),
                 ...propsData.value,
                 ...emitData.value,
@@ -309,11 +309,11 @@ export const directives = {
             const vnode = typeof currentTag === 'string'
                 ? withDirectives(
                     h(currentTag, attrObj, nowSlots.default),
-                    [[vCustomDirectives({ comp: props.comp, $slot: slotData, variable: variableData.value, expandAPI: {} })]]
+                    [[vCustomDirectives({ comp: props.comp, $slot: slotData, variable: variableData.value, expandAPI: props.expandAPI })]]
                 )
                 : withDirectives(
                     h(currentTag, attrObj, nowSlots),
-                    [[vCustomDirectives({ comp: props.comp, $slot: slotData, variable: variableData.value, expandAPI: {} })]]
+                    [[vCustomDirectives({ comp: props.comp, $slot: slotData, variable: variableData.value, expandAPI: props.expandAPI })]]
                 );
         
             // 缓存结果
@@ -326,7 +326,7 @@ export const directives = {
         const newForEachList = computed(() => {
             // 添加条件判断，避免不必要的计算
             if (!props.comp.directives?.for) return null;
-            return getForEachList(props.comp, variableData)
+            return getForEachList(props.comp, variableData, props.expandAPI)
         })
         // 出现极端情况解决方案。如元素不存在以及无法对元素进行修改的情况
         // 监听inheritAttrs为false的组件
@@ -349,7 +349,7 @@ export const directives = {
                     const batchUpdateDOM = (resetDom: HTMLElement | any) => {
                         const updates = reactive({
                             styles: computed(() => {
-                                return { ...!isShow({ comp: props.comp, $slot: props.inheritProps, expandAPI: {} }) && { display: 'none' } || {} }
+                                return { ...!isShow({ comp: props.comp, $slot: props.inheritProps, expandAPI: props.expandAPI }) && { display: 'none' } || {} }
                             }),
                             props: computed(() => propsData.value),
                             classes: computed(() => computedClass.value)
@@ -399,7 +399,7 @@ export const directives = {
         // 返回一个函数，根据不同的条件渲染DOM元素
         return () => [
             // 当newForEachList存在且有数据时，并且满足isFor条件，对数据进行map遍历，渲染每个元素
-            !!newForEachList.value && newForEachList.value.data && newForEachList.value.data.length > 0 && !!isFor({ comp: props.comp, $slot: props.inheritProps, expandAPI: {} }) &&
+            !!newForEachList.value && newForEachList.value.data && newForEachList.value.data.length > 0 && !!isFor({ comp: props.comp, $slot: props.inheritProps, expandAPI: props.expandAPI }) &&
             newForEachList.value.data.map((row: any, index: any) => {
                 // 使用renderDom函数渲染特定的DOM元素，传入当前项、索引、for指令和类型
                 return renderDom({
@@ -410,7 +410,7 @@ export const directives = {
                 })
             })
             // 当满足isIf条件时，渲染空的DOM元素
-            || isIf({ comp: props.comp, $slot: props.inheritProps, expandAPI: {} }) && renderDom({})
+            || isIf({ comp: props.comp, $slot: props.inheritProps, expandAPI: props.expandAPI }) && renderDom({})
             || null
         ]
     }

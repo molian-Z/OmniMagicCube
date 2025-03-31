@@ -154,6 +154,7 @@ const activeDivData = computed(() => {
 .comps-designer {
   width: 330px;
   height: 100%;
+  box-shadow: var(--ml-shadow-mini);
   &__header {
     padding: var(--ml-pd-base);
     background-color: var(--ml-bg-color);

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { inject, computed } from 'vue'
+import { inject, computed, ref, watch } from 'vue'
 import { useDebounceFn } from '@vueuse/core'
 import { selectedComp } from '@molianComps/Designer/designerData'
 import CodeEditor from '@molianComps/MlCodeEditor/index.vue'
@@ -45,18 +45,44 @@ const setData = (val: any) => {
     debouncedFn(val)
 }
 </script>
+
 <template>
-    <div :class="['designer-container', !selectedComp && 'disabled']">
-        <div class="designer-container__body-title">{{ t('css.customCssObj.title') }}</div>
-        <div class="designer-container__body" >
-            <codeEditor ref="codeRef" mode="json" class="ml-code-editor" :modelValue="currentValue" @update:modelValue="setData" />
-        </div>
+  <div class="css-panel">
+    <div class="css-panel__header">
+      <span class="css-panel__title">{{ t('css.customCssObj.title') }}</span>
+      <div class="css-panel__actions">
+        <!-- 可能的操作按钮 -->
+      </div>
     </div>
+    <div class="css-panel__body">
+      <div class="css-panel__row">
+        <div class="css-panel__code-wrapper">
+          <codeEditor 
+            ref="codeRef" 
+            mode="json" 
+            class="css-panel__code-editor" 
+            :modelValue="currentValue" 
+            @update:modelValue="setData" 
+          />
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <style lang="scss" scoped>
-.ml-code-editor{
+.css-panel {
+  &__code-wrapper {
+    width: 100%;
+    height: 200px;
+  }
+  
+  &__code-editor {
+    width: 100%;
+    height: 100%;
     border-radius: var(--ml-radius-base);
     overflow: hidden;
+    border: 1px solid var(--ml-border-color);
+  }
 }
 </style>

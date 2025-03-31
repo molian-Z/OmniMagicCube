@@ -138,7 +138,6 @@ const getI18n = (key: string | number) => {
     return t(rootKey);
   }
 };
-
 </script>
 <template>
   <!-- 插槽列表，用于展示和操作组件的插槽 -->
@@ -151,13 +150,13 @@ const getI18n = (key: string | number) => {
           <svg-icon class="slot-item__icon" icon="appendSlot" />
           <span class="slot-item__text">{{ getI18n(key) }}</span>
         </div>
-        <!-- 自定义弹窗，用于展示插槽内的子组件 --> 
+        <!-- 自定义弹窗，用于展示插槽内的子组件 -->
         <customPopup
           trigger="click"
           placement="bottom"
           :destroyOnClose="true"
           :disabled="!selectedComp"
-          :visible="showKeyName === key && !!selectedComp"
+          :visible="String(showKeyName) === String(key) && !!selectedComp"
           @update:visible="(btn:boolean)=>updateModelValue(key, btn)"
           v-if="existSlot(key)"
         >
@@ -211,30 +210,64 @@ const getI18n = (key: string | number) => {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background-color: var(--ml-bg-color);
-  padding: var(--ml-pd-lg) var(--ml-pd-base);
+  padding: var(--ml-pd-base) var(--ml-pd-lg);
   border-radius: var(--ml-radius-base);
   margin-bottom: var(--ml-mg-base);
   width: 100%;
+  background-color: var(--ml-fill-color-blank);
+  border: 1px solid var(--ml-border-color-light);
+  transition: all 0.2s ease;
+  
+  &:hover {
+    background-color: var(--ml-fill-color-4);
+    border-color: var(--ml-border-color);
+  }
 
   .slot-item__title {
     display: flex;
     justify-content: flex-start;
     align-items: center;
+    flex: 1;
+    overflow: hidden;
 
     .slot-item__icon {
       min-width: 20px;
       height: 20px;
+      margin-right: var(--ml-mg-base);
+      color: var(--ml-primary-color);
     }
 
     .slot-item__text {
       font-size: 14px;
-      font-weight: bold;
+      font-weight: 500;
+      color: var(--ml-text-color-1);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .slot-item__input {
       width: 110px;
+      margin-left: var(--ml-mg-small);
     }
+  }
+  
+  .el-button, .ant-btn, .tiny-button {
+    margin-left: var(--ml-mg-base);
+  }
+}
+
+.slots-list {
+  margin: var(--ml-pd-base);
+  padding: 0;
+  border-radius: var(--ml-radius-base);
+}
+
+.designer-slot__selected-item {
+  transition: all 0.2s ease;
+  
+  &:hover {
+    transform: translateX(2px);
   }
 }
 </style>

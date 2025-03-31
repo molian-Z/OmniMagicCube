@@ -9,7 +9,7 @@ type ValueTypes = {
     boolean: boolean;
     object: Record<string, any>;
     array: any[];
-    function: Function;
+    function: FunctionDefinition;
     computed: any;
 };
 
@@ -114,12 +114,19 @@ declare namespace CubeData {
             [key: string]: {
                 /**
                  * 属性的类型。
+                 * - 当为 'variable' 时，value 应为字符串数组
+                 * - 当为 'function' 时，value 应为函数定义对象
+                 * - 其他类型时，value 的类型应与 type 对应
                  */
-                type?: any;
+                type?: 'string' | 'number' | 'boolean' | 'object' | 'array' | 'function' | 'variable' | 'computed' | string;
                 /**
                  * 属性的值。
+                 * 根据 type 的不同，value 的类型也会不同：
+                 * - 当 type 为 'variable' 时，value 是一个字符串数组
+                 * - 当 type 为 'function' 时，value 是一个函数定义对象
+                 * - 当 type 为其他类型时，value 应与 type 对应
                  */
-                value?: any;
+                value?: string | number | boolean | object | any[] | FunctionDefinition | string[];
                 /**
                  * 属性的额外信息。
                  */
@@ -145,11 +152,11 @@ declare namespace CubeData {
                 /**
                  * 指令的类型。
                  */
-                type?: 'string' | 'variable';
+                type?: 'string' | 'function' | 'variable';
                 /**
                  * 指令的值。
                  */
-                value?: string;
+                value?: string | FunctionDefinition | string[];
             };
             /**
              * 显示指令。
@@ -158,11 +165,11 @@ declare namespace CubeData {
                 /**
                  * 指令的类型。
                  */
-                type?: 'variable';
+                type?: 'function' | 'variable';
                 /**
                  * 指令的值。
                  */
-                value?: string[];
+                value?: FunctionDefinition | string[];
             };
             /**
              * 条件渲染指令。
@@ -171,11 +178,11 @@ declare namespace CubeData {
                 /**
                  * 指令的类型。
                  */
-                type?: 'variable';
+                type?: 'function' | 'variable';
                 /**
                  * 指令的值。
                  */
-                value?: string[];
+                value?: FunctionDefinition | string[];
             };
             /**
              * 列表渲染指令。
@@ -197,10 +204,6 @@ declare namespace CubeData {
                  * 列表项的数据键。
                  */
                 dataKey?: string;
-                /**
-                 * 列表项的索引键。
-                 */
-                indexKey?: string;
             };
         };
         /**

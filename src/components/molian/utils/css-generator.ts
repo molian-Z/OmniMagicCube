@@ -380,7 +380,7 @@ export const createCss = function (compObj: any) {
         if (cssProperties.length === 0) return '';
 
         // 构建 CSS 规则
-        return `.${getKebabCase(name)}__${key}{
+        return `.${key}{
             ${cssProperties.join(';')};
         }`;
     });

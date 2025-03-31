@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { defineProps, inject } from "vue";
 import deepTreeToRender from "./DeepTreeToRender.vue";
-import { toKebabCase } from "@molian/utils/util";
 import { parseProps } from "@molian/utils/useCore";
 import vCustomDirectives from "@molian/utils/useDirectives";
 import { watchThrottled } from '@vueuse/core';
+import { AnimationManager } from "@molianComps/AnimationEngine/services/animation-manager";
 
 const comps: any = inject("mlComps");
 const props = defineProps(<
@@ -63,9 +63,7 @@ const parsedProps = computed(() =>
   parseProps(props.comp, comps.value, variable.value, props.expandAPI, props.slotData, 'render')
 );
 
-const componentClass = computed(() => 
-  `${toKebabCase(props.comp.name)}__${props.comp.key}`
-);
+const componentClass = computed(() => props.comp.key);
 const directiveParams = computed(() => ({
   comp: props.comp,
   $slot: props.slotData,
@@ -74,14 +72,61 @@ const directiveParams = computed(() => ({
 }));
 
 const vCurrentDirectives = computed(() => 
-  vCustomDirectives(directiveParams.value)
+    vCustomDirectives(directiveParams.value)
 );
+
+// 处理组件动画
+const componentRef = ref<any>(null);
+let animationManager: any = null;
+onMounted(() => {
+  if (props.comp.animations && componentRef.value) {
+    const element = componentRef.value.$el || componentRef.value;
+    // 创建动画管理器
+    animationManager = new AnimationManager(
+      element,
+      props.comp.animations,
+      {
+        component: componentRef,
+        props: parsedProps,
+        variable: variable
+      }
+    ).init();
+  }
+});
+
+onBeforeUnmount(() => {
+  // 销毁动画管理器
+  if (animationManager) {
+    animationManager.destroy();
+    animationManager = null;
+  }
+});
+
+// 更新setRenderRef函数以保存组件引用
+const setComponentRef = (el: any, comp: any) => {
+  componentRef.value = el;
+  setRenderRef(el, comp);
+};
+
+// 提供触发动画的方法
+function triggerAnimation(animationType: string, animationName: string) {
+  if (animationManager) {
+    return animationManager.triggerAnimation(animationType, animationName);
+  }
+  return null;
+}
+
+// 暴露方法给父组件
+defineExpose({
+  triggerAnimation
+});
 </script>
+
 <template>
   <component
     :id="comp.id"
     :is="useComp"
-    :ref="(el: any) => setRenderRef(el, comp)"
+    :ref="(el: any) => setComponentRef(el, comp)"
     v-bind="parsedProps"
     :class="componentClass"
     v-currentDirectives="directiveParams"

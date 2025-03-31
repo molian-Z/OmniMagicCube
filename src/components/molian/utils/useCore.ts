@@ -340,7 +340,7 @@ export const createSlot = (
  * @param variable 指令使用的变量信息
  * @returns 返回一个对象，包含列表的类型和数据，或者在错误情况下返回错误信息
  */
-export const getForEachList = function (comp: any, variable: any): ForEachResult | any {
+export const getForEachList = function (comp: any, variable: any, expandAPI:any): ForEachResult | any {
     // 提前进行空值检查
     if (!comp?.directives?.for) {
         return {
@@ -358,7 +358,10 @@ export const getForEachList = function (comp: any, variable: any): ForEachResult
     }
 
     // 获取可迭代数据
-    let forEachData = data2Vars(comp.directives.for, variable.value);
+    let forEachData = data2Vars(comp.directives.for, variable.value, {
+        slotData: null, 
+        expandAPI,
+    });
     
     // 处理函数类型数据
     if (typeof forEachData === 'function') {
@@ -461,7 +464,6 @@ export const isNotSlot = (slots: SlotMap): boolean => {
  */
 export const data2Vars = (directive: Directive, vars: Record<string, any>, options: DirectiveOptions = {}): any => {
     const { type, value } = directive;
-
     switch (type) {
         case 'variable':
             if (!Array.isArray(value) || !value.length) {
@@ -478,7 +480,7 @@ export const data2Vars = (directive: Directive, vars: Record<string, any>, optio
             return value;
 
         case 'function':
-            return runOn(directive, vars, options.expandAPI)({ 
+            return runOn(directive, vars, options.expandAPI || {})({ 
                 $slot: options.slotData 
             });
 

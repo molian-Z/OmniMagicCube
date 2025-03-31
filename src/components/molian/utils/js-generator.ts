@@ -106,8 +106,13 @@ export const createJS = function (compObj: IComp, globalAttrs: { lifecycle: any;
         }).join('\n')
 
         // 函数代码生成
-        let jsCode = Object.keys(jsCodeObj).map(key => {
-            return `  const ${key.replace(/:/g, '__')} = ${jsCodeObj[key]};`
+        let jsCode = Object.keys(jsCodeObj)
+        // 移除 update:modelValue 事件
+        .filter(key => {
+            return key.endsWith('update:modelValue') === false
+        })
+        .map(key => {
+            return `  const ${key} = ${jsCodeObj[key]};`
         }).join('\n')
         let code = `<script setup>`
         // import引入
@@ -143,9 +148,6 @@ export const createJS = function (compObj: IComp, globalAttrs: { lifecycle: any;
         Object.keys(variable).forEach(key => {
             const type = variable[key].type
             let value = variable[key].value || ''
-            if (typeof value === 'object') {
-                value = JSON.stringify(value).replace(/"/g, "'")
-            }
             if (type === 'computed') {
                 variableObj.computed += `${key}() {${value && value.code || "return null"}}\n`
             } else if (type === 'function') {
@@ -153,15 +155,23 @@ export const createJS = function (compObj: IComp, globalAttrs: { lifecycle: any;
                     variableObj.methods += `  ['${key}']: ${parseJSCode(value)},\n`
                 }
             } else {
+                if (typeof value === 'object') {
+                    value = JSON.stringify(value).replace(/"/g, "'")
+                }
                 variableObj.data += `'${key}': ${type === 'string' ? "'" + value + "'" : value || 'null'},\n`
             }
         })
         // jsCode 写入
-        let jsCode = Object.keys(jsCodeObj).map(key => {
-            return `  ${key.replace(/:/g, '__')}: ${jsCodeObj[key]}`
+        let jsCode = Object.keys(jsCodeObj)
+        // 移除 update:modelValue 事件
+        .filter(key => {
+            return key.endsWith('update:modelValue') === false
+        })
+        .map(key => {
+            return `  ['${key}']: ${jsCodeObj[key]}`
         }).join(',\n')
         return `<script>
-  export default {
+export default {
     data(){
       return {
         ${variableObj.data}
@@ -172,7 +182,7 @@ export const createJS = function (compObj: IComp, globalAttrs: { lifecycle: any;
     },
     methods:{\n${variableObj.methods}${jsCode}\n},
     ${lifecycleStr}
-  }
+}
 </script>`
     }
 }
@@ -270,7 +280,24 @@ function deepObjCreateJs(jsCodeObj: { [x: string]: string }, obj: { [x: string]:
  */
 function parseJS(jsCodeObj: { [x: string]: string }, obj: { [x: string]: any }) {
     // 遍历obj中的每个属性，这些属性包含了事件处理信息
-    obj.forEach((item: { on: any; nativeOn: { [x: string]: any }; key: any }) => {
+    obj.forEach((item: { attrs: any; on: any; nativeOn: { [x: string]: any }; key: any }) => {
+        if(item.attrs) {
+            // 遍历attrs中的每个属性，这些属性包含了事件处理信息
+            for (const key in item.attrs) {
+                if (Object.hasOwnProperty.call(item.attrs, key)) {
+                    // 获取当前属性的详细信息
+                    const element = item.attrs[key];
+                    // 解构出属性的各个属性，包括类型、作用模式、代码和变量
+                    const { type, value } = element; 
+                    // 检查属性类型是否不是变量类型
+                    if (type === 'function') {
+                        // 解析属性处理代码，并将其存储到jsCodeObj中
+                        jsCodeObj[`${item.key}_${key}`] = parseJSCode(element.value)
+                    }
+                } 
+            }
+        }
+
         // 检查是否存在on属性，即是否存在普通事件处理对象
         if (item.on) {
             // 遍历事件对象的每个事件

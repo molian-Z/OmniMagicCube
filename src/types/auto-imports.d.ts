@@ -7,9 +7,15 @@
 export {}
 declare global {
   const AIURL: typeof import('../components/molian/utils/defaultData')['AIURL']
+  const AnimationEditor: typeof import('../components/molian/components/AnimationEngine/index')['AnimationEditor']
+  const AnimationEngine: typeof import('../components/molian/components/AnimationEngine/index')['default']
+  const AnimationManager: typeof import('../components/molian/components/AnimationEngine/services/animation-manager')['AnimationManager']
+  const AnimationPreview: typeof import('../components/molian/components/AnimationEngine/index')['AnimationPreview']
+  const AnimationService: typeof import('../components/molian/components/AnimationEngine/services/animation-service')['AnimationService']
   const CodeEditor: typeof import('../lib-render-main')['CodeEditor']
   const ComponentPool: typeof import('../components/molian/utils/componentPool')['ComponentPool']
   const EffectScope: typeof import('vue')['EffectScope']
+  const TemplateParser: typeof import('../components/molian/utils/template-parser')['TemplateParser']
   const UIData: typeof import('../components/molian/utils/UIMap')['UIData']
   const actionPanel: typeof import('../components/molian/components/Designer/designerData')['actionPanel']
   const add: typeof import('../components/molian/utils/indexedDB')['add']
@@ -71,6 +77,7 @@ declare global {
   const defineComponent: typeof import('vue')['defineComponent']
   const deleteAll: typeof import('../components/molian/utils/indexedDB')['deleteAll']
   const deleteById: typeof import('../components/molian/utils/indexedDB')['deleteById']
+  const designerForAi: typeof import('../components/molian/components/Designer/designerForAi')['default']
   const deviceList: typeof import('../components/molian/utils/device')['deviceList']
   const directives: typeof import('../components/molian/components/Designer/containerDesigner/directives')['directives']
   const dragComp: typeof import('../components/molian/components/Designer/draggable')['dragComp']
@@ -87,16 +94,19 @@ declare global {
   const generateRandomString: typeof import('../components/molian/components/Designer/designerData')['generateRandomString']
   const generateUUID: typeof import('../components/molian/utils/util')['generateUUID']
   const get: typeof import('../components/molian/utils/indexedDB')['get']
+  const getAIPrompt: typeof import('../components/molian/components/Designer/designerForAi')['getAIPrompt']
   const getAll: typeof import('../components/molian/utils/indexedDB')['getAll']
   const getChartData: typeof import('../components/molian/utils/util')['getChartData']
   const getCloudData: typeof import('../components/molian/utils/getCloudData')['getCloudData']
   const getCurrentInstance: typeof import('vue')['getCurrentInstance']
   const getCurrentOn: typeof import('../components/molian/utils/customFunction')['getCurrentOn']
   const getCurrentScope: typeof import('vue')['getCurrentScope']
+  const getDefaultAnimationConfig: typeof import('../components/molian/components/AnimationEngine/services/animation-service')['getDefaultAnimationConfig']
   const getForEachList: typeof import('../components/molian/utils/useCore')['getForEachList']
   const getHighRules: typeof import('../components/molian/components/MlCodeEditor/tips.js')['getHighRules']
   const getLocales: typeof import('../components/molian/locales/index')['getLocales']
   const getNthParent: typeof import('../components/molian/utils/useCore')['getNthParent']
+  const getSelectedAIData: typeof import('../components/molian/components/Designer/designerForAi')['getSelectedAIData']
   const getValue: typeof import('../components/molian/utils/useCore')['getValue']
   const getVariableData: typeof import('../components/molian/utils/customFunction')['getVariableData']
   const globalAttrs: typeof import('../components/molian/components/Designer/designerData')['globalAttrs']
@@ -197,6 +207,7 @@ declare global {
   const undo: typeof import('../components/molian/components/Designer/designerData')['undo']
   const unref: typeof import('vue')['unref']
   const update: typeof import('../components/molian/utils/indexedDB')['update']
+  const updateFromAI: typeof import('../components/molian/components/Designer/designerForAi')['updateFromAI']
   const useAttrs: typeof import('vue')['useAttrs']
   const useCssModule: typeof import('vue')['useCssModule']
   const useCssVars: typeof import('vue')['useCssVars']
@@ -221,10 +232,19 @@ declare global {
 // for type re-export
 declare global {
   // @ts-ignore
+  export type { AnimationManager } from '../components/molian/components/AnimationEngine/services/animation-manager'
+  import('../components/molian/components/AnimationEngine/services/animation-manager')
+  // @ts-ignore
+  export type { AnimationService } from '../components/molian/components/AnimationEngine/services/animation-service'
+  import('../components/molian/components/AnimationEngine/services/animation-service')
+  // @ts-ignore
   export type { ComponentPool } from '../components/molian/utils/componentPool'
   import('../components/molian/utils/componentPool')
   // @ts-ignore
-  export type { IStyleMap, IConstX, IBorderRadius, IOpacity, IComp, ICss, IBlur, IColor, ISlots, IDefault, IAttrs, Component, ComponentPublicInstance, ComputedRef, DirectiveBinding, ExtractDefaultPropTypes, ExtractPropTypes, ExtractPublicPropTypes, InjectionKey, PropType, Ref, MaybeRef, MaybeRefOrGetter, VNode, WritableComputedRef } from './auto-imports.d'
+  export type { TemplateParser } from '../components/molian/utils/template-parser'
+  import('../components/molian/utils/template-parser')
+  // @ts-ignore
+  export type { AnimationEffect, AnimationConfig, ComponentAnimations, IStyleMap, IConstX, IBorderRadius, IOpacity, IComp, ICss, IBlur, IColor, ISlots, IDefault, IAttrs, Component, ComponentPublicInstance, ComputedRef, DirectiveBinding, ExtractDefaultPropTypes, ExtractPropTypes, ExtractPublicPropTypes, InjectionKey, PropType, Ref, MaybeRef, MaybeRefOrGetter, VNode, WritableComputedRef } from './auto-imports.d'
   import('./auto-imports.d')
   // @ts-ignore
   export type { GlobalComponents } from './components.d'

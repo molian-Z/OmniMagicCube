@@ -20,6 +20,7 @@ import { getVariableData } from '@molian/utils/customFunction'
 import { defaultNativeEventMap, defaultLifecycleMap } from '@molian/utils/defaultData'
 import { currentRegComps } from '@molian/utils/compsConfig'
 import { initCss } from '@molian/utils/css-generator'
+import { en } from 'element-plus/es/locale'
 // 菜单交互
 export const hiddenAllPanel = ref(false)
 export const compPanel = ref<string>('basic')
@@ -97,19 +98,77 @@ export const selectedDom = ref<HTMLElement | null>()
 /**
  * 设置选中的组件，并初始化其CSS属性
  * @param comp 选中的组件对象，该对象应包含一个css属性，用于存储CSS样式
+ * @param evt 事件对象
  * 
- * 此函数的目的是确保选中的组件有一个完整的css对象，
- * 即使该组件的css对象中缺少某些初始化Css中包含的键
+ * 此函数的目的是确保选中的组件有一个完整的css对象和animations对象，
+ * 并且确保modelValue中对应的组件也有相同的结构
  */
-export const setSelectedComp = (comp: any, evt:any) => {
-    // 将选中的组件设置为全局选中的组件
-    selectedComp.value = comp
-    // 设置打点框
-    if(evt) {
-        selectedDom.value = evt.target
-    } else {
-        selectedDom.value = null
+export const setSelectedComp = (comp: any, evt: any) => {
+    if (!comp) {
+        selectedComp.value = null;
+        selectedDom.value = null;
+        return;
     }
+    
+    // 初始化animations结构
+    ensureAnimationsStructure(comp);
+    
+    // 设置选中组件和DOM元素
+    selectedComp.value = comp;
+    selectedDom.value = evt ? evt.target : null;
+    
+    // 确保modelValue中对应组件的animations结构也是完整的
+    if (modelValue.value && comp.id) {
+        syncComponentInModelValue(modelValue.value, comp.id);
+    }
+}
+
+/**
+ * 确保组件有完整的animations结构
+ * @param comp 需要检查的组件对象
+ */
+const ensureAnimationsStructure = (comp: any): void => {
+    if (!comp.animations) {
+        comp.animations = {
+            enter: [],
+            leave: [],
+            stateChange: {},
+            interaction: {},
+        };
+    } else {
+        if (!comp.animations.enter) comp.animations.enter = [];
+        if (!comp.animations.leave) comp.animations.leave = [];
+        if (!comp.animations.stateChange) comp.animations.stateChange = {};
+        if (!comp.animations.interaction) comp.animations.interaction = {};
+    }
+}
+
+/**
+ * 在modelValue中查找并同步组件的animations结构
+ * @param items 组件数组
+ * @param compId 要查找的组件ID
+ * @returns 是否找到并更新了组件
+ */
+const syncComponentInModelValue = (items: any[], compId: string): boolean => {
+    for (let i = 0; i < items.length; i++) {
+        const item = items[i];
+        if (item.id === compId) {
+            ensureAnimationsStructure(item);
+            return true;
+        }
+        
+        // 递归检查子组件
+        if (item.slots) {
+            for (const slotKey in item.slots) {
+                if (item.slots[slotKey].children && item.slots[slotKey].children.length) {
+                    if (syncComponentInModelValue(item.slots[slotKey].children, compId)) {
+                        return true;
+                    }
+                }
+            }
+        }
+    }
+    return false;
 }
 
 // 编辑输入框内容时不触发魔术键
@@ -322,6 +381,12 @@ export const createComp = function (comp: ComponentConfig, appendComp?: any) {
         on: {},
         nativeOn: {},
         directives: {},
+        animations: {
+            enter: [],
+            leave: [],
+            stateChange: {},
+            interaction: {},
+        },
     };
 
     // 处理组件属性
@@ -556,6 +621,7 @@ interface InitialObject {
     on: Record<string, any>;
     nativeOn: Record<string, any>;
     directives: Record<string, any>;
+    animations: ComponentAnimations;
 }
 
 interface NativeEvent {
