@@ -232,19 +232,7 @@ declare global {
 // for type re-export
 declare global {
   // @ts-ignore
-  export type { AnimationManager } from '../components/molian/components/AnimationEngine/services/animation-manager'
-  import('../components/molian/components/AnimationEngine/services/animation-manager')
-  // @ts-ignore
-  export type { AnimationService } from '../components/molian/components/AnimationEngine/services/animation-service'
-  import('../components/molian/components/AnimationEngine/services/animation-service')
-  // @ts-ignore
-  export type { ComponentPool } from '../components/molian/utils/componentPool'
-  import('../components/molian/utils/componentPool')
-  // @ts-ignore
-  export type { TemplateParser } from '../components/molian/utils/template-parser'
-  import('../components/molian/utils/template-parser')
-  // @ts-ignore
-  export type { AnimationEffect, AnimationConfig, ComponentAnimations, IStyleMap, IConstX, IBorderRadius, IOpacity, IComp, ICss, IBlur, IColor, ISlots, IDefault, IAttrs, Component, ComponentPublicInstance, ComputedRef, DirectiveBinding, ExtractDefaultPropTypes, ExtractPropTypes, ExtractPublicPropTypes, InjectionKey, PropType, Ref, MaybeRef, MaybeRefOrGetter, VNode, WritableComputedRef } from './auto-imports.d'
+  export type { AnimationManager, AnimationService, ComponentPool, TemplateParser, AnimationEffect, AnimationConfig, ComponentAnimations, IStyleMap, IConstX, IBorderRadius, IOpacity, IComp, ICss, IBlur, IColor, ISlots, IDefault, IAttrs, Component, ComponentPublicInstance, ComputedRef, DirectiveBinding, ExtractDefaultPropTypes, ExtractPropTypes, ExtractPublicPropTypes, InjectionKey, PropType, Ref, MaybeRef, MaybeRefOrGetter, VNode, WritableComputedRef } from './auto-imports.d'
   import('./auto-imports.d')
   // @ts-ignore
   export type { GlobalComponents } from './components.d'

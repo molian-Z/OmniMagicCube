@@ -1,15 +1,7 @@
 <script setup lang="ts">
 import { useI18n } from "vue-i18n";
-import {
-  ElFormItem,
-  ElSelect,
-  ElOption,
-  ElInputNumber,
-  ElInput,
-  ElSwitch,
-  ElDivider,
-} from "element-plus";
-
+const customComps: any = inject("customComps");
+const { customInputNumber, customSelect, customSwitch, customDivider } = customComps;
 const props = defineProps({
   modelValue: {
     type: Object,
@@ -74,82 +66,93 @@ ensureDefaults();
 <template>
   <div class="timeline-editor">
     <!-- 基本设置 -->
-    <ElFormItem :label="t('animation.timeline.repeat')">
-      <ElInputNumber
-        v-model="modelValue.repeat"
-        :min="-1"
-        :step="1"
-        class="full-width"
-        @change="(val) => updateTimeline('repeat', val)"
-      />
-      <div class="form-hint">
-        {{ t("animation.timeline.repeatHint") }}
-      </div>
-    </ElFormItem>
+    <div class="form-section">
+      <div class="form-row">
+        <!-- 重复次数 -->
+        <div class="form-item">
+          <div class="form-label">{{ t('animation.timeline.repeat') }}</div>
+          <customInputNumber
+            v-model="modelValue.repeat"
+            :min="-1"
+            :step="1"
+            @change="(val: any) => updateTimeline('repeat', val)"
+          />
+          <div class="form-hint">
+            {{ t("animation.timeline.repeatHint") }}
+          </div>
+        </div>
 
-    <ElFormItem :label="t('animation.timeline.yoyo')">
-      <ElSwitch
-        v-model="modelValue.yoyo"
-        @change="(val) => updateTimeline('yoyo', val)"
-      />
-      <div class="form-hint">
-        {{ t("animation.timeline.yoyoHint") }}
+        <!-- 往返动画 -->
+        <div class="form-item">
+          <div class="form-label">{{ t('animation.timeline.yoyo') }}</div>
+          <customSwitch
+            v-model="modelValue.yoyo"
+            @change="(val: any) => updateTimeline('yoyo', val)"
+          />
+          <div class="form-hint">
+            {{ t("animation.timeline.yoyoHint") }}
+          </div>
+        </div>
       </div>
-    </ElFormItem>
 
-    <ElFormItem :label="t('animation.timeline.delay')">
-      <ElInputNumber
-        v-model="modelValue.delay"
-        :min="0"
-        :step="0.1"
-        :precision="1"
-        class="full-width"
-        @change="(val) => updateTimeline('delay', val)"
-      />
-    </ElFormItem>
+      <div class="form-row">
+        <!-- 延迟时间 -->
+        <div class="form-item">
+          <div class="form-label">{{ t('animation.timeline.delay') }}</div>
+          <customInputNumber
+            v-model="modelValue.delay"
+            :min="0"
+            :step="0.1"
+            :precision="1"
+            @change="(val: any) => updateTimeline('delay', val)"
+          />
+        </div>
 
-    <ElFormItem :label="t('animation.timeline.timeScale')">
-      <ElInputNumber
-        v-model="modelValue.timeScale"
-        :min="0.1"
-        :step="0.1"
-        :precision="1"
-        class="full-width"
-        @change="(val) => updateTimeline('timeScale', val)"
-      />
-      <div class="form-hint">
-        {{ t("animation.timeline.timeScaleHint") }}
+        <!-- 播放速度 -->
+        <div class="form-item">
+          <div class="form-label">{{ t('animation.timeline.timeScale') }}</div>
+          <customInputNumber
+            v-model="modelValue.timeScale"
+            :min="0.1"
+            :step="0.1"
+            :precision="1"
+            @change="(val: any) => updateTimeline('timeScale', val)"
+          />
+          <div class="form-hint">
+            {{ t("animation.timeline.timeScaleHint") }}
+          </div>
+        </div>
       </div>
-    </ElFormItem>
+    </div>
 
     <!-- 默认设置 -->
-    <ElDivider>{{ t("animation.timeline.defaults") }}</ElDivider>
+    <customDivider>{{ t("animation.timeline.defaults") }}</customDivider>
 
-    <ElFormItem :label="t('animation.timeline.defaultDuration')">
-      <ElInputNumber
-        v-model="modelValue.defaults.duration"
-        :min="0"
-        :step="0.1"
-        :precision="1"
-        class="full-width"
-        @change="(val) => updateDefaults('duration', val)"
-      />
-    </ElFormItem>
+    <div class="form-section">
+      <div class="form-row">
+        <!-- 默认持续时间 -->
+        <div class="form-item">
+          <div class="form-label">{{ t('animation.timeline.defaultDuration') }}</div>
+          <customInputNumber
+            v-model="modelValue.defaults.duration"
+            :min="0"
+            :step="0.1"
+            :precision="1"
+            @change="(val: any) => updateDefaults('duration', val)"
+          />
+        </div>
 
-    <ElFormItem :label="t('animation.timeline.defaultEase')">
-      <ElSelect
-        v-model="modelValue.defaults.ease"
-        class="full-width"
-        @change="(val) => updateDefaults('ease', val)"
-      >
-        <ElOption
-          v-for="option in easeOptions"
-          :key="option.value"
-          :label="option.label"
-          :value="option.value"
-        />
-      </ElSelect>
-    </ElFormItem>
+        <!-- 默认缓动函数 -->
+        <div class="form-item">
+          <div class="form-label">{{ t('animation.timeline.defaultEase') }}</div>
+          <customSelect
+            v-model="modelValue.defaults.ease"
+            :options="easeOptions"
+            @change="(val: any) => updateDefaults('ease', val)"
+          />
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -157,14 +160,14 @@ ensureDefaults();
 .timeline-editor {
   margin-bottom: 16px;
 
-  .full-width {
-    width: 100%;
+  .form-section {
+    margin-bottom: 16px;
   }
 
   .form-hint {
-    font-size: 12px;
-    color: var(--ml-text-color-secondary);
-    margin-top: 4px;
+    font-size: 14px;
+    color: var(--ml-text-color-6);
+    margin-left: 8px;
   }
 }
 </style>

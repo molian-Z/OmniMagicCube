@@ -734,10 +734,17 @@
         "engine": "Animation Engine",
         "stateName": "State Name",
         "pleaseSelectedComponent": "Please select a component first",
+        "duration": "Duration",
+        "delay": "Delay",
+        "custom": "Custom Properties",
+        "customHint": "Please drag the preview element to set custom properties",
+        "visualEditor": "Visual Editor",
+        "visualEditorHint": "Edit animation effects visually",
+        "dragHint": "Please drag the container preview element to set animation effects",
         "trigger": {
             "title": "Trigger",
             "type": "Trigger Type",
-            "delay": "Delay Time (seconds)",
+            "delay": "Delay (seconds)",
             "onMount": "On Component Mount",
             "onUnmount": "On Component Unmount",
             "onClick": "On Click",
@@ -752,7 +759,9 @@
             "operator": "Operator",
             "value": "Value",
             "expression": "Expression",
-            "advanced": "Advanced Settings"
+            "advanced": "Advanced Settings",
+            "conditionOperator": "Condition Operator",
+            "conditionValue": "Condition Value"
         },
         "effect": {
             "title": "Effect",
@@ -768,13 +777,24 @@
             "custom": "Custom",
             "opacity": "Opacity",
             "rotation": "Rotation Angle",
-            "distance": "Moving Distance",
+            "distance": "Movement Distance",
             "direction": {
                 "title": "Direction",
                 "up": "Up",
                 "down": "Down",
                 "left": "Left",
-                "right": "Right"
+                "right": "Right",
+                "topLeft": "Top Left",
+                "topRight": "Top Right",
+                "bottomLeft": "Bottom Left",
+                "bottomRight": "Bottom Right"
+            },
+            "shortcuts": {
+                "hint": "Shortcuts:",
+                "playPause": "Space (Play/Pause)",
+                "frameNavigation": "←→ (Prev/Next Frame)",
+                "jumpToEnds": "Home/End (Start/End)",
+                "deleteEffect": "Delete (Remove Effect)"
             },
             "customProperties": "Custom Properties",
             "propertyName": "Property Name",
@@ -787,7 +807,7 @@
             "self": "Current Element",
             "children": "Child Elements",
             "selector": "Selector",
-            "childSelector": "Child Selector"
+            "childSelector": "Child Element Selector"
         },
         "settings": {
             "title": "Animation Settings",
@@ -803,12 +823,12 @@
             "repeatHint": "-1 means infinite loop, 0 means no repeat",
             "yoyo": "Yoyo Animation",
             "yoyoHint": "Whether to play in reverse after completion",
-            "delay": "Delay Time (seconds)",
+            "delay": "Delay (seconds)",
             "timeScale": "Playback Speed",
             "timeScaleHint": "Greater than 1 speeds up, less than 1 slows down",
             "defaults": "Default Settings",
             "defaultDuration": "Default Duration",
-            "defaultEase": "Default Easing Function",
+            "defaultEase": "Default Easing",
             "defaultStagger": "Default Stagger Time",
             "staggerHint": "Interval time between multiple element animations",
             "advancedTitle": "Advanced Settings",

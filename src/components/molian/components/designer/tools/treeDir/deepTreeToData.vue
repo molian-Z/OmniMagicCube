@@ -210,13 +210,13 @@ const switchOpened = (id: number) => {
         ></customInput>
         <svg-icon
           class="tree-node-header__title-icon"
-          icon="ep:edit"
+          icon="edit"
           @click="editCompIndex = index"
           v-if="editCompIndex !== index"
         ></svg-icon>
         <svg-icon
           class="tree-node-header__title-icon"
-          icon="ep:select"
+          icon="select"
           v-else
           @click="editCompIndex = -1"
         ></svg-icon>

@@ -105,7 +105,7 @@ const showModelValue = computed(() => {
       >
         <template #suffix>
           <svg-icon
-            icon="ep:circle-close"
+            icon="circle-close"
             :class="[
               'arrow-selected',
               isClearable && 'is-selected',
@@ -115,7 +115,7 @@ const showModelValue = computed(() => {
             v-if="isClearable"
           ></svg-icon>
           <svg-icon
-            icon="ep:arrow-down"
+            icon="arrow-down"
             :class="[
               'arrow-selected',
               !!openedShow && 'is-opened',

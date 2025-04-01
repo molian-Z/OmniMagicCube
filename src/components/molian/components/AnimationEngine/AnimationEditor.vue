@@ -3,22 +3,14 @@ import { computed, ref, reactive, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import AnimationPreview from "./AnimationPreview.vue";
 import EffectEditor from "./components/EffectEditor.vue";
+// 导入可视化效果编辑器
+import VisualEffectEditor from "./components/VisualEffectEditor/index.vue";
 import TriggerEditor from "./components/TriggerEditor.vue";
 import TimelineEditor from "./components/TimelineEditor.vue";
 import AnimationList from "./components/AnimationList.vue";
 import { getDefaultAnimationConfig } from "./services/animation-service";
-
-import { 
-  ElForm, 
-  ElFormItem, 
-  ElInput,
-  ElSelect,
-  ElOption,
-  ElButton,
-  ElCollapse,
-  ElCollapseItem
-} from 'element-plus';
-
+const customComps: any = inject("customComps");
+const { customInput, customSwitch, customSelect, customButton, customTooltip, customCollapse, customCollapseItem } = customComps;
 const props = defineProps({
   // 组件ID或引用
   componentId: {
@@ -35,6 +27,8 @@ const props = defineProps({
 const emit = defineEmits(['update:animations', 'preview']);
 
 const { t } = useI18n();
+
+const engineOptions = ref([{label: 'GSAP',value: 'gsap'},{label: 'CSS',value: 'css'}]);
 
 // 动画类型选项
 const animationTypes = ref([
@@ -197,6 +191,23 @@ const previewAnimation = () => {
 const showPreview = ref(false);
 const showEditDialog = ref(false);
 
+// 添加预览元素引用
+const previewElementRef = ref(null);
+
+// 添加可视化编辑器控制变量
+const useVisualEditor = ref(true);
+
+// 监听可视化编辑器状态变化
+watch(useVisualEditor, (newValue) => {
+  // 如果开启可视化编辑，从折叠面板中移除timeline
+  if (newValue) {
+    activeCollapseNames.value = activeCollapseNames.value.filter(name => name !== 'timeline');
+  } else if (!activeCollapseNames.value.includes('timeline') && currentConfig.engine === 'gsap') {
+    // 如果关闭可视化编辑且当前引擎是gsap，添加timeline到折叠面板
+    activeCollapseNames.value.push('timeline');
+  }
+});
+
 // 添加折叠面板状态控制
 const activeCollapseNames = ref(['trigger', 'timeline', 'effects']);
 
@@ -231,9 +242,10 @@ const saveAndCloseDialog = () => {
       <template v-if="currentAnimationType === 'stateChange' || currentAnimationType === 'interaction'">
         <!-- 状态变化和交互动画需要先选择或创建具体的动画名称 -->
         <div class="animation-name-selector">
-          <ElFormItem :label="t('animation.stateName')">
-            <ElInput v-model="currentConfig.stateName" />
-          </ElFormItem>
+          <div class="form-item">
+            <div class="form-label">{{ t('animation.stateName') }}</div>
+            <customInput v-model="currentConfig.stateName" />
+          </div>
         </div>
       </template>
       
@@ -254,16 +266,17 @@ const saveAndCloseDialog = () => {
       <div class="preview-header">
         <span>{{ t("animation.preview") }}</span>
         <div class="preview-actions" v-if="currentAnimation">
-          <ElButton type="primary" size="small" @click="previewAnimation" :loading="showPreview">
+          <customButton theme="primary" size="small" @click="previewAnimation" :loading="showPreview">
             {{ t('animation.play') }}
-          </ElButton>
-          <ElButton size="small" @click="openEditDialog">
+          </customButton>
+          <customButton size="small" @click="openEditDialog">
             {{ t('animation.edit') }}
-          </ElButton>
+          </customButton>
         </div>
       </div>
       <div class="preview-content">
         <AnimationPreview 
+          ref="previewElementRef"
           :component-id="props.componentId"
           :animation-config="currentConfig"
           :animation-type="currentAnimationType"
@@ -278,60 +291,78 @@ const saveAndCloseDialog = () => {
     <ElDialog
       v-model="showEditDialog"
       :title="t('animation.editAnimation')"
-      width="600px"
+      width="1100px"
+      top="50px"
       :close-on-click-modal="false"
       :append-to-body="true"
     >
-      <ElForm label-width="140px" @submit.prevent="updateAnimation">
-        <!-- 动画名称 -->
-        <ElFormItem :label="t('animation.animationName')">
-          <ElInput v-model="currentConfig.name" />
-        </ElFormItem>
-        
-        <!-- 引擎选择 -->
-        <ElFormItem :label="t('animation.engine')">
-          <ElSelect v-model="currentConfig.engine" class="full-width">
-            <ElOption label="GSAP" value="gsap" />
-            <ElOption label="CSS" value="css" />
-          </ElSelect>
-        </ElFormItem>
+      <div class="animation-form-container">
+        <!-- 基本信息区域 -->
+        <div class="form-row">
+          <!-- 动画名称 -->
+          <div class="form-item">
+            <div class="form-label">{{ t('animation.animationName') }}</div>
+            <customInput v-model="currentConfig.name" />
+          </div>
+          
+          <!-- 引擎选择 -->
+          <div class="form-item">
+            <div class="form-label">{{ t('animation.engine') }}</div>
+            <customSelect v-model="currentConfig.engine" class="full-width" :options="engineOptions" />
+          </div>
+        </div>
         
         <!-- 使用统一的折叠面板 -->
-        <ElCollapse v-model="activeCollapseNames" class="animation-collapse">
+        <customCollapse v-model="activeCollapseNames" class="animation-collapse">
           <!-- 触发器编辑器组件 -->
-          <ElCollapseItem :title="t('animation.trigger.title')" name="trigger">
+          <customCollapseItem :title="t('animation.trigger.title')" name="trigger">
             <TriggerEditor 
               v-model="currentConfig.trigger"
               :animation-type="currentAnimationType"
             />
-          </ElCollapseItem>
+          </customCollapseItem>
 
-          <!-- 时间线编辑器组件 -->
-          <ElCollapseItem 
-            v-if="currentConfig.engine === 'gsap'" 
+          <!-- 时间线编辑器组件 - 在可视化编辑模式下隐藏 -->
+          <customCollapseItem 
+            v-if="currentConfig.engine === 'gsap' && !useVisualEditor" 
             :title="t('animation.timeline.title')" 
             name="timeline"
           >
             <TimelineEditor 
               v-model="currentConfig.timeline"
             />
-          </ElCollapseItem>
+          </customCollapseItem>
           
           <!-- 效果编辑器组件 -->
-          <ElCollapseItem :title="t('animation.effect.title')" name="effects">
-            <EffectEditor 
+          <customCollapseItem :title="t('animation.effect.title')" name="effects">
+            <!-- 添加编辑模式切换 -->
+            <div class="editor-mode-switch">
+              <span>{{ t('animation.visualEditor', '可视化编辑') }}</span>
+              <customSwitch v-model="useVisualEditor" />
+              <customTooltip :content="t('animation.visualEditorHint', '使用可视化方式编辑动画效果')">
+                <svg-icon icon="question-filled" />
+              </customTooltip>
+            </div>
+            
+            <!-- 根据模式选择不同的编辑器 -->
+            <VisualEffectEditor 
+              v-if="useVisualEditor"
               v-model="currentConfig.effects"
             />
-          </ElCollapseItem>
-        </ElCollapse>
-      </ElForm>
+            <EffectEditor 
+              v-else
+              v-model="currentConfig.effects"
+            />
+          </customCollapseItem>
+        </customCollapse>
+      </div>
       
       <template #footer>
         <div class="dialog-footer">
-          <ElButton @click="showEditDialog = false">{{ t('animation.cancel') }}</ElButton>
-          <ElButton type="primary" @click="saveAndCloseDialog">
+          <customButton @click="showEditDialog = false">{{ t('animation.cancel') }}</customButton>
+          <customButton theme="primary" @click="saveAndCloseDialog">
             {{ t('animation.save') }}
-          </ElButton>
+          </customButton>
         </div>
       </template>
     </ElDialog>
@@ -468,6 +499,58 @@ const saveAndCloseDialog = () => {
   
   :deep(.el-collapse-item__content) {
     padding: 16px 8px;
+  }
+}
+
+/* 添加编辑模式切换样式 */
+.editor-mode-switch {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+  background-color: var(--ml-fill-color-light);
+  border-radius: var(--ml-radius-base);
+  
+  span {
+    font-size: 14px;
+    color: var(--ml-text-color-secondary);
+  }
+  
+  i {
+    color: var(--ml-text-color-secondary);
+    cursor: pointer;
+  }
+}
+</style>
+
+<style lang="scss">
+/* 新增表单布局样式 */
+.animation-form-container {
+  margin-bottom: 20px;
+  
+  .form-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+  
+  .form-item {
+    flex: 1;
+    min-width: 200px;
+    max-width: calc(50% - 8px);
+    display: flex;
+    align-items: center;
+  }
+  
+  .form-label {
+    font-size: 14px;
+    color: var(--ml-text-color);
+    width: 120px;
+  }
+  
+  .full-width {
+    width: 100%;
   }
 }
 </style>

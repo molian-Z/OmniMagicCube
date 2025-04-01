@@ -56,13 +56,13 @@ const currentTitle = computed(() => {
           ></customInput>
           <svg-icon
             class="drag-title-text__icon"
-            icon="ep:edit"
+            icon="edit"
             @click="editSubTitle = true"
             v-if="!editSubTitle"
           ></svg-icon>
           <svg-icon
             class="drag-title-text__icon"
-            icon="ep:select"
+            icon="select"
             v-else
             @click="editSubTitle = false"
           ></svg-icon>

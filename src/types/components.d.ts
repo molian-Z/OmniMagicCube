@@ -39,6 +39,7 @@ declare module 'vue' {
     DropHint: typeof import('./../components/molian/components/Designer/containerDesigner/components/DropHint.vue')['default']
     Echarts: typeof import('./../components/molian/components/Echarts/index.vue')['default']
     Effect: typeof import('./../components/molian/components/Designer/cssDesigner/css-tool-panel/effect.vue')['default']
+    EffectControls: typeof import('./../components/molian/components/AnimationEngine/components/VisualEffectEditor/EffectControls.vue')['default']
     EffectEditor: typeof import('./../components/molian/components/AnimationEngine/components/EffectEditor.vue')['default']
     Fill: typeof import('./../components/molian/components/Designer/cssDesigner/css-tool-panel/fill.vue')['default']
     FloatBall: typeof import('./../components/molian/components/FloatBall/index.vue')['default']
@@ -66,6 +67,7 @@ declare module 'vue' {
     OptionsDesigner: typeof import('./../components/molian/components/Designer/optionsDesigner/index.vue')['default']
     Pagination: typeof import('./../components/molian/components/Pagination/index.vue')['default']
     Popper: typeof import('./../components/molian/components/Popper/index.vue')['default']
+    PreviewArea: typeof import('./../components/molian/components/AnimationEngine/components/VisualEffectEditor/PreviewArea.vue')['default']
     Prop: typeof import('./../components/molian/components/Designer/optionsDesigner/pages/prop.vue')['default']
     Render: typeof import('./../components/molian/components/Render/index.vue')['default']
     RenderFor: typeof import('./../components/molian/components/Render/RenderFor.vue')['default']
@@ -83,6 +85,8 @@ declare module 'vue' {
     SwitchButton: typeof import('./../components/molian/components/SwitchButton/index.vue')['default']
     TagGroup: typeof import('./../components/molian/components/TagGroup/index.vue')['default']
     TagInput: typeof import('./../components/molian/components/TagInput/index.vue')['default']
+    TimelineCanvas: typeof import('./../components/molian/components/AnimationEngine/components/VisualEffectEditor/TimelineCanvas.vue')['default']
+    TimelineControls: typeof import('./../components/molian/components/AnimationEngine/components/VisualEffectEditor/TimelineControls.vue')['default']
     TimelineEditor: typeof import('./../components/molian/components/AnimationEngine/components/TimelineEditor.vue')['default']
     ToolBar: typeof import('./../components/molian/components/Designer/containerDesigner/toolBar/index.vue')['default']
     ToolSideBar: typeof import('./../components/molian/components/Designer/toolSideBar/index.vue')['default']
@@ -95,5 +99,6 @@ declare module 'vue' {
     Variable: typeof import('./../components/molian/components/Designer/optionsDesigner/tooltip/variable.vue')['default']
     VariablePicker: typeof import('./../components/molian/components/VariablePicker/index.vue')['default']
     VerticalContainer: typeof import('./../components/molian/components/MolianLayoutContainer/verticalContainer.vue')['default']
+    VisualEffectEditor: typeof import('./../components/molian/components/AnimationEngine/components/VisualEffectEditor/index.vue')['default']
   }
 }

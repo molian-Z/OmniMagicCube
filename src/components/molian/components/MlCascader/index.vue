@@ -88,7 +88,7 @@ const selected = () => {
       >
         <template #suffix>
           <svg-icon
-            :icon="isClearable ? 'ep:circle-close' : 'ep:arrow-down'"
+            :icon="isClearable ? 'circle-close' : 'arrow-down'"
             :class="[
               'arrow-selected',
               isClearable && 'is-selected',

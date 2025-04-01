@@ -92,11 +92,11 @@ const navToPage = (i:number) =>{
   <div class="pagination-container">
     <div class="pagination-page">
       <div :class="['pagination-prev', !!isFirstPage && 'disabled']" @click="clickPrev">
-        <icon icon="ep:arrow-left-bold"></icon>
+        <icon icon="arrow-left-bold"></icon>
       </div>
       <div :class="['pagination-page-count', currentPage === i && 'active']" v-for="i in cmptdCurrentPageCount" @click="navToPage(i)">{{ i }}</div>
       <div :class="['pagination-next', !!isLastPage && 'disabled']" @click="clickNext">
-        <icon icon="ep:arrow-right-bold"></icon>
+        <icon icon="arrow-right-bold"></icon>
       </div>
     </div>
     <div class="pagination-total">{{total}}</div>

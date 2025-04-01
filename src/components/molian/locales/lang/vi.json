@@ -713,8 +713,8 @@
     },
     "animation": {
         "title": "Trình soạn thảo hoạt ảnh",
-        "enter": "Hoạt ảnh vào",
-        "leave": "Hoạt ảnh ra",
+        "enter": "Hoạt ảnh đi vào",
+        "leave": "Hoạt ảnh đi ra",
         "stateChange": "Hoạt ảnh thay đổi trạng thái",
         "interaction": "Hoạt ảnh tương tác",
         "animationName": "Tên hoạt ảnh",
@@ -722,7 +722,7 @@
         "animation": "Hoạt ảnh",
         "editAnimation": "Chỉnh sửa hoạt ảnh",
         "noAnimations": "Chưa có hoạt ảnh, vui lòng nhấp để thêm",
-        "previewElement": "Phần tử xem trước",
+        "previewElement": "Xem trước phần tử",
         "add": "Thêm hoạt ảnh",
         "delete": "Xóa hoạt ảnh",
         "edit": "Chỉnh sửa hoạt ảnh",
@@ -735,13 +735,20 @@
         "engine": "Động cơ hoạt ảnh",
         "stateName": "Tên trạng thái",
         "pleaseSelectedComponent": "Vui lòng chọn một thành phần trước",
+        "duration": "Thời lượng",
+        "delay": "Độ trễ",
+        "custom": "Thuộc tính tùy chỉnh",
+        "customHint": "Vui lòng kéo phần tử xem trước để đặt thuộc tính tùy chỉnh",
+        "visualEditor": "Trình soạn thảo trực quan",
+        "visualEditorHint": "Chỉnh sửa hiệu ứng hoạt ảnh một cách trực quan",
+        "dragHint": "Vui lòng kéo phần tử xem trước container để đặt hiệu ứng hoạt ảnh",
         "trigger": {
             "title": "Bộ kích hoạt",
             "type": "Loại kích hoạt",
-            "delay": "Thời gian trễ (giây)",
+            "delay": "Độ trễ (giây)",
             "onMount": "Khi gắn thành phần",
             "onUnmount": "Khi gỡ thành phần",
-            "onClick": "Khi nhấp",
+            "onClick": "Khi nhấp chuột",
             "onHover": "Khi di chuột",
             "onScroll": "Khi cuộn",
             "onStateChange": "Khi thay đổi trạng thái",
@@ -753,7 +760,9 @@
             "operator": "Toán tử",
             "value": "Giá trị",
             "expression": "Biểu thức",
-            "advanced": "Cài đặt nâng cao"
+            "advanced": "Cài đặt nâng cao",
+            "conditionOperator": "Toán tử điều kiện",
+            "conditionValue": "Giá trị điều kiện"
         },
         "effect": {
             "title": "Hiệu ứng",
@@ -775,7 +784,18 @@
                 "up": "Lên trên",
                 "down": "Xuống dưới",
                 "left": "Sang trái",
-                "right": "Sang phải"
+                "right": "Sang phải",
+                "topLeft": "Trên bên trái",
+                "topRight": "Trên bên phải",
+                "bottomLeft": "Dưới bên trái",
+                "bottomRight": "Dưới bên phải"
+            },
+            "shortcuts": {
+                "hint": "Phím tắt:",
+                "playPause": "Space (Phát/Tạm dừng)",
+                "frameNavigation": "←→ (Khung hình trước/sau)",
+                "jumpToEnds": "Home/End (Đầu/Cuối)",
+                "deleteEffect": "Delete (Xóa hiệu ứng)"
             },
             "customProperties": "Thuộc tính tùy chỉnh",
             "propertyName": "Tên thuộc tính",
@@ -796,20 +816,20 @@
             "repeat": "Số lần lặp lại",
             "yoyo": "Hoạt ảnh qua lại",
             "from": "Giá trị bắt đầu",
-            "to": "Giá trị đích"
+            "to": "Giá trị mục tiêu"
         },
         "timeline": {
             "title": "Cài đặt dòng thời gian",
             "repeat": "Số lần lặp lại",
-            "repeatHint": "-1 nghĩa là vòng lặp vô hạn, 0 nghĩa là không lặp lại",
+            "repeatHint": "-1 nghĩa là lặp vô hạn, 0 nghĩa là không lặp lại",
             "yoyo": "Hoạt ảnh qua lại",
             "yoyoHint": "Có phát ngược lại sau khi hoàn thành hay không",
-            "delay": "Thời gian trễ (giây)",
+            "delay": "Độ trễ (giây)",
             "timeScale": "Tốc độ phát",
             "timeScaleHint": "Lớn hơn 1 tăng tốc, nhỏ hơn 1 giảm tốc",
             "defaults": "Cài đặt mặc định",
             "defaultDuration": "Thời lượng mặc định",
-            "defaultEase": "Hàm easing mặc định",
+            "defaultEase": "Easing mặc định",
             "defaultStagger": "Thời gian xen kẽ mặc định",
             "staggerHint": "Thời gian giãn cách giữa các hoạt ảnh phần tử",
             "advancedTitle": "Cài đặt nâng cao",
@@ -823,21 +843,21 @@
             "labels": "Nhãn dòng thời gian",
             "labelsEditor": "Trình soạn thảo nhãn",
             "labelsHint": "Định dạng JSON",
-            "loopSection": "Phần lặp",
-            "enableLoopSection": "Bật phần lặp",
+            "loopSection": "Phần lặp lại",
+            "enableLoopSection": "Bật phần lặp lại",
             "loopStart": "Vị trí bắt đầu lặp",
             "loopEnd": "Vị trí kết thúc lặp",
             "loopRepeat": "Số lần lặp lại",
             "loopYoyo": "Lặp qua lại"
         },
         "ease": {
-            "linear": "Tuyến tính (Linear)",
-            "easeIn": "Vào chậm (Ease In)",
-            "easeOut": "Ra chậm (Ease Out)",
-            "easeInOut": "Vào-Ra chậm (Ease InOut)",
-            "elastic": "Đàn hồi (Elastic)",
-            "bounce": "Nảy (Bounce)",
-            "back": "Lùi (Back)"
+            "linear": "Tuyến tính",
+            "easeIn": "Ease In",
+            "easeOut": "Ease Out",
+            "easeInOut": "Ease InOut",
+            "elastic": "Đàn hồi",
+            "bounce": "Nảy",
+            "back": "Lùi"
         }
     }
 }

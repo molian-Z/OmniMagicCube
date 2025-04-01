@@ -23,7 +23,7 @@ const compList = Object.values(comps.value);
 // 优化计算属性
 const allUI = computed(() => {
   return UIData.filter((item) =>
-    compList.some((comp: { prefix?: string }) => comp?.prefix === item.prefix)
+    compList.some((comp: unknown) => (comp as { prefix?: string })?.prefix === item.prefix)
   );
 });
 

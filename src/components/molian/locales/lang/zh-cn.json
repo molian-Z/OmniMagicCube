@@ -735,6 +735,13 @@
         "engine": "动画引擎",
         "stateName": "状态名称",
         "pleaseSelectedComponent": "请先选择一个组件",
+        "duration": "持续时间",
+        "delay": "延迟时间",
+        "custom": "自定义属性",
+        "customHint": "请通过拖拽预览元素来设置自定义属性",
+        "visualEditor": "可视化编辑",
+        "visualEditorHint": "使用可视化方式编辑动画效果",
+        "dragHint": "请拖拽容器预览元素来设置动画效果",
         "trigger": {
             "title": "触发器",
             "type": "触发类型",
@@ -753,7 +760,9 @@
             "operator": "操作符",
             "value": "值",
             "expression": "表达式",
-            "advanced": "高级设置"
+            "advanced": "高级设置",
+            "conditionOperator": "条件操作符",
+            "conditionValue": "条件值"
         },
         "effect": {
             "title": "效果",
@@ -775,7 +784,18 @@
                 "up": "向上",
                 "down": "向下",
                 "left": "向左",
-                "right": "向右"
+                "right": "向右",
+                "topLeft": "左上",
+                "topRight": "右上",
+                "bottomLeft": "左下",
+                "bottomRight": "右下"
+            },
+            "shortcuts": {
+                "hint": "快捷键：",
+                "playPause": "空格(播放/暂停)",
+                "frameNavigation": "←→(前后帧)",
+                "jumpToEnds": "Home/End(开始/结束)",
+                "deleteEffect": "Delete(删除效果)"
             },
             "customProperties": "自定义属性",
             "propertyName": "属性名",

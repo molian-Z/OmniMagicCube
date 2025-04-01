@@ -157,7 +157,7 @@ onMounted(async () => {
       <icon
         class="icon-picker__inner__plus"
         :style="{ width: Number(size - 12) + 'px', height: Number(size - 12) + 'px' }"
-        icon="ep:plus"
+        icon="add"
       ></icon>
     </div>
     <custom-dialog

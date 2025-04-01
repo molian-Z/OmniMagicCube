@@ -86,7 +86,7 @@ const onDragend = function () {
         <div class="comps-panel-search" :class="[!setting.immerseLeftMode && 'no-border-radius']">
             <customInput :placeholder="t('component.search')" v-model="search" clearable>
                 <template #prefixIcon>
-                    <svg-icon icon="ep:search"></svg-icon>
+                    <svg-icon icon="search"></svg-icon>
                 </template>
             </customInput>
         </div>

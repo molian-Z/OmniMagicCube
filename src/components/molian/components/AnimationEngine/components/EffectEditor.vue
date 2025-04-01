@@ -1,15 +1,8 @@
 <script setup lang="ts">
 import { ref, computed, watch, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
-import {
-  ElFormItem,
-  ElSelect,
-  ElOption,
-  ElInputNumber,
-  ElInput,
-  ElButton,
-  // 移除 ElCollapse 和 ElCollapseItem
-} from "element-plus";
+const customComps: any = inject("customComps");
+const { customInput, customInputNumber, customSelect, customButton } = customComps;
 
 // 定义效果类型接口
 interface EffectProperty {
@@ -81,11 +74,15 @@ const easeOptions = [
 ];
 
 // 方向选项 (用于滑动效果)
-const directionOptions: OptionType[] = [
+const directionOptions = [
   { label: t("animation.effect.direction.up"), value: "up" },
   { label: t("animation.effect.direction.down"), value: "down" },
   { label: t("animation.effect.direction.left"), value: "left" },
   { label: t("animation.effect.direction.right"), value: "right" },
+  { label: t("animation.effect.direction.topLeft", "左上"), value: "topLeft" },
+  { label: t("animation.effect.direction.topRight", "右上"), value: "topRight" },
+  { label: t("animation.effect.direction.bottomLeft", "左下"), value: "bottomLeft" },
+  { label: t("animation.effect.direction.bottomRight", "右下"), value: "bottomRight" },
 ];
 
 // 当前编辑的效果索引
@@ -290,8 +287,6 @@ onMounted(() => {
 
 <template>
   <div class="effect-editor">
-    <!-- 移除 ElCollapse 和 ElCollapseItem -->
-    
     <!-- 效果选择器 -->
     <div class="effect-tabs">
       <div
@@ -304,226 +299,244 @@ onMounted(() => {
         {{ index + 1 }}
       </div>
 
-      <ElButton
+      <customButton
         type="text"
         class="add-effect-btn"
         @click="addEffect"
         :disabled="modelValue.length >= 5"
       >
         <i class="el-icon-plus"></i>
-      </ElButton>
+      </customButton>
     </div>
 
-    <!-- 效果类型 -->
-    <ElFormItem :label="t('animation.effect.type')">
-      <ElSelect
-        v-model="currentEffect.type"
-        class="full-width"
-        @change="(val) => updateEffect('type', val)"
-      >
-        <ElOption
-          v-for="option in effectTypeOptions"
-          :key="option.value"
-          :label="option.label"
-          :value="option.value"
-        />
-      </ElSelect>
-    </ElFormItem>
+    <div class="form-container">
+      <!-- 基础属性区域 - 使用更紧凑的布局 -->
+      <div class="form-section">
+        <div class="form-row three-columns">
+          <!-- 效果类型 -->
+          <div class="form-item">
+            <div class="form-label">{{ t('animation.effect.type') }}</div>
+            <customSelect
+              v-model="currentEffect.type"
+              class="control-input"
+              @change="(val: any) => updateEffect('type', val)"
+              :options="effectTypeOptions"
+            />
+          </div>
+          
+          <!-- 缓动函数 -->
+          <div class="form-item">
+            <div class="form-label">{{ t('animation.effect.ease') }}</div>
+            <customSelect
+              v-model="currentEffect.ease"
+              class="control-input"
+              @change="(val: any) => updateEffect('ease', val)"
+              :options="easeOptions"
+            />
+          </div>
 
-    <!-- 持续时间 -->
-    <ElFormItem :label="t('animation.effect.duration')">
-      <ElInputNumber
-        v-model="currentEffect.duration"
-        :min="0"
-        :step="0.1"
-        :precision="1"
-        class="full-width"
-        @change="(val) => updateEffect('duration', val)"
-      />
-    </ElFormItem>
-
-    <!-- 延迟时间 -->
-    <ElFormItem :label="t('animation.effect.delay')">
-      <ElInputNumber
-        v-model="currentEffect.delay"
-        :min="0"
-        :step="0.1"
-        :precision="1"
-        class="full-width"
-        @change="(val) => updateEffect('delay', val)"
-      />
-    </ElFormItem>
-
-    <!-- 缓动函数 -->
-    <ElFormItem :label="t('animation.effect.ease')">
-      <ElSelect
-        v-model="currentEffect.ease"
-        class="full-width"
-        @change="(val) => updateEffect('ease', val)"
-      >
-        <ElOption
-          v-for="option in easeOptions"
-          :key="option.value"
-          :label="option.label"
-          :value="option.value"
-        />
-      </ElSelect>
-    </ElFormItem>
-
-    <!-- 根据效果类型显示不同的配置选项 -->
-    <template v-if="currentEffect.type === 'fade' && currentEffect.to">
-      <ElFormItem :label="t('animation.effect.opacity')">
-        <ElInputNumber
-          v-model="currentEffect.to.opacity"
-          :min="0"
-          :max="1"
-          :step="0.1"
-          :precision="1"
-          class="full-width"
-          @change="(val) => updateEffectTo('opacity', val)"
-        />
-      </ElFormItem>
-    </template>
-
-    <template v-else-if="currentEffect.type === 'slide'">
-      <ElFormItem :label="t('animation.effect.direction.title')">
-        <ElSelect
-          v-model="currentEffect.direction"
-          class="full-width"
-          @change="(val) => updateEffect('direction', val)"
-        >
-          <ElOption
-            v-for="option in directionOptions"
-            :key="option.value"
-            :label="option.label"
-            :value="option.value"
-          />
-        </ElSelect>
-      </ElFormItem>
-
-      <ElFormItem
-        :label="t('animation.effect.distance')"
-        v-if="currentEffect.properties"
-      >
-        <ElInput
-          v-model="currentEffect.properties.distance"
-          @input="(val) => updateEffectProperty('distance', val)"
-        />
-      </ElFormItem>
-    </template>
-
-    <template v-else-if="currentEffect.type === 'scale' && currentEffect.to">
-      <ElFormItem :label="t('animation.effect.scale')">
-        <ElInputNumber
-          v-model="currentEffect.to.scale"
-          :min="0"
-          :step="0.1"
-          :precision="1"
-          class="full-width"
-          @change="(val) => updateEffectTo('scale', val)"
-        />
-      </ElFormItem>
-    </template>
-
-    <template v-else-if="currentEffect.type === 'rotate' && currentEffect.to">
-      <ElFormItem :label="t('animation.effect.rotation')">
-        <ElInputNumber
-          v-model="currentEffect.to.rotation"
-          :step="15"
-          class="full-width"
-          @change="(val) => updateEffectTo('rotation', val)"
-        />
-      </ElFormItem>
-    </template>
-
-    <template v-else-if="currentEffect.type === 'custom'">
-      <ElFormItem :label="t('animation.effect.customProperties')">
-        <div class="custom-property-form">
-          <ElInput
-            v-model="customPropertyKey"
-            :placeholder="t('animation.effect.propertyName')"
-            class="property-key"
-          />
-          <ElInput
-            v-model="customPropertyValue"
-            :placeholder="t('animation.effect.propertyValue')"
-            class="property-value"
-          />
-          <ElButton type="primary" size="small" @click="addCustomProperty">
-            {{ t("animation.effect.add") }}
-          </ElButton>
-        </div>
-
-        <!-- 显示已添加的自定义属性 -->
-        <div v-if="currentEffect.properties" class="custom-properties-list">
-          <div
-            v-for="(value, key) in currentEffect.properties"
-            :key="key"
-            class="custom-property-item"
-          >
-            <span class="property-name">{{ key }}:</span>
-            <span class="property-value">{{ value }}</span>
-            <ElButton
-              class="delete-btn"
-              @click="updateEffectProperty(String(key), undefined)"
-            >
-              <svg-icon icon="ep:delete"></svg-icon>
-            </ElButton>
+          <!-- 持续时间 -->
+          <div class="form-item">
+            <div class="form-label">{{ t('animation.effect.duration') }}</div>
+            <customInputNumber
+              v-model="currentEffect.duration"
+              :min="0"
+              :step="0.01"
+              :precision="2"
+              class="full-width"
+              @change="(val: any) => updateEffect('duration', val)"
+              controls-position="right"
+            />
           </div>
         </div>
-      </ElFormItem>
-    </template>
+
+        <div class="form-row three-columns">
+          <!-- 延迟时间 -->
+          <div class="form-item">
+            <div class="form-label">{{ t('animation.effect.delay') }}</div>
+            <customInputNumber
+              v-model="currentEffect.delay"
+              :min="0"
+              :step="0.01"
+              :precision="2"
+              class="full-width"
+              @change="(val: any) => updateEffect('delay', val)"
+              
+              controls-position="right"
+            />
+          </div>
+
+          <!-- 根据效果类型显示不同的配置选项 -->
+          <template v-if="currentEffect.type === 'fade' && currentEffect.to">
+            <div class="form-item">
+              <div class="form-label">{{ t('animation.effect.opacity') }}</div>
+              <customInputNumber
+                v-model="currentEffect.to.opacity"
+                :min="0"
+                :max="1"
+                :step="0.1"
+                :precision="1"
+                class="full-width"
+                @change="(val: any) => updateEffectTo('opacity', val)"
+                
+                controls-position="right"
+              />
+            </div>
+          </template>
+
+          <template v-else-if="currentEffect.type === 'slide'">
+            <div class="form-item">
+              <div class="form-label">{{ t('animation.effect.direction.title') }}</div>
+              <customSelect
+                v-model="currentEffect.direction"
+                class="control-input-small"
+                @change="(val: any) => updateEffect('direction', val)"
+                :options="directionOptions"
+              />
+            </div>
+
+            <div class="form-item" v-if="currentEffect.properties">
+              <div class="form-label">{{ t('animation.effect.distance') }}</div>
+              <customInput
+                v-model="currentEffect.properties.distance"
+                @input="(val: any) => updateEffectProperty('distance', val)"
+                class="control-input-small"
+                
+              />
+            </div>
+          </template>
+
+          <template v-else-if="currentEffect.type === 'scale' && currentEffect.to">
+            <div class="form-item">
+              <div class="form-label">{{ t('animation.effect.scale') }}</div>
+              <customInputNumber
+                v-model="currentEffect.to.scale"
+                :min="0"
+                :step="0.1"
+                :precision="1"
+                class="full-width"
+                @change="(val: any) => updateEffectTo('scale', val)"
+                
+                controls-position="right"
+              />
+            </div>
+          </template>
+
+          <template v-else-if="currentEffect.type === 'rotate' && currentEffect.to">
+            <div class="form-item">
+              <div class="form-label">{{ t('animation.effect.rotation') }}</div>
+              <customInputNumber
+                v-model="currentEffect.to.rotation"
+                :step="15"
+                class="full-width"
+                @change="(val: any) => updateEffectTo('rotation', val)"
+                
+                controls-position="right"
+              />
+            </div>
+          </template>
+        </div>
+      </div>
+
+      <!-- 自定义属性区域 -->
+      <template v-if="currentEffect.type === 'custom'">
+        <div class="form-section custom-section">
+          <div class="section-title">{{ t('animation.effect.customProperties') }}</div>
+          <div class="custom-property-form">
+            <customInput
+              v-model="customPropertyKey"
+              :placeholder="t('animation.effect.propertyName')"
+              class="property-key"
+              
+            />
+            <customInput
+              v-model="customPropertyValue"
+              :placeholder="t('animation.effect.propertyValue')"
+              class="property-value"
+              
+            />
+            <customButton type="primary"  @click="addCustomProperty">
+              {{ t("animation.effect.add") }}
+            </customButton>
+          </div>
+
+          <!-- 显示已添加的自定义属性 -->
+          <div class="custom-properties-list">
+            <div
+              v-for="(value, key) in currentEffect.properties"
+              :key="key"
+              class="custom-property-item"
+            >
+              <span class="property-name">{{ key }}:</span>
+              <span class="property-value">{{ value }}</span>
+              <customButton
+                class="delete-btn"
+                @click="updateEffectProperty(String(key), undefined)"
+                
+              >
+                <svg-icon icon="remove"></svg-icon>
+              </customButton>
+            </div>
+          </div>
+        </div>
+      </template>
+    </div>
 
     <div class="effect-actions">
       <!-- 添加效果按钮 -->
-      <ElButton
+      <customButton
         type="primary"
-        size="small"
+        
         @click="addEffect"
         :disabled="modelValue.length >= 5"
         style="margin-right: 8px"
       >
         <i class="el-icon-plus"></i>
         {{ t("animation.effect.add") }}
-      </ElButton>
+      </customButton>
       <!-- 删除效果按钮 -->
-      <ElButton
+      <customButton
         type="danger"
-        size="small"
+        
         @click="deleteEffect"
         :disabled="modelValue.length <= 1"
       >
         {{ t("animation.effect.delete") }}
-      </ElButton>
+      </customButton>
     </div>
   </div>
 </template>
 
 <style scoped lang="scss">
 .effect-editor {
-  margin-bottom: 16px;
+  margin-bottom: 12px;
 
-  // 移除 ElCollapse 相关样式
-  // :deep(.el-collapse-item__header) { ... }
-  // :deep(.el-collapse-item__content) { ... }
+  .form-container {
+    margin-bottom: 12px;
+  }
 
-  .full-width {
-    width: 100%;
+  .form-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 12px;
   }
 
   .effect-tabs {
     display: flex;
     flex-wrap: wrap;
-    margin-bottom: 16px;
+    margin-bottom: 12px;
     border-bottom: 1px solid var(--ml-border-color-light);
+    padding-bottom: 4px;
 
     .effect-tab {
-      padding: 6px 12px;
+      padding: 4px 10px;
       margin-right: 4px;
-      margin-bottom: 4px;
+      margin-bottom: 0;
       border-radius: var(--ml-radius-small) var(--ml-radius-small) 0 0;
       cursor: pointer;
       transition: all 0.2s;
+      font-size: 13px;
 
       &:hover {
         background-color: var(--ml-fill-color-light);
@@ -537,27 +550,29 @@ onMounted(() => {
 
     .add-effect-btn {
       margin-left: auto;
-      padding: 6px 8px;
+      padding: 4px 6px;
+      font-size: 13px;
     }
   }
 
   .custom-property-form {
     display: flex;
     margin-bottom: 8px;
+    width: 100%;
+    gap: 8px;
 
     .property-key {
       flex: 1;
-      margin-right: 8px;
     }
 
     .property-value {
       flex: 1;
-      margin-right: 8px;
     }
   }
 
   .custom-properties-list {
     margin-top: 8px;
+    margin-bottom: 12px;
 
     .custom-property-item {
       display: flex;
@@ -566,6 +581,7 @@ onMounted(() => {
       margin-bottom: 4px;
       background-color: var(--ml-fill-color-light);
       border-radius: var(--ml-radius-small);
+      font-size: 13px;
 
       .property-name {
         font-weight: 500;
@@ -581,14 +597,15 @@ onMounted(() => {
         display: flex;
         align-items: center;
         justify-content: center;
-        width: 20px;
-        height: 20px;
+        width: 18px;
+        height: 18px;
         border: none;
         background: transparent;
         color: var(--ml-text-color-secondary);
         cursor: pointer;
         border-radius: 50%;
         transition: all 0.2s;
+        padding: 0;
 
         &:hover {
           color: var(--ml-danger-color);
@@ -600,7 +617,8 @@ onMounted(() => {
   .effect-actions {
     display: flex;
     justify-content: flex-end;
-    margin-top: 16px;
+    margin-top: 12px;
+    gap: 8px;
   }
 }
 </style>

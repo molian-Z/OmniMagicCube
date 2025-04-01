@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useI18n } from "vue-i18n";
-import { ElButton } from "element-plus";
+const customComps: any = inject("customComps");
+const { customButton } = customComps;
 
 defineProps({
   animations: {
@@ -45,10 +46,10 @@ const deleteAnimation = (index: number, event: Event) => {
   <div class="animation-list">
     <div class="list-header">
       <span>{{ t("animation.animationList") }}</span>
-      <ElButton type="primary" size="small" @click="addAnimation">
-        <i class="el-icon-plus"></i>
+      <customButton theme="primary" size="small" @click="addAnimation">
+        <svg-icon icon="add"></svg-icon>
         {{ t("animation.add") }}
-      </ElButton>
+      </customButton>
     </div>
 
     <div class="list-content">
@@ -72,16 +73,16 @@ const deleteAnimation = (index: number, event: Event) => {
         </div>
         <div class="animation-item-actions">
           <div class="actions">
-            <ElButton type="primary" size="small" @click="editAnimation(index, $event)">
-              <svg-icon icon="ep:edit" />
-            </ElButton>
-            <ElButton
-              type="danger"
+            <customButton theme="primary" size="small" @click="editAnimation(index, $event)">
+              <svg-icon icon="edit" />
+            </customButton>
+            <customButton
+              theme="danger"
               size="small"
-              @click="(e) => deleteAnimation(index, e)"
+              @click="(e:any) => deleteAnimation(index, e)"
             >
-              <svg-icon icon="ep:delete" />
-            </ElButton>
+              <svg-icon icon="remove" />
+            </customButton>
           </div>
         </div>
       </div>
