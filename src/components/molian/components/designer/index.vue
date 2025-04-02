@@ -26,7 +26,8 @@ import treeDir from "./tools/treeDir/index.vue";
 import { setting } from "@molian/utils/defaultData";
 import { conciseJs } from "@molian/utils/js-generator";
 import { conciseCss, restoreCss } from "@molian/utils/css-generator";
-import { getSelectedAIData, getAIPrompt, updateFromAI } from "./designerForAi";
+import { getSelectedAIData, getAIPrompt, updateFromAI } from "@molian/utils/AI/designerForAi";
+import AIRequest from '@molian/utils/AI/AIRequest';
 const props = defineProps({
   width: {
     type: String,
@@ -67,6 +68,10 @@ const props = defineProps({
   expandAPI: {
     type: Object,
     default: () => {},
+  },
+  AIRequest: {
+    type: Function,
+    default: null,
   },
 });
 const { t } = useI18n();
@@ -146,7 +151,7 @@ const codeEditorTips = reactive({
 });
 
 provide("codeEditor", codeEditorTips);
-
+AIRequest(props.AIRequest);
 defineExpose({
   setData,
   getData,

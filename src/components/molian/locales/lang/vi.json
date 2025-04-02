@@ -859,5 +859,34 @@
             "bounce": "Nảy",
             "back": "Lùi"
         }
+    },
+    "ai": {
+        "placeholder": "Vui lòng nhập thao tác hoặc câu hỏi bạn muốn...",
+        "processing": "Đang suy nghĩ...",
+        "send": "Gửi",
+        "responseTitle": "Đề xuất sửa đổi AI",
+        "singleModification": "Sửa đổi đơn lẻ",
+        "multipleModification": "Nhiều sửa đổi",
+        "details": "Giải thích chi tiết",
+        "changes": "Danh sách thay đổi",
+        "from": "Giá trị gốc",
+        "to": "Giá trị mới",
+        "value": "Giá trị đã thêm",
+        "originalValue": "Giá trị đã xóa",
+        "applyResult": "Kết quả áp dụng",
+        "noResponse": "Không có dữ liệu phản hồi",
+        "cancel": "Hủy",
+        "apply": "Áp dụng sửa đổi",
+        "applied": "Đã áp dụng sửa đổi",
+        "applySuccess": "Đã áp dụng thành công đề xuất sửa đổi AI",
+        "applyPartial": "Một số đề xuất sửa đổi AI không áp dụng được",
+        "applyError": "Không thể áp dụng đề xuất sửa đổi AI",
+        "applyFailed": "Áp dụng thất bại",
+        "change": {
+            "added": "Thêm",
+            "modified": "Sửa đổi",
+            "removed": "Xóa",
+            "reordered": "Sắp xếp lại"
+        }
     }
 }

@@ -858,5 +858,34 @@
             "bounce": "Bounce",
             "back": "Back"
         }
+    },
+    "ai": {
+        "placeholder": "Please enter your desired operation or question...",
+        "processing": "Thinking...",
+        "send": "Send",
+        "responseTitle": "AI Modification Suggestions",
+        "singleModification": "Single Modification",
+        "multipleModification": "Multiple Modifications",
+        "details": "Detailed Explanation",
+        "changes": "Change Records",
+        "from": "Original Value",
+        "to": "New Value",
+        "value": "Added Value",
+        "originalValue": "Removed Value",
+        "applyResult": "Application Result",
+        "noResponse": "No response data",
+        "cancel": "Cancel",
+        "apply": "Apply Changes",
+        "applied": "Changes Applied",
+        "applySuccess": "AI modification suggestions applied successfully",
+        "applyPartial": "Some AI modification suggestions failed to apply",
+        "applyError": "Failed to apply AI modification suggestions",
+        "applyFailed": "Application Failed",
+        "change": {
+            "added": "Added",
+            "modified": "Modified",
+            "removed": "Removed",
+            "reordered": "Reordered"
+        }
     }
 }

@@ -859,5 +859,34 @@
             "bounce": "弹跳 (Bounce)",
             "back": "回弹 (Back)"
         }
+    },
+    "ai": {
+        "placeholder": "请输入您想要的操作或问题...",
+        "processing": "正在思考中...",
+        "send": "发送",
+        "responseTitle": "AI 修改建议",
+        "singleModification": "单一修改",
+        "multipleModification": "多项修改",
+        "details": "详细说明",
+        "changes": "变更记录",
+        "from": "原始值",
+        "to": "新值",
+        "value": "添加的值",
+        "originalValue": "被删除的值",
+        "applyResult": "应用结果",
+        "noResponse": "暂无响应数据",
+        "cancel": "取消",
+        "apply": "应用修改",
+        "applied": "已应用修改",
+        "applySuccess": "已成功应用 AI 修改建议",
+        "applyPartial": "部分 AI 修改建议应用失败",
+        "applyError": "应用 AI 修改建议失败",
+        "applyFailed": "应用失败",
+        "change": {
+            "added": "添加",
+            "modified": "修改",
+            "removed": "删除",
+            "reordered": "重排序"
+        }
     }
 }

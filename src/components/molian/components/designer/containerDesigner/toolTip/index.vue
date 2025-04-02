@@ -2,8 +2,8 @@
 import { computed, inject } from "vue";
 import { hoverComp, hoverBounding, startDraggable, useDraggable } from "../../draggable";
 import svgIcon from "@molianComps/SvgIcon/index.vue";
-import { useI18n } from "vue-i18n";
-const { t } = useI18n();
+import AIIcon from './components/AiIcon.vue';
+import { templateRef } from "@vueuse/core";
 const customComps: any = inject("customComps");
 const { customInput } = customComps;
 const { onDragend } = useDraggable(null, null, null);
@@ -25,6 +25,7 @@ const currentBounding = computed(() => {
     return obj;
   }
 });
+const aiConfirmRef = templateRef('aiConfirmRef');
 const editSubTitle = ref(false);
 const currentTitle = computed(() => {
   if (!!hoverComp.value.subTitle) return hoverComp.value.subTitle;
@@ -32,17 +33,35 @@ const currentTitle = computed(() => {
     hoverComp.value &&
     hoverComp.value.directives &&
     hoverComp.value.directives.text &&
-    hoverComp.value.directives.text.type === "string" && 
+    hoverComp.value.directives.text.type === "string" &&
     !!hoverComp.value.directives.text.value
   ) {
     return hoverComp.value.directives.text.value;
   }
-  return (mlComps.value[hoverComp.value.name] && mlComps.value[hoverComp.value.name].title) || hoverComp.value.name;
+  return (
+    (mlComps.value[hoverComp.value.name] && mlComps.value[hoverComp.value.name].title) ||
+    hoverComp.value.name
+  );
 });
+
+const openAIComfirm = () => {
+  if (hoverComp.value) {
+    aiConfirmRef.value?.open(hoverComp.value);
+  }
+};
 </script>
 
 <template>
   <div class="drag-shadow" @click.stop :style="currentBounding" v-if="hoverComp">
+    <div
+      class="drag-handler"
+      draggable="true"
+      @dragstart="startDraggable($event, hoverComp)"
+      @dragend="onDragend"
+    >
+      <svgIcon icon="drag-move"></svgIcon>
+      <!-- <span>{{ t('container.moveComp') }}</span> -->
+    </div>
     <div class="drag-tips">
       <svg-icon size="22" class="drag-icon" :icon="hoverComp.icon || 'comps-default'" />
       <div class="drag-title">
@@ -70,16 +89,10 @@ const currentTitle = computed(() => {
         <div class="drag-title__desc">{{ hoverComp.name }}</div>
       </div>
     </div>
-
-    <div
-      class="drag-handler"
-      draggable="true"
-      @dragstart="startDraggable($event, hoverComp)"
-      @dragend="onDragend"
-    >
-      <svgIcon icon="drag-move"></svgIcon>
-      <!-- <span>{{ t('container.moveComp') }}</span> -->
+    <div class="ai-handler" @click="openAIComfirm">
+        <AIIcon />
     </div>
+    <AIConfirm ref="aiConfirmRef" />
   </div>
 </template>
 
@@ -146,6 +159,9 @@ const currentTitle = computed(() => {
   }
 
   .drag-handler {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     color: var(--ml-primary-color);
     font-size: 22px;
     cursor: all-scroll;
@@ -155,6 +171,16 @@ const currentTitle = computed(() => {
     &:hover {
       color: var(--ml-primary-color-light-hover);
     }
+  }
+
+  .ai-handler {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 26px;
+    cursor: pointer;
+    transition: var(--ml-transition-base);
+    padding: 0 8px;
   }
 }
 </style>
