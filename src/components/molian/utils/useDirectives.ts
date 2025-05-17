@@ -111,9 +111,9 @@ const updateTextContent = (el: DirectiveElement, text: string, hasSlots: boolean
     }
 };
 
-export default (compObj: DirectiveCompObj) => {
+export default (compObj: any) => {
     const newText = compObj.comp.directives?.text ? customText(compObj) : null;
-    const hasSlots = Object.keys(compObj.comp.slots).length > 0;
+    const hasSlots = Object.keys(compObj.comp.slots || {}).length > 0;
 
     return {
         mounted(el: DirectiveElement) {
@@ -121,7 +121,7 @@ export default (compObj: DirectiveCompObj) => {
                 if (isRef(newText)) {
                     watch(
                         () => newText.value,
-                        (value) => updateTextContent(el, value, hasSlots),
+                        (value:any) => updateTextContent(el, value, hasSlots),
                         { immediate: true }
                     );
                 } else {
@@ -158,7 +158,7 @@ const setTextDom = (el: TextDomElement, text: string): void => {
         textContainer.id = 'custom-text';
         el.appendChild(textContainer);
         nextTick(() => {
-            textContainer.textContent = text;
+            if (textContainer) textContainer.textContent = text;
         })
     }
 };

@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { ref, computed, defineOptions, inject } from "vue";
 import { useCloned } from "@vueuse/core";
-import { selectedComp, createComp } from "../../designerData";
+import { selectedComp } from "../../designerData";
+import { createComponent } from '@molian/utils/componentCore'
 import svgIcon from "@molianComps/SvgIcon/index.vue";
 import { useI18n } from "vue-i18n";
 const { t } = useI18n();
@@ -96,7 +97,7 @@ const existSlot = (key: any) => {
  */
 const appendChildComp = (key: any, comp: any) => {
   // 创建子组件实例
-  let obj = createComp(comps.value[comp.name], comp);
+  let obj = createComponent(comps.value[comp.name], comp);
   // 将创建的子组件实例添加到选定组件的对应插槽中
   selectedComp.value.slots[key].children.push(obj);
 };

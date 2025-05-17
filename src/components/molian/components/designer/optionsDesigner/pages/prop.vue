@@ -15,25 +15,30 @@ const currentAttrs: any = computed(() => {
 
 const currentEmits = computed(() => {
   if (!selectedComp.value) return {};
-  return (
-    selectedComp.value &&
-    comps.value[selectedComp.value.name].emits
-      .filter((item: any) => {
-        return item.indexOf("update:") === 0;
-      })
-      .map((item: any) => {
-        return {
-          prop: item.replace("update:", ""),
-          emit: item,
-        };
-      })
-  );
+  
+  // 检查组件是否存在及其emits属性
+  const component = comps.value[selectedComp.value.name];
+  if (!component || !component.emits) {
+    // console.warn(`组件 ${selectedComp.value.name} 不存在或未定义emits`);
+    return [];
+  }
+
+  return component.emits
+    .filter((item: any) => {
+      return item.indexOf("update:") === 0;
+    })
+    .map((item: any) => {
+      return {
+        prop: item.replace("update:", ""),
+        emit: item,
+      };
+    });
 });
 
 const currentProps = computed(() => {
   if (!selectedComp.value) return {};
   const objData = {
-    ...comps.value[selectedComp.value.name].props
+    ...comps.value[selectedComp.value.name] && comps.value[selectedComp.value.name].props || {}
   }
   currentEmits.value.forEach((item: any) => {
     delete objData[item.prop];

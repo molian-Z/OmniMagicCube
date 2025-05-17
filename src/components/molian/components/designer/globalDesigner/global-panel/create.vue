@@ -8,6 +8,8 @@ import { modelValue, globalAttrs } from "../../designerData";
 import CodeEditor from "@molianComps/MlCodeEditor/index.vue";
 import { useBroadcastChannel } from "@vueuse/core";
 import { useI18n } from "vue-i18n";
+import { validateComponentTree, validateGlobalAttrs } from "@molian/utils/componentCore";
+
 const { t } = useI18n();
 const customComps: any = inject("customComps");
 const { customButton, customTooltip, customDialog } = customComps;
@@ -54,15 +56,24 @@ const importModelData = function () {
     message.error(t("global.dataformatError"));
     createCode = null;
   }
+  
   if (!!createCode) {
-    for (let key in createCode.globalAttrs) {
-      if (Object.prototype.hasOwnProperty.call(createCode.globalAttrs, key)) {
-        const element = createCode.globalAttrs[key];
+    // 验证和补全全局属性
+    const validatedGlobalAttrs = validateGlobalAttrs(createCode.globalAttrs || {});
+    
+    // 更新全局属性
+    for (let key in validatedGlobalAttrs) {
+      if (Object.prototype.hasOwnProperty.call(validatedGlobalAttrs, key)) {
+        const element = validatedGlobalAttrs[key];
         globalAttrs[key] = element;
       }
     }
-    modelValue.value = restoreCss(createCode.modelValue);
+    
+    // 验证和补全组件数据
+    const restoredModelValue = restoreCss(createCode.modelValue || []);
+    modelValue.value = validateComponentTree(restoredModelValue);
   }
+  
   codeData.value = ``;
   showImportDialog.value = false;
 };

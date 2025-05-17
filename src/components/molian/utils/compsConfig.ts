@@ -5,9 +5,6 @@ import {
     ShallowRef,
     App
 } from 'vue'
-import {
-    useCloned
-} from '@vueuse/core'
 import {camelCase} from 'change-case'
 import {
     defaultCategory,

@@ -94,16 +94,76 @@ const createContextCode = (ref?: string) => {
         ? getNthParent(modelValue.value, ref, contextLevel)
         : modelValue.value;
 
-    // 根据contextModelValue的类型决定如何传递给createTemplate
-    const templateInput = Array.isArray(contextModelValue)
-        ? contextModelValue
-        : [contextModelValue];
+    // 简化数据结构，移除不必要的信息
+    const simplifiedValue = simplifyForContext(contextModelValue);
+    
+    // 根据简化后的值决定如何传递给createTemplate
+    const templateInput = Array.isArray(simplifiedValue)
+        ? simplifiedValue
+        : [simplifiedValue];
 
     return {
+        // 使用更简洁的模板生成方式
         codeRepresentation: createTemplate(templateInput),
-        // 压缩JSON数据，移除多余空格和换行
-        jsonData: JSON.stringify(contextModelValue)
+        // 压缩JSON数据并限制大小
+        jsonData: JSON.stringify(simplifiedValue, (key, value) => {
+            // 过滤掉空值和大对象
+            if (value === null || value === undefined) return undefined;
+            if (typeof value === 'object' && Object.keys(value).length > 10) {
+                return { 
+                    ...value, 
+                    _truncated: `...${Object.keys(value).length - 5} more items` 
+                };
+            }
+            return value;
+        })
     };
+};
+
+// 简化数据结构，保留关键信息
+const simplifyForContext = (data: any): any => {
+    if (Array.isArray(data)) {
+        return data.slice(0, 5).map(item => simplifyForContext(item));
+    }
+    
+    if (data && typeof data === 'object') {
+        const { id, name, tag, category, ref, attrs, slots } = data;
+        const simplified: any = { id, name, tag, category, ref };
+        
+        // 简化属性
+        if (attrs) {
+            simplified.attrs = Object.keys(attrs).reduce((acc, key) => {
+                if (typeof attrs[key] !== 'object' || Array.isArray(attrs[key])) {
+                    acc[key] = attrs[key];
+                }
+                return acc;
+            }, {} as Record<string, any>);
+        }
+        
+        // 简化插槽
+        if (slots) {
+            simplified.slots = Object.keys(slots).reduce((acc, key) => {
+                const slot = slots[key];
+                const simplifiedSlot: any = {
+                    childrenCount: slot.children?.length || 0
+                };
+                
+                // 递归处理slot中的children
+                if (slot.children && slot.children.length > 0) {
+                    simplifiedSlot.sampleChildren = slot.children
+                        .slice(0, 3) // 限制最多3个样本子组件
+                        .map((child:any) => simplifyForContext(child));
+                }
+                
+                acc[key] = simplifiedSlot;
+                return acc;
+            }, {} as Record<string, any>);
+        }
+        
+        return simplified;
+    }
+    
+    return data;
 };
 
 /**

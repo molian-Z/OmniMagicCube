@@ -159,6 +159,7 @@
             }
         },
         "MlSubForm": {
+            "isIndex": "Hiển thị số thứ tự",
             "isAdd": "Mở thêm mới",
             "isAppend": "Mở thêm vào",
             "isDelete": "Mở xóa",

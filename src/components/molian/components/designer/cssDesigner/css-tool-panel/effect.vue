@@ -7,14 +7,35 @@ import { useI18n } from "vue-i18n";
 const { t } = useI18n();
 const customComps: any = inject("customComps");
 const { customInput, customSelect, customRadioButton, customRadioGroup } = customComps;
-const css = computed(() => {
-  return (
-    (selectedComp.value && selectedComp.value.css) || {
-      mixBlendMode: {},
-      blur: {},
-      boxShadow: [],
+// 深度合并函数
+function deepMerge(target:any, source:any) {
+  if (!source) return { ...target };
+  
+  const result = { ...target };
+  
+  Object.keys(result).forEach(key => {
+    if (source[key] === undefined) return;
+    
+    if (typeof result[key] === 'object' && !Array.isArray(result[key])) {
+      result[key] = { ...result[key], ...source[key] };
+    } else {
+      result[key] = source[key];
     }
-  );
+  });
+  
+  return result;
+}
+
+// 默认CSS结构
+const defaultCss = {
+  mixBlendMode: { modelValue: '', isShow: true },
+  blur: { field: '', modelValue: '', isShow: true },
+  boxShadow: [],
+  opacity: ''
+};
+
+const css = computed(() => {
+  return deepMerge(defaultCss, selectedComp.value?.css);
 });
 const mode = [
   ["normal"],

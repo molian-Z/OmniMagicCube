@@ -209,7 +209,7 @@ export class AnimationService {
     const animConfig = Array.isArray(config) ? config[0] : config;
     
     if (!animConfig || !animConfig.effects || animConfig.effects.length === 0) {
-      console.warn('无效的动画配置:', config);
+      // console.warn('无效的动画配置:', config);
       return null;
     }
     
@@ -246,7 +246,7 @@ export class AnimationService {
     const animConfig = Array.isArray(config) ? config[0] : config;
     
     if (!animConfig || !animConfig.effects || animConfig.effects.length === 0) {
-      console.warn('无效的动画配置:', config);
+      // console.warn('无效的动画配置:', config);
       return null;
     }
     

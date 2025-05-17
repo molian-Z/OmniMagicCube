@@ -7,8 +7,8 @@ import {
 } from 'vue'
 import {
     hiddenAllPanel,
-    createComp
 } from './designerData'
+import { createComponent } from '@molian/utils/componentCore'
 
 interface AllowComp {
     name: string;
@@ -155,7 +155,7 @@ export const useDraggable = (comps?: any, compData?: any, message?: any) => {
         if (isCreate) {
             // 创建新组件
             const appendComp = slotVal?.appendComps?.find(item => item.name === name)
-            const obj = createComp(comps.value[name], appendComp)
+            const obj = createComponent(comps.value[name], appendComp)
             compData.value.splice(targetIndex, 0, obj)
         } else {
             // 移动现有组件
@@ -194,7 +194,7 @@ export const useDraggable = (comps?: any, compData?: any, message?: any) => {
         if (isCreate) {
             // 创建新组件
             const appendComp = slotVal.appendComps?.find(item => item.name === name)
-            const obj = createComp(comps.value[name], appendComp)
+            const obj = createComponent(comps.value[name], appendComp)
             slotVal.children.push(obj)
         } else {
             // 移动现有组件

@@ -9,7 +9,7 @@ import {
 } from "vue";
 import { useSortable, moveArrayElement } from "@vueuse/integrations/useSortable";
 import gsap from "gsap";
-import { generateRandomString } from "@molianComps/Designer/designerData";
+import { generateRandomString } from "@molian/utils/componentCore";
 import Data2Input from "@molianComps/Data2Input/index.vue";
 import {useI18n} from 'vue-i18n'
 const {t} = useI18n()
@@ -30,63 +30,12 @@ const props = defineProps({
   columns: {
     type: Array as () => any[],
     default: () => {
-      return [
-        {
-          prop: "name",
-          label: "变量名",
-          type: "string",
-          required: true,
-        },
-        {
-          prop: "label",
-          label: "文本名",
-          type: "string",
-          default: null,
-        },
-        {
-          prop: "type",
-          label: "数据格式",
-          type: "string",
-          default: "string",
-          required: true,
-          optionItems: [
-            {
-              label: "string",
-              value: "string",
-            },
-            {
-              label: "number",
-              value: "number",
-            },
-            {
-              label: "boolean",
-              value: "boolean",
-            },
-            {
-              label: "array",
-              value: "array",
-            },
-            {
-              label: "object",
-              value: "object",
-            },
-            {
-              label: "function",
-              value: "function",
-            },
-            {
-              label: "computed",
-              value: "computed",
-            },
-          ],
-        },
-        {
-          prop: "value",
-          label: "数据值",
-          default: null,
-        },
-      ];
+      return [];
     },
+  },
+  isIndex:{
+    type: Boolean,
+    default: true,
   },
   isAdd: {
     type: Boolean,
@@ -255,12 +204,12 @@ defineExpose({
 <template>
   <div class="ml-sub-form-list">
     <div class="ml-sub-form-list__header">
-      <div class="ml-sub-form-list__item index">
+      <div class="ml-sub-form-list__item index" v-if="isIndex">
         <div class="ml-sub-form-list__item-label">
           {{ t("options.index") }}
         </div>
       </div>
-      <div class="ml-sub-form-list__item sort">
+      <div class="ml-sub-form-list__item sort" v-if="isSortable">
         <div class="ml-sub-form-list__item-label">
           {{ t("options.sortable") }}
         </div>
@@ -271,7 +220,7 @@ defineExpose({
           >{{ column.label || column.prop }}
         </div>
       </div>
-      <div class="ml-sub-form-list__item">
+      <div class="ml-sub-form-list__item" v-if="isDelete || isAppend">
         <div class="ml-sub-form-list__item-label">
           {{ t("options.operate") }}
         </div>
@@ -298,10 +247,10 @@ defineExpose({
             v-for="(item, index) in data"
             :key="item.$key"
           >
-            <div class="ml-sub-form-list__item-label index">
+            <div class="ml-sub-form-list__item-label index" v-if="isIndex">
               {{ index + 1 }}
             </div>
-            <div class="ml-sub-form-list__item-label sort">
+            <div class="ml-sub-form-list__item-label sort" v-if="isSortable">
               <SvgIcon class="css-svg-icon handle" size="24" icon="drag"></SvgIcon>
             </div>
             <slot name="row" :row="item" :rowIndex="index">
@@ -319,7 +268,7 @@ defineExpose({
                 </slot>
               </div>
             </slot>
-            <div class="ml-sub-form-list__item-label">
+            <div class="ml-sub-form-list__item-label" v-if="isDelete || isAppend">
               <slot name="toolbar" :row="item" :rowIndex="index">
                 <customButton
                   theme="primary"

@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { defineOptions } from "vue";
-import { currentEmits, currentNativeOn, currentLifecycle, globalAttrs, generateRandomString } from "@molianComps/Designer/designerData";
+import { currentEmits, currentNativeOn, currentLifecycle, globalAttrs } from "@molianComps/Designer/designerData";
+import { generateRandomString } from "@molian/utils/componentCore";
 import ActionDetail from "./ActionDetail.vue";
 import {useI18n} from 'vue-i18n'
 const {t} = useI18n()

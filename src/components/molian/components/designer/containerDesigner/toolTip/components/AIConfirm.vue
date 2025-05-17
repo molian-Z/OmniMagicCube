@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { ref, defineExpose, nextTick } from "vue";
 import { useI18n } from "vue-i18n";
-import AI_PROMPT_TEMPLATE from '@molianComps/Designer/AIPrompt/AIRequest.md?raw'
+import AI_PROMPT_TEMPLATE from '@molianComps/Designer/AIPrompt/UnifiedPrompt.md?raw'
 import AIResponseViewer from './AIResponseViewer.vue';
+import {useUI} from '@molian/utils/UIMap'
+import { useWindowSize } from '@vueuse/core'
 const customComps: any = inject("customComps");
 const { customButton, customInput } = customComps;
 const { t } = useI18n();
@@ -13,6 +14,94 @@ const loading = ref(false);
 const inputValue = ref("");
 const currentComponent = ref<any>(null);
 const responseViewer = ref<InstanceType<typeof AIResponseViewer> | null>(null);
+
+// 获取窗口尺寸
+const { height: windowHeight } = useWindowSize();
+
+// 创建对确认框容器的引用
+const confirmWrapperRef = ref<HTMLElement | null>(null);
+const confirmContainerRef = ref<HTMLElement | null>(null);
+
+// 计算位置样式
+const positionStyle = ref({
+  top: 'auto',
+  bottom: '100%',
+  left: '0',
+  transform: 'none'
+});
+
+// 计算并更新组件位置
+const updatePosition = () => {
+  if (!confirmWrapperRef.value || !confirmContainerRef.value) return;
+  
+  const wrapperRect = confirmWrapperRef.value.parentElement?.getBoundingClientRect();
+  const containerRect = confirmContainerRef.value.getBoundingClientRect();
+  
+  if (!wrapperRect) return;
+  
+  // 计算上方和下方的可用空间
+  const spaceAbove = wrapperRect.top;
+  const spaceBelow = windowHeight.value - wrapperRect.bottom;
+  
+  // 容器高度
+  const containerHeight = containerRect.height;
+  
+  // 默认显示在上方，需要的空间
+  const neededSpace = containerHeight + 10; // 10px 的间距
+  
+  // 如果上方空间不足，但下方空间足够，则显示在下方
+  if (spaceAbove < neededSpace && spaceBelow >= neededSpace) {
+    positionStyle.value = {
+      top: '100%',
+      bottom: 'auto',
+      left: '0',
+      transform: 'none'
+    };
+  } 
+  // 如果上方空间足够，则显示在上方
+  else if (spaceAbove >= neededSpace) {
+    positionStyle.value = {
+      top: 'auto',
+      bottom: '100%',
+      left: '0',
+      transform: 'none'
+    };
+  }
+  // 如果上下都不够，但上方空间更大，则显示在上方并调整位置
+  else if (spaceAbove > spaceBelow) {
+    positionStyle.value = {
+      top: `-${spaceAbove}px`,
+      bottom: 'auto',
+      left: '0',
+      transform: 'none'
+    };
+  }
+  // 如果上下都不够，但下方空间更大，则显示在下方并调整位置
+  else {
+    positionStyle.value = {
+      top: '100%',
+      bottom: 'auto',
+      left: '0',
+      transform: 'none'
+    };
+  }
+};
+
+// 监听可见性变化，更新位置
+watch(visible, (newValue) => {
+  if (newValue) {
+    nextTick(() => {
+      updatePosition();
+    });
+  }
+});
+
+// 监听窗口大小变化，更新位置
+watch(windowHeight, () => {
+  if (visible.value) {
+    updatePosition();
+  }
+});
 
 // 打开对话框
 const open = (component: any) => {
@@ -26,6 +115,8 @@ const open = (component: any) => {
     if (inputEl) {
       (inputEl as HTMLInputElement).focus();
     }
+    // 计算位置
+    updatePosition();
   });
 };
 
@@ -47,12 +138,13 @@ const generateAIPrompt = (component: any, userPrompt: string): string => {
   // 处理组件数据，提取关键信息并限制大小
   const componentData = prepareComponentData(component);
   return AI_PROMPT_TEMPLATE
-    .replace('{{componentId}}', component.id)
-    .replace('{{componentName}}', component.name)
-    .replace('{{componentData}}', JSON.stringify(componentData))
-    .replace('{{userPrompt}}', userPrompt)
-    .replace('{{requestId}}', Date.now().toString())
-    .replace('{{timestamp}}', Date.now().toString());
+    .replace(/{{componentId}}/g, component.id)
+    .replace(/{{componentName}}/g, component.name)
+    .replace(/{{componentData}}/g, JSON.stringify(componentData))
+    .replace(/{{componentLib}}/g, useUI.value)
+    .replace(/{{userPrompt}}/g, userPrompt)
+    .replace(/{{requestId}}/g, Date.now().toString())
+    .replace(/{{timestamp}}/g, Date.now().toString());
 }
 
 // 准备组件数据，提取关键信息并限制大小
@@ -64,7 +156,7 @@ const prepareComponentData = (component: any, depth = 0): any => {
   // 创建组件数据的简化版本
   const simplifiedData: any = {
     id: component.id,
-    key: component.key,
+    // key: component.key,
     name: component.name,
     subTitle: component.subTitle,
     attrs: component.attrs,
@@ -114,10 +206,11 @@ const sendData = async () => {
         id: currentComponent.value.id,
         name: currentComponent.value.name,
       },
-      // 生成格式化的 prompt
       prompt: generateAIPrompt(currentComponent.value, inputValue.value),
       timestamp: Date.now(),
+      stream: true // 添加流式传输标志
     };
+
     // 使用自定义事件 + 回调函数
     const responsePromise = new Promise((resolve) => {
       // 创建自定义事件对象
@@ -125,9 +218,39 @@ const sendData = async () => {
         detail: {
           data,
           callback: (response: any) => {
-            // 回调函数接收响应
-            resolve(response);
+            // 处理流式响应
+            if (response.isStreaming) {
+              // 实时显示响应
+              if (responseViewer.value) {
+                responseViewer.value.showResponse(response);
+              }
+
+              // 如果是流式结束，则resolve
+              if (response.isDone) {
+                resolve(response.data);
+              }
+            } else {
+              // 普通一次性响应
+              resolve(response);
+            }
           },
+          callbackReason:(response: any) => {
+            // 处理流式响应
+            if (response.isStreaming) {
+              // 实时显示响应
+              if (responseViewer.value) {
+                responseViewer.value.showResponse(response);
+              }
+
+              // 如果是流式结束，则resolve
+              if (response.isDone) {
+                resolve(response.data);
+              }
+            } else {
+              // 普通一次性响应
+              resolve(response.data);
+            }
+          }
         },
       });
 
@@ -135,19 +258,27 @@ const sendData = async () => {
       window.dispatchEvent(event);
     });
 
-    // 等待响应
-    const response: any = await responsePromise;
-    
-    // 显示响应查看器
+    // 等待响应完成
+    const finalResponse:any = await responsePromise;
+    // 显示最终响应
     if (responseViewer.value) {
-      responseViewer.value.showResponse(response);
+      responseViewer.value.showResponse(finalResponse);
     }
 
     // 清空输入并关闭当前输入框
     inputValue.value = "";
     visible.value = false;
-  } catch (error) {
+  } catch (error:any) {
     console.error("AI请求发送失败:", error);
+    // 显示错误信息
+    if (responseViewer.value) {
+      responseViewer.value.showResponse({
+        success: false,
+        requestId: -1,
+        error: error.message,
+        message: "AI请求处理失败",
+      });
+    }
   } finally {
     loading.value = false;
   }
@@ -172,8 +303,12 @@ defineExpose({
 </script>
 
 <template>
-  <div v-if="visible" class="ai-confirm-wrapper" @click.stop>
-    <div class="ai-confirm-container">
+  <div v-if="visible" 
+       class="ai-confirm-wrapper" 
+       ref="confirmWrapperRef"
+       :style="positionStyle"
+       @click.stop>
+    <div class="ai-confirm-container" ref="confirmContainerRef">
       <i class="ai-icon">AI</i>
       <customInput
         v-model="inputValue"
@@ -209,14 +344,13 @@ defineExpose({
 <style lang="scss" scoped>
 .ai-confirm-wrapper {
   position: absolute;
-  top: -55px;
-  left: 0;
   width: 100%;
   z-index: 2001;
+  /* 移除固定的 bottom 和 margin-bottom，改为使用 JavaScript 动态计算 */
 }
 
 .ai-confirm-container {
-  background-color: rgba(255, 255, 255, 0.15);
+  background-color: var(--ml-bg-color);
   box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
   backdrop-filter: saturate(150%) var(--ml-bg-blur-base);
   border-radius: 20px;
@@ -227,6 +361,7 @@ defineExpose({
   animation: ai-popup 0.2s ease-out;
   position: relative;
   z-index: 2;
+  margin: 10px 0; /* 添加上下边距 */
 }
 
 .ai-input {

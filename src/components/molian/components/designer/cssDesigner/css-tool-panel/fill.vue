@@ -6,7 +6,7 @@ import svgIcon from '@molianComps/SvgIcon/index.vue'
 import {useI18n} from 'vue-i18n'
 const {t} = useI18n()
 const css = computed(() => {
-    return selectedComp.value && selectedComp.value.css.background || {}
+    return selectedComp.value?.css?.background ?? {}
 })
 </script>
 <template>

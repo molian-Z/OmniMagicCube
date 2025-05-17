@@ -380,7 +380,7 @@ export const createCss = function (compObj: any) {
         if (cssProperties.length === 0) return '';
 
         // 构建 CSS 规则
-        return `.${key}{
+        return `.comp_${key}{
             ${cssProperties.join(';')};
         }`;
     });
@@ -612,7 +612,6 @@ function shallowDiff(obj1: any, obj2: any) {
     // 使用 Set 存储相同的键，提高查找效率
     const sameKeys = new Set<string>()
     
-    // 使用 Object.entries 替代 for...in
     Object.entries(obj1).forEach(([key, value1]) => {
         if (!obj2.hasOwnProperty(key)) return
         

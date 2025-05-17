@@ -51,19 +51,19 @@ export namespace AIResponse {
     /** 请求 ID，通常是时间戳 */
     requestId: number;
     /** 组件信息 */
-    component: ComponentInfo;
+    component?: ComponentInfo;
     /** 修改类型 */
-    modificationType: ModificationType;
+    modificationType?: ModificationType;
     /** 被修改的属性路径列表 */
-    modifiedPaths: string[];
+    modifiedPaths?: string[];
     /** 变更记录 */
-    changes: Change[];
+    changes?: Change[];
     /** 操作说明 */
     message: string;
     /** 详细说明 */
-    details: string[];
+    details?: string[];
     /** 时间戳 */
-    timestamp: number;
+    timestamp?: number;
     /** 错误信息（如果有） */
     error?: string;
   }

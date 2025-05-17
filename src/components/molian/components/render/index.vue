@@ -8,6 +8,7 @@ import renderTree from "./DeepTreeToRender.vue";
 import { runLifecycle } from "@molian/utils/customFunction";
 import { createCss } from "@molian/utils/css-generator";
 import useRenderData from "./renderData";
+import { validateComponentTree, validateGlobalAttrs } from "@/components/molian/utils/componentCore";
 defineOptions({
     name: "Render",
 })
@@ -43,23 +44,33 @@ const { css, unload } = useStyleTag('',{
 });
 const interInc = useRenderData()
 const { renderRef, variable, originVariable } = interInc
-const realExpandAPI = computed(() => { 
-    return {
-        ...props.expandAPI,
-        __type: 'render',
-    }
-})
+const expandAPIRef = ref({});
+watchEffect(() => {
+    const target = props.expandAPI || {};
+    expandAPIRef.value = new Proxy(target, {
+        get(target, prop) {
+            if (prop === '__type') return 'render';
+            return target[prop];
+        }
+    });
+});
+
+// 验证和补全组件数据
+const validatedModelValue = ref(validateComponentTree(props.modelValue));
+const validatedGlobalAttrs = ref(validateGlobalAttrs(props.globalAttrs));
+
 watch(
   () => props.globalAttrs,
   (newVal) => {
+    validatedGlobalAttrs.value = validateGlobalAttrs(newVal);
     // 只在真正需要更新的时候才更新
-    if (newVal.variable !== originVariable.value) {
-      originVariable.value = newVal.variable;
-      variable.value = getVariableData(newVal.variable, realExpandAPI.value, true);
+    if (validatedGlobalAttrs.value.variable !== originVariable.value) {
+      originVariable.value = validatedGlobalAttrs.value.variable;
+      variable.value = getVariableData(validatedGlobalAttrs.value.variable, expandAPIRef.value, true);
     }
-    if (newVal.lifecycle !== lifecycle.value) {
-      lifecycle.value = newVal.lifecycle;
-      runLifecycle(lifecycle, variable.value, realExpandAPI.value);
+    if (validatedGlobalAttrs.value.lifecycle !== lifecycle.value) {
+      lifecycle.value = validatedGlobalAttrs.value.lifecycle;
+      runLifecycle(lifecycle, variable.value, expandAPIRef.value);
     }
   },
   { 
@@ -67,16 +78,21 @@ watch(
     deep: false // 避免深度监听带来的性能开销
   }
 );
+
+// 监听组件数据变化
 watchThrottled(
   () => props.modelValue,
   (newVal) => {
-    // 可以考虑只更新变化的部分 CSS
-    const newCss = createCss(newVal);
+    // 验证和补全组件数据
+    validatedModelValue.value = validateComponentTree(newVal);
+    
+    // 更新CSS
+    const newCss = createCss(validatedModelValue.value);
     if (newCss !== css.value) {
       css.value = newCss;
     }
   },
-  { immediate: true, throttle: 50 } // 根据实际情况调整节流时间
+  { immediate: true, throttle: 50 }
 );
 onUnmounted(() => {
   unload();
@@ -89,8 +105,8 @@ defineExpose({
 
 <template>
   <renderTree
-    :modelValue="modelValue"
-    :expandAPI="realExpandAPI"
+    :modelValue="validatedModelValue"
+    :expandAPI="expandAPIRef"
     :interInc="interInc"
-  ></renderTree>
+  />
 </template>

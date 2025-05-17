@@ -159,6 +159,7 @@
             }
         },
         "MlSubForm": {
+            "isIndex": "Show Index",
             "isAdd": "Open Add",
             "isAppend": "Open Append",
             "isDelete": "Open Delete",

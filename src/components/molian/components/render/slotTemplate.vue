@@ -63,7 +63,7 @@ const parsedProps = computed(() =>
   parseProps(props.comp, comps.value, variable.value, props.expandAPI, props.slotData, 'render')
 );
 
-const componentClass = computed(() => props.comp.key);
+const componentClass = `comp_${props.comp.key}`;
 const directiveParams = computed(() => ({
   comp: props.comp,
   $slot: props.slotData,
@@ -115,7 +115,6 @@ function triggerAnimation(animationType: string, animationName: string) {
   }
   return null;
 }
-
 // 暴露方法给父组件
 defineExpose({
   triggerAnimation

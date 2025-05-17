@@ -66,7 +66,15 @@ export const directives = {
             showToolbar
         } = useDraggable(comps, compData, message)
         const elRef = ref()
-
+        // 修改监听函数，在props.comp.value变化时清除缓存
+        watch(() => props.comp.value, (newVal: any, oldVal: any) => {
+            // 清除渲染缓存，强制重新渲染
+            renderCache.clear()
+            // 清除事件处理函数缓存
+            eventHandlersCache.clear()
+        }, {
+            deep: true
+        })
         /**
          * 处理点击事件的函数，用于处理在组件上的点击行为
          * @param evt 点击事件对象，类型为any，以便兼容不同的事件格式
@@ -159,20 +167,20 @@ export const directives = {
         // 定义一个计算属性propsData，用于解析和计算组件的props
         const propsData: any = computed(() => {
             // 调用parseProps函数解析组件的props，并返回解析结果
-            return parseProps(props.comp, comps.value, variableData.value, {}, {}, 'designer')
+            return parseProps(props.comp.value, comps.value, variableData.value, {}, {}, 'designer')
         })
         // 根据组件的缓存配置计算需要发射的数据
         const emitData: any = computed(() => {
             // 初始化发射对象
             const emitObj: any = {}
             // 遍历组件的缓存配置
-            for (const key in props.comp.cacheOn) {
-                // 确保key是props.comp.cacheOn的直接属性
-                if (Object.prototype.hasOwnProperty.call(props.comp.cacheOn, key)) {
+            for (const key in props.comp.value.cacheOn) {
+                // 确保key是props.comp.value.cacheOn的直接属性
+                if (Object.prototype.hasOwnProperty.call(props.comp.value.cacheOn, key)) {
                     // 处理以'update:'开头的键
                     if (key.startsWith('update:')) {
                         // 获取缓存的元素
-                        const element = props.comp.cacheOn[key];
+                        const element = props.comp.value.cacheOn[key];
                         // 将键名转换为事件格式，首字母大写
                         const onStr = key.charAt(0).toUpperCase() + key.slice(1);
                         // 构造发射对象的属性名，以'on'开头，后跟转换后的键名
@@ -183,35 +191,34 @@ export const directives = {
             // 返回构造好的发射对象
             return emitObj
         })
-
         // 计算组件的类名，基于当前状态动态生成
         const computedClass = computed(() => {
             // 返回一个对象，其中包含不同条件下的类名
             return {
                 // 如果当前组件允许继承属性，则添加' designer-comp'类
-                'designer-comp': comps.value[props.comp.name] && comps.value[props.comp.name].inheritAttrs !== false,
+                'designer-comp': comps.value[props.comp.value.name] && comps.value[props.comp.value.name].inheritAttrs !== false,
                 // 当拖动索引与当前组件索引相同时，添加'hiddenComps'类
                 'hiddenComps': dragIndex.value === props.index,
                 // 当放置索引与当前组件索引相同且组件可拖动时，添加'is-margin'类
                 // 'is-margin': dropIndex.value === props.index && isDraggable.value,
                 // 当选中的组件与当前组件相同时，添加'selectedComp'类
-                'selectedComp': selectedComp && selectedComp.value && selectedComp.value.key === props.comp.key,
+                'selectedComp': selectedComp && selectedComp.value && selectedComp.value.key === props.comp.value.key,
                 // 当组件内没有文本指令且不可拖动且不是插槽时，添加'designer-comp-is-empty'类
-                'designer-comp-is-empty': !props.comp.directives.text && !isDraggable.value && isNotSlot(props.comp.slots),
-                [props.comp.key]: true,
+                'designer-comp-is-empty': !props.comp.value.directives.text && !isDraggable.value && isNotSlot(props.comp.value.slots),
+                [`comp_${props.comp.value.key}`]: true,
             }
         })
 
         // 自定义指令支持
         let currentTag = ""
         // 当前组件名不存在于comps.value中时，默认使用div作为当前标签
-        if (!comps.value[props.comp.name]) {
-            currentTag = 'div'
+        if (!comps.value[props.comp.value.name]) {
+            currentTag = props.comp.value.name || 'div'
         } else {
             // 当前组件名存在于comps.value中时，根据其类型决定当前标签
             // 如果是组件实例，则使用markRaw标记原始对象以优化性能
             // 如果是组件名称，则直接使用该名称作为标签
-            currentTag = comps.value[props.comp.name].comp ? markRaw(comps.value[props.comp.name].comp) : comps.value[props.comp.name].name
+            currentTag = comps.value[props.comp.value.name].comp ? markRaw(comps.value[props.comp.value.name].comp) : comps.value[props.comp.value.name].name
         }
         // 修改事件处理函数缓存的实现
         const eventHandlersCache = new Map();
@@ -260,36 +267,38 @@ export const directives = {
         const renderDom = (domForAttr: { row?: any; index?: any; keyProps?: any; type?: any }) => {
             const { row, index, keyProps } = domForAttr;
         
-            // 使用字符串作为缓存键
+            // 使用更详细的缓存键，包含组件的关键属性
             const cacheKey = JSON.stringify({
-                compId: props.comp.id,
+                compId: props.comp.value.id,
+                compKey: props.comp.value.key,  // 添加key属性
+                compProps: JSON.stringify(propsData.value),  // 添加props的哈希值
                 row: row?.id,
                 index,
                 keyProps: keyProps?.idKey
             });
         
-            // 检查缓存
+            // 检查缓存，但对于for指令或props变化时不使用缓存
             const cached = renderCache.get(cacheKey);
-            if (cached && !props.comp.directives?.for) {
+            if (cached && !props.comp.value.directives?.for) {
                 return cached;
             }
         
             // 优化插槽数据创建
-            const slotData = props.comp.directives?.for
-                ? createSlot(row, index, props.comp, props.inheritProps)
+            const slotData = props.comp.value.directives?.for
+                ? createSlot(row, index, props.comp.value, props.inheritProps)
                 : props.inheritProps;
         
             // 优化属性对象创建
             const attrObj = {
                 style: computed(() => ({
-                    ...(!isShow({ comp: props.comp, $slot: slotData, expandAPI: props.expandAPI }) && { display: 'none' } || {})
+                    ...(!isShow({ comp: props.comp.value, $slot: slotData, expandAPI: props.expandAPI }) && { display: 'none' } || {})
                 })),
                 ...propsData.value,
                 ...emitData.value,
-                ...createEventHandlers(props.comp, props.index),
+                ...createEventHandlers(props.comp.value, props.index),
                 class: computedClass.value,
-                id: props.comp.id,
-                ['data-key']: props.comp.key,
+                id: props.comp.value.id,
+                ['data-key']: props.comp.value.key,
                 isDesigner: true,
                 ref: elRef
             };
@@ -300,8 +309,8 @@ export const directives = {
             }
         
             // 优化插槽处理
-            const nowSlots = Object.entries(slots).reduce((acc, [key, value]) => {
-                acc[key] = keyProps ? value(slotData) : () => value(slotData);
+            const nowSlots:any = Object.entries(slots).reduce((acc, [key, value]) => {
+                acc = { ...acc, [key]: keyProps ? (value as Function)(slotData) : () => (value as Function)(slotData) };
                 return acc;
             }, {});
         
@@ -309,15 +318,15 @@ export const directives = {
             const vnode = typeof currentTag === 'string'
                 ? withDirectives(
                     h(currentTag, attrObj, nowSlots.default),
-                    [[vCustomDirectives({ comp: props.comp, $slot: slotData, variable: variableData.value, expandAPI: props.expandAPI })]]
+                    [[vCustomDirectives({ comp: props.comp.value, $slot: slotData, variable: variableData.value, expandAPI: props.expandAPI })]]
                 )
                 : withDirectives(
                     h(currentTag, attrObj, nowSlots),
-                    [[vCustomDirectives({ comp: props.comp, $slot: slotData, variable: variableData.value, expandAPI: props.expandAPI })]]
+                    [[vCustomDirectives({ comp: props.comp.value, $slot: slotData, variable: variableData.value, expandAPI: props.expandAPI })]]
                 );
         
             // 缓存结果
-            if (!props.comp.directives?.for) {
+            if (!props.comp.value.directives?.for) {
                 renderCache.set(cacheKey, vnode);
             }
         
@@ -325,31 +334,31 @@ export const directives = {
         };
         const newForEachList = computed(() => {
             // 添加条件判断，避免不必要的计算
-            if (!props.comp.directives?.for) return null;
-            return getForEachList(props.comp, variableData, props.expandAPI)
+            if (!props.comp.value.directives?.for) return null;
+            return getForEachList(props.comp.value, variableData, props.expandAPI)
         })
         // 出现极端情况解决方案。如元素不存在以及无法对元素进行修改的情况
         // 监听inheritAttrs为false的组件
-        if (comps.value[props.comp.name].inheritAttrs === false) {
-            watchDebounced(compsEls[props.comp.id], (resetDom) => {
+        if (comps.value[props.comp.value.name] && comps.value[props.comp.value.name].inheritAttrs === false) {
+            watchDebounced(compsEls[props.comp.value.id], (resetDom) => {
                 //if(!resetDom?.forceWatch) return 
                 // await nextTick()
                 nextTick(() => {
-                    resetDom.id = props.comp.id
-                    resetDom.dataset.key = props.comp.key
+                    resetDom.id = props.comp.value.id
+                    resetDom.dataset.key = props.comp.value.key
                     //...propsData,
-                    resetDom.onclick = ($event: any) => onClick($event, props.comp, props.index)
-                    resetDom.oncontextmenu = ($event: any) => onContextmenu($event, props.comp, props.index)
-                    // resetDom.ondragstart = (evt: any) => onDragStart(evt, props.comp)
+                    resetDom.onclick = ($event: any) => onClick($event, props.comp.value, props.index)
+                    resetDom.oncontextmenu = ($event: any) => onContextmenu($event, props.comp.value, props.index)
+                    // resetDom.ondragstart = (evt: any) => onDragStart(evt, props.comp.value)
                     // resetDom.ondragend = onDragend
                     // 不可使用
                     resetDom.ondragover = () => {
-                        onDragenter(props.index, props.comp, null, compData)
+                        onDragenter(props.index, props.comp.value, null, compData)
                     }
                     const batchUpdateDOM = (resetDom: HTMLElement | any) => {
                         const updates = reactive({
                             styles: computed(() => {
-                                return { ...!isShow({ comp: props.comp, $slot: props.inheritProps, expandAPI: props.expandAPI }) && { display: 'none' } || {} }
+                                return { ...!isShow({ comp: props.comp.value, $slot: props.inheritProps, expandAPI: props.expandAPI }) && { display: 'none' } || {} }
                             }),
                             props: computed(() => propsData.value),
                             classes: computed(() => computedClass.value)
@@ -399,18 +408,18 @@ export const directives = {
         // 返回一个函数，根据不同的条件渲染DOM元素
         return () => [
             // 当newForEachList存在且有数据时，并且满足isFor条件，对数据进行map遍历，渲染每个元素
-            !!newForEachList.value && newForEachList.value.data && newForEachList.value.data.length > 0 && !!isFor({ comp: props.comp, $slot: props.inheritProps, expandAPI: props.expandAPI }) &&
+            !!newForEachList.value && newForEachList.value.data && newForEachList.value.data.length > 0 && !!isFor({ comp: props.comp.value, $slot: props.inheritProps, expandAPI: props.expandAPI }) &&
             newForEachList.value.data.map((row: any, index: any) => {
                 // 使用renderDom函数渲染特定的DOM元素，传入当前项、索引、for指令和类型
                 return renderDom({
                     row,
                     index,
-                    keyProps: props.comp.directives.for,
+                    keyProps: props.comp.value.directives.for,
                     type: newForEachList.value.type
                 })
             })
             // 当满足isIf条件时，渲染空的DOM元素
-            || isIf({ comp: props.comp, $slot: props.inheritProps, expandAPI: props.expandAPI }) && renderDom({})
+            || isIf({ comp: props.comp.value, $slot: props.inheritProps, expandAPI: props.expandAPI }) && renderDom({})
             || null
         ]
     }

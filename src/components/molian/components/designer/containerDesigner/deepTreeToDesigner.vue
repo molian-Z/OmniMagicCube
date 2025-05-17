@@ -65,6 +65,11 @@ const value = computed(() =>
         "designer"
     )
 );
+const getCompValue = (index: number) => {
+    // 保持响应式引用
+    return computed(() => value.value[index])
+}
+
 const { onDrop, onDropSlot } = useDraggable(comps, compData, message);
 const setRef = async (el: HTMLElement, comp: any, index: number) => {
     await nextTick();
@@ -118,7 +123,7 @@ const isSlotData = (slotProps: Record<string, any>): boolean => Boolean(slotProp
     />
     <directives
       :ref="(el: any) => setRef(el, comp, index)"
-      :comp="value[index]"
+      :comp="getCompValue(index)"
       :index="index"
       :modelValue="compData"
       :parentNode="parentNode"

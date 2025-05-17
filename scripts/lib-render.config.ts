@@ -92,7 +92,10 @@ export default defineConfig({
                 "ace-builds/src-min-noconflict/snippets/javascript",
                 '/node_modules/ace-builds/src-min-noconflict/worker-json.js',
                 '/node_modules/ace-builds/src-min-noconflict/worker-javascript.js',
-                'vue-i18n'
+                'vue-i18n',
+                'marked',
+                'highlight.js',
+                'highlight.js/styles/github.css',
             ],
             output: {
                 // 在 UMD 构建模式下为这些外部化的依赖提供一个全局变量

@@ -97,18 +97,17 @@ const openAIComfirm = () => {
 </template>
 
 <style lang="scss" scoped>
-@use '../../../../assets/styles/global.scss';
 
 .drag-shadow {
   position: absolute;
-  background-color: rgba(global.$bgColor, 0.15);
+  background-color: var(--ml-bg-color);
   box-shadow: var(--ml-shadow-lg);
   backdrop-filter: saturate(150%) var(--ml-bg-blur-base);
   border-radius: var(--ml-radius-lg);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  z-index: 100;
+  z-index: 1000;
   user-select: none;
   padding: 12px var(--ml-pd-base);
   transition: var(--ml-transition-base);

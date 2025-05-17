@@ -117,7 +117,7 @@ export const runLifecycle = function (
         context: Record<string, any>,
         args: any[] = []
     ) => {
-        const type: string | null = context.__type;
+        const type: 'designer' | null = context.__type;
         const runFn = createFunc(functionMode, codeVar, code, type);
         runFn.bind(context).call(null, ...args);
     };
@@ -271,7 +271,7 @@ export const getVariableData = (
 ): Record<string, any> => {
     const vars = reactive<Record<string, any>>({});
     const context = { app: Vue, vars, ...expandAPI };
-    const type: string | null = expandAPI.__type;
+    const type: 'designer' | null = expandAPI.__type;
     const processFunction = (value: VariableValue): Function => {
         if (value?.functionMode && ['asyncFunction', 'function'].includes(value.functionMode)) {
             return createFunc(value.functionMode, value.codeVar || [], value.code || '', type);
@@ -320,7 +320,7 @@ export const setComputed = (
 ): ComputedRef<any> => {
     // 创建一个上下文对象，包含Vue应用实例、变量和扩展API
     const context = { app: Vue, vars: reactive(vars), ...expandAPI };
-    const type: string | null = expandAPI.__type;
+    const type: 'designer' | null = expandAPI.__type;
     // 创建计算属性的函数，根据给定的配置和代码
     const computedFn = createFunc(computedObj.functionMode, computedObj.codeVar, computedObj.code, type);
     // 使用Vue的computed函数创建并返回计算属性，绑定上下文以使其在执行时可用

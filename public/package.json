@@ -1,6 +1,6 @@
 {
   "name": "omni-magic-cube",
-  "version": "0.33.1",
+  "version": "0.35.1",
   "private": false,
   "description": "",
   "author": "molian-Z",
@@ -38,7 +38,9 @@
     "es-toolkit": "^1.32.0",
     "sortablejs": "^1.15.6",
     "vue3-colorpicker": "^2.3.0",
-    "vue-i18n": "^11.1.0"
+    "vue-i18n": "^11.1.0",
+    "highlight.js": "^11.11.1",
+    "marked": "^15.0.11"
   },
   "devDependencies": {
     "@iconify/vue": "^4.2.0",

@@ -40,73 +40,281 @@ export default (request: any) => {
         await new Promise(resolve => setTimeout(resolve, 500));
 
         // 构建响应数据格式
-        return {
-            success: true,
-            requestId: data.timestamp,
-            component: {
-                id: data.component.id,
-                name: data.component.name,
+        return `\`\`\`json:container_search
+{
+  "id": "container_search",
+  "name": "MlVerticalContainer",
+  "slots": {
+    "default": {
+      "allowComps": [],
+      "children": [
+        {
+          "id": "card_total",
+          "name": "ElCard",
+          "attrs": {
+            "shadow": {
+              "type": "string",
+              "value": "hover"
+            }
+          },
+          "css": {
+            "margin": ["0","0","10","0"],
+            "background": {
+              "isShow": true,
+              "modelValue": "linear-gradient(135deg, #f6d365 0%, #fda085 100%)"
             },
-            // 修改类型，可以是 'attrs', 'css', 'animations', 'slots' 等
-            modificationType: 'multiple',
-            // 添加修改的属性路径列表
-            modifiedPaths: [
-                'attrs.flexWrap',
-                'slots.default.children[0]',
-                'slots.default.children[1].attrs.text',
-            ],
-            // 变更记录
-            changes: [
-                { type: 'modified', path: 'attrs.flexWrap', from: false, to: true },
-                { 
-                    type: 'added', 
-                    path: 'slots.default.children[0]', 
-                    value: {
-                        name: 'ElText',
-                        category: 'basic',
-                        attrs: {
-                            text: {
-                                type: 'string',
-                                value: '新添加的文本'
-                            }
-                        },
-                        key: 'comp_new_text_1',
-                        id: 'comp_new_text_1'
+            "color": {
+              "isShow": true,
+              "modelValue": "#ffffff"
+            },
+            "height": "120px"
+          },
+          "slots": {
+            "default": {
+              "allowComps": [],
+              "children": [
+                {
+                  "id": "total_title",
+                  "name": "div",
+                  "directives": {
+                    "text": {
+                      "type": "string",
+                      "value": "总订单数"
                     }
+                  },
+                  "css": {
+                    "fontSize": "16px",
+                    "fontWeight": "bold",
+                    "marginBottom": "10px"
+                  }
                 },
                 {
-                    type: 'modified', 
-                    path: 'slots.default.children[1].attrs.text', 
-                    from: '原始文本', 
-                    to: '修改后的文本' 
-                },
-                { 
-                    type: 'removed', 
-                    path: 'slots.default.children[2]',
-                    originalValue: {
-                        id: 'comp_removed_1',
-                        name: 'MlButton'
+                  "id": "total_value",
+                  "name": "div",
+                  "directives": {
+                    "text": {
+                      "type": "string",
+                      "value": "1,234"
                     }
-                },
-                {
-                    type: 'reordered',
-                    path: 'slots.footer.children',
-                    from: ['comp_id_1', 'comp_id_2', 'comp_id_3'],
-                    to: ['comp_id_2', 'comp_id_1', 'comp_id_3']
+                  },
+                  "css": {
+                    "fontSize": "24px",
+                    "fontWeight": "bold"
+                  }
                 }
-            ],
-            // 操作说明
-            message: `已根据您的请求修改了组件结构`,
-            // 详细说明
-            details: [
-                '将 flexWrap 设置为 true，允许内容换行',
-                '在默认插槽中添加了一个新的文本组件',
-                '修改了现有文本组件的内容',
-                '移除了一个按钮组件',
-                '在允许的组件类型中添加了图片组件',
-                '重新排序了页脚插槽中的组件'
-            ],
-            timestamp: Date.now()
-        };
+              ]
+            }
+          }
+        },
+        {
+          "id": "card_pending",
+          "name": "ElCard",
+          "attrs": {
+            "shadow": {
+              "type": "string",
+              "value": "hover"
+            }
+          },
+          "css": {
+            "margin": ["0","0","10","0"],
+            "background": {
+              "isShow": true,
+              "modelValue": "linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%)"
+            },
+            "color": {
+              "isShow": true,
+              "modelValue": "#ffffff"
+            },
+            "height": "120px"
+          },
+          "slots": {
+            "default": {
+              "allowComps": [],
+              "children": [
+                {
+                  "id": "pending_title",
+                  "name": "div",
+                  "directives": {
+                    "text": {
+                      "type": "string",
+                      "value": "待处理订单"
+                    }
+                  },
+                  "css": {
+                    "fontSize": "16px",
+                    "fontWeight": "bold",
+                    "marginBottom": "10px"
+                  }
+                },
+                {
+                  "id": "pending_value",
+                  "name": "div",
+                  "directives": {
+                    "text": {
+                      "type": "string",
+                      "value": "56"
+                    }
+                  },
+                  "css": {
+                    "fontSize": "24px",
+                    "fontWeight": "bold"
+                  }
+                }
+              ]
+            }
+          }
+        },
+        {
+          "id": "card_completed",
+          "name": "ElCard",
+          "attrs": {
+            "shadow": {
+              "type": "string",
+              "value": "hover"
+            }
+          },
+          "css": {
+            "margin": ["0","0","10","0"],
+            "background": {
+              "isShow": true,
+              "modelValue": "linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%)"
+            },
+            "color": {
+              "isShow": true,
+              "modelValue": "#ffffff"
+            },
+            "height": "120px"
+          },
+          "slots": {
+            "default": {
+              "allowComps": [],
+              "children": [
+                {
+                  "id": "completed_title",
+                  "name": "div",
+                  "directives": {
+                    "text": {
+                      "type": "string",
+                      "value": "已完成订单"
+                    }
+                  },
+                  "css": {
+                    "fontSize": "16px",
+                    "fontWeight": "bold",
+                    "marginBottom": "10px"
+                  }
+                },
+                {
+                  "id": "completed_value",
+                  "name": "div",
+                  "directives": {
+                    "text": {
+                      "type": "string",
+                      "value": "987"
+                    }
+                  },
+                  "css": {
+                    "fontSize": "24px",
+                    "fontWeight": "bold"
+                  }
+                }
+              ]
+            }
+          }
+        },
+        {
+          "id": "card_canceled",
+          "name": "ElCard",
+          "attrs": {
+            "shadow": {
+              "type": "string",
+              "value": "hover"
+            }
+          },
+          "css": {
+            "margin": ["0","0","10","0"],
+            "background": {
+              "isShow": true,
+              "modelValue": "linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%)"
+            },
+            "color": {
+              "isShow": true,
+              "modelValue": "#ffffff"
+            },
+            "height": "120px"
+          },
+          "slots": {
+            "default": {
+              "allowComps": [],
+              "children": [
+                {
+                  "id": "canceled_title",
+                  "name": "div",
+                  "directives": {
+                    "text": {
+                      "type": "string",
+                      "value": "已取消订单"
+                    }
+                  },
+                  "css": {
+                    "fontSize": "16px",
+                    "fontWeight": "bold",
+                    "marginBottom": "10px"
+                  }
+                },
+                {
+                  "id": "canceled_value",
+                  "name": "div",
+                  "directives": {
+                    "text": {
+                      "type": "string",
+                      "value": "45"
+                    }
+                  },
+                  "css": {
+                    "fontSize": "24px",
+                    "fontWeight": "bold"
+                  }
+                }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}
+\`\`\`
+
+## 修改解释
+
+1. **修改内容及原因**：
+   - 为每个卡片组件添加了slots.default配置，在其中嵌套了标题和数值展示的div组件
+   - 为每个卡片设置了固定高度(120px)以保持统一美观
+   - 为标题和数值设置了不同的字体大小和粗细，增强视觉层次
+   - 保留了原有的渐变背景色，保持多彩卡片的设计意图
+   - 使用directives.text来设置文本内容，符合无界魔方设计器规范
+
+2. **解决问题**：
+   - 通过slots嵌套实现了更丰富的卡片内容展示，不仅显示标题还能展示具体数值
+   - 统一的样式设置使卡片组看起来更协调专业
+   - 数值使用大字号突出显示，便于快速识别关键数据
+
+3. **可能影响**：
+   - 固定高度可能在不同尺寸屏幕上需要调整
+   - 数值需要后端数据绑定才能真正动态显示
+
+4. **注意事项**：
+   - 实际使用时需要将数值部分改为动态数据绑定
+   - 可根据实际需求调整卡片高度和字体大小
+
+## 修改内容总结
+
+| 修改项 | 修改前 | 修改后 | 修改原因 |
+| ----- | ----- | ----- | ------- |
+| 卡片内容 | 只有简单文本 | 添加标题和数值分层展示 | 增强数据展示效果 |
+| 卡片高度 | 未设置 | 固定120px | 保持卡片大小一致 |
+| 文本样式 | 统一设置 | 标题和数值不同样式 | 增强视觉层次感 |
+| slots配置 | 简单文本指令 | 嵌套div组件结构 | 符合设计器规范，便于扩展 |`
     };
 }

@@ -5,11 +5,11 @@ import { throttle } from "es-toolkit";
 import deepComps from "./deepTreeToDesigner.vue";
 import toolTip from "./toolTip/index.vue";
 import toolBar from "./toolBar/index.vue";
+import { createComponent } from '@molian/utils/componentCore'
 import {
   modelValue,
   selectedComp,
   selectedDom,
-  createComp,
   screenRatioInfo,
   zoomModeModelValue,
   zoomModeName,
@@ -42,7 +42,7 @@ const onDrop = function (evt: DragEvent) {
   if (isCreate) {
     const comp = comps.value[name];
     if (!comp) return;
-    const { cloned }: { cloned: any } = useCloned(createComp(comp));
+    const { cloned }: { cloned: any } = useCloned(createComponent(comp));
     const insertIndex = dropIndex.value ?? modelValue.value.length;
     modelValue.value.splice(insertIndex, 0, cloned.value);
   } else {
@@ -224,10 +224,11 @@ onUnmounted(() => {
     </div>
     <!-- 组件提示栏 -->
     <!-- <div class="drag-tips" v-if="isDraggable">{{ t('container.dropContent') }}</div> -->
-    <!-- 组件工具栏 -->
-    <toolTip></toolTip>
     <!-- 组件打点框 -->
     <div class="points-container" :style="pointsStyle"></div>
+    <!-- 组件工具栏 -->
+    <toolTip></toolTip>
+    
   </div>
 </template>
 

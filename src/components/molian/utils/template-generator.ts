@@ -54,7 +54,7 @@ function parseTemplate(obj: { tag: any; attrs: any; on: any; nativeOn: any; dire
   }
   if (obj.key) {
     // 如果存在key属性
-    templateStr += ` class="${obj.key}"`
+    templateStr += ` class="comp_${obj.key}"`
   }
   
   // 收集可能的v-model绑定

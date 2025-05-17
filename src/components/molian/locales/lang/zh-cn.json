@@ -159,6 +159,7 @@
             }
         },
         "MlSubForm": {
+            "isIndex": "显示序号",
             "isAdd": "打开新增",
             "isAppend": "打开追加",
             "isDelete": "打开删除",

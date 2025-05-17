@@ -11,7 +11,6 @@ import {
   globalAttrs,
   useKeys,
   compsRefs,
-  variableData,
 } from "./designerData";
 import globalTool from "./globalTool/index.vue";
 import cssDesigner from "./cssDesigner/index.vue";
@@ -21,13 +20,18 @@ import compsDesigner from "./compsDesigner/index.vue";
 import optionsDesigner from "./optionsDesigner/index.vue";
 import actionDesigner from "./actionDesigner/index.vue";
 import globalDesigner from "./globalDesigner/index.vue";
-import treeDir from "./tools/treeDir/index.vue";
+import treeDir from "./tools/TreeDir/index.vue";
+import { validateComponentTree, validateGlobalAttrs } from "@molian/utils/componentCore";
 // import aiIm from "./tools/aiIm/index.vue";
 import { setting } from "@molian/utils/defaultData";
 import { conciseJs } from "@molian/utils/js-generator";
 import { conciseCss, restoreCss } from "@molian/utils/css-generator";
 import { getSelectedAIData, getAIPrompt, updateFromAI } from "@molian/utils/AI/designerForAi";
 import AIRequest from '@molian/utils/AI/AIRequest';
+
+defineOptions({
+  name: "MolianDesigner",
+})
 const props = defineProps({
   width: {
     type: String,
@@ -69,7 +73,7 @@ const props = defineProps({
     type: Object,
     default: () => {},
   },
-  AIRequest: {
+  aiRequest: {
     type: Function,
     default: null,
   },
@@ -90,13 +94,22 @@ useKeys(message, t);
  * @param {any} data - 包含模型值和全局属性的对象
  */
 const setData = (data: any) => {
-  // 更新组件的模型值
-  modelValue.value = restoreCss(data.modelValue);
-
-  // 遍历全局属性对象的每个键，更新或添加属性
-  Object.keys(data.globalAttrs).forEach((key: string) => {
-    globalAttrs[key] = Object.assign({}, data.globalAttrs[key]);
-  });
+  if (!!data) {
+    // 验证和补全全局属性
+    const validatedGlobalAttrs = validateGlobalAttrs(data.globalAttrs || {});
+    
+    // 更新全局属性
+    for (let key in validatedGlobalAttrs) {
+      if (Object.prototype.hasOwnProperty.call(validatedGlobalAttrs, key)) {
+        const element = validatedGlobalAttrs[key];
+        globalAttrs[key] = element;
+      }
+    }
+    
+    // 验证和补全组件数据
+    const restoredModelValue = restoreCss(data.modelValue || []);
+    modelValue.value = validateComponentTree(restoredModelValue);
+  }
 };
 
 /**
@@ -151,7 +164,7 @@ const codeEditorTips = reactive({
 });
 
 provide("codeEditor", codeEditorTips);
-AIRequest(props.AIRequest);
+AIRequest(props.aiRequest);
 defineExpose({
   setData,
   getData,

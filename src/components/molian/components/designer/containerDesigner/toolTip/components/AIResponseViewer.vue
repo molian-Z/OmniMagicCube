@@ -1,80 +1,52 @@
 <script setup lang="ts">
-import { ref, defineProps, defineExpose, inject } from "vue";
 import { useI18n } from "vue-i18n";
-import { AIResponse } from "@/types/ai-response";
-import {applyAIChanges} from "@molian/utils/AI/applyAIChanges";
+import MarkdownStreamViewer from "./MarkdownStreamViewer.vue";
+import { parseMarkdownChanges } from "@molian/utils/AI/markdownParser";
+import { modelValue } from "@molianComps/Designer/designerData";
 const message = inject("mlMessage") as any;
 const { t } = useI18n();
 const customComps: any = inject("customComps");
-const { customButton, customTag, customDivider, customCollapse, customCollapseItem } = customComps;
-const props = defineProps({
-  // 可以传入初始响应数据
-  initialResponse: {
-    type: Object as () => AIResponse.Response | null,
-    default: null,
-  },
+const { customButton, customDivider } = customComps;
+
+// 响应数据 - 可以是字符串或对象
+const responseData = ref("");
+const visible = ref(false);
+// 是否已应用标志
+const hasApplied = ref(false);
+// 应用结果
+const applyResult = ref({
+  success: false,
+  message: "",
+  details: [] as Array<{ path: string; success: boolean; message: string }>,
 });
 
-// 响应数据
-const responseData = ref<AIResponse.Response | null>(props.initialResponse);
-const visible = ref(false);
-// 添加应用结果状态记录
-const applyResults = ref<Record<number, boolean>>({});
-// 添加应用结果详情
-const applyDetails = ref<Array<{index: number, success: boolean, message: string}>>([]);
-// 添加是否已应用标志
-const hasApplied = ref(false);
-// 添加应用结果统计
-const resultSummary = ref<{
-  success: boolean;
-  message: string;
-  successCount: number;
-  totalCount: number;
-} | null>(null);
-
-// 根据变更类型获取标签类型
-const getTagType = (
-  changeType: AIResponse.ChangeType
-): "info" | "success" | "warning" | "danger" | "primary" => {
-  switch (changeType) {
-    case "added":
-      return "success";
-    case "modified":
-      return "info";
-    case "removed":
-      return "danger";
-    case "reordered":
-      return "warning";
-    default:
-      return "primary";
-  }
-};
-
-// 根据变更类型获取文本
-const getChangeText = (changeType: AIResponse.ChangeType): string => {
-  switch (changeType) {
-    case "added":
-      return t("ai.change.added", "添加");
-    case "modified":
-      return t("ai.change.modified", "修改");
-    case "removed":
-      return t("ai.change.removed", "删除");
-    case "reordered":
-      return t("ai.change.reordered", "重排序");
-    default:
-      return changeType;
-  }
-};
+// 添加一个控制是否启用流式显示的变量
+const enableStreaming = ref(true);
 
 // 显示响应数据
-const showResponse = (response: AIResponse.Response) => {
-  responseData.value = response;
-  visible.value = true;
-  // 重置应用状态
-  applyResults.value = {};
-  applyDetails.value = [];
-  resultSummary.value = null;
-  hasApplied.value = false;
+const showResponse = (response: any) => {
+  if (!visible.value) {
+    enableStreaming.value = true;
+    visible.value = true;
+    hasApplied.value = false;
+    applyResult.value = {
+      success: false,
+      message: "",
+      details: [],
+    };
+  }
+  if (typeof response === "string") {
+    responseData.value = response;
+  } else {
+    if (response.isDone) {
+      enableStreaming.value = false; // 当isDone为true时，禁用流式动画
+      responseData.value = response.data;
+    } else if (response.isStreaming) {
+      responseData.value += response.data;
+    } else {
+      responseData.value = response.data;
+    }
+  }
 };
 
 // 关闭查看器
@@ -82,71 +54,222 @@ const close = () => {
   visible.value = false;
 };
 
-// 应用变更
+// 应用AI建议
 const applyChanges = () => {
   if (!responseData.value) return;
 
   try {
-    // 直接调用导入的函数
-    const result: any = applyAIChanges(responseData.value);
-    
-    // 设置已应用标志
+    const markdownContent = responseData.value;
+
+    const changes = parseMarkdownChanges(markdownContent);
+    const newModelValue = JSON.parse(JSON.stringify(modelValue.value));
+    const { details, successCount } = applyAllChanges(newModelValue, changes);
+    modelValue.value = newModelValue;
+
     hasApplied.value = true;
-    
-    // 记录应用结果摘要
-    if (typeof result === 'object') {
-      resultSummary.value = {
-        success: result.success,
-        message: result.message,
-        successCount: result.successCount,
-        totalCount: result.totalCount
-      };
-    }
-    
-    // 记录每个变更的应用结果
-    if (responseData.value.changes && responseData.value.changes.length > 0) {
-      // 使用新的 result 格式
-      if (typeof result === 'object') {
-        // 保存详细信息
-        applyDetails.value = result.details || [];
-        
-        // 更新每个变更的成功/失败状态
-        responseData.value.changes.forEach((_, index) => {
-          if (Array.isArray(result.successIndices)) {
-            applyResults.value[index] = result.successIndices.includes(index);
-          } else {
-            applyResults.value[index] = false;
-          }
-        });
-      } else {
-        // 如果没有详细结果，则假设所有变更都成功
-        responseData.value.changes.forEach((_, index) => {
-          applyResults.value[index] = true;
-        });
-      }
-    }
-    
+    applyResult.value = {
+      success: successCount === changes.length,
+      message:
+        successCount === changes.length
+          ? t("ai.applySuccess", "已成功应用 AI 修改建议")
+          : successCount > 0
+          ? t("ai.applyPartial", `已应用 ${successCount}/${changes.length} 项修改`)
+          : t("ai.applyError", "应用 AI 修改建议失败"),
+      details,
+    };
+
     if (message) {
-      if (result.success) {
+      if (applyResult.value.success) {
         message.success(t("ai.applySuccess", "已成功应用 AI 修改建议"));
-      } else if (result.successCount > 0) {
-        message.warning(t("ai.applyPartial", "部分 AI 修改建议应用失败"));
+      } else if (successCount > 0) {
+        message.warning(
+          t("ai.applyPartial", `已应用 ${successCount}/${changes.length} 项修改`)
+        );
       } else {
         message.error(t("ai.applyError", "应用 AI 修改建议失败"));
       }
     }
-  } catch (error) {
-    console.error("应用 AI 变更失败:", error);
+  } catch (error: any) {
+    console.error("应用AI建议失败:", error);
+    hasApplied.value = true;
+    applyResult.value = {
+      success: false,
+      message: t("ai.applyError", "应用 AI 修改建议失败"),
+      details: [
+        {
+          path: "解析错误",
+          success: false,
+          message: error.message,
+        },
+      ],
+    };
     if (message) {
       message.error(t("ai.applyError", "应用 AI 修改建议失败"));
     }
   }
 };
 
-// 获取应用结果详情
-const getApplyDetail = (index: number) => {
-  return applyDetails.value.find(detail => detail.index === index);
-};
+// 批量应用变更并收集结果
+function applyAllChanges(model: Record<string, any>, changes: any[]) {
+  const details = [];
+  let successCount = 0;
+  for (const change of changes) {
+    try {
+      const result: any = applyChangeToModel(model, change);
+      if (result.success) {
+        successCount++;
+        details.push({
+          path: change.identifier || "未指定",
+          success: true,
+          message: `成功应用变更: ${change.identifier || "未指定"}`,
+        });
+      } else {
+        details.push({
+          path: change.identifier || "未指定",
+          success: false,
+          message: `应用变更失败: ${result.message}`,
+        });
+      }
+    } catch (err: any) {
+      details.push({
+        path: change.identifier || "未指定",
+        success: false,
+        message: `应用变更出错: ${err.message}`,
+      });
+    }
+  }
+  return { details, successCount };
+}
+
+// 应用单个变更到模型
+function applyChangeToModel(
+  model: Record<string, any>,
+  change: { identifier: string; type: string; value: any; language: string }
+) {
+  try {
+    if (change.language === "json") {
+      return applyJsonChange(model, change);
+    } else {
+      return applyNonJsonChange(model, change);
+    }
+  } catch (err: any) {
+    return { success: false, message: err.message };
+  }
+}
+
+// 处理JSON格式的变更
+function applyJsonChange(
+  model: Record<string, any>,
+  change: { identifier: string; value: any }
+) {
+  try {
+    const valueObj =
+      typeof change.value === "string" ? JSON.parse(change.value) : change.value;
+    if (change.identifier && change.identifier.trim() !== "") {
+      const applied = recursiveApplyByIdentifier(model, change.identifier, valueObj);
+      if (applied) return { success: true };
+    }
+    mergeToRoot(model, valueObj);
+    return { success: true };
+  } catch (err: any) {
+    return { success: false, message: `JSON解析失败: ${err.message}` };
+  }
+}
+
+// 递归查找并应用变更（支持深度组件数组）
+function recursiveApplyByIdentifier(
+  obj: any,
+  identifier: string,
+  valueObj: any
+): boolean {
+  if (!obj || typeof obj !== "object") return false;
+  // 1. 组件数组递归
+  if (Array.isArray(obj)) {
+    let applied = false;
+    for (let i = 0; i < obj.length; i++) {
+      if (obj[i] && (obj[i].id === identifier || obj[i].name === identifier)) {
+        obj[i] = deepMerge(obj[i], valueObj);
+        applied = true;
+      } else {
+        applied = recursiveApplyByIdentifier(obj[i], identifier, valueObj) || applied;
+      }
+    }
+    return applied;
+  }
+  // 2. 当前对象直接匹配
+  if (obj.id === identifier || obj.name === identifier) {
+    Object.assign(obj, deepMerge(obj, valueObj));
+    return true;
+  }
+  // 3. 递归子属性
+  for (const key of Object.keys(obj)) {
+    if (typeof obj[key] === "object" && obj[key] !== null) {
+      if (recursiveApplyByIdentifier(obj[key], identifier, valueObj)) {
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
+// 合并到根级别
+function mergeToRoot(model: Record<string, any>, valueObj: Record<string, any>) {
+  Object.keys(valueObj).forEach((key) => {
+    if (typeof valueObj[key] === "object" && valueObj[key] !== null) {
+      if (!model[key]) {
+        model[key] = Array.isArray(valueObj[key])
+          ? [...valueObj[key]]
+          : { ...valueObj[key] };
+      } else {
+        model[key] = deepMerge(model[key], valueObj[key]);
+      }
+    } else {
+      model[key] = valueObj[key];
+    }
+  });
+}
+
+// 处理非JSON格式的变更
+function applyNonJsonChange(model: Record<string, any>, change: any) {
+  if (!model.aiSuggestions) {
+    model.aiSuggestions = [];
+  }
+  model.aiSuggestions.push({
+    type: change.type,
+    identifier: change.identifier,
+    language: change.language,
+    content: change.value,
+  });
+  return { success: true };
+}
+
+// 深度合并对象
+function deepMerge(target: any, source: any) {
+  if (source === null || source === undefined) return target;
+  if (target === null || target === undefined) {
+    return Array.isArray(source) ? [...source] : { ...source };
+  }
+  const output = Array.isArray(target) ? [...target] : { ...target };
+  Object.keys(source).forEach((key) => {
+    const sourceValue = source[key];
+    if (typeof sourceValue === "object" && sourceValue !== null) {
+      if (Array.isArray(sourceValue)) {
+        output[key] = [...sourceValue];
+      } else if (
+        typeof output[key] === "object" &&
+        output[key] !== null &&
+        !Array.isArray(output[key])
+      ) {
+        output[key] = deepMerge(output[key], sourceValue);
+      } else {
+        output[key] = sourceValue;
+      }
+    } else {
+      output[key] = sourceValue;
+    }
+  });
+  return output;
+}
 
 defineExpose({
   showResponse,
@@ -167,133 +290,55 @@ defineExpose({
             </div>
 
             <div v-if="responseData" class="ai-response-content">
-              <!-- 操作说明 -->
-              <div class="ai-message">{{ responseData.message }}</div>
+              <!-- Markdown内容展示 -->
+              <div class="ai-markdown-content">
+                <MarkdownStreamViewer
+                  enableAutoScroll
+                  :enableStreaming="enableStreaming"
+                  :content="responseData"
+                />
+              </div>
 
-              <!-- 修改类型 -->
-              <div class="ai-modification-type">
-                <customTag type="info" effect="plain">
-                  {{
-                    responseData.modificationType === "single"
-                      ? t("ai.singleModification", "单一修改")
-                      : t("ai.multipleModification", "多项修改")
-                  }}
-                </customTag>
-                
-                <!-- 添加应用结果摘要 -->
-                <div v-if="hasApplied && resultSummary" class="ai-result-summary">
-                  <customTag :type="resultSummary.success ? 'success' : 'warning'" effect="dark">
-                    {{ resultSummary.message }}
-                  </customTag>
+              <!-- 应用结果展示 -->
+              <div v-if="hasApplied" class="ai-result-summary">
+                <customDivider>{{ t("ai.resultSummary", "应用结果") }}</customDivider>
+                <div
+                  :class="['summary-message', applyResult.success ? 'success' : 'failed']"
+                >
+                  {{ applyResult.message }}
                 </div>
-              </div>
 
-              <!-- 详细说明列表 -->
-              <div class="ai-details">
-                <customDivider>{{ t("ai.details", "详细说明") }}</customDivider>
-                <ul>
-                  <li v-for="(detail, index) in responseData.details" :key="index">
-                    {{ detail }}
-                  </li>
-                </ul>
-              </div>
-
-              <!-- 变更记录 -->
-              <div class="ai-changes">
-                <customDivider>{{ t("ai.changes", "变更记录") }}</customDivider>
-                <customCollapse>
-                  <customCollapseItem
-                    v-for="(change, index) in responseData.changes"
+                <!-- 显示详细结果 -->
+                <div
+                  v-if="applyResult.details && applyResult.details.length > 0"
+                  class="result-details"
+                >
+                  <customDivider>{{ t("ai.resultDetails", "详细结果") }}</customDivider>
+                  <div
+                    v-for="(detail, index) in applyResult.details"
                     :key="index"
-                    :name="index"
+                    :class="['detail-item', detail.success ? 'success' : 'failed']"
                   >
-                    <template #title>
-                      <div class="collapse-title">
-                        <div>
-                            <customTag :type="getTagType(change.type)" effect="dark">
-                            {{ getChangeText(change.type) }}
-                            </customTag>
-                            <span class="change-path">{{ change.path }}</span>
-                        </div>
-                        <!-- 添加应用结果标签 -->
-                        <customTag 
-                          v-if="hasApplied"
-                          :type="applyResults[index] ? 'success' : 'danger'" 
-                          effect="light"
-                          class="apply-result-tag"
-                        >
-                          {{ applyResults[index] ? t("ai.applySuccess", "应用成功") : t("ai.applyFailed", "应用失败") }}
-                        </customTag>
-                      </div>
-                    </template>
-                    <div class="change-content">
-                      <template v-if="change.type === 'modified'">
-                        <div class="change-from">
-                          <div class="change-label">
-                            {{ t("ai.from", "原始值") }}:
-                          </div>
-                          <pre>{{ JSON.stringify(change.from, null, 2) }}</pre>
-                        </div>
-                        <div class="change-to">
-                          <div class="change-label">{{ t("ai.to", "新值") }}:</div>
-                          <pre>{{ JSON.stringify(change.to, null, 2) }}</pre>
-                        </div>
-                      </template>
-
-                      <template v-else-if="change.type === 'added'">
-                        <div class="change-value">
-                          <div class="change-label">
-                            {{ t("ai.value", "添加的值") }}:
-                          </div>
-                          <pre>{{ JSON.stringify(change.value, null, 2) }}</pre>
-                        </div>
-                      </template>
-
-                      <template v-else-if="change.type === 'removed'">
-                        <div class="change-original-value">
-                          <div class="change-label">
-                            {{ t("ai.originalValue", "被删除的值") }}:
-                          </div>
-                          <pre>{{ JSON.stringify(change.originalValue, null, 2) }}</pre>
-                        </div>
-                      </template>
-
-                      <template v-else-if="change.type === 'reordered'">
-                        <div class="change-from">
-                          <div class="change-label">
-                            {{ t("ai.from", "原始顺序") }}:
-                          </div>
-                          <pre>{{ JSON.stringify(change.from, null, 2) }}</pre>
-                        </div>
-                        <div class="change-to">
-                          <div class="change-label">{{ t("ai.to", "新顺序") }}:</div>
-                          <pre>{{ JSON.stringify(change.to, null, 2) }}</pre>
-                        </div>
-                      </template>
-                      
-                      <!-- 显示应用结果详情 -->
-                      <div v-if="hasApplied && getApplyDetail(index)" class="change-result-detail">
-                        <div class="change-label">{{ t("ai.applyResult", "应用结果") }}:</div>
-                        <div class="result-message" :class="{ 'success': applyResults[index], 'failed': !applyResults[index] }">
-                          {{ getApplyDetail(index)?.message }}
-                        </div>
-                      </div>
-                    </div>
-                  </customCollapseItem>
-                </customCollapse>
+                    <div class="detail-path">{{ detail.path }}</div>
+                    <div class="detail-message">{{ detail.message }}</div>
+                  </div>
+                </div>
               </div>
             </div>
 
             <div v-else class="ai-no-response">
               {{ t("ai.noResponse", "暂无响应数据") }}
             </div>
+
             <!-- 操作按钮 -->
             <div class="ai-actions">
-                <customButton @click="close">{{ t("ai.cancel", "取消") }}</customButton>
-                <customButton theme="primary" @click="applyChanges" :disabled="hasApplied">
-                  {{ hasApplied ? t("ai.applied", "已应用修改") : t("ai.apply", "应用修改") }}
-                </customButton>
-              </div>
+              <customButton @click="close">{{ t("ai.cancel", "取消") }}</customButton>
+              <customButton theme="primary" @click="applyChanges" :disabled="hasApplied">
+                {{
+                  hasApplied ? t("ai.applied", "已应用修改") : t("ai.apply", "应用修改")
+                }}
+              </customButton>
+            </div>
           </div>
         </Transition>
       </div>
@@ -392,112 +437,22 @@ defineExpose({
   max-height: 60vh;
 }
 
-.ai-message {
-  font-size: 16px;
-  margin-bottom: 16px;
-  color: #333;
-}
-
-.ai-modification-type {
-  margin-bottom: 16px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
 .ai-result-summary {
-  margin-left: auto;
-}
+  margin-top: 20px;
 
-.ai-details {
-  margin-bottom: 24px;
-
-  ul {
-    padding-left: 20px;
-
-    li {
-      margin-bottom: 8px;
-      color: #555;
-    }
-  }
-}
-
-.ai-changes {
-  margin-bottom: 24px;
-
-  .collapse-title {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding-right: var(--ml-pd-base);
-    width: 100%;
-
-    .change-path {
-      margin-left: 8px;
-      color: #666;
-      font-weight: bold;
-      font-size: 14px;
-      flex: 1;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-    
-    .apply-result-tag {
-      margin-left: 8px;
-    }
-  }
-
-  .change-content {
-    padding: 8px;
-    background-color: #f9f9f9;
+  .summary-message {
+    padding: 12px;
     border-radius: 4px;
+    margin-top: 8px;
 
-    .change-label {
-      font-weight: bold;
-      margin-bottom: 4px;
-      color: #555;
+    &.success {
+      background-color: rgba(103, 194, 58, 0.1);
+      color: #67c23a;
     }
 
-    pre {
-      margin: 0;
-      padding: 8px;
-      background-color: #f1f1f1;
-      border-radius: 4px;
-      overflow-x: auto;
-      font-size: 12px;
-      line-height: 1.4;
-      white-space: pre-wrap;
-      word-break: break-word;
-      max-height: 300px;
-    }
-
-    .change-from,
-    .change-value,
-    .change-original-value {
-      margin-bottom: 12px;
-    }
-    
-    .change-result-detail {
-      margin-top: 12px;
-      padding-top: 12px;
-      border-top: 1px dashed #ddd;
-      
-      .result-message {
-        padding: 6px 10px;
-        border-radius: 4px;
-        font-size: 13px;
-        
-        &.success {
-          background-color: rgba(103, 194, 58, 0.1);
-          color: #67c23a;
-        }
-        
-        &.failed {
-          background-color: rgba(245, 108, 108, 0.1);
-          color: #f56c6c;
-        }
-      }
+    &.failed {
+      background-color: rgba(245, 108, 108, 0.1);
+      color: #f56c6c;
     }
   }
 }
@@ -513,5 +468,37 @@ defineExpose({
   padding: 24px;
   text-align: center;
   color: #999;
+}
+
+/* 保留一些基本样式 */
+.ai-markdown-content {
+  margin-bottom: 24px;
+}
+
+.result-details {
+  margin-top: 16px;
+
+  .detail-item {
+    padding: 8px 12px;
+    margin-bottom: 8px;
+    border-radius: 4px;
+
+    &.success {
+      background-color: rgba(103, 194, 58, 0.1);
+    }
+
+    &.failed {
+      background-color: rgba(245, 108, 108, 0.1);
+    }
+
+    .detail-path {
+      font-weight: bold;
+      margin-bottom: 4px;
+    }
+
+    .detail-message {
+      font-size: 0.9em;
+    }
+  }
 }
 </style>
