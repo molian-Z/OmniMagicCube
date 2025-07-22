@@ -9,7 +9,7 @@ type ValueTypes = {
     boolean: boolean;
     object: Record<string, any>;
     array: any[];
-    function: Function;
+    function: FunctionDefinition;
     computed: any;
 };
 
@@ -52,6 +52,34 @@ type FunctionDefinition = {
     };
 };
 
+interface IDefaultSlotsMap {
+    /**
+     * 组件的名称
+     */
+    [key: string]: {
+        /**
+         * 插槽的名称
+         */
+        [key: string]: string| boolean | {
+            /**
+             * 是否自动添加该插槽
+             */
+            auto?: boolean;
+            /**
+             * 允许的组件列表，这些组件可以被快速插入或附加
+             */
+            allowComps?: string[] | {
+                name: string,
+            }[];
+            /**
+             * 可以被快速插入的组件列表
+             * 这里可以指定组件的名称，以及可选的属性
+             */
+            appendComps?: string[] | CubeData.ModelValue[];
+        };
+    };
+}
+
 /**
 * 为 CubeData 命名空间声明类型和接口。
 */
@@ -78,12 +106,19 @@ declare namespace CubeData {
             [key: string]: {
                 /**
                  * 属性的类型。
+                 * - 当为 'variable' 时，value 应为字符串数组
+                 * - 当为 'function' 时，value 应为函数定义对象
+                 * - 其他类型时，value 的类型应与 type 对应
                  */
-                type?: any;
+                type?: 'string' | 'number' | 'boolean' | 'object' | 'array' | 'function' | 'variable' | 'computed' | string;
                 /**
                  * 属性的值。
+                 * 根据 type 的不同，value 的类型也会不同：
+                 * - 当 type 为 'variable' 时，value 是一个字符串数组
+                 * - 当 type 为 'function' 时，value 是一个函数定义对象
+                 * - 当 type 为其他类型时，value 应与 type 对应
                  */
-                value?: any;
+                value?: string | number | boolean | object | any[] | FunctionDefinition | string[];
                 /**
                  * 属性的额外信息。
                  */
@@ -109,11 +144,11 @@ declare namespace CubeData {
                 /**
                  * 指令的类型。
                  */
-                type?: 'string' | 'variable';
+                type?: 'string' | 'function' | 'variable';
                 /**
                  * 指令的值。
                  */
-                value?: string;
+                value?: string | FunctionDefinition | string[];
             };
             /**
              * 显示指令。
@@ -122,11 +157,11 @@ declare namespace CubeData {
                 /**
                  * 指令的类型。
                  */
-                type?: 'variable';
+                type?: 'function' | 'variable';
                 /**
                  * 指令的值。
                  */
-                value?: string[];
+                value?: FunctionDefinition | string[];
             };
             /**
              * 条件渲染指令。
@@ -135,11 +170,11 @@ declare namespace CubeData {
                 /**
                  * 指令的类型。
                  */
-                type?: 'variable';
+                type?: 'function' | 'variable';
                 /**
                  * 指令的值。
                  */
-                value?: string[];
+                value?: FunctionDefinition | string[];
             };
             /**
              * 列表渲染指令。
@@ -161,10 +196,6 @@ declare namespace CubeData {
                  * 列表项的数据键。
                  */
                 dataKey?: string;
-                /**
-                 * 列表项的索引键。
-                 */
-                indexKey?: string;
             };
         };
         /**
@@ -194,13 +225,37 @@ declare namespace CubeData {
              */
             borderRadius?: string[] | string | number | number[];
             /**
-             * 外边距样式。
+             * 顶部外边距。
              */
-            margin?: string[] | string | number | number[];
+            marginTop?: string | number;
             /**
- * 内边距样式。
- */
-            padding?: string[] | string | number | number[];
+             * 左侧外边距。
+             */
+            marginLeft?: string | number;
+            /**
+             * 右侧外边距。
+             */
+            marginRight?: string | number;
+            /**
+             * 底部外边距。
+             */
+            marginBottom?: string | number;
+            /**
+             * 顶部内边距。
+             */
+            paddingTop?: string | number;
+            /**
+             * 左侧内边距。
+             */
+            paddingLeft?: string | number;
+            /**
+             * 右侧内边距。
+             */
+            paddingRight?: string | number;
+            /**
+             * 底部内边距。
+             */
+            paddingBottom?: string | number;
             /**
              * 水平对齐方式。
              */
@@ -209,6 +264,34 @@ declare namespace CubeData {
              * 垂直对齐方式。
              */
             constY?: 'top' | 'center' | 'bottom' | 'top2bottom';
+            /**
+             * 水平移动距离。
+             */
+            moveX?: string | number;
+            /**
+             * 垂直移动距离。
+             */
+            moveY?: string | number;
+            /**
+             * 宽度。
+             */
+            width?: string | number;
+            /**
+             * 高度。
+             */
+            height?: string | number;
+            /**
+             * 定位方式。
+             */
+            position?: 'static' | 'relative' | 'absolute' | 'fixed' | 'sticky';
+            /**
+             * 透明度。
+             */
+            opacity?: number;
+            /**
+             * 旋转角度。
+             */
+            rotate?: string | number;
             /**
              * 颜色样式。
              */
@@ -238,7 +321,28 @@ declare namespace CubeData {
             /**
              * 边框样式。
              */
-            border?: string[] | string | number | number[];
+            border?: {
+                /**
+                 * 边框颜色。
+                 */
+                color?: string;
+                /**
+                 * 边框宽度。
+                 */
+                width?: number;
+                /**
+                 * 边框样式。
+                 */
+                style?: 'solid' | 'dashed' | 'dotted' | 'double' | 'groove' | 'ridge' | 'inset' | 'outset';
+                /**
+                 * 边框类型。
+                 */
+                type?: 'all' | 'top' | 'bottom' | 'left' | 'right';
+                /**
+                 * 是否显示边框。
+                 */
+                isShow?: boolean;
+            }[];
             /**
              * 混合模式样式。
              */
@@ -303,9 +407,177 @@ declare namespace CubeData {
                 isShow?: boolean;
             }[];
             /**
+             * CSS单位配置。
+             */
+            units?: {
+                /**
+                 * 宽度单位。
+                 */
+                width: 'px' | '%' | 'rem' | 'em' | 'vw' | 'vh' | 'vmin' | 'vmax' | 'auto';
+                /**
+                 * 高度单位。
+                 */
+                height: 'px' | '%' | 'rem' | 'em' | 'vw' | 'vh' | 'vmin' | 'vmax' | 'auto';
+                /**
+                 * 其他CSS属性单位。
+                 */
+                [key: string]: string;
+            };
+            /**
+             * 自定义CSS代码。
+             */
+            customCss?: string;
+            /**
              * 其他任意 CSS 属性。
              */
             [key: string]: any;
+        };
+        /**
+         * 动画配置。
+         */
+        animations?: {
+            /**
+             * 入场动画配置数组。
+             */
+            enter?: import('./animation').AnimationConfig[];
+            /**
+             * 退场动画配置数组。
+             */
+            leave?: import('./animation').AnimationConfig[];
+            /**
+             * 状态变化动画配置。
+             */
+            stateChange?: {
+                /**
+                 * 激活状态动画。
+                 */
+                active: import('./animation').AnimationConfig[];
+                /**
+                 * 非激活状态动画。
+                 */
+                inactive: import('./animation').AnimationConfig[];
+                /**
+                 * 选中状态动画。
+                 */
+                selected: import('./animation').AnimationConfig[];
+                /**
+                 * 未选中状态动画。
+                 */
+                unselected: import('./animation').AnimationConfig[];
+                /**
+                 * 展开状态动画。
+                 */
+                expanded: import('./animation').AnimationConfig[];
+                /**
+                 * 折叠状态动画。
+                 */
+                collapsed: import('./animation').AnimationConfig[];
+                /**
+                 * 加载状态动画。
+                 */
+                loading: import('./animation').AnimationConfig[];
+                /**
+                 * 加载完成状态动画。
+                 */
+                loaded: import('./animation').AnimationConfig[];
+                /**
+                 * 错误状态动画。
+                 */
+                error: import('./animation').AnimationConfig[];
+                /**
+                 * 成功状态动画。
+                 */
+                success: import('./animation').AnimationConfig[];
+                /**
+                 * 禁用状态动画。
+                 */
+                disabled: import('./animation').AnimationConfig[];
+                /**
+                 * 启用状态动画。
+                 */
+                enabled: import('./animation').AnimationConfig[];
+                /**
+                 * 聚焦状态动画。
+                 */
+                focused: import('./animation').AnimationConfig[];
+                /**
+                 * 失焦状态动画。
+                 */
+                blurred: import('./animation').AnimationConfig[];
+                /**
+                 * 自定义状态动画。
+                 */
+                [stateName: string]: import('./animation').AnimationConfig[];
+            };
+            /**
+             * 交互动画配置。
+             */
+            interaction?: {
+                /**
+                 * 悬停动画。
+                 */
+                hover: import('./animation').AnimationConfig[];
+                /**
+                 * 点击动画。
+                 */
+                click: import('./animation').AnimationConfig[];
+                /**
+                 * 双击动画。
+                 */
+                doubleClick: import('./animation').AnimationConfig[];
+                /**
+                 * 鼠标按下动画。
+                 */
+                mouseDown: import('./animation').AnimationConfig[];
+                /**
+                 * 鼠标释放动画。
+                 */
+                mouseUp: import('./animation').AnimationConfig[];
+                /**
+                 * 鼠标进入动画。
+                 */
+                mouseEnter: import('./animation').AnimationConfig[];
+                /**
+                 * 鼠标离开动画。
+                 */
+                mouseLeave: import('./animation').AnimationConfig[];
+                /**
+                 * 聚焦动画。
+                 */
+                focus: import('./animation').AnimationConfig[];
+                /**
+                 * 失焦动画。
+                 */
+                blur: import('./animation').AnimationConfig[];
+                /**
+                 * 拖拽动画。
+                 */
+                drag: import('./animation').AnimationConfig[];
+                /**
+                 * 拖拽开始动画。
+                 */
+                dragStart: import('./animation').AnimationConfig[];
+                /**
+                 * 拖拽结束动画。
+                 */
+                dragEnd: import('./animation').AnimationConfig[];
+                /**
+                 * 滚动动画。
+                 */
+                scroll: import('./animation').AnimationConfig[];
+                /**
+                 * 滑动动画。
+                 */
+                swipe: import('./animation').AnimationConfig[];
+                /**
+                 * 缩放动画。
+                 */
+                pinch: import('./animation').AnimationConfig[];
+                /**
+                 * 自定义交互动画。
+                 */
+                [eventName: string]: import('./animation').AnimationConfig[];
+            };
         };
         /**
          * 模型的键。
@@ -323,7 +595,7 @@ declare namespace CubeData {
          * 子标题。
          */
         subTitle: string;
-    };
+    }
     /**
     * 全局属性接口。
     */
@@ -432,7 +704,7 @@ declare namespace AI {
         /**
          * 消息文本，具体结构未定义。
          */
-        messageText?: messageText;
+        messageText?: any;
         /**
          * 是否使用用户界面。
          */
@@ -566,24 +838,12 @@ declare namespace IConfig {
      */
     interface ILifecycleMap {
         [key: string]: {
-            codeVar: string[];
-            code: string;
+            codeVar?: string[];
+            code?: string;
             function?: any;
         };
     }
 
-    /**
-     * IDefaultSlotsMap 接口定义了组件的默认插槽映射。
-     * 描述了插槽的名称和配置，包括允许的组件类型和自动插槽等。
-     */
-    interface IDefaultSlotsMap {
-        [key: string]: {
-            [key: string]: {
-                allowComps?: (string)[] | any;
-                auto?: boolean;
-            } | string | boolean;
-        };
-    }
     /**
      * IData 接口定义了组件的基本数据配置。
      * 包括组件名称、前缀、图标、文档链接等信息。
@@ -595,7 +855,7 @@ declare namespace IConfig {
         docUrl?: string;
         removeAttrs?: string[];
         compMapping?: ICompMapping;
-    };
+    }
     /**
      * ICompMapping 接口定义了组件映射。
      * 用于映射组件名称到其特定配置，支持多种组件类型。
@@ -784,38 +1044,7 @@ declare namespace plug {
         /**
          * 可选的插槽映射，用于定义组件的插槽配置
          */
-        slotsMap?: {
-            /**
-             * 组件的名称
-             */
-            [key: string]: {
-                /**
-                 * 插槽的名称
-                 */
-                [key: string]: string | {
-                    /**
-                     * 是否自动添加该插槽
-                     */
-                    auto?: true;
-                    /**
-                     * 允许的组件列表，这些组件可以被快速插入或附加
-                     */
-                    allowComps?: string[] | {
-                        name: string,
-                    }[];
-                    /**
-                     * 可以被快速插入的组件列表
-                     * 这里可以指定组件的名称，以及可选的属性
-                     */
-                    appendComps?: string[] | {
-                        name: string,
-                        attrs?: {
-                            [key: string]: string;
-                        }
-                    }[];
-                };
-            };
-        };
+        slotsMap?: IDefaultSlotsMap | (() => IDefaultSlotsMap) | (() => Promise<IDefaultSlotsMap>);
         /**
          * 可选的生命周期映射，用于存储生命周期函数的相关信息
          * 
@@ -826,14 +1055,14 @@ declare namespace plug {
          */
         lifecycleMap?: {
             [key: string]: {
-                codeVar: string[];
-                code: string;
-                function: any;
+                codeVar?: string[];
+                code?: string;
+                function?: any;
             },
         };
         /**
          * 可选的原生事件映射，用于映射事件名称到事件类型
-         */ 
+         */
         nativeEventMap?: {
             [key: string]: string[];
         };
@@ -856,7 +1085,7 @@ declare namespace plug {
                     // 是否为必填属性
                     required?: boolean;
                     // 属性的扩展类型，可以是"Icon"或者字符串
-                    expandType?: "Icon" | string;
+                    expandType?: "Icon" | "Color" | string;
                     // 其他未明确列出的属性配置
                     [key: string]: any;
                 }
@@ -876,9 +1105,22 @@ declare namespace plug {
     interface renderInstall {
         customComps?: any;
         clearDefaultComps?: boolean;
+        iconUrl?: string;
+        UIName: string;
+        appendUIMap?: any;
     }
 }
 
-declare module 'omni-magic-cube' {
-    export function install(config: any): void;
+
+interface InitObj {
+    [key: string]: any;
+}
+
+interface AppendComp {
+    [pKey: string]: {
+        [key: string]: {
+            value?: any;
+            valueFn?: (params: any) => any;
+        };
+    };
 }

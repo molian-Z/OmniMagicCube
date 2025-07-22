@@ -1,0 +1,669 @@
+.sub-title {
+    font-size: 12px;
+    font-weight: bold;
+    user-select: none;
+    color: var(--ml-text-color-1);
+}
+
+.designer-container__body-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: var(--ml-bg-color);
+    border-radius: var(--ml-radius-small);
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    padding: var(--ml-pd-lg) var(--ml-pd-base);
+    cursor: pointer;
+
+    &__text {
+        font-size: 14px;
+        font-weight: bold;
+        user-select: none;
+        color: var(--ml-text-color-1);
+    }
+
+    &__expand {
+        width: 16px;
+        height: 16px;
+    }
+}
+
+.suffix-tag,
+.suffix-unit {
+    color: var(--ml-icon-color);
+    font-size: 10px;
+}
+
+/* 1. 声明过渡效果 */
+.fade-move,
+.fade-enter-active,
+.fade-leave-active {
+    transition: all 0.2s cubic-bezier(0.55, 0, 0.1, 1);
+}
+
+/* 2. 声明进入和离开的状态 */
+.fade-enter-from,
+.fade-leave-to {
+    opacity: 0;
+    transform: scaleY(0.01) translate(30px, 0);
+}
+
+/* 3. 确保离开的项目被移除出了布局流
+      以便正确地计算移动时的动画效果。 */
+.fade-leave-active {
+    position: absolute;
+}
+
+/* 1. 声明过渡效果 */
+.fade1-move,
+.fade1-enter-active,
+.fade1-leave-active {
+    opacity: 1;
+    transition: all 0.5s cubic-bezier(0.55, 0, 0.1, 1);
+}
+
+/* 2. 声明进入和离开的状态 */
+.fade1-enter-from,
+.fade1-leave-to {
+    opacity: 0;
+}
+
+/* 3. 确保离开的项目被移除出了布局流
+      以便正确地计算移动时的动画效果。 */
+.fade1-leave-active {
+    position: absolute;
+}
+
+
+
+.list-move,
+/* 对移动中的元素应用的过渡 */
+.list-enter-active,
+.list-leave-active {
+    transition: all 0.5s ease;
+}
+
+.list-enter-from,
+.list-leave-to {
+    opacity: 0;
+    transform: translateY(30px);
+}
+
+/* 确保将离开的元素从布局流中删除
+  以便能够正确地计算移动的动画。 */
+.list-leave-active {
+    position: absolute;
+}
+
+.list2top-move,
+/* 对移动中的元素应用的过渡 */
+.list2top-enter-active,
+.list2top-leave-active {
+    transition: all 0.5s ease;
+}
+
+.list2top-enter-from,
+.list2top-leave-to {
+    opacity: 0;
+    transform: translateY(30px);
+}
+
+/* 确保将离开的元素从布局流中删除
+  以便能够正确地计算移动的动画。 */
+.list2top-leave-active {
+    position: absolute;
+    top: 0;
+}
+
+
+/* 定义过渡效果 */
+.slide2Width-enter-active,
+.slide2Width-leave-active {
+    transition: 0.5s ease;
+    overflow: hidden;
+    position: relative;
+    /* 防止内容在过渡期间溢出 */
+}
+
+/* 定义进入时的关键帧 */
+@keyframes slide2WidthIn {
+    from {
+        width: 0;
+    }
+
+    to {
+        width: 300px;
+    }
+}
+
+/* 定义离开时的关键帧 */
+@keyframes slide2WidthOut {
+    from {
+        width: 300px;
+    }
+
+    to {
+        width: 0;
+    }
+}
+
+/* 应用进入时的动画 */
+.slide2Width-enter-to {
+    animation: slide2WidthIn 0.5s forwards;
+}
+
+/* 应用离开时的动画 */
+.slide2Width-leave-to {
+    animation: slide2WidthOut 0.5s forwards;
+}
+
+
+.function-top {
+    background-color: #282a36;
+    color: #FFF;
+    font-weight: bold;
+    padding: 6px 10px;
+}
+
+.function-bottom {
+    background-color: #282a36;
+    color: #FFF;
+    font-weight: bold;
+    padding: 6px 10px;
+}
+
+.css-svg-icon {
+    // fill: var(--ml-primary-color);
+    margin: 0 !important;
+    cursor: pointer;
+    transition: var(--ml-transition-base);
+    border-radius: var(--ml-radius-small);
+
+    &:hover {
+        background-color: var(--ml-fill-color-4);
+    }
+
+    &.is-active {
+        background-color: var(--ml-fill-color-3);
+    }
+
+    &.disabled {
+        background-color: var(--ml-bg-color);
+        cursor: auto;
+    }
+}
+
+.link-icon {
+    margin-left: var(--ml-mg-small) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 28px !important;
+    height: 28px !important;
+}
+
+.toolbar-icon {
+    font-size: 22px;
+    width: 28px !important;
+    height: 28px !important;
+}
+
+.designer-toolbar {
+    background-color: var(--ml-bg-color);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--ml-pd-base) 0;
+    border-bottom: 1px solid var(--ml-border-color);
+    position: fixed;
+    width: 320px;
+    z-index: 2;
+}
+
+.comp-container {
+    // margin: var(--ml-mg-base);
+    // max-width: 312px;
+    // border-radius: var(--ml-radius-base);
+    position: relative;
+    box-shadow: var(--ml-shadow-mini);
+    margin-top: var(--ml-mg-base);
+    overflow: hidden;
+    background-color: var(--ml-bg-color);
+    background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.03), transparent);
+    .comp-content {
+      padding: 0 var(--ml-pd-base);
+    }
+  }
+
+.basic-list {
+    display: flex;
+    width: 100%;
+    height: auto;
+    overflow-y: auto;
+    overflow-x: hidden;
+    flex-direction: column;
+    padding: var(--ml-pd-base);
+    border-top: 1px solid var(--ml-border-color-light, rgba(0, 0, 0, 0.05));
+}
+
+.is-side-bar {
+    .basic-list {
+        height: inherit;
+    }
+}
+
+::-webkit-scrollbar {
+    width: 0px;
+    height: 2px;
+    border-radius: 10px;
+    background-color: #F5F5F5;
+}
+
+
+.context-menu__list {
+    .mx-context-menu-item {
+        padding: var(--ml-pd-base) var(--ml-pd-lg);
+
+        .mx-item-row {
+            .label {
+                font-size: 12px;
+                font-weight: 500;
+                letter-spacing: .5px;
+            }
+        }
+
+        &.menu-danger {
+            color: var(--ml-danger-color);
+        }
+
+        &.menu-success {
+            color: var(--ml-success-color);
+        }
+
+        &.menu-info {
+            color: var(--ml-info-color);
+        }
+
+        &.menu-warning {
+            color: var(--ml-warning-color);
+        }
+
+        &.menu-primary {
+            color: var(--ml-primary-color);
+        }
+
+        &.disabled {
+            color: var(--mx-menu-disabled-text);
+        }
+    }
+}
+
+:root {
+    //Backgroud
+    --mx-menu-backgroud: var(--ml-bg-color); //菜单背景颜色
+    --mx-menu-hover-backgroud: var(--ml-fill-color-4); //菜单条目鼠标悬浮时的背景颜色
+    --mx-menu-active-backgroud: var(--ml-fill-color-3); //菜单条目鼠标按下时的背景颜色
+    --mx-menu-open-backgroud: var(--ml-fill-color-4); //菜单条目子菜单打开时的背景颜色
+    --mx-menu-open-hover-background: var(--ml-fill-color-4); //菜单条目子菜单打开时悬浮的背景颜色
+    --mx-menu-divider: var(--ml-fill-color-5); //菜单分割线条目颜色
+
+    //Text
+    --mx-menu-text: var(--ml-primary-color); //菜单文字颜色
+    --mx-menu-hover-text: var(--ml-primary-color-hover); //菜单条目鼠标悬浮时的文字颜色
+    --mx-menu-active-text: var(--ml-primary-color-active); //菜单条目鼠标按下时的文字颜色
+    --mx-menu-open-text: var(--ml-primary-color); //菜单条目子菜单打开时的文字颜色
+    --mx-menu-open-hover-text: var(--ml-primary-color-hover); //菜单条目子菜单打开时悬浮的文字颜色
+    --mx-menu-disabled-text: var(--ml-primary-color-disabled); //菜单条目禁用的文字颜色
+
+    //Shadow
+    --mx-menu-shadow-color: rgba(0, 0, 0, .05); //菜单背景阴影颜色
+    --mx-menu-backgroud-radius: var(--ml-radius-small); //菜单背景圆角大小
+
+    //Shortcut badge
+    --mx-menu-shortcut-backgroud: #ebebeb; //菜单快捷键标记的背景颜色，下方是它的四个状态
+    --mx-menu-shortcut-backgroud-hover: #ebebeb;
+    --mx-menu-shortcut-backgroud-active: #ebebeb;
+    --mx-menu-shortcut-backgroud-open: #ebebeb;
+    --mx-menu-shortcut-backgroud-disabled: #fdfdfd;
+    --mx-menu-shortcut-text: #424242; //菜单快捷键标记的文字颜色，下方是它的四个状态
+    --mx-menu-shortcut-text-hover: #424242;
+    --mx-menu-shortcut-text-active: #424242;
+    --mx-menu-shortcut-text-open: #424242;
+    --mx-menu-shortcut-text-disabled: #a5a5a5;
+
+    //Focus border color
+    --mx-menu-focus-color: #0085f1; //菜单项键盘激活时的外框颜色
+
+    //Icon placeholder width
+    --mx-menu-placeholder-width: 24px; //图标占位区域的宽度
+}
+
+
+.fullscreen {
+    background-color: transparent !important;
+}
+
+.data2form-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: var(--ml-bg-color);
+    padding: var(--ml-pd-base);
+    border-radius: var(--ml-radius-base);
+    height: 40px;
+
+    .data2form-item__label {
+        width: 100px;
+        font-size: 14px;
+        font-weight: bold;
+        padding-right: var(--ml-pd-base);
+        overflow: hidden;
+    }
+
+    .data2form-item__input {
+        width: 120px;
+        position: relative;
+    }
+
+    .data2form-item__input>* {
+        width: 100%;
+    }
+
+    .data2form-item__icon {
+        width: 24px;
+        padding: 3px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-radius: var(--ml-radius-base);
+        user-select: none;
+
+        &:not(&.disabled) {
+            background-color: var(--ml-bg-page-color);
+            transition: var(--ml-transition-base);
+            cursor: pointer;
+
+            &:hover {
+                background-color: var(--ml-fill-color-3);
+            }
+        }
+
+        .data2form-item__svg-icon {
+            margin: 0;
+            width: 12px;
+        }
+
+        &.disabled {
+            .data2form-item__svg-icon {
+                color: var(--ml-fill-color-2);
+            }
+        }
+    }
+}
+
+
+.designer-slot__selected-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: bold;
+    user-select: none;
+    cursor: pointer;
+    transition: var(--ml-transition-base);
+    padding: var(--ml-pd-small) var(--ml-pd-base);
+    border-radius: var(--ml-radius-small);
+}
+
+.designer-slot__selected-item:hover {
+    background-color: var(--ml-fill-color-4);
+    color: var(--ml-primary-color);
+}
+
+// CSS面板相关样式
+.css-panel {
+    background-color: var(--ml-bg-color);
+    // border-radius: var(--ml-radius-base);
+    // margin: var(--ml-mg-base);
+    overflow: hidden;
+    box-shadow: var(--ml-shadow-mini);
+    margin-top: var(--ml-mg-base);
+
+    // 面板头部
+    &__header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: var(--ml-pd-base);
+        user-select: none;
+    }
+
+    // 面板标题
+    &__title {
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--ml-text-color-1);
+    }
+
+    // 面板操作区
+    &__actions {
+        display: flex;
+        align-items: center;
+        gap: var(--ml-mg-small);
+    }
+
+    // 面板内容区
+    &__body {
+        padding: var(--ml-pd-base);
+
+        &--divider {
+            margin-top: var(--ml-mg-lg);
+            padding-top: var(--ml-pd-lg);
+            border-top: 1px solid var(--ml-border-color-light);
+        }
+    }
+
+    &__radio-group {
+        flex: 1;
+        display: flex;
+        align-items: center;
+    }
+
+    // 内容行
+    &__row {
+        display: flex;
+        align-items: center;
+        margin-bottom: var(--ml-mg-base);
+        gap: var(--ml-mg-base); // 添加行级gap
+
+        &:last-child {
+            margin-bottom: 0;
+        }
+
+        // 两端对齐
+        &--between {
+            justify-content: space-between;
+        }
+
+        // 包裹
+        &--wrap {
+            flex-wrap: wrap;
+            gap: var(--ml-mg-base);
+        }
+    }
+
+    // 圆角链接图标容器
+    &__radius-link-container {
+        position: absolute;
+        top: -16px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 1;
+    }
+
+    // 圆角链接图标
+    &__radius-link-icon {
+        cursor: pointer;
+        background-color: var(--ml-bg-color);
+        border-radius: 50%;
+        padding: 4px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    // 输入框容器
+    &__input-wrapper {
+        flex: 1;
+        min-width: 0;
+        // 移除margin-right
+        // margin-right: var(--ml-mg-base);
+
+        &:last-child {
+            margin-right: 0; // 可以保留这个以确保兼容性
+        }
+
+        // 等宽输入框
+        &--equal {
+            flex: 0 0 calc(50% - var(--ml-mg-base) / 2);
+        }
+    }
+
+    // 图标按钮
+    &__icon-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 28px;
+        height: 28px;
+        border-radius: 100%;
+        cursor: pointer;
+        transition: var(--ml-transition-base);
+
+        &:hover {
+            background-color: var(--ml-fill-color-4);
+        }
+
+        &--active {
+            background-color: var(--ml-fill-color-3);
+            color: var(--ml-primary-color);
+        }
+
+        &--disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+
+            &:hover {
+                background-color: transparent;
+            }
+        }
+    }
+
+    // 分组
+    &__group {
+        display: flex;
+        align-items: center;
+        background-color: var(--ml-bg-page-color);
+        border-radius: var(--ml-radius-small);
+        padding: var(--ml-pd-small);
+        gap: var(--ml-mg-small);
+    }
+
+    // 标签
+    &__label {
+        font-size: 12px;
+        color: var(--ml-text-color-2);
+        margin-bottom: var(--ml-mg-small);
+    }
+
+    // 后缀单位
+    &__suffix {
+        color: var(--ml-icon-color);
+        font-size: 10px;
+    }
+
+    // 禁用状态
+    &.is-disabled {
+        opacity: 0.7;
+        pointer-events: none;
+    }
+
+    &__button-group {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+
+        .css-panel__icon-btn {
+            margin-left: var(--ml-mg-base);
+            cursor: pointer;
+            transition: var(--ml-transition-base);
+            padding: 4px;
+            border-radius: var(--ml-radius-small);
+
+            &:hover {
+                background-color: var(--ml-fill-color-4);
+            }
+
+            &--active {
+                color: var(--ml-primary-color);
+                background-color: var(--ml-fill-color-3);
+            }
+
+            &:first-child {
+                margin-left: 0;
+            }
+        }
+    }
+
+    &__align-group {
+        display: flex;
+        align-items: center;
+        width: 100%;
+        margin-top: var(--ml-mg-base);
+
+        .css-panel__align-btn {
+            padding: 5px;
+            cursor: pointer;
+            transition: var(--ml-transition-base);
+            border-radius: var(--ml-radius-small);
+            margin-right: var(--ml-mg-base);
+
+            &:hover {
+                background-color: var(--ml-fill-color-4);
+            }
+
+            &--active {
+                background-color: var(--ml-fill-color-3);
+            }
+
+            &:last-child {
+                margin-right: 0;
+            }
+        }
+    }
+}
+
+// 工具栏图标
+.css-toolbar-icon {
+    width: 24px;
+    height: 24px;
+    padding: 4px;
+    border-radius: var(--ml-radius-small);
+    cursor: pointer;
+    transition: var(--ml-transition-base);
+
+    &:hover {
+        background-color: var(--ml-fill-color-4);
+    }
+
+    &--active {
+        background-color: var(--ml-fill-color-3);
+        color: var(--ml-primary-color);
+    }
+}
+
+// 颜色选择器容器
+.css-color-picker {
+    display: flex;
+    align-items: center;
+    gap: var(--ml-mg-base);
+}

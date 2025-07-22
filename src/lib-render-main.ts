@@ -1,4 +1,4 @@
-// import 'virtual:svg-icons-register';
+import { shallowRef } from 'vue'
 import Render from '@/components/molian/components/Render/index.vue'
 import { Icon, addAPIProvider } from '@iconify/vue'
 import {iconifyUrl} from '@molian/utils/defaultData'
@@ -13,6 +13,8 @@ import MlSubForm from '@molianComps/MlSubForm/index.vue'
 import MlCodeEditor from '@molianComps/MlCodeEditor/index.vue'
 import '@molian/assets/styles/render.scss'
 import { UIData } from '@molian/utils/UIMap'
+
+// 全局安装函数
 const installRender = function (app: any, options: plug.renderInstall) {
     UIData.push(options.appendUIMap)
     registerCustomComps(app, options.UIName)
@@ -41,5 +43,14 @@ const installRender = function (app: any, options: plug.renderInstall) {
     })
 }
 
-export const CodeEditor = MlCodeEditor
+// 导出单独组件供按需引入
+export { Render as OmcRender };
+export { default as Render } from '@/components/molian/components/Render/index.vue';
+export { SvgIcon, IconPicker, MlHorizontalContainer, MlVerticalContainer, MlSubContainer, MlEcharts, MlSubForm };
+export const CodeEditor = MlCodeEditor;
+
+// 导出工具函数
+export { registerCustomComps };
+export * from '@molian/utils/UIMap';
+
 export default installRender

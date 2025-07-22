@@ -75,15 +75,7 @@ interface IDefaultSlotsMap {
              * 可以被快速插入的组件列表
              * 这里可以指定组件的名称，以及可选的属性
              */
-            appendComps?: string[] | {
-                name: string,
-                /**
-                 * 默认插入时递交的属性
-                */
-                attrs?: {
-                    [key: string]: any;
-                }
-            }[];
+            appendComps?: string[] | CubeData.ModelValue[];
         };
     };
 }
@@ -108,6 +100,36 @@ declare namespace CubeData {
          * 模型的属性，使用键值对表示。
          */
         attrs?: {
+            /**
+             * 属性的键，可以是任意字符串。
+             */
+            [key: string]: {
+                /**
+                 * 属性的类型。
+                 * - 当为 'variable' 时，value 应为字符串数组
+                 * - 当为 'function' 时，value 应为函数定义对象
+                 * - 其他类型时，value 的类型应与 type 对应
+                 */
+                type?: 'string' | 'number' | 'boolean' | 'object' | 'array' | 'function' | 'variable' | 'computed' | string;
+                /**
+                 * 属性的值。
+                 * 根据 type 的不同，value 的类型也会不同：
+                 * - 当 type 为 'variable' 时，value 是一个字符串数组
+                 * - 当 type 为 'function' 时，value 是一个函数定义对象
+                 * - 当 type 为其他类型时，value 应与 type 对应
+                 */
+                value?: string | number | boolean | object | any[] | FunctionDefinition | string[];
+                /**
+                 * 属性的额外信息。
+                 */
+                [key: string]: any;
+            };
+        };
+        /**
+         * 下一级属性，结构与attrs相同，用于存储子组件相关的属性配置。
+         * 这是一个可选属性，不是必填字段。
+         */
+        nextAttrs?: {
             /**
              * 属性的键，可以是任意字符串。
              */
@@ -233,14 +255,6 @@ declare namespace CubeData {
              */
             borderRadius?: string[] | string | number | number[];
             /**
-             * 外边距样式。 ( TODO: 取消使用)
-             */
-            margin?: string[] | string | number | number[];
-            /**
-             * 内边距样式。 ( TODO: 取消使用)
-             */
-            padding?: string[] | string | number | number[];
-            /**
              * 顶部外边距。
              */
             marginTop?: string | number;
@@ -281,6 +295,34 @@ declare namespace CubeData {
              */
             constY?: 'top' | 'center' | 'bottom' | 'top2bottom';
             /**
+             * 水平移动距离。
+             */
+            moveX?: string | number;
+            /**
+             * 垂直移动距离。
+             */
+            moveY?: string | number;
+            /**
+             * 宽度。
+             */
+            width?: string | number;
+            /**
+             * 高度。
+             */
+            height?: string | number;
+            /**
+             * 定位方式。
+             */
+            position?: 'static' | 'relative' | 'absolute' | 'fixed' | 'sticky';
+            /**
+             * 透明度。
+             */
+            opacity?: number;
+            /**
+             * 旋转角度。
+             */
+            rotate?: string | number;
+            /**
              * 颜色样式。
              */
             color?: {
@@ -309,7 +351,28 @@ declare namespace CubeData {
             /**
              * 边框样式。
              */
-            border?: string[] | string | number | number[];
+            border?: {
+                /**
+                 * 边框颜色。
+                 */
+                color?: string;
+                /**
+                 * 边框宽度。
+                 */
+                width?: number;
+                /**
+                 * 边框样式。
+                 */
+                style?: 'solid' | 'dashed' | 'dotted' | 'double' | 'groove' | 'ridge' | 'inset' | 'outset';
+                /**
+                 * 边框类型。
+                 */
+                type?: 'all' | 'top' | 'bottom' | 'left' | 'right';
+                /**
+                 * 是否显示边框。
+                 */
+                isShow?: boolean;
+            }[];
             /**
              * 混合模式样式。
              */
@@ -374,9 +437,177 @@ declare namespace CubeData {
                 isShow?: boolean;
             }[];
             /**
+             * CSS单位配置。
+             */
+            units?: {
+                /**
+                 * 宽度单位。
+                 */
+                width: 'px' | '%' | 'rem' | 'em' | 'vw' | 'vh' | 'vmin' | 'vmax' | 'auto';
+                /**
+                 * 高度单位。
+                 */
+                height: 'px' | '%' | 'rem' | 'em' | 'vw' | 'vh' | 'vmin' | 'vmax' | 'auto';
+                /**
+                 * 其他CSS属性单位。
+                 */
+                [key: string]: string;
+            };
+            /**
+             * 自定义CSS代码。
+             */
+            customCss?: string;
+            /**
              * 其他任意 CSS 属性。
              */
             [key: string]: any;
+        };
+        /**
+         * 动画配置。
+         */
+        animations?: {
+            /**
+             * 入场动画配置数组。
+             */
+            enter?: import('../types/animation').AnimationConfig[];
+            /**
+             * 退场动画配置数组。
+             */
+            leave?: import('../types/animation').AnimationConfig[];
+            /**
+             * 状态变化动画配置。
+             */
+            stateChange?: {
+                /**
+                 * 激活状态动画。
+                 */
+                active: import('../types/animation').AnimationConfig[];
+                /**
+                 * 非激活状态动画。
+                 */
+                inactive: import('../types/animation').AnimationConfig[];
+                /**
+                 * 选中状态动画。
+                 */
+                selected: import('../types/animation').AnimationConfig[];
+                /**
+                 * 未选中状态动画。
+                 */
+                unselected: import('../types/animation').AnimationConfig[];
+                /**
+                 * 展开状态动画。
+                 */
+                expanded: import('../types/animation').AnimationConfig[];
+                /**
+                 * 折叠状态动画。
+                 */
+                collapsed: import('../types/animation').AnimationConfig[];
+                /**
+                 * 加载状态动画。
+                 */
+                loading: import('../types/animation').AnimationConfig[];
+                /**
+                 * 加载完成状态动画。
+                 */
+                loaded: import('../types/animation').AnimationConfig[];
+                /**
+                 * 错误状态动画。
+                 */
+                error: import('../types/animation').AnimationConfig[];
+                /**
+                 * 成功状态动画。
+                 */
+                success: import('../types/animation').AnimationConfig[];
+                /**
+                 * 禁用状态动画。
+                 */
+                disabled: import('../types/animation').AnimationConfig[];
+                /**
+                 * 启用状态动画。
+                 */
+                enabled: import('../types/animation').AnimationConfig[];
+                /**
+                 * 聚焦状态动画。
+                 */
+                focused: import('../types/animation').AnimationConfig[];
+                /**
+                 * 失焦状态动画。
+                 */
+                blurred: import('../types/animation').AnimationConfig[];
+                /**
+                 * 自定义状态动画。
+                 */
+                [stateName: string]: import('../types/animation').AnimationConfig[];
+            };
+            /**
+             * 交互动画配置。
+             */
+            interaction?: {
+                /**
+                 * 悬停动画。
+                 */
+                hover: import('../types/animation').AnimationConfig[];
+                /**
+                 * 点击动画。
+                 */
+                click: import('../types/animation').AnimationConfig[];
+                /**
+                 * 双击动画。
+                 */
+                doubleClick: import('../types/animation').AnimationConfig[];
+                /**
+                 * 鼠标按下动画。
+                 */
+                mouseDown: import('../types/animation').AnimationConfig[];
+                /**
+                 * 鼠标释放动画。
+                 */
+                mouseUp: import('../types/animation').AnimationConfig[];
+                /**
+                 * 鼠标进入动画。
+                 */
+                mouseEnter: import('../types/animation').AnimationConfig[];
+                /**
+                 * 鼠标离开动画。
+                 */
+                mouseLeave: import('../types/animation').AnimationConfig[];
+                /**
+                 * 聚焦动画。
+                 */
+                focus: import('../types/animation').AnimationConfig[];
+                /**
+                 * 失焦动画。
+                 */
+                blur: import('../types/animation').AnimationConfig[];
+                /**
+                 * 拖拽动画。
+                 */
+                drag: import('../types/animation').AnimationConfig[];
+                /**
+                 * 拖拽开始动画。
+                 */
+                dragStart: import('../types/animation').AnimationConfig[];
+                /**
+                 * 拖拽结束动画。
+                 */
+                dragEnd: import('../types/animation').AnimationConfig[];
+                /**
+                 * 滚动动画。
+                 */
+                scroll: import('../types/animation').AnimationConfig[];
+                /**
+                 * 滑动动画。
+                 */
+                swipe: import('../types/animation').AnimationConfig[];
+                /**
+                 * 缩放动画。
+                 */
+                pinch: import('../types/animation').AnimationConfig[];
+                /**
+                 * 自定义交互动画。
+                 */
+                [eventName: string]: import('../types/animation').AnimationConfig[];
+            };
         };
         /**
          * 模型的键。

@@ -1,6 +1,6 @@
 {
   "name": "omni-magic-cube",
-  "version": "0.35.1",
+  "version": "0.37.2",
   "private": false,
   "description": "",
   "author": "molian-Z",
@@ -23,7 +23,6 @@
   },
   "license": "Apache-2.0",
   "dependencies":{
-    "ace-builds": "^1.36.5",
     "echarts": "^5.6.0",
     "@popperjs/core": "^2.11.8",
     "@imengyu/vue3-context-menu": "^1.4.4",
@@ -39,6 +38,7 @@
     "sortablejs": "^1.15.6",
     "vue3-colorpicker": "^2.3.0",
     "vue-i18n": "^11.1.0",
+    "monaco-editor": "^0.52.2",
     "highlight.js": "^11.11.1",
     "marked": "^15.0.11"
   },

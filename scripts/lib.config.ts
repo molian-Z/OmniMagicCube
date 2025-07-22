@@ -28,8 +28,22 @@ export default defineConfig({
             ],
             dts: './src/types/auto-imports.d.ts',
             dirs: [
-                './src/**',
+                './src/components/molian/utils',
+                './src/components/molian/components'
             ],
+            // 禁用警告信息
+            eslintrc: {
+                enabled: false
+            },
+            // 减少扫描范围，避免重复导入警告
+            ignore: [
+                '**/node_modules/**',
+                '**/dist/**',
+                '**/libDist/**',
+                '**/types/**'
+            ],
+            // 禁用重复导入检查
+            vueTemplate: false
         }),
         components({
             dirs: ['src/components'],
@@ -62,13 +76,13 @@ export default defineConfig({
         // target: 'modules',
         lib: {
             entry: resolve(__dirname, "../src/lib-main.ts"), //指定组件编译入口文件
-            name: "omni-magic-cube",
+            name: "OmniMagicCube",
             fileName: (format) => `designer.${format}.js`,
-            formats: ["es", "cjs", 'umd'],
+            formats: ["es", "cjs"],
         }, //库编译模式配置
         rollupOptions: {
             // 确保外部化处理那些你不想打包进库的依赖
-            external: ["vue", "element-plus", "naive-ui", "tdesign-vue-next", "vexip-ui", "ant-design-vue", "ace-builds", "echarts",
+            external: ["vue", "element-plus", "naive-ui", "tdesign-vue-next", "vexip-ui", "ant-design-vue", "monaco-editor", "echarts",
                 "@popperjs/core",
                 "@imengyu/vue3-context-menu",
                 "@imengyu/vue3-context-menu/lib/vue3-context-menu.es",
@@ -87,49 +101,23 @@ export default defineConfig({
                 "sortablejs",
                 "vue3-colorpicker",
                 "@iconify/vue",
-                "ace-builds/src-min-noconflict/snippets/javascript",
-                "ace-builds/src-min-noconflict/ext-beautify",
-                "ace-builds/src-min-noconflict/theme-dracula",
-                'ace-builds/src-min-noconflict/mode-javascript',
-                'ace-builds/src-min-noconflict/mode-html',
-                'ace-builds/src-min-noconflict/mode-css',
-                'ace-builds/src-min-noconflict/ext-language_tools',
-                "ace-builds/src-min-noconflict/mode-json",
-                "ace-builds/src-min-noconflict/ext-searchbox",
-                "ace-builds/src-min-noconflict/ext-error_marker",
-                "ace-builds/src-min-noconflict/ext-linking",
-                "ace-builds/src-min-noconflict/ext-emmet",
-                "ace-builds/src-min-noconflict/ext-elastic_tabstops_lite",
-                "ace-builds/src-min-noconflict/ext-command_bar",
-                "ace-builds/src-min-noconflict/ext-beautify",
-                "ace-builds/src-min-noconflict/ext-linking",
-                "ace-builds/src-min-noconflict/ext-options",
-                "ace-builds/src-min-noconflict/ext-prompt",
-                "ace-builds/src-min-noconflict/worker-json",
-                "ace-builds/src-min-noconflict/worker-javascript",
-                "ace-builds/src-min-noconflict/worker-css",
-                "ace-builds/src-min-noconflict/snippets/css",
-                "ace-builds/src-min-noconflict/snippets/javascript",
-                '/node_modules/ace-builds/src-min-noconflict/worker-json.js',
-                '/node_modules/ace-builds/src-min-noconflict/worker-javascript.js',
                 'vue-i18n',
                 'marked',
-                'highlight.js',
+                'highlight.js/lib/core',
+                'highlight.js/lib/languages/javascript',
+                'highlight.js/styles/github.css',
+                'highlight.js/lib/languages/xml',
+                'highlight.js/lib/languages/json',
+                'highlight.js/lib/languages/yaml',
+                'highlight.js/lib/languages/sql',
                 'highlight.js/styles/github.css',
             ],
             output: {
                 // 在 UMD 构建模式下为这些外部化的依赖提供一个全局变量
                 globals: {
                     vue: "Vue",
-                    ['ace-builds']: "ace-builds",
                     echarts: "echarts",
                     ['vue-i18n']: 'vue-i18n',
-                    ['ace-builds/src-min-noconflict/snippets/javascript']: "ace-builds/src-min-noconflict/snippets/javascript",
-                    ["ace-builds/src-min-noconflict/snippets/css"]: "ace-builds/src-min-noconflict/snippets/css",
-                    // ['ace-builds/src-min-noconflict/worker-css']: "ace-builds/src-min-noconflict/worker-css",
-                    // ['ace-builds/src-min-noconflict/worker-javascript']: "ace-builds/src-min-noconflict/worker-javascript",
-                    ['ace-builds/src-min-noconflict/ext-beautify']: "ace-builds/src-min-noconflict/ext-beautify",
-                    ['ace-builds/esm-resolver']: "ace-builds/esm-resolver"
                 },
                 assetFileNames: 'designer.css',
                 exports: "named"

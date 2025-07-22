@@ -16,7 +16,7 @@
 
 ### 首先安装必备的依赖项
 
-npm install @vueuse/core ace-builds dexie vue3-colorpicker sass vite-plugin-svg-icons
+npm install
 
 ### 其次ts项目应为项目配置运行js
 ``` tsconfig.json

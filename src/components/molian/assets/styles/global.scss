@@ -1,0 +1,134 @@
+@use 'sass:color';
+// UI组件库
+// $UIPrefix:'td'; // td el a (规范不同暂不启用)
+
+// 颜色变量
+$colorTypeObj: (
+    "primary": #2D74FF,
+    "warning": #FF9500,
+    "success": #34C759,
+    "danger": #F53F3F,
+    "info":#6B7280
+);
+
+$textColorObj:(
+    "text":#1D2129,
+    "text-reverse":#FFF
+);
+
+// 背景色
+$bgColor:#FFFFFF;
+$bgPageColor:#F9F9F9;
+$borderColor:#E5E6EB;
+
+$bgBlur:(
+    "small":blur(5px),
+    "base":blur(13.5px),
+    "lg":blur(16px)
+); 
+$transition:(
+    "base":.25s
+);
+
+
+$boxShadowObj: (
+    "small": "0 1px 10px rgba(0, 0, 0, .01),0 4px 5px rgba(0, 0, 0, 3%),0 2px 4px -1px rgba(0, 0, 0, 3%)",
+    "base": "0 3px 14px 2px rgba(0, 0, 0, .05),0 8px 10px 1px rgba(0, 0, 0, 6%),0 5px 5px -3px rgba(0, 0, 0, 10%)",
+    "lg": "0 6px 30px 5px rgba(0, 0, 0, .05),0 16px 24px 2px rgba(0, 0, 0, 4%),0 8px 10px -5px rgba(0, 0, 0, 8%)",
+    "small-inset":"0 1px 10px rgba(0, 0, 0, .05),0 4px 5px rgba(0, 0, 0, 8%),0 2px 4px -1px rgba(0, 0, 0, 12%) inset",
+    "mini-inset":"0 1px 2px 1px #00000010 inset",
+    "mini": "0 1px 2px rgba(0, 0, 0, 0.07), 0 1px 1px rgba(0, 0, 0, 0.05)"
+);
+
+// 圆角变量
+$borderRadius:(
+    "base":"6px",
+    "small":"4px",
+    "lg":"8px",
+    "xlg":"16px",
+    "round":9999px,
+    "circle":"50%"
+);
+
+// 边距变量
+$marginTypeObj: (
+    "12":"12px",
+    "base":"8px",
+    "small":"4px",
+    "lg":"16px"
+);
+@use './basic.scss';
+:root {
+    --ml-bg-color:#{$bgColor};
+    --ml-bg-page-color:#{$bgPageColor};
+    --ml-border-color:#{$borderColor};
+    // 生成常用的颜色
+    @each $colorType,
+    $colorValue in$colorTypeObj {
+
+        @for $i from 1 through 5 {
+            --ml-#{$colorType}-color-#{$i}: #{color.adjust($colorValue, $lightness: (5 - $i) * 9%)};
+        }
+
+        --ml-#{$colorType}-color-6:#{$colorValue};
+
+        @for $i from 1 through 3 {
+            --ml-#{$colorType}-color-#{6 + $i}: #{color.adjust($colorValue, $lightness: -$i * 10%)};
+        }
+        --ml-#{$colorType}-color:var(--ml-#{$colorType}-color-6);
+        --ml-#{$colorType}-color-light: var(--ml-#{$colorType}-color-1);
+        --ml-#{$colorType}-color-focus: var(--ml-#{$colorType}-color-2);
+        --ml-#{$colorType}-color-disabled: var(--ml-#{$colorType}-color-3);
+        --ml-#{$colorType}-color-hover: var(--ml-#{$colorType}-color-7);
+        --ml-#{$colorType}-color-active: var(--ml-#{$colorType}-color-8);
+        --ml-#{$colorType}-color-light-hover: var(--ml-#{$colorType}-color-2);
+    }
+
+    // 文本及背景填充色
+    @each $colorType,
+    $colorValue in$textColorObj {
+        @for $i from 1 through 7 {
+            --ml-#{$colorType}-color-#{$i}: #{color.adjust($colorValue, $lightness: $i * 8.7%)};
+        }
+    }
+
+    --ml-fill-color:#6B7280;
+    --ml-fill-color-1:#6B7280;
+    --ml-fill-color-2:#C9CDD4;
+    --ml-fill-color-3:#E5E6EB;
+    --ml-fill-color-4:#F2F4F7;
+    --ml-fill-color-5:#FAFAFB;
+    --ml-icon-color:#BDBDBD;
+
+    // 生成常用的外边距大小
+    @each $key,
+    $value in$marginTypeObj{
+        --ml-mg-#{$key}: #{$value};
+    }
+    // 生成常用的内边距大小
+    @each $key,
+    $value in$marginTypeObj{
+        --ml-pd-#{$key}: #{$value};
+    }
+
+    // 生成常用的圆角
+    @each $key,
+    $value in$borderRadius{
+        --ml-radius-#{$key}: #{$value};
+    }
+
+    // 生成阴影
+    @each $key,$value in $boxShadowObj{
+        --ml-shadow-#{$key}:#{$value};
+    }
+
+    // 生成背景模糊效果
+    @each $key,$value in $bgBlur{
+        --ml-bg-blur-#{$key}:#{$value};
+    }
+
+    // 生成动效时长
+    @each $key,$value in $transition{
+        --ml-transition-#{$key}:#{$value};
+    }
+}

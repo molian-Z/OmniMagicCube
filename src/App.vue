@@ -31,7 +31,7 @@ console.log(getSelectedAIData)
 
 <template>
   <designer ref="designerRef" width="100vw" height="100vh">
-    <template v-slot:toolbarRight>
+    <template v-slot:toolbarRight="scoped">
       <el-button @click="getAIPrompt">getAIPrompt</el-button>
     </template>
   </designer>

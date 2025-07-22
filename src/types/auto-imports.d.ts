@@ -6,6 +6,10 @@
 // biome-ignore lint: disable
 export {}
 declare global {
+  const AIAssistant: typeof import('../components/molian/components/MlCodeEditor/ai/ai-assistant')['AIAssistant']
+  const AICodeAssistant: typeof import('../components/molian/components/MlCodeEditor/ai/index')['AICodeAssistant']
+  const AICodeAssistantManager: typeof import('../components/molian/components/MlCodeEditor/ai/index')['AICodeAssistantManager']
+  const AICompletionHandler: typeof import('../components/molian/components/MlCodeEditor/handlers/AICompletionHandler')['AICompletionHandler']
   const AIRequest: typeof import('../components/molian/utils/AI/AIRequest')['default']
   const AIURL: typeof import('../components/molian/utils/defaultData')['AIURL']
   const AnimationEditor: typeof import('../components/molian/components/AnimationEngine/index')['AnimationEditor']
@@ -13,20 +17,44 @@ declare global {
   const AnimationManager: typeof import('../components/molian/components/AnimationEngine/services/animation-manager')['AnimationManager']
   const AnimationPreview: typeof import('../components/molian/components/AnimationEngine/index')['AnimationPreview']
   const AnimationService: typeof import('../components/molian/components/AnimationEngine/services/animation-service')['AnimationService']
+  const CacheManager: typeof import('../components/molian/components/MlCodeEditor/ai/index')['CacheManager']
   const CanvasTable: typeof import('../components/molian/components/CanvasTable/index.vue')['default']
   const CodeEditor: typeof import('../lib-render-main')['CodeEditor']
+  const CompletionManager: typeof import('../components/molian/components/MlCodeEditor/managers/CompletionManager')['CompletionManager']
   const ComponentPool: typeof import('../components/molian/utils/componentPool')['ComponentPool']
+  const CustomCompletionHandler: typeof import('../components/molian/components/MlCodeEditor/handlers/CustomCompletionHandler')['CustomCompletionHandler']
+  const Designer: typeof import('../lib-main')['Designer']
   const EffectScope: typeof import('vue')['EffectScope']
+  const IconPicker: typeof import('../lib-render-main')['IconPicker']
   const LABEL_WIDTH: typeof import('../components/molian/components/AnimationEngine/composables/useTimelineEvents')['LABEL_WIDTH']
+  const MlEcharts: typeof import('../lib-render-main')['MlEcharts']
+  const MlHorizontalContainer: typeof import('../lib-render-main')['MlHorizontalContainer']
+  const MlSubContainer: typeof import('../lib-render-main')['MlSubContainer']
+  const MlSubForm: typeof import('../lib-render-main')['MlSubForm']
+  const MlVerticalContainer: typeof import('../lib-render-main')['MlVerticalContainer']
+  const OmcDesigner: typeof import('../lib-main')['OmcDesigner']
+  const OmcRender: typeof import('../lib-render-main')['OmcRender']
+  const Plug: typeof import('../lib-main')['Plug']
+  const PromptManager: typeof import('../components/molian/components/MlCodeEditor/ai/prompt-manager')['PromptManager']
+  const ReadonlyValidator: typeof import('../components/molian/components/MlCodeEditor/ai/readonly-validator')['ReadonlyValidator']
+  const RefsCompletionHandler: typeof import('../components/molian/components/MlCodeEditor/handlers/RefsCompletionHandler')['RefsCompletionHandler']
+  const Render: typeof import('../lib-render-main')['Render']
+  const RequestManager: typeof import('../components/molian/components/MlCodeEditor/ai/request-manager')['RequestManager']
+  const ResponseParser: typeof import('../components/molian/components/MlCodeEditor/ai/response-parser')['ResponseParser']
+  const SvgIcon: typeof import('../lib-render-main')['SvgIcon']
   const TemplateParser: typeof import('../components/molian/utils/template-parser')['TemplateParser']
   const UIData: typeof import('../components/molian/utils/UIMap')['UIData']
+  const VariablesCompletionHandler: typeof import('../components/molian/components/MlCodeEditor/handlers/VariablesCompletionHandler')['VariablesCompletionHandler']
+  const Z_INDEX_CONFIG: typeof import('../components/molian/components/Designer/constants/zIndex')['Z_INDEX_CONFIG']
   const actionPanel: typeof import('../components/molian/components/Designer/designerData')['actionPanel']
   const add: typeof import('../components/molian/utils/indexedDB')['add']
   const aiImRef: typeof import('../components/molian/components/Designer/designerData')['aiImRef']
   const appendNativeOn: typeof import('../components/molian/components/Designer/designerData')['appendNativeOn']
   const asyncFunction: typeof import('../components/molian/utils/customFunction')['asyncFunction']
   const bar: typeof import('../components/molian/components/Echarts/model/bar')['default']
+  const calculateDropHintZIndex: typeof import('../components/molian/components/Designer/constants/zIndex')['calculateDropHintZIndex']
   const calculateRatio: typeof import('../components/molian/utils/util')['calculateRatio']
+  const calculateZIndex: typeof import('../components/molian/components/Designer/constants/zIndex')['calculateZIndex']
   const canRedo: typeof import('../components/molian/components/Designer/designerData')['canRedo']
   const canUndo: typeof import('../components/molian/components/Designer/designerData')['canUndo']
   const categoryList: typeof import('../components/molian/utils/compsConfig')['categoryList']
@@ -45,14 +73,21 @@ declare global {
   const conciseCss: typeof import('../components/molian/utils/css-generator')['conciseCss']
   const conciseJs: typeof import('../components/molian/utils/js-generator')['conciseJs']
   const contextLevel: typeof import('../components/molian/utils/defaultData')['contextLevel']
+  const createAICodeAssistant: typeof import('../components/molian/components/MlCodeEditor/ai/index')['createAICodeAssistant']
   const createApp: typeof import('vue')['createApp']
   const createComponent: typeof import('../components/molian/utils/componentCore')['createComponent']
+  const createComponentCacheKey: typeof import('../components/molian/components/Render/utils/safeCacheKey')['createComponentCacheKey']
   const createControl: typeof import('../components/molian/utils/importUIControl')['createControl']
   const createCss: typeof import('../components/molian/utils/css-generator')['createCss']
+  const createDirectiveCacheKey: typeof import('../components/molian/components/Render/utils/safeCacheKey')['createDirectiveCacheKey']
   const createFunc: typeof import('../components/molian/utils/customFunction')['createFunc']
   const createFuse: typeof import('../components/molian/utils/fuse')['createFuse']
   const createJS: typeof import('../components/molian/utils/js-generator')['createJS']
+  const createReactiveTimeSlicing: typeof import('../components/molian/components/Render/timeslicing')['createReactiveTimeSlicing']
+  const createSafeCacheKey: typeof import('../components/molian/components/Render/utils/safeCacheKey')['createSafeCacheKey']
+  const createScheduler: typeof import('../components/molian/components/Render/timeslicing')['createScheduler']
   const createSlot: typeof import('../components/molian/utils/useCore')['createSlot']
+  const createSlotCacheKey: typeof import('../components/molian/components/Render/utils/safeCacheKey')['createSlotCacheKey']
   const createTemplate: typeof import('../components/molian/utils/template-generator')['createTemplate']
   const cssPanel: typeof import('../components/molian/components/Designer/designerData')['cssPanel']
   const currentEmits: typeof import('../components/molian/components/Designer/designerData')['currentEmits']
@@ -65,6 +100,7 @@ declare global {
   const customText: typeof import('../components/molian/utils/useDirectives')['customText']
   const data2Vars: typeof import('../components/molian/utils/useCore')['data2Vars']
   const dbName: typeof import('../components/molian/utils/defaultData')['dbName']
+  const debounce: typeof import('../components/molian/components/MlCodeEditor/utils/helpers')['debounce']
   const debug: typeof import('../components/molian/utils/UIMap')['debug']
   const deepModelValueToTree: typeof import('../components/molian/utils/util')['deepModelValueToTree']
   const deepObjToArray: typeof import('../components/molian/utils/util')['deepObjToArray']
@@ -80,10 +116,11 @@ declare global {
   const deleteById: typeof import('../components/molian/utils/indexedDB')['deleteById']
   const designerForAi: typeof import('../components/molian/utils/AI/designerForAi')['default']
   const deviceList: typeof import('../components/molian/utils/device')['deviceList']
-  const directives: typeof import('../components/molian/components/Designer/containerDesigner/directives')['directives']
+  const directives: typeof import('../components/molian/components/Designer/containerDesigner/directives')['default']
   const dragComp: typeof import('../components/molian/components/Designer/draggable')['dragComp']
   const dragIndex: typeof import('../components/molian/components/Designer/draggable')['dragIndex']
   const dragNodes: typeof import('../components/molian/components/Designer/draggable')['dragNodes']
+  const draggableCreateComponent: typeof import('../components/molian/components/Designer/draggable')['draggableCreateComponent']
   const dropIndex: typeof import('../components/molian/components/Designer/draggable')['dropIndex']
   const dropKey: typeof import('../components/molian/components/Designer/draggable')['dropKey']
   const dropNode: typeof import('../components/molian/components/Designer/draggable')['dropNode']
@@ -101,6 +138,7 @@ declare global {
   const getAll: typeof import('../components/molian/utils/indexedDB')['getAll']
   const getChartData: typeof import('../components/molian/utils/util')['getChartData']
   const getCloudData: typeof import('../components/molian/utils/getCloudData')['getCloudData']
+  const getCodeContext: typeof import('../components/molian/components/MlCodeEditor/utils/helpers')['getCodeContext']
   const getCurrentInstance: typeof import('vue')['getCurrentInstance']
   const getCurrentOn: typeof import('../components/molian/utils/customFunction')['getCurrentOn']
   const getCurrentScope: typeof import('vue')['getCurrentScope']
@@ -117,6 +155,7 @@ declare global {
   const globalMenu: typeof import('../components/molian/components/Designer/designerData')['globalMenu']
   const globalPanel: typeof import('../components/molian/components/Designer/designerData')['globalPanel']
   const h: typeof import('vue')['h']
+  const hasCircularReference: typeof import('../components/molian/components/Render/utils/safeCacheKey')['hasCircularReference']
   const hiddenAllPanel: typeof import('../components/molian/components/Designer/designerData')['hiddenAllPanel']
   const history: typeof import('../components/molian/components/Designer/designerData')['history']
   const hoverBounding: typeof import('../components/molian/components/Designer/draggable')['hoverBounding']
@@ -131,6 +170,7 @@ declare global {
   const install: typeof import('../lib-main')['install']
   const installDesigner: typeof import('../lib-main')['installDesigner']
   const installRender: typeof import('../lib-main')['installRender']
+  const isCreated: typeof import('../components/molian/components/Designer/draggable')['isCreated']
   const isDraggable: typeof import('../components/molian/components/Designer/draggable')['isDraggable']
   const isFor: typeof import('../components/molian/utils/useCore')['isFor']
   const isIf: typeof import('../components/molian/utils/useCore')['isIf']
@@ -169,6 +209,8 @@ declare global {
   const parseStyle: typeof import('../components/molian/utils/css-generator')['parseStyle']
   const pie: typeof import('../components/molian/components/Echarts/model/pie')['default']
   const plug: typeof import('../components/molian/utils/plug')['default']
+  const processComponentsWithTimeSlicing: typeof import('../components/molian/components/Render/timeslicing')['processComponentsWithTimeSlicing']
+  const processWithTimeSlicing: typeof import('../components/molian/components/Render/timeslicing')['processWithTimeSlicing']
   const provide: typeof import('vue')['provide']
   const reactive: typeof import('vue')['reactive']
   const readonly: typeof import('vue')['readonly']
@@ -176,6 +218,7 @@ declare global {
   const ref: typeof import('vue')['ref']
   const registerCustomComps: typeof import('../components/molian/utils/compsConfig')['registerCustomComps']
   const renderData: typeof import('../components/molian/components/Render/renderData')['default']
+  const renderdata: typeof import('../components/molian/components/Render/renderdata')['default']
   const resetDraggable: typeof import('../components/molian/components/Designer/draggable')['resetDraggable']
   const resetHover: typeof import('../components/molian/components/Designer/draggable')['resetHover']
   const resolveComponent: typeof import('vue')['resolveComponent']
@@ -183,6 +226,7 @@ declare global {
   const runLifecycle: typeof import('../components/molian/utils/customFunction')['runLifecycle']
   const runModifier: typeof import('../components/molian/utils/customFunction')['runModifier']
   const runOn: typeof import('../components/molian/utils/customFunction')['runOn']
+  const safeStringify: typeof import('../components/molian/components/Render/utils/safeCacheKey')['safeStringify']
   const scaleCalculate: typeof import('../components/molian/utils/util')['scaleCalculate']
   const screenRatioInfo: typeof import('../components/molian/components/Designer/designerData')['screenRatioInfo']
   const selectedComp: typeof import('../components/molian/components/Designer/designerData')['selectedComp']
@@ -213,16 +257,27 @@ declare global {
   const unref: typeof import('vue')['unref']
   const update: typeof import('../components/molian/utils/indexedDB')['update']
   const updateFromAI: typeof import('../components/molian/utils/AI/designerForAi')['updateFromAI']
+  const updateSelectedCompCss: typeof import('../components/molian/components/Designer/designerData')['updateSelectedCompCss']
+  const useAIFeatures: typeof import('../components/molian/components/MlCodeEditor/composables/useAIFeatures')['useAIFeatures']
   const useAttrs: typeof import('vue')['useAttrs']
+  const useComponentProps: typeof import('../components/molian/components/Designer/optionsDesigner/composables/useComponentProps')['useComponentProps']
   const useCssModule: typeof import('vue')['useCssModule']
   const useCssVars: typeof import('vue')['useCssVars']
   const useDirectives: typeof import('../components/molian/utils/useDirectives')['default']
   const useDraggable: typeof import('../components/molian/components/Designer/draggable')['useDraggable']
+  const useErrorHandler: typeof import('../components/molian/components/Designer/optionsDesigner/composables/useErrorHandler')['useErrorHandler']
   const useId: typeof import('vue')['useId']
+  const useKeyboardEvents: typeof import('../components/molian/components/MlCodeEditor/composables/useKeyboardEvents')['useKeyboardEvents']
   const useKeys: typeof import('../components/molian/components/Designer/designerData')['useKeys']
   const useMenus: typeof import('../components/molian/components/Designer/containerDesigner/menus/index')['useMenus']
   const useModel: typeof import('vue')['useModel']
+  const useMonacoEditor: typeof import('../components/molian/components/MlCodeEditor/composables/useMonacoEditor')['useMonacoEditor']
+  const useParentProps: typeof import('../components/molian/components/Designer/optionsDesigner/composables/useComponentProps')['useParentProps']
+  const usePerformance: typeof import('../components/molian/components/Designer/optionsDesigner/composables/usePerformance')['usePerformance']
   const usePrefix: typeof import('../components/molian/utils/UIMap')['usePrefix']
+  const useReadonlyRegions: typeof import('../components/molian/components/MlCodeEditor/composables/useReadonlyRegions')['useReadonlyRegions']
+  const useSafeComponentUpdate: typeof import('../components/molian/components/Designer/optionsDesigner/composables/useSafeDebounce')['useSafeComponentUpdate']
+  const useSafeDebounce: typeof import('../components/molian/components/Designer/optionsDesigner/composables/useSafeDebounce')['useSafeDebounce']
   const useSlots: typeof import('vue')['useSlots']
   const useTemplateRef: typeof import('vue')['useTemplateRef']
   const useTimelineDrawing: typeof import('../components/molian/components/AnimationEngine/composables/useTimelineDrawing')['useTimelineDrawing']
@@ -242,24 +297,18 @@ declare global {
 // for type re-export
 declare global {
   // @ts-ignore
-  export type { AnimationManager } from '../components/molian/components/AnimationEngine/services/animation-manager'
-  import('../components/molian/components/AnimationEngine/services/animation-manager')
-  // @ts-ignore
-  export type { AnimationService } from '../components/molian/components/AnimationEngine/services/animation-service'
-  import('../components/molian/components/AnimationEngine/services/animation-service')
+  export type { Component, Slot, Slots, ComponentPublicInstance, ComputedRef, DirectiveBinding, ExtractDefaultPropTypes, ExtractPropTypes, ExtractPublicPropTypes, InjectionKey, PropType, Ref, MaybeRef, MaybeRefOrGetter, VNode, WritableComputedRef } from 'vue'
+  import('vue')
   // @ts-ignore
   export type { ComponentPool } from '../components/molian/utils/componentPool'
   import('../components/molian/utils/componentPool')
   // @ts-ignore
+  export type { IStyleMap, ICssBlur, IConstX, IBorderRadius, IOpacity } from '../components/molian/utils/css-generator'
+  import('../components/molian/utils/css-generator')
+  // @ts-ignore
+  export type { IComp, ICss, IBlur, IColor, ISlots, IDefault, IAttrs } from '../components/molian/utils/js-generator'
+  import('../components/molian/utils/js-generator')
+  // @ts-ignore
   export type { TemplateParser } from '../components/molian/utils/template-parser'
   import('../components/molian/utils/template-parser')
-  // @ts-ignore
-  export type { EffectProperty, EffectTo, IStyleMap, IConstX, IBorderRadius, IOpacity, IComp, ICss, IBlur, IColor, ISlots, IDefault, IAttrs, Component, ComponentPublicInstance, ComputedRef, DirectiveBinding, ExtractDefaultPropTypes, ExtractPropTypes, ExtractPublicPropTypes, InjectionKey, PropType, Ref, MaybeRef, MaybeRefOrGetter, VNode, WritableComputedRef, ModificationType, ChangeType, Change, ComponentInfo, Response, AnimationConfig, AnimationEffect, ComponentAnimations } from './auto-imports.d'
-  import('./auto-imports.d')
-  // @ts-ignore
-  export type { GlobalComponents } from './components.d'
-  import('./components.d')
-  // @ts-ignore
-  export type { IPopup } from './global.d'
-  import('./global.d')
 }

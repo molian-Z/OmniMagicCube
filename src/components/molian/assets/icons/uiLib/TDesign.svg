@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="_图层_2" data-name="图层 2" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 22.58 23.18">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #009bff;
+      }
+
+      .cls-2 {
+        fill: url(#_未命名的渐变);
+      }
+
+      .cls-3 {
+        fill: #0064ff;
+      }
+
+      .cls-4 {
+        fill: url(#_未命名的渐变_2);
+      }
+    </style>
+    <linearGradient id="_未命名的渐变" data-name="未命名的渐变" x1="6.44" y1="25.54" x2="21.87" y2="22.76" gradientTransform="translate(0 27.09) scale(1 -1)" gradientUnits="userSpaceOnUse">
+      <stop offset=".03" stop-color="#e9ffff"/>
+      <stop offset=".17" stop-color="#c4fac9"/>
+      <stop offset=".33" stop-color="#a0f694"/>
+      <stop offset=".48" stop-color="#82f269"/>
+      <stop offset=".63" stop-color="#6aef47"/>
+      <stop offset=".76" stop-color="#5aed2f"/>
+      <stop offset=".89" stop-color="#4feb20"/>
+      <stop offset="1" stop-color="#4ceb1b"/>
+    </linearGradient>
+    <linearGradient id="_未命名的渐变_2" data-name="未命名的渐变 2" x1="7.51" y1="21.7" x2="7.62" y2="10.8" gradientTransform="translate(0 27.09) scale(1 -1)" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#009bff"/>
+      <stop offset=".35" stop-color="#0081fe"/>
+      <stop offset=".75" stop-color="#006afd"/>
+      <stop offset="1" stop-color="#0062fd"/>
+    </linearGradient>
+  </defs>
+  <g id="_图层_1-2" data-name="图层 1">
+    <g>
+      <path class="cls-1" d="M7.97,23.18H3.28c-.08,0-.15-.02-.23-.05-.07-.03-.13-.08-.18-.14-.05-.06-.09-.13-.11-.2-.02-.07-.03-.15-.02-.23l.91-5.16h5.78l-.94,5.35c-.03,.12-.09,.23-.19,.31-.1,.08-.22,.12-.34,.12h0Z"/>
+      <path class="cls-2" d="M21.18,5.79H5.7L6.72,0h15.27c.08,0,.17,0,.25,.03,.08,.03,.15,.08,.2,.14,.06,.06,.1,.14,.12,.22,.02,.08,.02,.17,0,.25l-.86,4.71c-.02,.12-.09,.23-.19,.31-.1,.08-.22,.12-.35,.12Z"/>
+      <path class="cls-3" d="M5.7,5.79H.55c-.08,0-.16-.02-.23-.05-.07-.03-.14-.08-.19-.14-.05-.06-.09-.13-.11-.2-.02-.08-.03-.16-.02-.23L.84,.45c.02-.12,.09-.24,.19-.32C1.13,.05,1.25,0,1.38,0H6.72l-1.02,5.78Z"/>
+      <path class="cls-4" d="M9.45,17.39H3.65L5.7,5.8h5.8l-2.05,11.59Z"/>
+    </g>
+  </g>
+</svg>

@@ -8,6 +8,7 @@ import autoImport from 'unplugin-auto-import/vite'
 import components from 'unplugin-vue-components/vite'
 import loadVersion from 'vite-plugin-package-version';
 import vueDevTools from 'vite-plugin-vue-devtools'
+import monacoEditorPlugin from 'vite-plugin-monaco-editor'
 // https://vitejs.dev/config/
 export default defineConfig({
     base: './', // 这里更改打包相对绝对路径
@@ -75,6 +76,9 @@ export default defineConfig({
         }),
         vueI18n({
             include: resolve(process.cwd(), 'src/components/molian/locales/lang/**'),
+        }),
+        monacoEditorPlugin({
+            languageWorkers: ['editorWorkerService', 'typescript', 'json', 'css']
         }),
     ],
     resolve: {
