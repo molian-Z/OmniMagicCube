@@ -1,14 +1,42 @@
 <script setup lang="ts">
 import { ref, computed, defineOptions, inject } from "vue";
 import { useCloned } from "@vueuse/core";
-import { selectedComp } from "../../designerData";
+import { selectedComp, compsRefs, compsEls } from "../../designerData";
 import { createComponent } from '@molian/utils/componentCore'
+import { slotsMap } from '@molian/utils/compsConfig'
 import svgIcon from "@molianComps/SvgIcon/index.vue";
 import { useI18n } from "vue-i18n";
 const { t } = useI18n();
 defineOptions({
   name: "SlotComp",
 });
+
+/**
+ * 递归清理组件及其子组件的引用
+ * @param comp 要清理的组件
+ */
+const cleanupComponentRefs = (comp: any) => {
+  if (!comp || !comp.id) return;
+  
+  // 清理当前组件的引用
+  if (compsRefs[comp.id]) {
+    delete compsRefs[comp.id];
+  }
+  if (compsEls[comp.id]) {
+    delete compsEls[comp.id];
+  }
+  
+  // 递归清理子组件
+  if (comp.slots) {
+    Object.values(comp.slots).forEach((slot: any) => {
+      if (slot && slot.children) {
+        slot.children.forEach((childComp: any) => {
+          cleanupComponentRefs(childComp);
+        });
+      }
+    });
+  }
+};
 const comps: any = inject("mlComps");
 const customComps: any = inject("customComps");
 const { customButton, customInput, customPopup } = customComps;
@@ -17,7 +45,7 @@ const tempSlot = ref("");
 const showKeyName = ref("");
 const slots: any = computed(() => {
   if (selectedComp.value) {
-    return comps.value[selectedComp.value.name]?.slots;
+    return slotsMap.value[selectedComp.value.name];
   }
 });
 /**
@@ -33,6 +61,16 @@ const slots: any = computed(() => {
 const appendSlot = function (key: string | number, val: any) {
   // 检查选中组件的插槽是否存在，如果存在，则删除该插槽
   if (selectedComp.value.slots && selectedComp.value.slots[key]) {
+    // 清理slot中的组件引用
+     const slotToDelete = selectedComp.value.slots[key];
+     if (slotToDelete && slotToDelete.children) {
+       // 递归清理slot中所有组件的引用
+       slotToDelete.children.forEach((comp: any) => {
+         cleanupComponentRefs(comp);
+       });
+       // 清空children数组
+       slotToDelete.children.length = 0;
+     }
     delete selectedComp.value.slots[key];
     return false;
   }

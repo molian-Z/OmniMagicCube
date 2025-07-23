@@ -59,8 +59,10 @@ const setSlots = computed(() => (slotProps: any) => {
 });
 
 // 使用计算属性优化频繁计算的值
-const parsedProps = computed(() => 
-  parseProps(props.comp, comps.value, variable.value, props.expandAPI, props.slotData, 'render')
+const parsedProps = computed(() => {
+    return parseProps(props.comp, comps.value, variable.value, props.expandAPI, props.slotData, 'render')
+}
+  
 );
 
 const componentClass = `comp_${props.comp.key}`;

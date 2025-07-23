@@ -216,7 +216,7 @@ const tabType = () => {
           v-model="variableValue"
           v-if="type === 'variable'"
         />
-        <customSwitch size="small" v-model="value" v-else-if="type === 'boolean'" />
+        <customSwitch size="small" v-model="value" v-else-if="type === 'boolean' || type === Boolean" />
         <customSelect
           :options="getOptionItemI18n(propData.optionItems)"
           size="small"
@@ -224,7 +224,7 @@ const tabType = () => {
           :clearable="true"
           v-else-if="propData.optionItems"
         />
-        <customInputNumber size="small" v-model="value" v-else-if="type === 'number'">
+        <customInputNumber size="small" v-model="value" v-else-if="type === 'number' || type === Number">
         </customInputNumber>
         <icon-picker v-model="value" :size="28" v-else-if="type === 'icon'"></icon-picker>
         <colorPicker

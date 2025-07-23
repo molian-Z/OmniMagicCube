@@ -511,6 +511,8 @@ export const parseProps = (
 ): Record<string, any> => {
     const propsData: Record<string, any> = {};
     if (!comp?.attrs || !comps[comp.name]) {
+        console.log('不存在组件或者属性', comp.name, comp.attrs)
+
         // 待优化
         const commonTags = [
             'a', 'abbr', 'address', 'area', 'article', 'aside', 'audio',
@@ -610,7 +612,6 @@ export const parseProps = (
 
     Object.entries(comp.attrs).forEach(([key, element]) => {
         if (!element) return;
-
         const compProp = comps[comp.name].props[key];
         
         if (compProp?.hidden && (
@@ -621,7 +622,6 @@ export const parseProps = (
         }
 
         let newVal: any = null;
-
         switch (element.type) {
             case 'variable':
                 newVal = processVariableType(element, compProp);
@@ -640,7 +640,6 @@ export const parseProps = (
         if (isRef(newVal)) {
             newVal = newVal.value;
         }
-
         if (newVal !== null) {
             propsData[key] = newVal;
         }

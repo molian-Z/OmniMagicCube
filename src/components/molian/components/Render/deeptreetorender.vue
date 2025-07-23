@@ -42,7 +42,6 @@ const {
   progress,
   updateWithTimeSlicing
 } = createReactiveTimeSlicing([]);
-
 // 性能监控
 const performanceMetrics = ref({
   lastRenderTime: 0,

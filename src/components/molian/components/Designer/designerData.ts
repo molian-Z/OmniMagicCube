@@ -57,6 +57,14 @@ export const variableData = computed(() => {
 
 // 清空画布
 export const clearCanvas = () => {
+    // 清理所有组件引用
+    Object.keys(compsRefs).forEach(key => {
+        delete compsRefs[key];
+    });
+    Object.keys(compsEls).forEach(key => {
+        delete compsEls[key];
+    });
+    
     modelValue.value = []
     globalAttrs.import = {}
     globalAttrs.export = {}
@@ -270,6 +278,37 @@ export const useKeys = (message: MessageService, t: (key: string) => string): vo
             key: 'delete',
             handler: () => {
                 if (hoverNodes.value && typeof hoverIndex.value === 'number' && hoverIndex.value >= 0) {
+                    // 获取要删除的组件
+                    const compToDelete = hoverNodes.value[hoverIndex.value];
+                    // 清理组件引用
+                    if (compToDelete && compToDelete.id) {
+                        // 递归清理组件及其子组件的引用
+                        const cleanupComponentRefs = (comp: any) => {
+                            if (!comp || !comp.id) return;
+                            
+                            // 清理当前组件的引用
+                            if (compsRefs[comp.id]) {
+                                delete compsRefs[comp.id];
+                            }
+                            if (compsEls[comp.id]) {
+                                delete compsEls[comp.id];
+                            }
+                            
+                            // 递归清理子组件
+                            if (comp.slots) {
+                                Object.values(comp.slots).forEach((slot: any) => {
+                                    if (slot && slot.children) {
+                                        slot.children.forEach((childComp: any) => {
+                                            cleanupComponentRefs(childComp);
+                                        });
+                                    }
+                                });
+                            }
+                        };
+                        
+                        cleanupComponentRefs(compToDelete);
+                    }
+                    // 从数组中删除组件
                     hoverNodes.value.splice(hoverIndex.value, 1);
                     resetDraggable();
                 }

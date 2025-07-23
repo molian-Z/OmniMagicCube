@@ -200,7 +200,6 @@ export const useDraggable = (comps?: any, compData?: any, message?: any) => {
             // 创建新组件
             const appendComp = slotVal.appendComps?.find(item => item.name === name)
             const obj = createComponent(comps.value[name], appendComp)
-            console.log(slotVal)
             if(slotVal.children.length === 0) {
                 slotVal.children = reactive([])
             }
